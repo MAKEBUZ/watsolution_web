@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="watsolution - Gestión inteligente de acueductos y recursos hídricos con tecnología PWA.">
+    <meta name="theme-color" content="#0077be">
+    <title>watsolution | Gestión Inteligente de Acueductos</title>
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Critical CSS Inline -->
+    <style>
+      :root {
+        --color-primary: #0077be;
+        --color-bg: #f0faff;
+      }
+      body {
+        margin: 0;
+        background-color: var(--color-bg);
+        font-family: 'Inter', sans-serif;
+      }
+      .header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 70px;
+        z-index: 1000;
+      }
+      .hero {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

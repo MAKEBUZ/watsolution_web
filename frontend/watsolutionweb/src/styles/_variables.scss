@@ -1,0 +1,28 @@
+// Paleta de colores - Inspirada en agua y tecnología
+$color-primary: #0077be; // Azul oceánico
+$color-primary-light: #00a8cc; // Azul claro
+$color-primary-dark: #005f99; // Azul oscuro
+$color-secondary: #00ced1; // Turquesa
+$color-secondary-light: #40e0d0; // Turquesa claro
+$color-accent: #40e0d0; // Turquesa claro
+$color-white: #ffffff;
+$color-bg: #f0faff; // Azul muy claro
+$color-text: #2c3e50;
+$color-text-muted: #7f8c8d;
+
+// Breakpoints
+$bp-mobile: 320px;
+$bp-tablet: 768px;
+$bp-desktop: 1024px;
+
+// Espaciado
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 2rem;
+$spacing-lg: 4rem;
+$spacing-xl: 8rem;
+
+// Sombras
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
