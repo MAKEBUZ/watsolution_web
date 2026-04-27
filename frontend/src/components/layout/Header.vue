@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { Menu, X, Droplets } from 'lucide-vue-next'
-
 import { useAuthStore } from '../../stores/auth'
-import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const isMenuOpen = ref(false)
 const isScrolled = ref(false)
+const route = useRoute()
+
+const isWhiteBackground = computed(() => {
+  return isScrolled.value || route.path !== '/'
+})
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -20,7 +24,7 @@ const toggleMenu = () => {
 }
 
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 20
+  isScrolled.value = window.scrollY > 10
 }
 
 onMounted(() => {
@@ -46,7 +50,7 @@ const navLinks = [
 </script>
 
 <template>
-  <header :class="['header', { 'header--scrolled': isScrolled }]">
+  <header :class="['header', { 'header--scrolled': isWhiteBackground }]">
     <div class="container header__content">
       <div class="header__logo">
         <Droplets class="header__logo-icon" :size="32" />
@@ -133,10 +137,9 @@ const navLinks = [
   transition: all 0.3s ease;
   background: transparent;
 
-  &--scrolled {
-    background: color.change($color-white, $alpha: 0.9);
-    backdrop-filter: blur(10px);
-    box-shadow: $shadow-sm;
+  &.header--scrolled {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
     padding: $spacing-xs 0;
   }
 
