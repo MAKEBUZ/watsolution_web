@@ -1,0 +1,130 @@
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: $color-text;
+  background-color: $color-bg;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.3s;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-sm;
+  
+  @include tablet {
+    padding: 0 $spacing-md;
+  }
+}
+
+// Accesibilidad
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: $color-primary;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+  &:focus {
+    top: 0;
+  }
+}
+
+// Botones base
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s, background-color 0.2s;
+  min-width: 44px;
+  min-height: 44px;
+  text-align: center;
+  line-height: 1;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  &--primary {
+    background-color: $color-primary;
+    color: white;
+    &:hover {
+      background-color: color.adjust($color-primary, $lightness: -10%);
+    }
+  }
+  
+  &--secondary {
+    background-color: $color-secondary;
+    color: white;
+    &:hover {
+      background-color: color.adjust($color-secondary, $lightness: -10%);
+    }
+  }
+  
+  &--outline {
+    background-color: transparent;
+    border: 2px solid $color-primary;
+    color: $color-primary;
+    &:hover {
+      background-color: $color-primary;
+      color: white;
+    }
+  }
+}
