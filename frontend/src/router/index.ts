@@ -13,8 +13,11 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/auth/LoginView.vue'),
-      meta: { hideLayout: true }
+      component: () => import('../views/auth/LoginView.vue')
+    },
+    {
+      path: '/register',
+      redirect: { name: 'login' }
     },
     {
       path: '/noticias',
@@ -44,6 +47,12 @@ const router = createRouter({
           path: 'resumen',
           name: 'admin-summary',
           component: () => import('../views/admin/StatsView.vue'),
+          meta: { requiresAdmin: true }
+        },
+        {
+          path: 'actividad',
+          name: 'admin-activity',
+          component: () => import('../views/admin/ActivityView.vue'),
           meta: { requiresAdmin: true }
         },
         {
@@ -96,7 +105,7 @@ router.beforeEach(async (to, from, next) => {
       next({ name: 'login' })
     }
   } else if (to.name === 'login' && authStore.isAuthenticated) {
-    // If already logged in and trying to access login, redirect to appropriate portal
+    // If already logged in and trying to access auth pages, redirect to appropriate portal
     if (authStore.isAdmin) {
       next({ name: 'admin-summary' })
     } else {
