@@ -3,7 +3,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import { 
   LayoutDashboard, Users, FileText, Newspaper, 
-  TrendingUp, LogOut, ChevronRight, Menu, X, User
+  TrendingUp, LogOut, ChevronRight, Menu, X, User, History
 } from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted } from 'vue'
 
@@ -15,6 +15,7 @@ const isMobile = ref(window.innerWidth <= 1024)
 
 const menuItems = [
   { name: 'Resumen', routeName: 'admin-summary', icon: LayoutDashboard },
+  { name: 'Actividad', routeName: 'admin-activity', icon: History },
   { name: 'Usuarios', routeName: 'admin-users', icon: Users },
   { name: 'Facturación', routeName: 'admin-billing', icon: FileText },
   { name: 'Noticias', routeName: 'admin-news', icon: Newspaper },
@@ -361,12 +362,14 @@ const closeSidebarOnMobile = () => {
 
 .admin-content-view {
   padding: $spacing-md;
+  padding-bottom: $spacing-xl * 2; // Extra padding at bottom to separate from footer
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
 
   @include tablet {
     padding: $spacing-lg;
+    padding-bottom: $spacing-xl * 2;
   }
 }
 </style>

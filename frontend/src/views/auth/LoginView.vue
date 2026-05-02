@@ -2,13 +2,15 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
-import { LogIn, User, Lock } from 'lucide-vue-next'
+import { Mail, Eye, EyeOff } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
+const rememberMe = ref(false)
+const showPassword = ref(false)
 const error = ref('')
 
 const handleLogin = async () => {
@@ -36,196 +38,109 @@ const handleLogin = async () => {
     error.value = 'Credenciales inválidas. Prueba con admin@watsolution.tech / admin123'
   }
 }
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value
+}
 </script>
 
 <template>
-  <div class="login-view">
-    <div class="container login-container">
-      <div class="login-card">
-        <div class="login-header">
-          <div class="login-icon">
-            <LogIn :size="32" />
-          </div>
-          <h1>Bienvenido de nuevo</h1>
-          <p>Ingresa a tu cuenta de watsolution</p>
-        </div>
+  <section class="auth-scene">
+    <svg class="auth-art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9fc3ef" stop-opacity="0.65" />
+          <stop offset="1" stop-color="#5d93d3" stop-opacity="0.85" />
+        </linearGradient>
+        <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6ba1df" stop-opacity="0.75" />
+          <stop offset="1" stop-color="#2e5f9b" stop-opacity="0.9" />
+        </linearGradient>
+        <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1a4e73" stop-opacity="0.9" />
+          <stop offset="1" stop-color="#07192b" stop-opacity="1" />
+        </linearGradient>
+      </defs>
 
-        <form @submit.prevent="handleLogin" class="login-form">
-          <div v-if="error" class="error-alert">{{ error }}</div>
-          
-          <div class="form-group">
-            <label for="email">Correo Electrónico</label>
-            <div class="input-wrapper">
-              <User class="input-icon" :size="18" />
-              <input 
-                type="email" 
-                id="email" 
-                v-model="email" 
-                placeholder="ejemplo@correo.com" 
+      <g opacity="0.9" fill="#ffffff">
+        <path d="M115 260c35-60 120-80 175-40 20-35 62-52 102-40 25-45 80-65 130-45 55 23 70 85 38 127H115z" opacity="0.55" />
+        <path d="M980 240c35-55 115-74 168-38 18-32 58-48 96-38 24-40 70-58 116-40 52 21 66 78 36 116H980z" opacity="0.5" />
+      </g>
+
+      <path d="M0 585C190 500 350 520 470 575c120 56 260 55 360-10 120-79 260-112 610 20v330H0V585z" fill="url(#m1)" />
+      <path d="M0 650c190-110 360-100 520-32 160 68 320 58 430-12 140-90 280-110 490-22v360H0V650z" fill="url(#m2)" />
+      <path d="M0 735c190-110 390-120 560-40 170 80 340 70 470-10 170-104 280-108 410-55v340H0V735z" fill="url(#m3)" />
+
+      <g fill="#050d18" opacity="0.9">
+        <path d="M128 812l24-68 24 68h-14l-4 34h-12l-4-34h-14z" />
+        <path d="M184 826l18-50 18 50h-10l-3 24h-10l-3-24h-10z" />
+        <path d="M1248 812l24-68 24 68h-14l-4 34h-12l-4-34h-14z" />
+        <path d="M1192 826l18-50 18 50h-10l-3 24h-10l-3-24h-10z" />
+      </g>
+
+      <g fill="#050d18" opacity="0.92">
+        <path d="M0 900V610c22 30 36 58 44 86 10 34 10 76 10 204H0z" />
+        <path d="M40 900V640c34 34 54 70 60 108 8 50 7 90 7 152H40z" />
+        <path d="M1440 900V620c-22 28-36 56-44 84-10 34-10 76-10 196h54z" />
+        <path d="M1400 900V650c-34 34-54 70-60 108-8 50-7 90-7 142h67z" />
+      </g>
+    </svg>
+
+    <div class="auth-content">
+      <div class="auth-card" role="region" aria-label="Formulario de inicio de sesión">
+        <h1 class="auth-title">LOGIN</h1>
+
+        <div v-if="error" class="auth-error">{{ error }}</div>
+
+        <form class="auth-form" @submit.prevent="handleLogin">
+          <div class="auth-field">
+            <label class="auth-label" for="email">Email</label>
+            <div class="auth-input">
+              <input
+                id="email"
+                v-model="email"
+                class="auth-input__control"
+                type="email"
+                autocomplete="email"
                 required
               >
+              <Mail class="auth-input__icon" :size="18" aria-hidden="true" />
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="password">Contraseña</label>
-            <div class="input-wrapper">
-              <Lock class="input-icon" :size="18" />
-              <input 
-                type="password" 
-                id="password" 
-                v-model="password" 
-                placeholder="********" 
+          <div class="auth-field">
+            <label class="auth-label" for="password">Password</label>
+            <div class="auth-input">
+              <input
+                id="password"
+                v-model="password"
+                class="auth-input__control"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
                 required
               >
+              <button
+                type="button"
+                class="auth-input__button"
+                :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                @click="togglePasswordVisibility"
+              >
+                <Eye v-if="showPassword" :size="18" aria-hidden="true" />
+                <EyeOff v-else :size="18" aria-hidden="true" />
+              </button>
+            </div>
+            <div class="auth-row">
+              <label class="auth-remember">
+                <input v-model="rememberMe" type="checkbox">
+                <span>Remember Me</span>
+              </label>
+              <a class="auth-forgot" href="#" @click.prevent>Forgot Password?</a>
             </div>
           </div>
 
-          <button type="submit" class="btn btn--primary btn--block">Iniciar Sesión</button>
+          <button class="auth-submit" type="submit">Login</button>
         </form>
-
-        <div class="login-footer">
-          <p>¿No tienes una cuenta? <a href="#">Contáctanos</a></p>
-          <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-        </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
-
-<style lang="scss" scoped>
-@use 'sass:color';
-@use '../../styles/variables' as *;
-@use '../../styles/mixins' as *;
-
-.login-view {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, $color-bg 0%, #e0f2fe 100%);
-  padding: $spacing-xl 0;
-}
-
-.login-container {
-  display: flex;
-  justify-content: center;
-}
-
-.login-card {
-  background: white;
-  padding: $spacing-lg;
-  border-radius: 24px;
-  box-shadow: $shadow-lg;
-  width: 100%;
-  max-width: 450px;
-}
-
-.login-header {
-  text-align: center;
-  margin-bottom: $spacing-lg;
-
-  .login-icon {
-    width: 64px;
-    height: 64px;
-    background: color.change($color-primary, $alpha: 0.1);
-    color: $color-primary;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto $spacing-md;
-  }
-
-  h1 {
-    font-size: 1.75rem;
-    color: $color-text;
-    margin-bottom: $spacing-xs;
-  }
-
-  p {
-    color: $color-text-muted;
-  }
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.error-alert {
-  background: #fee2e2;
-  color: #ef4444;
-  padding: $spacing-sm;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-
-  label {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: $color-text;
-  }
-}
-
-.input-wrapper {
-  position: relative;
-  
-  .input-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $color-text-muted;
-  }
-
-  input {
-    width: 100%;
-    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-    }
-  }
-}
-
-.btn--block {
-  width: 100%;
-}
-
-.login-footer {
-  margin-top: $spacing-lg;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-
-  p {
-    font-size: 0.9rem;
-    color: $color-text-muted;
-    a {
-      color: $color-primary;
-      font-weight: 600;
-    }
-  }
-
-  .forgot-password {
-    font-size: 0.85rem;
-    color: $color-text-muted;
-    &:hover {
-      color: $color-primary;
-    }
-  }
-}
-</style>

@@ -99,6 +99,7 @@ const formatDate = (dateStr: string) => {
 
 .news-list-view {
   padding-top: 70px;
+  padding-bottom: $spacing-xl * 3;
   background-color: $color-bg;
   min-height: 100vh;
 }

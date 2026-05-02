@@ -3,8 +3,7 @@ import { onMounted, ref } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import { 
   Users, DollarSign, Droplets, TrendingUp, 
-  Download, Filter, CreditCard, UserPlus, 
-  FileText, Clock, CheckCircle, ArrowUpRight,
+  Download, Filter, ArrowUpRight,
   ArrowDownRight, Calendar
 } from 'lucide-vue-next'
 
@@ -49,34 +48,6 @@ const stats = [
     description: 'Disponibilidad del sistema'
   }
 ]
-
-const logs = ref([
-  { id: 1, user: 'Maria Garcia', action: 'Pago de Factura', details: 'FAC-2026-0038', amount: '$45,200', type: 'payment', time: 'Hace 5 min' },
-  { id: 2, user: 'Juan Perez', action: 'Nueva Lectura', details: '1,265 m³ - Sector Sur', type: 'reading', time: 'Hace 12 min' },
-  { id: 3, user: 'Sistema', action: 'Nueva Noticia', details: 'Corte programado sector Norte', type: 'news', time: 'Hace 25 min' },
-  { id: 4, user: 'Carlos Ruiz', action: 'Registro Usuario', details: 'Nuevo suscriptor: ID #104', type: 'user', time: 'Hace 1 hora' },
-  { id: 5, user: 'Ana Lopez', action: 'Pago de Factura', details: 'FAC-2026-0039', amount: '$32,100', type: 'payment', time: 'Hace 2 horas' }
-])
-
-const getLogIcon = (type: string) => {
-  switch(type) {
-    case 'payment': return CreditCard;
-    case 'reading': return Droplets;
-    case 'news': return FileText;
-    case 'user': return UserPlus;
-    default: return Clock;
-  }
-}
-
-const getLogColor = (type: string) => {
-  switch(type) {
-    case 'payment': return '#10b981';
-    case 'reading': return '#3b82f6';
-    case 'news': return '#f59e0b';
-    case 'user': return '#8b5cf6';
-    default: return '#94a3b8';
-  }
-}
 
 // --- CHARTS ---
 const consumptionChartRef = ref<HTMLCanvasElement | null>(null)
@@ -203,51 +174,25 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Sidebar Area: Activity Logs -->
-      <aside class="activity-sidebar">
-        <div class="logs-card">
-          <div class="card-header">
-            <h3>Actividad Reciente</h3>
-            <button class="text-link">Ver todo</button>
-          </div>
-          <div class="logs-container">
-            <div v-for="log in logs" :key="log.id" class="log-entry">
-              <div class="log-icon" :style="{ color: getLogColor(log.type), backgroundColor: getLogColor(log.type) + '15' }">
-                <component :is="getLogIcon(log.type)" :size="18" />
-              </div>
-              <div class="log-info">
-                <div class="log-header">
-                  <strong>{{ log.user }}</strong>
-                  <span class="log-time">{{ log.time }}</span>
-                </div>
-                <p class="log-action">{{ log.action }}</p>
-                <div class="log-meta">
-                  <span class="log-details">{{ log.details }}</span>
-                  <span v-if="log.amount" class="log-amount">{{ log.amount }}</span>
-                </div>
-              </div>
-              <CheckCircle v-if="log.type === 'payment'" class="payment-check" :size="14" />
+      <div class="info-card">
+        <h3>Estado del Sistema</h3>
+        <div class="status-list">
+          <div class="status-item">
+            <div class="status-row">
+              <span class="status-label">Presión de Red</span>
+              <span class="status-value">85%</span>
             </div>
+            <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
+          </div>
+          <div class="status-item">
+            <div class="status-row">
+              <span class="status-label">Calidad Agua</span>
+              <span class="status-value">99%</span>
+            </div>
+            <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
           </div>
         </div>
-
-        <!-- Quick Info Card -->
-        <div class="info-card">
-          <h3>Estado del Sistema</h3>
-          <div class="status-list">
-            <div class="status-item">
-              <span>Presión de Red</span>
-              <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
-              <span>85%</span>
-            </div>
-            <div class="status-item">
-              <span>Calidad Agua</span>
-              <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
-              <span>99%</span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      </div>
     </div>
   </div>
 </template>
@@ -341,13 +286,9 @@ onMounted(() => {
 }
 
 .dashboard-layout {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: $spacing-xl;
-
-  @include desktop {
-    grid-template-columns: 1fr 340px;
-  }
 }
 
 .main-stats {
@@ -385,94 +326,13 @@ onMounted(() => {
   }
 }
 
-.activity-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
-}
-
-.logs-card {
-  background: white;
-  padding: $spacing-xl;
-  border-radius: 24px;
-  box-shadow: $shadow-sm;
-  flex: 1;
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-lg;
-    h3 { font-size: 1.1rem; font-weight: 700; }
-    .text-link {
-      background: none;
-      border: none;
-      color: $color-primary;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      &:hover { text-decoration: underline; }
-    }
-  }
-}
-
-.logs-container {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
-.log-entry {
-  display: flex;
-  gap: 12px;
-  position: relative;
-
-  .log-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .log-info {
-    flex: 1;
-    .log-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2px;
-      strong { font-size: 0.9rem; color: $color-text; }
-      .log-time { font-size: 0.75rem; color: $color-text-muted; }
-    }
-    .log-action { font-size: 0.85rem; color: $color-text; margin-bottom: 4px; }
-    .log-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .log-details { font-size: 0.8rem; color: $color-text-muted; }
-      .log-amount { font-size: 0.85rem; font-weight: 700; color: #10b981; }
-    }
-  }
-
-  .payment-check {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    color: #10b981;
-    background: white;
-    border-radius: 50%;
-  }
-}
-
 .info-card {
   background: #1e293b;
   color: white;
   padding: $spacing-xl;
   border-radius: 24px;
   box-shadow: $shadow-md;
+  width: 100%;
 
   h3 { font-size: 1.1rem; margin-bottom: $spacing-lg; }
   
@@ -487,6 +347,24 @@ onMounted(() => {
     flex-direction: column;
     gap: 6px;
     font-size: 0.85rem;
+
+    .status-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .status-label {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .status-value {
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      font-variant-numeric: tabular-nums;
+    }
     
     .status-bar {
       height: 6px;
@@ -498,11 +376,6 @@ onMounted(() => {
         background: $color-primary;
         &.success { background: #10b981; }
       }
-    }
-
-    div:last-child {
-      display: flex;
-      justify-content: space-between;
     }
   }
 }
