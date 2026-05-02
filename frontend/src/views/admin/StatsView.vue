@@ -147,50 +147,27 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Charts & Logs Layout -->
-    <div class="dashboard-layout">
-      <!-- Main Content Area -->
-      <div class="main-stats">
-        <!-- Chart: Consumption -->
-        <div class="chart-card">
-          <div class="card-header">
-            <h3>Tendencia de Consumo</h3>
-            <span class="badge">m³ / mes</span>
-          </div>
-          <div class="chart-container">
-            <canvas ref="consumptionChartRef"></canvas>
-          </div>
+    <!-- Charts Section -->
+    <div class="main-stats">
+      <!-- Chart: Consumption -->
+      <div class="chart-card">
+        <div class="card-header">
+          <h3>Tendencia de Consumo</h3>
+          <span class="badge">m³ / mes</span>
         </div>
-
-        <!-- Chart: Revenue -->
-        <div class="chart-card">
-          <div class="card-header">
-            <h3>Recaudo Mensual</h3>
-            <span class="badge success">Millones COP</span>
-          </div>
-          <div class="chart-container">
-            <canvas ref="revenueChartRef"></canvas>
-          </div>
+        <div class="chart-container">
+          <canvas ref="consumptionChartRef"></canvas>
         </div>
       </div>
 
-      <div class="info-card">
-        <h3>Estado del Sistema</h3>
-        <div class="status-list">
-          <div class="status-item">
-            <div class="status-row">
-              <span class="status-label">Presión de Red</span>
-              <span class="status-value">85%</span>
-            </div>
-            <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
-          </div>
-          <div class="status-item">
-            <div class="status-row">
-              <span class="status-label">Calidad Agua</span>
-              <span class="status-value">99%</span>
-            </div>
-            <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
-          </div>
+      <!-- Chart: Revenue -->
+      <div class="chart-card">
+        <div class="card-header">
+          <h3>Recaudo Mensual</h3>
+          <span class="badge success">Millones COP</span>
+        </div>
+        <div class="chart-container">
+          <canvas ref="revenueChartRef"></canvas>
         </div>
       </div>
     </div>
@@ -204,7 +181,7 @@ onMounted(() => {
 .summary-dashboard {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
+  gap: $spacing-lg;
   padding: $spacing-sm;
 
   @include desktop {
@@ -238,12 +215,12 @@ onMounted(() => {
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: $spacing-lg;
+  gap: $spacing-md;
 }
 
 .stat-card {
   background: white;
-  padding: $spacing-lg;
+  padding: $spacing-md;
   border-radius: 20px;
   box-shadow: $shadow-sm;
   display: flex;
@@ -285,21 +262,15 @@ onMounted(() => {
   }
 }
 
-.dashboard-layout {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
-}
-
 .main-stats {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
+  gap: $spacing-lg;
 }
 
 .chart-card {
   background: white;
-  padding: $spacing-xl;
+  padding: $spacing-lg;
   border-radius: 24px;
   box-shadow: $shadow-sm;
 
@@ -307,7 +278,7 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-md;
     h3 { font-size: 1.2rem; font-weight: 700; }
     .badge {
       padding: 4px 12px;
@@ -321,62 +292,8 @@ onMounted(() => {
   }
 
   .chart-container {
-    height: 300px;
+    height: 240px;
     position: relative;
-  }
-}
-
-.info-card {
-  background: #1e293b;
-  color: white;
-  padding: $spacing-xl;
-  border-radius: 24px;
-  box-shadow: $shadow-md;
-  width: 100%;
-
-  h3 { font-size: 1.1rem; margin-bottom: $spacing-lg; }
-  
-  .status-list {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-  }
-
-  .status-item {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 0.85rem;
-
-    .status-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .status-label {
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .status-value {
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.9);
-      font-variant-numeric: tabular-nums;
-    }
-    
-    .status-bar {
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 100px;
-      overflow: hidden;
-      .fill {
-        height: 100%;
-        background: $color-primary;
-        &.success { background: #10b981; }
-      }
-    }
   }
 }
 </style>

@@ -137,26 +137,34 @@ const downloadReceipt = () => {
 @use '../../styles/mixins' as *;
 
 .payment-view {
-  padding: 120px 0 $spacing-xl;
+  padding: 100px $spacing-sm $spacing-xl;
   background: $color-bg;
   min-height: 100vh;
+
+  @include tablet {
+    padding: 120px 0 $spacing-xl;
+  }
 }
 
 .payment-form-card, .success-card {
   background: white;
-  padding: $spacing-lg;
+  padding: $spacing-md;
   border-radius: 24px;
   box-shadow: $shadow-lg;
   max-width: 600px;
   margin: 0 auto;
+
+  @include tablet {
+    padding: $spacing-lg;
+  }
 }
 
 .payment-header {
   text-align: center;
   margin-bottom: $spacing-lg;
-  .pse-logo { height: 60px; margin-bottom: $spacing-sm; }
-  h1 { font-size: 1.75rem; color: $color-text; }
-  p { color: $color-text-muted; }
+  .pse-logo { height: clamp(40px, 10vw, 60px); margin-bottom: $spacing-sm; }
+  h1 { font-size: clamp(1.4rem, 4vw, 1.75rem); color: $color-text; font-weight: 800; }
+  p { color: $color-text-muted; font-size: 0.95rem; }
 }
 
 .payment-summary {

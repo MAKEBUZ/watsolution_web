@@ -52,10 +52,10 @@ const navLinks = [
 <template>
   <header :class="['header', { 'header--scrolled': isWhiteBackground }]">
     <div class="container header__content">
-      <div class="header__logo">
+      <router-link to="/" class="header__logo">
         <Droplets class="header__logo-icon" :size="32" />
         <span class="header__logo-text">Wat<span>Solution</span></span>
-      </div>
+      </router-link>
 
       <!-- Desktop Navigation -->
       <nav class="header__nav header__nav--desktop">
@@ -153,9 +153,16 @@ const navLinks = [
     display: flex;
     align-items: center;
     gap: $spacing-xs;
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
     font-weight: 700;
     color: $color-primary;
+    text-decoration: none;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      opacity: 0.9;
+    }
 
     &-text {
       span {

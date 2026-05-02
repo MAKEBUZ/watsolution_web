@@ -112,8 +112,16 @@ const formatDate = (dateStr: string) => {
   margin-bottom: $spacing-xl;
 
   h1 {
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 5vw, 3rem);
     margin-bottom: $spacing-sm;
+    font-weight: 800;
+  }
+  
+  p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
   }
 }
 
@@ -121,9 +129,11 @@ const formatDate = (dateStr: string) => {
   display: grid;
   grid-template-columns: 1fr;
   gap: $spacing-lg;
+  padding: 0 $spacing-sm;
 
   @include desktop {
     grid-template-columns: 300px 1fr;
+    padding: 0;
   }
 }
 

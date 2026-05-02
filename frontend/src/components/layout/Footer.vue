@@ -6,10 +6,10 @@ import { Droplets, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin }
   <footer id="contacto" class="footer">
     <div class="container footer__grid">
       <div class="footer__brand">
-        <div class="footer__logo">
+        <router-link to="/" class="footer__logo">
           <Droplets :size="32" />
           <span>Wat<span>Solution</span></span>
-        </div>
+        </router-link>
         <p class="footer__description">
           Liderando la innovación tecnológica para la gestión sostenible del recurso más vital del planeta.
         </p>
@@ -76,11 +76,12 @@ import { Droplets, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin }
   &__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: $spacing-xl;
+    gap: $spacing-lg;
     margin-bottom: $spacing-xl;
 
     @include tablet {
       grid-template-columns: repeat(2, 1fr);
+      gap: $spacing-xl;
     }
 
     @include desktop {
@@ -92,6 +93,11 @@ import { Droplets, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin }
     display: flex;
     flex-direction: column;
     gap: $spacing-md;
+    
+    @include mobile {
+      align-items: center;
+      text-align: center;
+    }
   }
 
   &__logo {
@@ -101,6 +107,11 @@ import { Droplets, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin }
     font-size: 1.5rem;
     font-weight: 700;
     color: white;
+    text-decoration: none;
+
+    &:hover {
+      opacity: 0.9;
+    }
 
     span span {
       color: $color-secondary;
@@ -110,17 +121,31 @@ import { Droplets, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin }
   &__description {
     line-height: 1.6;
     max-width: 300px;
+    font-size: 0.95rem;
   }
 
   &__social {
     display: flex;
     gap: $spacing-md;
 
+    @include mobile {
+      justify-content: center;
+    }
+
     a {
       color: #94a3b8;
-      transition: color 0.3s;
+      transition: all 0.3s;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:hover {
         color: white;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-3px);
       }
     }
   }
@@ -130,6 +155,26 @@ import { Droplets, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin }
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: $spacing-md;
+    position: relative;
+    padding-bottom: 12px;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 30px;
+      height: 2px;
+      background: $color-primary;
+    }
+    
+    @include mobile {
+      text-align: center;
+      &::after {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
   }
 
   &__links ul, &__contact ul {
@@ -137,15 +182,22 @@ import { Droplets, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin }
     flex-direction: column;
     gap: $spacing-sm;
 
+    @include mobile {
+      align-items: center;
+    }
+
     li {
       display: flex;
       align-items: center;
       gap: $spacing-xs;
+      font-size: 0.95rem;
     }
 
     a {
+      transition: all 0.3s;
       &:hover {
         color: white;
+        padding-left: 5px;
       }
     }
   }

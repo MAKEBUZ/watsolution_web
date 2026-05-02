@@ -134,8 +134,8 @@ const closeSidebarOnMobile = () => {
 
 .admin-layout {
   display: flex;
-  min-height: calc(100vh - 80px); 
-  margin-top: 80px; 
+  min-height: calc(100vh - 60px); 
+  margin-top: 60px; 
   background-color: #f8fafc;
   position: relative;
 }
@@ -156,8 +156,8 @@ const closeSidebarOnMobile = () => {
   flex-direction: column;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: sticky;
-  top: 80px; // Sticky below global header
-  height: calc(100vh - 80px);
+  top: 60px; // Sticky below global header
+  height: calc(100vh - 60px);
   z-index: 100;
 
   &.is-closed {
@@ -302,7 +302,7 @@ const closeSidebarOnMobile = () => {
 .admin-topbar {
   background: white;
   padding: 0 $spacing-md;
-  height: 70px;
+  height: 85px; // Aumentado de 70px
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -318,7 +318,7 @@ const closeSidebarOnMobile = () => {
   .topbar-left {
     display: flex;
     align-items: center;
-    gap: $spacing-md;
+    gap: $spacing-lg; // Aumentado de $spacing-md
     
     .mobile-toggle {
       background: none;
@@ -331,32 +331,39 @@ const closeSidebarOnMobile = () => {
     }
   }
 
-  h2 { font-size: 1.1rem; color: $color-text; font-weight: 600; }
+  h2 { 
+    font-size: 1.25rem; // Aumentado de 1.1rem
+    color: $color-text; 
+    font-weight: 700; // Aumentado de 600
+    letter-spacing: -0.5px;
+  }
 }
 
 .admin-profile {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $spacing-md; // Aumentado de 12px
 
   .avatar {
-    width: 36px;
-    height: 36px;
+    width: 44px; // Aumentado de 36px
+    height: 44px; // Aumentado de 36px
     background: $color-primary;
     color: white;
-    border-radius: 50%;
+    border-radius: 12px; // Cambiado de 50% (círculo) a redondeado
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.95rem; // Aumentado de 0.85rem
+    box-shadow: $shadow-sm;
   }
 
   .info {
     display: flex;
     flex-direction: column;
-    .name { font-weight: 600; font-size: 0.85rem; color: $color-text; }
-    .role { font-size: 0.7rem; color: $color-text-muted; }
+    gap: 2px;
+    .name { font-weight: 700; font-size: 0.95rem; color: $color-text; } // Ajustado peso y tamaño
+    .role { font-size: 0.75rem; color: $color-text-muted; font-weight: 500; } // Ajustado tamaño y peso
   }
 }
 
