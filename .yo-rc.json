@@ -1,0 +1,39 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "backendType": "NodeJS",
+    "baseName": "watsolution",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-nodejs",
+        "version": "3.2.0"
+      }
+    ],
+    "clientFramework": "vue",
+    "clientTestFrameworks": [],
+    "clientTheme": "spacelab",
+    "clientThemeVariant": "primary",
+    "creationTimestamp": 1777587582445,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "enableTranslation": true,
+    "entities": ["Address", "Person", "Meter", "Invoice"],
+    "jhipsterVersion": "8.10.0",
+    "languages": ["es"],
+    "lastLiquibaseTimestamp": 1777587927000,
+    "microfrontend": null,
+    "microfrontends": [],
+    "monorepository": true,
+    "nativeLanguage": "es",
+    "packageName": "com.ucc.watsolution",
+    "prodDatabaseType": "postgresql",
+    "serverPort": null,
+    "skipCommitHook": true,
+    "testFrameworks": [],
+    "withAdminUi": false
+  },
+  "generator-jhipster-nodejs": {
+    "nodejsVersion": "3.2.0"
+  }
+}

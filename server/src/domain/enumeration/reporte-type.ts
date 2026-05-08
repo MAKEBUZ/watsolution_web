@@ -1,0 +1,5 @@
+export enum ReporteType {
+  FUGA = 'FUGA',
+  RECLAMACION = 'RECLAMACION',
+  CERTIFICADO = 'CERTIFICADO',
+}

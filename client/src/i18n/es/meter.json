@@ -1,0 +1,29 @@
+{
+  "watsolutionApp": {
+    "meter": {
+      "home": {
+        "title": "Meters",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Meter",
+        "createOrEditLabel": "Crear o editar Meter",
+        "notFound": "Ningún Meters encontrado"
+      },
+      "created": "Un nuevo Meter ha sido creado con el identificador { param }",
+      "updated": "Un Meter ha sido actualizado con el identificador { param }",
+      "deleted": "Un Meter ha sido eliminado con el identificador { param }",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Meter { id }?"
+      },
+      "detail": {
+        "title": "Meter"
+      },
+      "id": "ID",
+      "waterMeasure": "Water Measure",
+      "readingDate": "Reading Date",
+      "observation": "Observation",
+      "createdAt": "Created At",
+      "person": "Person",
+      "address": "Address"
+    }
+  }
+}

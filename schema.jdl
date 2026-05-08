@@ -1,0 +1,90 @@
+/**
+ * Entidades para el Sistema de Gestión de Agua
+ */
+
+application {
+    config {
+        baseName watsolution
+        applicationType monolith
+        packageName com.ucc.watsolution
+        authenticationType jwt
+        databaseType sql
+        devDatabaseType postgresql
+        prodDatabaseType postgresql
+        clientFramework vue
+    }
+    entities Address, Person, Meter, Invoice
+}
+
+entity Address {
+    neighborhood String required
+    street String
+    houseNumber String
+    city String required
+    latitude BigDecimal
+    longitude BigDecimal
+}
+
+entity Person {
+    fullName String required
+    documentNumber String required unique
+    phone String
+    email String
+    status PersonStatus
+    createdAt Instant
+}
+
+entity Meter {
+    waterMeasure BigDecimal required
+    readingDate LocalDate required
+    observation String
+    createdAt Instant
+}
+
+entity Invoice {
+    issueDate LocalDate required
+    dueDate LocalDate required
+    consumptionM3 BigDecimal required
+    amountDue BigDecimal required
+    status InvoiceStatus
+    createdAt Instant
+}
+
+enum PersonStatus {
+    ACTIVE,
+    INACTIVE
+}
+
+enum InvoiceStatus {
+    PENDING,
+    PAID,
+    CANCELLED
+}
+
+/**
+ * Relaciones (Basadas en tu esquema SQL)
+ */
+
+relationship ManyToOne {
+    // Una persona puede tener una dirección asociada
+    Person{address} to Address
+    
+    // Un medidor pertenece a una persona y está en una dirección
+    Meter{person} to Person
+    Meter{address} to Address
+    
+    // Una factura pertenece a un medidor y a una persona
+    Invoice{meter} to Meter
+    Invoice{person} to Person
+}
+
+/**
+ * Opciones de Configuración (Sintaxis V8)
+ */
+
+// Se usa 'paginate' seguido de 'with pagination' o 'with infinite-scroll'
+paginate Person, Meter with infinite-scroll
+paginate Invoice with pagination
+
+dto * with mapstruct
+service * with serviceImpl

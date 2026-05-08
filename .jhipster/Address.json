@@ -1,0 +1,39 @@
+{
+  "annotations": {
+    "changelogDate": "20260430222524"
+  },
+  "applications": ["watsolution"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "neighborhood",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "street",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "houseNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "city",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "latitude",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "longitude",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "name": "Address",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

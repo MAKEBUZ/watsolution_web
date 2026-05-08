@@ -1,0 +1,9 @@
+{
+  "watsolutionApp": {
+    "PersonStatus": {
+      "null": "",
+      "ACTIVE": "ACTIVE",
+      "INACTIVE": "INACTIVE"
+    }
+  }
+}

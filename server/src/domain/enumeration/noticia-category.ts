@@ -1,0 +1,5 @@
+export enum NoticiaCategory {
+  OPERATIVO = 'OPERATIVO',
+  INSTITUCIONAL = 'INSTITUCIONAL',
+  URGENTE = 'URGENTE',
+}

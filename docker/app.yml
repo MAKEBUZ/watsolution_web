@@ -1,0 +1,26 @@
+name: watsolution
+services:
+  app:
+    build: ..
+    environment:
+      - BACKEND_ENV=prod
+    ports:
+      - 8080:8080
+    healthcheck:
+      test:
+        - CMD
+        - nc
+        - -vz
+        - -w1
+        - localhost
+        - '8080'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      postgresql:
+        condition: service_healthy
+  postgresql:
+    extends:
+      file: ./postgresql.yml
+      service: postgresql
