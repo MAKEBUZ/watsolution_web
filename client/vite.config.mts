@@ -7,6 +7,8 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 const { getAbsoluteFSPath } = await import('swagger-ui-dist');
 const swaggerUiPath = getAbsoluteFSPath();
 
+const isStandalone = process.env.STANDALONE === 'true';
+
 // eslint-disable-next-line prefer-const
 let config = defineConfig({
   plugins: [
@@ -26,11 +28,15 @@ let config = defineConfig({
     }),
   ],
   root: fileURLToPath(new URL('./src/', import.meta.url)),
-  publicDir: fileURLToPath(new URL('./../server/dist/static/public', import.meta.url)),
-  cacheDir: fileURLToPath(new URL('./../tmp/.vite-cache', import.meta.url)),
+  publicDir: isStandalone ? false : fileURLToPath(new URL('./../server/dist/static/public', import.meta.url)),
+  cacheDir: isStandalone
+    ? fileURLToPath(new URL('./tmp/.vite-cache', import.meta.url))
+    : fileURLToPath(new URL('./../tmp/.vite-cache', import.meta.url)),
   build: {
     emptyOutDir: true,
-    outDir: fileURLToPath(new URL('./../server/dist/static/', import.meta.url)),
+    outDir: isStandalone
+      ? fileURLToPath(new URL('./dist/', import.meta.url))
+      : fileURLToPath(new URL('./../server/dist/static/', import.meta.url)),
     rollupOptions: {
       input: {
         app: fileURLToPath(new URL('./src/index.html', import.meta.url)),
