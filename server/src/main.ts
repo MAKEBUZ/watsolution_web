@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
 const logger: Logger = new Logger('Main');
-const port = process.env.NODE_SERVER_PORT || config.get('server.port');
+const port = process.env.PORT || process.env.NODE_SERVER_PORT || config.get('server.port');
 const useJHipsterRegistry = config.get('eureka.client.enabled');
 
 async function bootstrap(): Promise<void> {

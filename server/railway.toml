@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+buildCommand = "npm ci && npm run build:prod"
+
+[deploy]
+startCommand = "node dist/main.js"
+healthcheckPath = "/api/v2/api-docs"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+
+[variables]
+BACKEND_ENV = "prod"

@@ -60,7 +60,7 @@ function ormConfig(): TypeOrmModuleOptions {
   }
 
   return {
-    synchronize: process.env.BACKEND_ENV === 'test',
+    synchronize: process.env.BACKEND_ENV === 'test' || process.env.BACKEND_ENV === 'prod',
     migrationsRun: true,
     entities: [
       User,
