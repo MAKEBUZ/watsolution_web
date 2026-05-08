@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY package*.json ./
 # Install all deps (devDeps required for tsc + ts-node)
-RUN npm ci
+RUN npm install --prefer-offline
 
 COPY . .
 # Compile TypeScript, copy YAML config, create dist/static placeholder
