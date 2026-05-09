@@ -22,6 +22,9 @@ import { PortalModule } from './module/portal.module';
     TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
     ServeStaticModule.forRoot({
       rootPath: config.getClientPath(),
+      // Serve index.html for all non-API paths (SPA client-side routing)
+      renderPath: '/*',
+      exclude: ['/api/(.*)', '/management/(.*)', '/v3/(.*)'],
     }),
     AuthModule,
     AddressModule,

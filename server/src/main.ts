@@ -23,8 +23,16 @@ async function bootstrap(): Promise<void> {
       forbidUnknownValues: false,
     }),
   );
-  // Disable cache.
-  app.getHttpAdapter().getInstance().set('etag', false);
+  // Disable ETag and prevent index.html from being cached by the browser.
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.set('etag', false);
+  expressApp.use((req, res, next) => {
+    if (req.path === '/' || req.path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+    }
+    next();
+  });
 
   const staticClientPath = config.getClientPath();
   if (fs.existsSync(staticClientPath)) {
