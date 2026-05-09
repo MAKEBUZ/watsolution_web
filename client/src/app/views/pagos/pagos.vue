@@ -4,7 +4,12 @@
       <div class="card-body p-4">
         <!-- PSE Logo -->
         <div class="text-center mb-3">
-          <img src="/content/images/pse-logo.png" alt="PSE Logo" class="pse-logo" onerror="this.style.display='none'" />
+          <div class="pse-badge mx-auto">
+            <svg width="72" height="32" viewBox="0 0 72 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="72" height="32" rx="6" fill="#003087"/>
+              <text x="36" y="21" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="13" fill="#ffffff" letter-spacing="1">PSE</text>
+            </svg>
+          </div>
         </div>
 
         <!-- Title -->
@@ -130,9 +135,9 @@
   border: none;
 }
 
-.pse-logo {
-  height: 50px;
-  object-fit: contain;
+.pse-badge {
+  display: inline-block;
+  line-height: 0;
 }
 
 .ref-box {
