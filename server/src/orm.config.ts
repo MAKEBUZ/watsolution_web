@@ -20,12 +20,18 @@ function ormConfig(): TypeOrmModuleOptions {
   const backendEnv = process.env.BACKEND_ENV || 'prod';
 
   if (backendEnv === 'prod') {
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) {
+      ormLogger.error('DATABASE_URL is not set! Add it in Railway → service → Variables tab as ${{Postgres.DATABASE_URL}}');
+    } else {
+      ormLogger.log(`Connecting to: ${dbUrl.replace(/:([^:@]+)@/, ':***@')}`);
+    }
     ormconfig = {
       name: 'default',
       type: 'postgres',
       // typeorm fails to auto load driver due to workspaces resolution
       driver: require('pg'),
-      url: process.env.DATABASE_URL,
+      url: dbUrl,
       logging: false,
     };
   } else if (backendEnv === 'test') {
