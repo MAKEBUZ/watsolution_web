@@ -6,7 +6,6 @@ WORKDIR /usr/node-app
 
 ENV NODE_SERVER_PORT=8080
 ENV BACKEND_ENV=prod
-ENV NODE_ENV=production
 ENV CYPRESS_INSTALL_BINARY=0
 
 COPY . .
@@ -16,6 +15,8 @@ RUN npm run --workspace server build
 RUN npm run --workspace client build
 RUN npm cache clean --force
 RUN rm -rf target tmp
+
+ENV NODE_ENV=production
 
 EXPOSE 8080
 
