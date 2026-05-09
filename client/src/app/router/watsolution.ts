@@ -1,5 +1,6 @@
 import { Authority } from '@/shared/security/authority';
 
+const LoginPage = () => import('@/views/login/login.vue');
 const PortalDashboard = () => import('@/views/portal/portal-dashboard.vue');
 const CentroNoticias = () => import('@/views/noticias/centro-noticias.vue');
 const PagosView = () => import('@/views/pagos/pagos.vue');
@@ -11,6 +12,11 @@ const AdminFacturacion = () => import('@/views/admin/admin-facturacion.vue');
 const AdminNoticias = () => import('@/views/admin/admin-noticias.vue');
 
 export default [
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage,
+  },
   {
     path: '/noticias',
     name: 'CentroNoticias',

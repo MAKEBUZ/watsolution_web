@@ -17,8 +17,9 @@ import { ActivityLog } from './domain/activity-log.entity';
 
 function ormConfig(): TypeOrmModuleOptions {
   let ormconfig: TypeOrmModuleOptions;
+  const backendEnv = process.env.BACKEND_ENV || 'prod';
 
-  if (process.env.BACKEND_ENV === 'prod') {
+  if (backendEnv === 'prod') {
     ormconfig = {
       name: 'default',
       type: 'postgres',
@@ -27,7 +28,7 @@ function ormConfig(): TypeOrmModuleOptions {
       url: process.env.DATABASE_URL,
       logging: false,
     };
-  } else if (process.env.BACKEND_ENV === 'test') {
+  } else if (backendEnv === 'test') {
     ormconfig = {
       name: 'default',
       type: 'sqlite',
@@ -36,7 +37,7 @@ function ormConfig(): TypeOrmModuleOptions {
       database: ':memory:',
       logging: true,
     };
-  } else if (process.env.BACKEND_ENV === 'dev') {
+  } else if (backendEnv === 'dev') {
     const dbUrl = process.env.DATABASE_PUBLIC_URL;
     ormLogger.log(`Connecting to: ${dbUrl ? dbUrl.replace(/:([^:@]+)@/, ':***@') : 'UNDEFINED – check server/.env'}`);
     ormconfig = {
@@ -60,7 +61,7 @@ function ormConfig(): TypeOrmModuleOptions {
   }
 
   return {
-    synchronize: process.env.BACKEND_ENV === 'test' || process.env.BACKEND_ENV === 'prod',
+    synchronize: backendEnv === 'test' || backendEnv === 'prod',
     migrationsRun: true,
     entities: [
       User,

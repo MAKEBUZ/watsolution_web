@@ -86,11 +86,12 @@ export class Config {
   }
 }
 
+const backendEnv = process.env.BACKEND_ENV || 'prod';
 const yamlConfigPath = path.join(__dirname, 'config', 'application.yml');
-const envYamlConfigPath = path.join(__dirname, 'config', `application-${process.env.BACKEND_ENV}.yml`);
+const envYamlConfigPath = path.join(__dirname, 'config', `application-${backendEnv}.yml`);
 
 const yamlConfig = yaml.load(fs.readFileSync(yamlConfigPath, 'utf8'));
-logger.log(`Actual process.env.BACKEND_ENV value: ${process.env.BACKEND_ENV}`);
+logger.log(`Actual process.env.BACKEND_ENV value: ${backendEnv}`);
 logger.log('Standard allowed values are: dev, test or prod');
 logger.log('if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file');
 if (!fs.existsSync(envYamlConfigPath)) {

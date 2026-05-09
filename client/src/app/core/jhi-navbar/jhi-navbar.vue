@@ -37,7 +37,7 @@
       <!-- Right controls -->
       <ul class="navbar-nav ml-auto align-items-center">
         <li class="nav-item" v-if="!authenticated">
-          <a class="nav-link" href="javascript:void(0);" @click="openLogin()">Iniciar Sesión</a>
+          <router-link class="nav-link" to="/login">Iniciar Sesión</router-link>
         </li>
         <li class="nav-item" v-if="!authenticated">
           <router-link class="nav-link" to="/register">Registrarse</router-link>

@@ -5,10 +5,13 @@ yarn.lock
 server/node_modules
 server/package-lock.json
 server/yarn.lock
+server/.env
 
 client/node_modules
 client/package-lock.json
 client/yarn.lock
+client/dist
 
 tmp/
 target
+.git

@@ -23,7 +23,7 @@ export default defineComponent({
     provide('alertService', useAlertService());
 
     const route = useRoute();
-    const isAdminPanel = computed(() => route.path.startsWith('/admin-panel'));
+    const isAdminPanel = computed(() => route.path.startsWith('/admin-panel') || route.path === '/login');
 
     return {
       t$: useI18n().t,
