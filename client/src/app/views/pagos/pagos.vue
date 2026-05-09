@@ -4,7 +4,7 @@
       <div class="card-body p-4">
         <!-- PSE Logo -->
         <div class="text-center mb-3">
-          <img src="/content/images/pse-logo.png" alt="PSE Logo" class="pse-logo" onerror="this.style.display='none'" />
+          <span class="pse-logo-placeholder" aria-label="PSE Logo" style="display:inline-block;height:50px;line-height:50px;font-size:1.5rem;font-weight:bold;color:#2563eb;">PSE</span>
         </div>
 
         <!-- Title -->
