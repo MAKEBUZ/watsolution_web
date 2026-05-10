@@ -1,219 +1,356 @@
+<script setup lang="ts">
+import { useRouter, useRoute } from 'vue-router'
+import { useAccountStore } from '@/shared/config/store/account-store'
+import { 
+  LayoutDashboard, Users, FileText, Newspaper, 
+  TrendingUp, LogOut, ChevronRight, Menu, X, User
+} from 'lucide-vue-next'
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const router = useRouter()
+const route = useRoute()
+const accountStore = useAccountStore()
+const isSidebarOpen = ref(true)
+const isMobile = ref(false)
+
+const menuItems = [
+  { name: 'Resumen', routeName: 'admin-summary', icon: LayoutDashboard },
+  { name: 'Usuarios', routeName: 'admin-users', icon: Users },
+  { name: 'Facturación', routeName: 'admin-billing', icon: FileText },
+  { name: 'Noticias', routeName: 'admin-news', icon: Newspaper },
+  { name: 'Portal Usuario', routeName: 'user-portal', icon: User }
+]
+
+const handleLogout = () => {
+  accountStore.logout()
+  router.push('/')
+}
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 1024
+  if (isMobile.value) {
+    isSidebarOpen.value = false
+  } else {
+    isSidebarOpen.value = true
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  handleResize()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+const closeSidebarOnMobile = () => {
+  if (isMobile.value) {
+    isSidebarOpen.value = false
+  }
+}
+</script>
+
 <template>
-  <div class="admin-layout d-flex" style="min-height: calc(100vh - 60px);">
-    <!-- Sidebar -->
-    <nav class="admin-sidebar d-flex flex-column">
-      <!-- Brand -->
-      <div class="sidebar-brand d-flex align-items-center justify-content-between px-4">
-        <span class="sidebar-brand-text"><span class="brand-wat">Wat</span>Solution</span>
-        <button class="sidebar-close-btn" @click="$router.push('/')">
-          <font-awesome-icon icon="times" />
+  <div class="admin-layout">
+    <div v-if="isMobile && isSidebarOpen" class="sidebar-overlay" @click="toggleSidebar"></div>
+
+    <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
+      <div class="sidebar-header">
+        <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
+        <button class="toggle-btn" @click="toggleSidebar">
+          <Menu v-if="!isSidebarOpen" :size="20" />
+          <X v-else :size="20" />
         </button>
       </div>
 
-      <!-- Nav Links -->
-      <div class="sidebar-nav flex-grow-1 py-2">
-        <router-link class="sidebar-link" to="/admin-panel/resumen">
-          <font-awesome-icon icon="th-large" class="sidebar-icon" />
-          <span class="flex-grow-1">Resumen</span>
-          <font-awesome-icon icon="chevron-right" class="sidebar-chevron" />
+      <nav class="sidebar-nav">
+        <router-link 
+          v-for="item in menuItems" 
+          :key="item.routeName" 
+          :to="{ name: item.routeName }"
+          class="nav-item"
+          :class="{ 'active': route.name === item.routeName }"
+          @click="closeSidebarOnMobile"
+        >
+          <div class="nav-icon-container">
+            <component :is="item.icon" :size="22" :stroke-width="2.5" />
+          </div>
+          <span v-if="isSidebarOpen || isMobile">{{ item.name }}</span>
+          <ChevronRight v-if="isSidebarOpen && !isMobile" class="chevron" :size="14" />
         </router-link>
-        <router-link class="sidebar-link" to="/admin-panel/actividad">
-          <font-awesome-icon icon="clock" class="sidebar-icon" />
-          <span class="flex-grow-1">Actividad</span>
-          <font-awesome-icon icon="chevron-right" class="sidebar-chevron" />
-        </router-link>
-        <router-link class="sidebar-link" to="/admin-panel/usuarios">
-          <font-awesome-icon icon="users" class="sidebar-icon" />
-          <span class="flex-grow-1">Usuarios</span>
-          <font-awesome-icon icon="chevron-right" class="sidebar-chevron" />
-        </router-link>
-        <router-link class="sidebar-link" to="/admin-panel/facturacion">
-          <font-awesome-icon icon="file-invoice-dollar" class="sidebar-icon" />
-          <span class="flex-grow-1">Facturación</span>
-          <font-awesome-icon icon="chevron-right" class="sidebar-chevron" />
-        </router-link>
-        <router-link class="sidebar-link" to="/admin-panel/noticias">
-          <font-awesome-icon icon="newspaper" class="sidebar-icon" />
-          <span class="flex-grow-1">Noticias</span>
-          <font-awesome-icon icon="chevron-right" class="sidebar-chevron" />
-        </router-link>
-        <router-link class="sidebar-link" to="/portal">
-          <font-awesome-icon icon="user-circle" class="sidebar-icon" />
-          <span class="flex-grow-1">Portal Usuario</span>
-          <font-awesome-icon icon="chevron-right" class="sidebar-chevron" />
-        </router-link>
-      </div>
+      </nav>
 
-      <!-- Logout -->
-      <div class="sidebar-logout-area px-3 pb-4">
-        <a class="sidebar-link sidebar-link-logout" href="javascript:void(0)" @click="logout">
-          <font-awesome-icon icon="sign-out-alt" class="sidebar-icon" />
-          <span>Cerrar Sesión</span>
-        </a>
+      <div class="sidebar-footer">
+        <button class="logout-btn" @click="handleLogout">
+          <LogOut :size="20" />
+          <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
+        </button>
       </div>
-    </nav>
+    </aside>
 
-    <!-- Main Content -->
-    <div class="admin-content flex-grow-1 d-flex flex-column">
-      <!-- Content Header -->
-      <div class="admin-content-header d-flex align-items-center justify-content-between px-4">
-        <h5 class="mb-0 font-weight-bold content-title">{{ sectionTitle }}</h5>
-        <div class="d-flex align-items-center">
-          <div class="admin-avatar mr-3">{{ userInitials }}</div>
-          <div>
-            <div class="font-weight-bold admin-name">{{ currentUsername }}</div>
-            <div class="admin-role">Administrador Principal</div>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button v-if="isMobile" class="mobile-toggle" @click="toggleSidebar">
+            <Menu :size="24" />
+          </button>
+          <h2>{{ menuItems.find(i => i.routeName === route.name)?.name || 'Panel Administrativo' }}</h2>
+        </div>
+        <div class="topbar-right">
+          <div class="admin-profile">
+            <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+            <div class="info" v-if="!isMobile">
+              <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
+              <span class="role">Administrador Principal</span>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <!-- Router View -->
-      <div class="flex-grow-1 overflow-auto">
-        <router-view></router-view>
+      <div class="admin-content-view">
+        <router-view />
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
-<script lang="ts" src="./admin-panel.component.ts"></script>
+<style lang="scss" scoped>
+@use '../../../content/scss/variables' as *;
+@use '../../../content/scss/mixins' as *;
 
-<style scoped>
 .admin-layout {
-  background: #f0f5fb;
+  display: flex;
+  min-height: calc(100vh - 70px);
+  margin-top: 70px;
+  background-color: #f8fafc;
+  position: relative;
 }
 
-/* ── Sidebar ── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+  backdrop-filter: blur(2px);
+}
+
 .admin-sidebar {
-  width: 230px;
-  min-width: 230px;
-  background: #1a2d42;
+  width: 260px;
+  background: #1e293b;
   color: white;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  z-index: 100;
+
+  &.is-closed {
+    width: 80px;
+    .logo-text, .nav-item span, .chevron, .logout-btn span { display: none; }
+    .nav-item, .logout-btn { justify-content: center; padding: 1rem; }
+    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+  }
+
+  &.is-mobile {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(0);
+    z-index: 2000;
+    
+    &.is-closed {
+      transform: translateX(-100%);
+      width: 280px; 
+    }
+  }
 }
 
-.sidebar-brand {
-  height: 60px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.sidebar-header {
+  padding: $spacing-sm $spacing-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 70px;
+
+  .logo-text { 
+    font-size: 1.15rem; 
+    color: $color-primary-light;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    strong { color: $color-secondary; }
+  }
+
+  .toggle-btn { 
+    background: rgba(255, 255, 255, 0.1); 
+    border: none; 
+    color: white; 
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin-left: $spacing-xs;
+
+    &:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+  }
 }
 
-.sidebar-brand-text {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: white;
-  letter-spacing: -0.3px;
+.sidebar-nav {
+  flex: 1;
+  padding: $spacing-md 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.brand-wat {
-  color: #38bdf8;
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem $spacing-md;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  .nav-icon-container {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &:hover, &.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.active {
+    border-left: 4px solid $color-primary;
+    color: white;
+    background: rgba($color-primary, 0.1);
+  }
+
+  .chevron { margin-left: auto; opacity: 0.5; }
 }
 
-.sidebar-close-btn {
+.sidebar-footer {
+  padding: $spacing-md;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.55);
+  color: #f87171;
   cursor: pointer;
-  font-size: 0.9rem;
-  padding: 4px;
-  transition: color 0.15s;
-}
-.sidebar-close-btn:hover { color: white; }
-
-/* Nav links */
-.sidebar-nav {
-  padding: 0.5rem 0.75rem;
-}
-
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  padding: 0.65rem 0.75rem;
-  border-left: 3px solid transparent;
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  border-radius: 0 8px 8px 0;
-  margin-bottom: 2px;
-  font-size: 0.88rem;
-  transition: color 0.15s, background 0.15s;
-  gap: 10px;
-}
-.sidebar-link:hover {
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.07);
-  text-decoration: none;
-}
-.sidebar-link.router-link-active {
-  color: #ffffff;
-  border-left-color: #38bdf8;
-  background: rgba(255, 255, 255, 0.09);
-  font-weight: 600;
-}
-
-.sidebar-icon {
-  font-size: 0.95rem;
-  width: 18px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.sidebar-chevron {
-  font-size: 0.7rem;
-  opacity: 0.45;
-  flex-shrink: 0;
-}
-
-.sidebar-link-logout {
-  color: rgba(239, 68, 68, 0.8);
   border-radius: 8px;
-}
-.sidebar-link-logout:hover {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
+  white-space: nowrap;
+  &:hover { background: rgba(239, 68, 68, 0.1); }
 }
 
-.sidebar-logout-area {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 1rem;
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+  background-color: #f8fafc;
 }
 
-/* ── Content Header ── */
-.admin-content {
-  background: #f0f5fb;
-  overflow: hidden;
-}
-
-.admin-content-header {
-  height: 60px;
+.admin-topbar {
   background: white;
-  border-bottom: 1px solid #e9ecef;
-  flex-shrink: 0;
+  padding: 0 $spacing-md;
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+
+  @include desktop {
+    padding: 0 $spacing-xl;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    .mobile-toggle {
+      background: none;
+      border: none;
+      color: $color-text;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  h2 { font-size: 1.1rem; color: $color-text; font-weight: 600; }
 }
 
-.content-title {
-  font-size: 1rem;
-  color: #1a2d42;
-}
-
-.admin-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #2563eb;
-  color: white;
+.admin-profile {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  font-weight: 700;
-  flex-shrink: 0;
+  gap: 12px;
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    background: $color-primary;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    .name { font-weight: 600; font-size: 0.85rem; color: $color-text; }
+    .role { font-size: 0.7rem; color: $color-text-muted; }
+  }
 }
 
-.admin-name {
-  font-size: 0.9rem;
-  color: #1a2d42;
-  line-height: 1.2;
-}
+.admin-content-view {
+  padding: $spacing-md;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
 
-.admin-role {
-  font-size: 0.72rem;
-  color: #9ca3af;
+  @include tablet {
+    padding: $spacing-lg;
+  }
 }
 </style>

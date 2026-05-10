@@ -1,221 +1,122 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { Chart } from 'chart.js'
+import { 
+  FileText, CreditCard, History, Settings, Bell, 
+  MessageSquare, Download, Droplet, Calendar
+} from 'lucide-vue-next'
+import { useAccountStore } from '@/shared/config/store/account-store'
+
+const accountStore = useAccountStore()
+const consumptionChartRef = ref<HTMLCanvasElement | null>(null)
+
+const recentInvoices = [
+  { id: 'FAC-2026-001', date: '2026-04-01', amount: 45000, status: 'Pagada' },
+  { id: 'FAC-2026-002', date: '2026-03-01', amount: 42500, status: 'Pagada' },
+  { id: 'FAC-2026-003', date: '2026-02-01', amount: 48000, status: 'Pagada' }
+]
+
+onMounted(() => {
+  if (consumptionChartRef.value) {
+    new Chart(consumptionChartRef.value, {
+      type: 'bar',
+      data: {
+        labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
+        datasets: [{
+          label: 'Tu Consumo (m³)',
+          data: [12, 15, 14, 18, 16, 15],
+          backgroundColor: '#0077be',
+          borderRadius: 6
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    })
+  }
+})
+</script>
+
 <template>
-  <div class="portal-bg">
-    <!-- Loading -->
-    <div v-if="isFetching" class="text-center pt-5 pb-5">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-3 text-muted">Cargando tu portal...</p>
+  <div class="user-portal">
+    <div class="portal-header">
+      <div class="container header-content">
+        <div class="user-welcome">
+          <h1>Hola, {{ accountStore.account?.firstName || 'Usuario' }}</h1>
+          <p>Bienvenido a tu portal personal de watsolution</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-icon-round"><Bell :size="20" /></button>
+          <button class="btn-icon-round"><Settings :size="20" /></button>
+        </div>
+      </div>
     </div>
 
-    <!-- Error -->
-    <div v-else-if="error" class="container-fluid px-4 pt-4">
-      <div class="alert alert-warning">
-        <font-awesome-icon icon="exclamation-triangle" class="mr-2" />
-        {{ error }}
-      </div>
-    </div>
+    <div class="container portal-body">
+      <div class="portal-grid">
+        <div class="portal-card invoice-summary">
+          <div class="card-header">
+            <h3>Factura Actual</h3>
+            <span class="badge badge--pending">Pendiente</span>
+          </div>
+          <div class="invoice-amount">
+            <span class="currency">$</span>
+            <span class="value">45,000</span>
+          </div>
+          <p class="due-date"><Calendar :size="14" /> Vence: 15 de Mayo, 2026</p>
+          <router-link to="/pagos" class="btn btn--primary btn--block">
+            <CreditCard :size="18" /> Pagar Ahora
+          </router-link>
+        </div>
 
-    <!-- Portal content -->
-    <div v-else class="container-fluid px-4 pt-4">
-      <!-- Header -->
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <div class="d-flex align-items-center">
-          <div class="subscriber-avatar mr-3">
-            <font-awesome-icon icon="user" />
-          </div>
-          <div>
-            <h2 class="mb-0 font-weight-bold">Hola, {{ data?.person?.fullName ?? 'Usuario' }}</h2>
-            <small class="text-muted">
-              Suscriptor #{{ data?.person?.subscriberNumber ?? data?.person?.id ?? '—' }}
-              <span v-if="data?.person?.stratum"> • Estrato {{ data.person.stratum }}</span>
-            </small>
-          </div>
-        </div>
-        <div class="notification-bell-wrap">
-          <div class="notification-bell">
-            <font-awesome-icon icon="bell" />
-          </div>
-          <span class="bell-badge">3</span>
-        </div>
-      </div>
-
-      <!-- Stat Cards -->
-      <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-          <div class="card portal-stat-card h-100">
-            <div class="card-body d-flex align-items-center">
-              <div class="pstat-icon pstat-green mr-3">
-                <font-awesome-icon icon="chart-line" class="text-success" />
-              </div>
-              <div>
-                <div class="pstat-val text-success">{{ data?.person?.savingsPercent ?? 0 }}%</div>
-                <div class="pstat-label">Ahorro Acumulado</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card portal-stat-card h-100">
-            <div class="card-body d-flex align-items-center">
-              <div class="pstat-icon pstat-orange mr-3">
-                <font-awesome-icon icon="medal" class="text-warning" />
-              </div>
-              <div>
-                <div class="pstat-val text-warning">{{ (data?.person?.greenPoints ?? 0).toLocaleString('es-CO') }}</div>
-                <div class="pstat-label">Puntos Verdes</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card portal-stat-card h-100">
-            <div class="card-body d-flex align-items-center">
-              <div class="pstat-icon pstat-blue mr-3">
-                <font-awesome-icon icon="clock" class="text-primary" />
-              </div>
-              <div>
-                <div class="pstat-val text-primary">{{ data?.person?.daysSinceLastDebt ?? 0 }}</div>
-                <div class="pstat-label">Días sin Mora</div>
-              </div>
-            </div>
+        <div class="portal-card consumption-chart">
+          <h3>Tendencia de Consumo</h3>
+          <div class="chart-wrapper">
+            <canvas ref="consumptionChartRef"></canvas>
           </div>
         </div>
       </div>
 
-      <div class="row">
-        <!-- Left Column -->
-        <div class="col-lg-8 mb-4">
-          <!-- Trámites y Consultas -->
-          <div class="card shadow-sm mb-4">
-            <div class="card-body">
-              <h5 class="font-weight-bold mb-4">Trámites y Consultas</h5>
-              <div class="row text-center">
-                <div class="col-3">
-                  <div class="tramite-item" @click="$router.push('/portal/reporte/fuga')">
-                    <div class="tramite-icon">
-                      <font-awesome-icon icon="tint" />
-                    </div>
-                    <small>Reportar Fuga</small>
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="tramite-item" @click="$router.push('/portal/reporte/reclamacion')">
-                    <div class="tramite-icon">
-                      <font-awesome-icon icon="comment-alt" />
-                    </div>
-                    <small>Reclamaciones</small>
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="tramite-item" @click="$router.push('/portal/certificados')">
-                    <div class="tramite-icon">
-                      <font-awesome-icon icon="history" />
-                    </div>
-                    <small>Certificados</small>
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="tramite-item" @click="$router.push('/account/settings')">
-                    <div class="tramite-icon">
-                      <font-awesome-icon icon="cog" />
-                    </div>
-                    <small>Mi Perfil</small>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div class="portal-grid secondary">
+        <div class="portal-card history-card">
+          <div class="card-header">
+            <h3>Historial de Facturas</h3>
+            <button class="btn-text">Ver todo</button>
           </div>
-
-          <!-- Invoice History -->
-          <div class="card shadow-sm mb-4">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="font-weight-bold mb-0">Historial</h5>
-                <a href="#" class="text-primary small font-weight-600">Ver todo</a>
-              </div>
-              <div v-if="!data?.invoiceHistory?.length" class="text-muted small text-center py-3">
-                No hay facturas registradas.
-              </div>
-              <div
-                v-for="inv in data?.invoiceHistory"
-                :key="inv.id"
-                class="inv-row d-flex align-items-center justify-content-between py-2"
-              >
-                <div class="d-flex align-items-center">
-                  <div class="inv-icon mr-3">
-                    <font-awesome-icon icon="file-invoice" />
-                  </div>
-                  <div>
-                    <div class="font-weight-600" style="font-size:0.9rem;">{{ invoiceRef(inv) }}</div>
-                    <small class="text-muted">{{ formatDateShort(inv.issueDate) }}</small>
-                  </div>
-                </div>
-                <div class="d-flex align-items-center">
-                  <span class="font-weight-bold mr-3">{{ formatCurrency(inv.amountDue) }}</span>
-                  <button class="btn btn-link btn-sm p-0">
-                    <font-awesome-icon icon="download" class="text-muted" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Actividad Reciente -->
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="font-weight-bold mb-3">Actividad Reciente</h5>
-              <div v-for="act in recentActivities" :key="act.id" class="act-row d-flex align-items-start py-2">
-                <div class="act-icon mr-3" :class="act.iconClass">
-                  <font-awesome-icon :icon="act.icon" />
-                </div>
+          <div class="history-list">
+            <div v-for="inv in recentInvoices" :key="inv.id" class="history-item">
+              <div class="item-info">
+                <FileText :size="20" class="icon" />
                 <div>
-                  <div class="font-weight-600" style="font-size:0.85rem;">{{ act.title }}</div>
-                  <div class="text-muted small">{{ act.description }}</div>
-                  <div class="text-muted" style="font-size:0.72rem;">{{ act.timeAgo }}</div>
+                  <span class="id">{{ inv.id }}</span>
+                  <span class="date">{{ inv.date }}</span>
                 </div>
               </div>
-              <div v-if="!recentActivities.length" class="text-muted small text-center py-2">
-                Sin actividad reciente.
+              <div class="item-actions">
+                <span class="amount">${{ inv.amount.toLocaleString() }}</span>
+                <button class="btn-download" title="Descargar PDF"><Download :size="16" /></button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="col-lg-4 mb-4">
-          <!-- Factura Actual -->
-          <div class="card shadow-sm mb-4 current-invoice-card">
-            <div class="card-body">
-              <h6 class="text-muted mb-3">Factura Actual</h6>
-              <div v-if="data?.currentInvoice">
-                <div class="invoice-amount">
-                  <span class="invoice-currency">$</span>{{ Number(data.currentInvoice.amountDue).toLocaleString('es-CO') }}
-                </div>
-                <div class="d-flex align-items-center mt-2 mb-4">
-                  <font-awesome-icon icon="calendar" class="text-danger mr-2" style="font-size:0.8rem;" />
-                  <small class="text-muted">Vence: {{ formatDateLong(data.currentInvoice.dueDate) }}</small>
-                </div>
-                <router-link to="/pagos" class="btn btn-pay btn-block font-weight-bold">
-                  <font-awesome-icon icon="credit-card" class="mr-2" /> Pagar Ahora
-                </router-link>
-              </div>
-              <div v-else class="text-muted text-center py-3">
-                No hay facturas pendientes
-              </div>
-            </div>
-          </div>
-
-          <!-- Consumption Bar Chart -->
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h6 class="font-weight-bold mb-3">Tendencia de Consumo</h6>
-              <BarChart
-                v-if="barChartData.labels.length"
-                :data="barChartData"
-                :options="barChartOptions"
-                style="max-height: 220px;"
-              />
-              <p v-else class="text-muted text-center small py-3">Sin datos de consumo</p>
-            </div>
+        <div class="portal-card quick-actions">
+          <h3>Trámites y Consultas</h3>
+          <div class="actions-grid">
+            <button class="action-btn">
+              <Droplet :size="24" />
+              <span>Reportar Fuga</span>
+            </button>
+            <button class="action-btn">
+              <MessageSquare :size="24" />
+              <span>Reclamaciones</span>
+            </button>
+            <button class="action-btn">
+              <History :size="24" />
+              <span>Certificados</span>
+            </button>
+            <button class="action-btn">
+              <Settings :size="24" />
+              <span>Mi Perfil</span>
+            </button>
           </div>
         </div>
       </div>
@@ -223,160 +124,191 @@
   </div>
 </template>
 
-<script lang="ts" src="./portal-dashboard.component.ts"></script>
+<style lang="scss" scoped>
+@use '../../../content/scss/variables' as *;
+@use '../../../content/scss/mixins' as *;
 
-<style scoped>
-.portal-bg {
-  background-color: #f0f5fb;
-  min-height: calc(100vh - 60px);
+.user-portal {
+  padding-top: 70px;
+  background-color: $color-bg;
+  min-height: 100vh;
 }
 
-/* Header */
-.subscriber-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #e0eaf5;
+.portal-header {
+  background: white;
+  padding: $spacing-xl 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: $spacing-xl;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h1 { font-size: 2rem; color: $color-text; }
+  p { color: $color-text-muted; }
+}
+
+.header-actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: #1a3a5c;
+  gap: $spacing-sm;
 }
 
-.notification-bell-wrap {
-  position: relative;
-}
-.notification-bell {
+.btn-icon-round {
   width: 44px;
   height: 44px;
   border-radius: 50%;
+  border: 1px solid #e2e8f0;
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  color: #6c757d;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  color: $color-text-muted;
+  transition: all 0.3s;
+
+  &:hover { background: #f1f5f9; color: $color-primary; border-color: $color-primary; }
 }
-.bell-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 18px;
-  height: 18px;
-  background: #ef4444;
-  color: white;
-  border-radius: 50%;
-  font-size: 0.65rem;
+
+.portal-body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.portal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @include desktop { grid-template-columns: 1fr 2fr; }
+  &.secondary { @include desktop { grid-template-columns: 2fr 1fr; } }
+}
+
+.portal-card {
+  background: white;
+  padding: $spacing-lg;
+  border-radius: 24px;
+  box-shadow: $shadow-sm;
+
+  h3 { font-size: 1.25rem; margin-bottom: $spacing-md; }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  h3 { margin-bottom: 0; }
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  &--pending { background: #fef3c7; color: #92400e; }
 }
 
-/* Stat cards */
-.portal-stat-card {
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+.invoice-summary {
+  .invoice-amount {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    margin: $spacing-md 0;
+    .currency { font-size: 1.5rem; font-weight: 600; color: $color-text-muted; margin-top: 4px; }
+    .value { font-size: 3.5rem; font-weight: 800; color: $color-text; line-height: 1; }
+  }
+  .due-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #ef4444;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: $spacing-lg;
+  }
 }
-.pstat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-.pstat-green  { background: #dcfce7; }
-.pstat-orange { background: #fef3c7; }
-.pstat-blue   { background: #dbeafe; }
-.pstat-val    { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
-.pstat-label  { font-size: 0.78rem; color: #6c757d; }
 
-/* Trámites */
-.tramite-item {
-  cursor: pointer;
-  padding: 0.75rem 0.5rem;
+.chart-wrapper { height: 250px; }
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: #f8fafc;
   border-radius: 12px;
-  transition: background 0.2s;
-}
-.tramite-item:hover { background: #e8f0fb; }
-.tramite-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  background: #f0f5fb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  color: #1a3a5c;
-  margin: 0 auto 0.4rem;
+
+  .item-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    .icon { color: $color-primary; }
+    div { display: flex; flex-direction: column; }
+    .id { font-weight: 700; color: $color-text; }
+    .date { font-size: 0.85rem; color: $color-text-muted; }
+  }
+
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    .amount { font-weight: 700; color: $color-text; }
+    .btn-download {
+      background: white;
+      border: 1px solid #e2e8f0;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      &:hover { color: $color-primary; border-color: $color-primary; }
+    }
+  }
 }
 
-/* Invoice list */
-.inv-row { border-bottom: 1px solid #f0f0f0; }
-.inv-row:last-child { border-bottom: none; }
-.inv-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: #eff6ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #2563eb;
-  font-size: 0.9rem;
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
 }
 
-/* Activity */
-.act-row { border-bottom: 1px solid #f0f0f0; }
-.act-row:last-child { border-bottom: none; }
-.act-icon {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  border-radius: 10px;
+.action-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-}
-.act-pay    { background: #d1fae5; color: #059669; }
-.act-report { background: #dbeafe; color: #2563eb; }
-.act-system { background: #f3f4f6; color: #6b7280; }
-
-/* Current invoice card */
-.current-invoice-card {
-  border: none;
+  gap: 8px;
+  padding: $spacing-md;
+  border: 1px solid #e2e8f0;
+  background: white;
   border-radius: 16px;
-}
-.invoice-amount {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #1a2d42;
-}
-.invoice-currency {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #6c757d;
-  margin-right: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: $color-text;
+
+  span { font-size: 0.85rem; font-weight: 600; }
+  &:hover {
+    border-color: $color-primary;
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
 }
 
-.btn-pay {
-  background: #2563eb;
-  color: white;
+.btn-text {
+  background: none;
   border: none;
-  border-radius: 10px;
-  padding: 0.65rem;
-  transition: background 0.2s;
+  color: $color-primary;
+  font-weight: 600;
+  cursor: pointer;
 }
-.btn-pay:hover { background: #1d4ed8; color: white; text-decoration: none; }
-
-.font-weight-600 { font-weight: 600; }
 </style>

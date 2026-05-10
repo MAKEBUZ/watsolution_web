@@ -97,7 +97,7 @@ const app = createApp({
     watch(
       () => store.account,
       async value => {
-        if (!translationService.getLocalStoreLanguage()) {
+        if (!translationService.getLocalStoreLanguage() && value?.langKey) {
           await changeLanguage(value.langKey);
         }
       },

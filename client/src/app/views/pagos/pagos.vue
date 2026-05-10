@@ -1,168 +1,234 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { CreditCard, Landmark, CheckCircle2, Download, ArrowRight, ShieldCheck } from 'lucide-vue-next'
+import { jsPDF } from 'jspdf'
+
+const step = ref(1)
+const paymentData = ref({
+  bank: '',
+  userType: 'persona',
+  docType: 'CC',
+  docNumber: '',
+  amount: 45000,
+  reference: 'FACT-2026-001'
+})
+
+const banks = [
+  'Banco de Bogotá', 'Bancolombia', 'Davivienda', 'BBVA', 'Banco Popular', 'Nequi', 'Daviplata'
+]
+
+const handlePayment = () => {
+  step.value = 2
+}
+
+const downloadReceipt = () => {
+  const doc = new jsPDF()
+  doc.setFontSize(22)
+  doc.text('watsolution - Comprobante de Pago', 20, 20)
+  doc.setFontSize(12)
+  doc.text(`Referencia: ${paymentData.value.reference}`, 20, 40)
+  doc.text(`Fecha: ${new Date().toLocaleString()}`, 20, 50)
+  doc.text(`Banco: ${paymentData.value.bank}`, 20, 60)
+  doc.text(`Valor: $${paymentData.value.amount.toLocaleString()}`, 20, 70)
+  doc.text(`Estado: EXITOSO`, 20, 80)
+  doc.save(`recibo-${paymentData.value.reference}.pdf`)
+}
+</script>
+
 <template>
-  <div class="pagos-bg d-flex align-items-start justify-content-center py-5">
-    <div class="pagos-card card shadow-sm">
-      <div class="card-body p-4">
-        <!-- PSE Logo -->
-        <div class="text-center mb-3">
-          <div class="pse-badge mx-auto">
-            <svg width="72" height="32" viewBox="0 0 72 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="72" height="32" rx="6" fill="#003087"/>
-              <text x="36" y="21" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="13" fill="#ffffff" letter-spacing="1">PSE</text>
-            </svg>
+  <div class="payment-view">
+    <div class="container">
+      <div v-if="step === 1" class="payment-form-card">
+        <div class="payment-header">
+          <h1>Pagos en Línea</h1>
+          <p>Completa los datos para realizar tu pago de forma segura</p>
+        </div>
+
+        <div class="payment-summary">
+          <div class="summary-item">
+            <span>Referencia:</span>
+            <strong>{{ paymentData.reference }}</strong>
+          </div>
+          <div class="summary-item">
+            <span>Total a pagar:</span>
+            <strong class="amount">${{ paymentData.amount.toLocaleString() }}</strong>
           </div>
         </div>
 
-        <!-- Title -->
-        <div class="text-center mb-4">
-          <h2 class="font-weight-bold mb-1">Pagos en Línea</h2>
-          <p class="text-muted small">Completa los datos para realizar tu pago de forma segura</p>
-        </div>
-
-        <!-- Reference Summary -->
-        <div class="ref-box d-flex align-items-center justify-content-between mb-4 p-3">
-          <div>
-            <span class="text-muted small">Referencia:</span>
-            <span class="font-weight-bold ml-1">{{ invoiceRef }}</span>
+        <form @submit.prevent="handlePayment" class="form-grid">
+          <div class="form-group">
+            <label>Tipo de Persona</label>
+            <select v-model="paymentData.userType" required>
+              <option value="persona">Persona Natural</option>
+              <option value="empresa">Persona Jurídica</option>
+            </select>
           </div>
-          <div>
-            <span class="text-muted small">Total a pagar:</span>
-            <span class="text-primary font-weight-bold ml-1" style="font-size:1.1rem;">{{ formatCurrency(totalAmount) }}</span>
-          </div>
-        </div>
 
-        <!-- Form -->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="font-weight-600">Tipo de Persona</label>
-              <select class="form-control" v-model="form.personType">
-                <option value="natural">Persona Natural</option>
-                <option value="juridica">Persona Jurídica</option>
+          <div class="form-group">
+            <label>Banco</label>
+            <div class="input-wrapper">
+              <Landmark class="input-icon" :size="18" />
+              <select v-model="paymentData.bank" required>
+                <option value="" disabled>Selecciona tu banco</option>
+                <option v-for="bank in banks" :key="bank" :value="bank">{{ bank }}</option>
               </select>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="font-weight-600">Banco</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text bg-white">
-                    <font-awesome-icon icon="building-columns" class="text-muted" />
-                  </span>
-                </div>
-                <select class="form-control border-left-0" v-model="form.bank">
-                  <option value="">Selecciona tu banco</option>
-                  <option value="bancolombia">Bancolombia</option>
-                  <option value="davivienda">Davivienda</option>
-                  <option value="bogota">Banco de Bogotá</option>
-                  <option value="occidente">Banco de Occidente</option>
-                  <option value="popular">Banco Popular</option>
-                  <option value="bbva">BBVA</option>
-                  <option value="nequi">Nequi</option>
-                </select>
-              </div>
-            </div>
+
+          <div class="form-group">
+            <label>Tipo de Documento</label>
+            <select v-model="paymentData.docType" required>
+              <option value="CC">Cédula de Ciudadanía</option>
+              <option value="CE">Cédula de Extranjería</option>
+              <option value="NIT">NIT</option>
+            </select>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="font-weight-600">Tipo de Documento</label>
-              <select class="form-control" v-model="form.docType">
-                <option value="cc">Cédula de Ciudadanía</option>
-                <option value="ce">Cédula de Extranjería</option>
-                <option value="nit">NIT</option>
-                <option value="pp">Pasaporte</option>
-              </select>
-            </div>
+
+          <div class="form-group">
+            <label>Número de Documento</label>
+            <input type="text" v-model="paymentData.docNumber" placeholder="Ej: 12345678" required>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="font-weight-600">Número de Documento</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Ej: 12345678"
-                v-model="form.docNumber"
-              />
-            </div>
+
+          <div class="security-info">
+            <ShieldCheck :size="20" />
+            <p>Tus datos están protegidos con encriptación de grado bancario PCI-DSS.</p>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--block">
+            Pagar con PSE <ArrowRight :size="18" />
+          </button>
+        </form>
+      </div>
+
+      <div v-else class="success-card">
+        <div class="success-icon">
+          <CheckCircle2 :size="64" />
+        </div>
+        <h1>¡Pago Exitoso!</h1>
+        <p>Tu transacción se ha procesado correctamente.</p>
+        
+        <div class="receipt-details">
+          <div class="detail">
+            <span>CUS:</span>
+            <strong>987654321</strong>
+          </div>
+          <div class="detail">
+            <span>Fecha:</span>
+            <strong>{{ new Date().toLocaleDateString() }}</strong>
           </div>
         </div>
 
-        <!-- Security Notice -->
-        <div class="security-notice d-flex align-items-start p-3 mb-4">
-          <font-awesome-icon icon="shield-alt" class="text-success mr-2 mt-1" />
-          <span class="small text-success">
-            Tus datos están protegidos con encriptación de grado bancario PCI-DSS.
-          </span>
-        </div>
-
-        <!-- Error / Success -->
-        <div v-if="errorMsg" class="alert alert-danger mb-3">{{ errorMsg }}</div>
-        <div v-if="successMsg" class="alert alert-success mb-3">{{ successMsg }}</div>
-
-        <!-- CTA Button -->
-        <button
-          class="btn btn-pse btn-block font-weight-bold"
-          @click="submitPayment"
-          :disabled="isPaying"
-        >
-          <font-awesome-icon :icon="isPaying ? 'spinner' : 'credit-card'" :spin="isPaying" class="mr-2" />
-          {{ isPaying ? 'Procesando...' : 'Pagar con PSE →' }}
-        </button>
-
-        <!-- Back link -->
-        <div class="text-center mt-3">
-          <router-link to="/portal" class="text-muted small">
-            ← Volver al Portal
-          </router-link>
+        <div class="actions">
+          <button @click="downloadReceipt" class="btn btn--outline">
+            <Download :size="18" /> Descargar PDF
+          </button>
+          <button @click="step = 1" class="btn btn--primary">
+            Finalizar
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts" src="./pagos.component.ts"></script>
+<style lang="scss" scoped>
+@use '../../../content/scss/variables' as *;
+@use '../../../content/scss/mixins' as *;
 
-<style scoped>
-.pagos-bg {
-  background: #f0f5fb;
-  min-height: calc(100vh - 60px);
+.payment-view {
+  padding: 120px 0 $spacing-xl;
+  background: $color-bg;
+  min-height: 100vh;
 }
 
-.pagos-card {
-  width: 100%;
-  max-width: 580px;
-  border-radius: 18px;
-  border: none;
+.payment-form-card, .success-card {
+  background: white;
+  padding: $spacing-lg;
+  border-radius: 24px;
+  box-shadow: $shadow-lg;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.pse-badge {
-  display: inline-block;
-  line-height: 0;
+.payment-header {
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  h1 { font-size: 1.75rem; color: $color-text; }
+  p { color: $color-text-muted; }
 }
 
-.ref-box {
+.payment-summary {
   background: #f8fafc;
-  border: 1px solid #e9ecef;
-  border-radius: 10px;
+  padding: $spacing-md;
+  border-radius: 12px;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  
+  .amount { color: $color-primary; font-size: 1.25rem; }
 }
 
-.security-notice {
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @include tablet {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .btn--block { grid-column: 1 / -1; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  label { font-weight: 600; font-size: 0.9rem; }
+  input, select {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: $color-text-muted; }
+  select { padding-left: 2.5rem; width: 100%; }
+}
+
+.security-info {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
   background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 10px;
+  padding: $spacing-sm;
+  border-radius: 8px;
+  color: #166534;
+  font-size: 0.85rem;
 }
 
-.btn-pse {
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 0.8rem;
-  font-size: 1rem;
-  transition: background 0.2s;
+.success-card {
+  text-align: center;
+  .success-icon { color: #22c55e; margin-bottom: $spacing-md; }
+  h1 { margin-bottom: $spacing-xs; }
+  p { color: $color-text-muted; margin-bottom: $spacing-lg; }
 }
-.btn-pse:hover:not(:disabled) { background: #1d4ed8; }
-.btn-pse:disabled { opacity: 0.7; cursor: not-allowed; }
 
-.font-weight-600 { font-weight: 600; }
+.receipt-details {
+  border-top: 1px dashed #e2e8f0;
+  border-bottom: 1px dashed #e2e8f0;
+  padding: $spacing-md 0;
+  margin-bottom: $spacing-lg;
+  .detail { display: flex; justify-content: space-between; margin-bottom: 8px; }
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+}
 </style>

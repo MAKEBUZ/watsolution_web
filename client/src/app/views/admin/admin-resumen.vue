@@ -1,147 +1,501 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { Chart, registerables } from 'chart.js'
+import { 
+  Users, DollarSign, Droplets, TrendingUp, 
+  Download, Filter, CreditCard, UserPlus, 
+  FileText, Clock, CheckCircle, ArrowUpRight,
+  ArrowDownRight, Calendar
+} from 'lucide-vue-next'
+
+Chart.register(...registerables)
+
+const stats = [
+  { label: 'Usuarios Activos', value: '1,284', icon: Users, color: '#3b82f6', trend: '+12.5%', isPositive: true, description: 'Suscriptores con servicio activo' },
+  { label: 'Recaudo Mensual', value: '$12.4M', icon: DollarSign, color: '#10b981', trend: '+8.2%', isPositive: true, description: 'Total recaudado este mes' },
+  { label: 'Consumo Total', value: '4,560 m³', icon: Droplets, color: '#0ea5e9', trend: '-2.4%', isPositive: false, description: 'Promedio de consumo por sector' },
+  { label: 'Eficiencia Op.', value: '98.2%', icon: TrendingUp, color: '#f59e0b', trend: '+0.5%', isPositive: true, description: 'Disponibilidad del sistema' }
+]
+
+const logs = ref([
+  { id: 1, user: 'Maria Garcia', action: 'Pago de Factura', details: 'FAC-2026-0038', amount: '$45,200', type: 'payment', time: 'Hace 5 min' },
+  { id: 2, user: 'Juan Perez', action: 'Nueva Lectura', details: '1,265 m³ - Sector Sur', type: 'reading', time: 'Hace 12 min' },
+  { id: 3, user: 'Sistema', action: 'Nueva Noticia', details: 'Corte programado sector Norte', type: 'news', time: 'Hace 25 min' },
+  { id: 4, user: 'Carlos Ruiz', action: 'Registro Usuario', details: 'Nuevo suscriptor: ID #104', type: 'user', time: 'Hace 1 hora' },
+  { id: 5, user: 'Ana Lopez', action: 'Pago de Factura', details: 'FAC-2026-0039', amount: '$32,100', type: 'payment', time: 'Hace 2 horas' }
+])
+
+const getLogIcon = (type: string) => {
+  switch(type) {
+    case 'payment': return CreditCard;
+    case 'reading': return Droplets;
+    case 'news': return FileText;
+    case 'user': return UserPlus;
+    default: return Clock;
+  }
+}
+
+const getLogColor = (type: string) => {
+  switch(type) {
+    case 'payment': return '#10b981';
+    case 'reading': return '#3b82f6';
+    case 'news': return '#f59e0b';
+    case 'user': return '#8b5cf6';
+    default: return '#94a3b8';
+  }
+}
+
+const consumptionChartRef = ref<HTMLCanvasElement | null>(null)
+const revenueChartRef = ref<HTMLCanvasElement | null>(null)
+
+onMounted(() => {
+  if (consumptionChartRef.value) {
+    new Chart(consumptionChartRef.value, {
+      type: 'line',
+      data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Consumo (m³)',
+          data: [1200, 1350, 1100, 1500, 1400, 1600],
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#3b82f6'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+      }
+    })
+  }
+
+  if (revenueChartRef.value) {
+    new Chart(revenueChartRef.value, {
+      type: 'bar',
+      data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+        datasets: [{ label: 'Recaudo ($)', data: [4.5, 5.2, 4.8, 6.1, 5.9, 6.5], backgroundColor: '#10b981', borderRadius: 6 }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: (val: any) => `$${val}M` } }, x: { grid: { display: false } } }
+      }
+    })
+  }
+})
+</script>
+
 <template>
-  <div class="p-4">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-start mb-4">
-      <div>
-        <h3 class="font-weight-bold mb-1">Resumen Ejecutivo</h3>
-        <div class="text-muted small d-flex align-items-center">
-          <font-awesome-icon icon="calendar" class="mr-1" />
-          Periodo actual:
-          <span class="text-primary font-weight-600 ml-1">{{ currentMonth }}</span>
-        </div>
+  <div class="summary-dashboard">
+    <header class="summary-header">
+      <div class="header-info">
+        <h1>Resumen Ejecutivo</h1>
+        <p><Calendar :size="16" /> Periodo actual: <strong>Abril 2026</strong></p>
       </div>
-      <div class="d-flex">
-        <button class="btn btn-outline-secondary btn-sm mr-2">
-          <font-awesome-icon icon="filter" class="mr-1" /> Filtros
-        </button>
-        <button class="btn btn-primary btn-sm">
-          <font-awesome-icon icon="download" class="mr-1" /> Descargar Reporte
-        </button>
+      <div class="header-actions">
+        <button class="btn btn--outline"><Filter :size="18" /> Filtros</button>
+        <button class="btn btn--primary"><Download :size="18" /> Descargar Reporte</button>
       </div>
-    </div>
+    </header>
 
-    <!-- Stat Cards -->
-    <div v-if="isFetching" class="text-center py-5">
-      <div class="spinner-border text-primary"></div>
-    </div>
-    <div v-else class="row mb-4">
-      <!-- Usuarios Activos -->
-      <div class="col-md-3 mb-3">
-        <div class="card stat-card h-100">
-          <div class="card-body">
-            <div class="stat-icon-wrap stat-icon-blue mb-3">
-              <font-awesome-icon icon="users" class="text-primary" />
-            </div>
-            <div class="text-muted small mb-1">Usuarios Activos</div>
-            <div class="stat-num">{{ (stats?.activeUsers ?? 0).toLocaleString('es-CO') }}</div>
-            <div class="mt-1">
-              <small class="text-success font-weight-600">
-                <font-awesome-icon icon="arrow-up" /> +12.5%
-              </small>
-            </div>
-            <div class="text-muted mt-1" style="font-size:0.7rem;">Suscriptores con servicio activo</div>
-          </div>
+    <div class="metrics-grid">
+      <div v-for="stat in stats" :key="stat.label" class="stat-card">
+        <div class="stat-icon" :style="{ backgroundColor: stat.color + '15', color: stat.color }">
+          <component :is="stat.icon" :size="24" />
         </div>
-      </div>
-
-      <!-- Recaudo Mensual -->
-      <div class="col-md-3 mb-3">
-        <div class="card stat-card h-100">
-          <div class="card-body">
-            <div class="stat-icon-wrap stat-icon-green mb-3">
-              <font-awesome-icon icon="dollar-sign" class="text-success" />
-            </div>
-            <div class="text-muted small mb-1">Recaudo Mensual</div>
-            <div class="stat-num">{{ formatCurrency(stats?.monthlyRevenue ?? 0) }}</div>
-            <div class="mt-1">
-              <small class="text-success font-weight-600">
-                <font-awesome-icon icon="arrow-up" /> +8.2%
-              </small>
-            </div>
-            <div class="text-muted mt-1" style="font-size:0.7rem;">Total recaudado este mes</div>
+        <div class="stat-content">
+          <span class="stat-label">{{ stat.label }}</span>
+          <div class="stat-value-group">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span :class="['stat-trend', stat.isPositive ? 'positive' : 'negative']">
+              <ArrowUpRight v-if="stat.isPositive" :size="14" />
+              <ArrowDownRight v-else :size="14" />
+              {{ stat.trend }}
+            </span>
           </div>
-        </div>
-      </div>
-
-      <!-- Consumo Total -->
-      <div class="col-md-3 mb-3">
-        <div class="card stat-card h-100">
-          <div class="card-body">
-            <div class="stat-icon-wrap stat-icon-teal mb-3">
-              <font-awesome-icon icon="tint" class="text-info" />
-            </div>
-            <div class="text-muted small mb-1">Consumo Total</div>
-            <div class="stat-num">{{ (stats?.totalConsumption ?? 0).toLocaleString('es-CO') }}</div>
-            <div class="stat-unit">m³</div>
-            <div class="mt-1">
-              <small class="text-danger font-weight-600">
-                <font-awesome-icon icon="arrow-down" /> -2.4%
-              </small>
-            </div>
-            <div class="text-muted mt-1" style="font-size:0.7rem;">Promedio de consumo por sector</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Eficiencia Operacional -->
-      <div class="col-md-3 mb-3">
-        <div class="card stat-card h-100">
-          <div class="card-body">
-            <div class="stat-icon-wrap stat-icon-orange mb-3">
-              <font-awesome-icon icon="chart-line" class="text-warning" />
-            </div>
-            <div class="text-muted small mb-1">Eficiencia Op.</div>
-            <div class="stat-num">{{ stats?.efficiency ?? 98.2 }}%</div>
-            <div class="mt-1">
-              <small class="text-success font-weight-600">
-                <font-awesome-icon icon="arrow-up" /> +0.5%
-              </small>
-            </div>
-            <div class="text-muted mt-1" style="font-size:0.7rem;">Disponibilidad del sistema</div>
-          </div>
+          <p class="stat-desc">{{ stat.description }}</p>
         </div>
       </div>
     </div>
 
-    <!-- Consumption Chart -->
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="font-weight-bold mb-0">Tendencia de Consumo</h6>
-          <small class="badge badge-light text-muted px-2 py-1">m³ / mes</small>
+    <div class="dashboard-layout">
+      <div class="main-stats">
+        <div class="chart-card">
+          <div class="card-header">
+            <h3>Tendencia de Consumo</h3>
+            <span class="badge">m³ / mes</span>
+          </div>
+          <div class="chart-container">
+            <canvas ref="consumptionChartRef"></canvas>
+          </div>
         </div>
-        <LineChart :data="chartData" :options="chartOptions" style="max-height: 300px;" />
+
+        <div class="chart-card">
+          <div class="card-header">
+            <h3>Recaudo Mensual</h3>
+            <span class="badge success">Millones COP</span>
+          </div>
+          <div class="chart-container">
+            <canvas ref="revenueChartRef"></canvas>
+          </div>
+        </div>
       </div>
+
+      <aside class="activity-sidebar">
+        <div class="logs-card">
+          <div class="card-header">
+            <h3>Actividad Reciente</h3>
+            <button class="text-link">Ver todo</button>
+          </div>
+          <div class="logs-container">
+            <div v-for="log in logs" :key="log.id" class="log-entry">
+              <div class="log-icon" :style="{ color: getLogColor(log.type), backgroundColor: getLogColor(log.type) + '15' }">
+                <component :is="getLogIcon(log.type)" :size="18" />
+              </div>
+              <div class="log-info">
+                <div class="log-header">
+                  <strong>{{ log.user }}</strong>
+                  <span class="log-time">{{ log.time }}</span>
+                </div>
+                <p class="log-action">{{ log.action }}</p>
+                <div class="log-meta">
+                  <span class="log-details">{{ log.details }}</span>
+                  <span v-if="log.amount" class="log-amount">{{ log.amount }}</span>
+                </div>
+              </div>
+              <CheckCircle v-if="log.type === 'payment'" class="payment-check" :size="14" />
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>Estado del Sistema</h3>
+          <div class="status-list">
+            <div class="status-item">
+              <span>Presión de Red</span>
+              <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
+              <span>85%</span>
+            </div>
+            <div class="status-item">
+              <span>Calidad Agua</span>
+              <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
+              <span>99%</span>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
   </div>
 </template>
 
-<script lang="ts" src="./admin-resumen.component.ts"></script>
+<style lang="scss" scoped>
+@use '../../../content/scss/variables' as *;
+@use '../../../content/scss/mixins' as *;
 
-<style scoped>
-.font-weight-600 { font-weight: 600; }
-
-.stat-card {
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+.summary-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  padding: $spacing-sm;
 }
 
-.stat-icon-wrap {
-  width: 44px;
-  height: 44px;
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  h1 { 
+    font-size: 1.8rem; 
+    font-weight: 800; 
+    color: $color-text; 
+    margin-bottom: 4px; 
+  }
+
+  p { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    color: $color-text-muted; 
+    font-size: 0.95rem; 
+    
+    strong { color: $color-primary; }
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: $spacing-lg;
+}
+
+.stat-card {
+  background: white;
+  padding: $spacing-lg;
+  border-radius: 20px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  transition: transform 0.2s;
+
+  &:hover { 
+    transform: translateY(-4px); 
+  }
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
 }
 
-.stat-icon-blue   { background: #dbeafe; }
-.stat-icon-green  { background: #dcfce7; }
-.stat-icon-teal   { background: #cffafe; }
-.stat-icon-orange { background: #fef3c7; }
+.stat-label {
+  font-size: 0.9rem;
+  color: $color-text-muted;
+  font-weight: 500;
+}
 
-.stat-num  { font-size: 1.75rem; font-weight: 800; line-height: 1.1; }
-.stat-unit { font-size: 0.78rem; color: #6c757d; }
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $color-text;
+}
+
+.stat-value-group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.stat-trend {
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  &.positive { color: #10b981; }
+  &.negative { color: #ef4444; }
+}
+
+.stat-desc {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-xl;
+
+  @include desktop {
+    grid-template-columns: 1fr 340px;
+  }
+}
+
+.main-stats {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.chart-card {
+  background: white;
+  padding: $spacing-xl;
+  border-radius: 24px;
+  box-shadow: $shadow-sm;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+
+  h3 { 
+    font-size: 1.2rem; 
+    font-weight: 700; 
+  }
+}
+
+.badge {
+  padding: 4px 12px;
+  background: #f1f5f9;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $color-text-muted;
+
+  &.success { 
+    background: #dcfce7; 
+    color: #166534; 
+  }
+}
+
+.chart-container {
+  height: 300px;
+  position: relative;
+}
+
+.activity-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.logs-card {
+  background: white;
+  padding: $spacing-xl;
+  border-radius: 24px;
+  box-shadow: $shadow-sm;
+  flex: 1;
+}
+
+.logs-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.log-entry {
+  display: flex;
+  gap: 12px;
+  position: relative;
+}
+
+.log-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.log-info {
+  flex: 1;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+
+  strong { 
+    font-size: 0.9rem; 
+    color: $color-text; 
+  }
+}
+
+.log-time { 
+  font-size: 0.75rem; 
+  color: $color-text-muted; 
+}
+
+.log-action { 
+  font-size: 0.85rem; 
+  color: $color-text; 
+  margin-bottom: 4px; 
+}
+
+.log-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.log-details { 
+  font-size: 0.8rem; 
+  color: $color-text-muted; 
+}
+
+.log-amount { 
+  font-size: 0.85rem; 
+  font-weight: 700; 
+  color: #10b981; 
+}
+
+.payment-check {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  color: #10b981;
+  background: white;
+  border-radius: 50%;
+}
+
+.info-card {
+  background: #1e293b;
+  color: white;
+  padding: $spacing-xl;
+  border-radius: 24px;
+  box-shadow: $shadow-md;
+
+  h3 { 
+    font-size: 1.1rem; 
+    margin-bottom: $spacing-lg; 
+  }
+}
+
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.status-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: $color-primary;
+
+  &.success { 
+    background: #10b981; 
+  }
+}
+
+.text-link {
+  background: none;
+  border: none;
+  color: $color-primary;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+
+  &:hover { 
+    text-decoration: underline; 
+  }
+}
 </style>

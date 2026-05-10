@@ -36,6 +36,7 @@ export default [
   },
   {
     path: '/admin-panel',
+    name: 'AdminDashboard',
     component: AdminPanel,
     meta: { authorities: [Authority.ADMIN] },
     children: [
@@ -46,5 +47,25 @@ export default [
       { path: 'facturacion', name: 'AdminFacturacion', component: AdminFacturacion },
       { path: 'noticias',    name: 'AdminNoticias',    component: AdminNoticias },
     ],
+  },
+  {
+    path: '/admin',
+    name: 'admin-summary',
+    redirect: '/admin-panel/resumen'
+  },
+  {
+    path: '/admin/usuarios',
+    name: 'admin-users',
+    redirect: '/admin-panel/usuarios'
+  },
+  {
+    path: '/admin/facturacion',
+    name: 'admin-billing',
+    redirect: '/admin-panel/facturacion'
+  },
+  {
+    path: '/admin/noticias',
+    name: 'admin-news',
+    redirect: '/admin-panel/noticias'
   },
 ];

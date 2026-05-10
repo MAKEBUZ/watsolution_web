@@ -1,242 +1,248 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { LogIn, User, Lock } from 'lucide-vue-next'
+import { useAccountStore } from '@/shared/config/store/account-store'
+
+const router = useRouter()
+const accountStore = useAccountStore()
+
+const email = ref('')
+const password = ref('')
+const error = ref('')
+
+const handleLogin = async () => {
+  error.value = ''
+  
+  try {
+    const response = await fetch('api/authenticate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: email.value, password: password.value })
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      localStorage.setItem('jhi-authenticationToken', data.id_token)
+      await accountStore.loadAccountAction()
+      router.push('/portal')
+    } else {
+      error.value = 'Credenciales inválidas'
+    }
+  } catch (e) {
+    if (email.value === 'admin' && password.value === 'admin') {
+      const mockAccount = {
+        login: 'admin',
+        firstName: 'Administrador',
+        email: 'admin@watsolution.tech',
+        authorities: ['ROLE_ADMIN']
+      }
+      accountStore.setAuthentication(mockAccount)
+      localStorage.setItem('jhi-authenticationToken', 'mock-token')
+      router.push('/portal')
+    } else if (email.value === 'user' && password.value === 'user') {
+      const mockAccount = {
+        login: 'user',
+        firstName: 'Usuario',
+        email: 'user@watsolution.tech',
+        authorities: ['ROLE_USER']
+      }
+      accountStore.setAuthentication(mockAccount)
+      localStorage.setItem('jhi-authenticationToken', 'mock-token')
+      router.push('/portal')
+    } else {
+      error.value = 'Credenciales inválidas. Prueba con admin/admin o user/user'
+    }
+  }
+}
+</script>
+
 <template>
-  <div class="login-page">
-    <div class="login-card">
-      <!-- Logo -->
-      <div class="login-logo">
-        <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 4C16 4 6 14 6 20C6 25.5228 10.4772 30 16 30C21.5228 30 26 25.5228 26 20C26 14 16 4Z" fill="#38bdf8"/>
-          <path d="M16 10C16 10 10 17 10 21C10 24.3137 12.6863 27 16 27C19.3137 27 22 24.3137 22 21C22 17 16 10Z" fill="#bae6fd"/>
-        </svg>
-        <h1 class="login-brand"><strong>Wat</strong>Solution</h1>
-        <p class="login-subtitle">Sistema de Gestión de Agua</p>
-      </div>
-
-      <!-- Error alert -->
-      <div v-if="authError" class="login-error">
-        <font-awesome-icon icon="exclamation-circle" class="mr-2" />
-        Usuario o contraseña incorrectos. Intente de nuevo.
-      </div>
-
-      <!-- Form -->
-      <form @submit.prevent="doLogin" novalidate>
-        <div class="login-field">
-          <label for="username">Usuario</label>
-          <div class="input-wrap">
-            <font-awesome-icon icon="user" class="input-icon" />
-            <input
-              id="username"
-              v-model="username"
-              type="text"
-              placeholder="Ingrese su usuario"
-              autocomplete="username"
-              required
-            />
+  <div class="login-view">
+    <div class="container login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-icon">
+            <LogIn :size="32" />
           </div>
+          <h1>Bienvenido de nuevo</h1>
+          <p>Ingresa a tu cuenta de watsolution</p>
         </div>
 
-        <div class="login-field">
-          <label for="password">Contraseña</label>
-          <div class="input-wrap">
-            <font-awesome-icon icon="lock" class="input-icon" />
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              placeholder="Ingrese su contraseña"
-              autocomplete="current-password"
-              required
-            />
+        <form @submit.prevent="handleLogin" class="login-form">
+          <div v-if="error" class="error-alert">{{ error }}</div>
+          
+          <div class="form-group">
+            <label for="email">Correo Electrónico / Usuario</label>
+            <div class="input-wrapper">
+              <User class="input-icon" :size="18" />
+              <input 
+                type="text" 
+                id="email" 
+                v-model="email" 
+                placeholder="usuario@correo.com" 
+                required
+              >
+            </div>
           </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <div class="input-wrapper">
+              <Lock class="input-icon" :size="18" />
+              <input 
+                type="password" 
+                id="password" 
+                v-model="password" 
+                placeholder="********" 
+                required
+              >
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--block">Iniciar Sesión</button>
+        </form>
+
+        <div class="login-footer">
+          <p>Demo: <strong>admin/admin</strong> o <strong>user/user</strong></p>
+          <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
         </div>
-
-        <div class="login-remember">
-          <label class="remember-label">
-            <input type="checkbox" v-model="rememberMe" />
-            <span>Recordarme</span>
-          </label>
-          <router-link to="/account/reset/request" class="forgot-link">¿Olvidó su contraseña?</router-link>
-        </div>
-
-        <button type="submit" class="btn-login" :disabled="loading">
-          <span v-if="loading">
-            <font-awesome-icon icon="spinner" spin /> Ingresando...
-          </span>
-          <span v-else>Iniciar Sesión</span>
-        </button>
-      </form>
-
-      <p class="login-register">
-        ¿No tiene cuenta?
-        <router-link to="/register">Regístrese aquí</router-link>
-      </p>
+      </div>
     </div>
   </div>
 </template>
 
-<script lang="ts" src="./login.component.ts"></script>
+<style lang="scss" scoped>
+@use '../../../content/scss/variables' as *;
+@use '../../../content/scss/mixins' as *;
 
-<style scoped>
-.login-page {
+.login-view {
   min-height: 100vh;
   display: flex;
   align-items: center;
+  background: linear-gradient(135deg, $color-bg 0%, #e0f2fe 100%);
+  padding: $spacing-xl 0;
+}
+
+.login-container {
+  display: flex;
   justify-content: center;
-  background: linear-gradient(135deg, #0f2744 0%, #1a3a5c 60%, #1e4976 100%);
-  padding: 1rem;
 }
 
 .login-card {
-  background: #fff;
-  border-radius: 18px;
-  padding: 2.5rem 2rem;
+  background: white;
+  padding: $spacing-lg;
+  border-radius: 24px;
+  box-shadow: $shadow-lg;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 450px;
 }
 
-.login-logo {
+.login-header {
   text-align: center;
-  margin-bottom: 1.75rem;
+  margin-bottom: $spacing-lg;
+
+  .login-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto $spacing-md;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    color: $color-text;
+    margin-bottom: $spacing-xs;
+  }
+
+  p {
+    color: $color-text-muted;
+  }
 }
 
-.login-brand {
-  font-size: 1.75rem;
-  color: #1a3a5c;
-  margin: 0.5rem 0 0.25rem;
-  letter-spacing: -0.5px;
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
 }
 
-.login-brand strong {
-  color: #0ea5e9;
-}
-
-.login-subtitle {
-  font-size: 0.85rem;
-  color: #64748b;
-  margin: 0;
-}
-
-.login-error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+.error-alert {
+  background: #fee2e2;
+  color: #ef4444;
+  padding: $spacing-sm;
   border-radius: 8px;
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
-.login-field {
-  margin-bottom: 1.25rem;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: $color-text;
+  }
 }
 
-.login-field label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 0.4rem;
-}
-
-.input-wrap {
+.input-wrapper {
   position: relative;
+  
+  .input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-text-muted;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
 }
 
-.input-icon {
-  position: absolute;
-  left: 0.875rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8;
-  font-size: 0.875rem;
-}
-
-.input-wrap input {
+.btn--block {
   width: 100%;
-  padding: 0.65rem 0.875rem 0.65rem 2.5rem;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  color: #1e293b;
-  outline: none;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
 }
 
-.input-wrap input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-}
-
-.login-remember {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  font-size: 0.85rem;
-}
-
-.remember-label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: #475569;
-  cursor: pointer;
-  margin: 0;
-}
-
-.remember-label input[type="checkbox"] {
-  accent-color: #0ea5e9;
-}
-
-.forgot-link {
-  color: #0ea5e9;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.forgot-link:hover {
-  text-decoration: underline;
-}
-
-.btn-login {
-  width: 100%;
-  padding: 0.75rem;
-  background: linear-gradient(135deg, #0ea5e9, #2563eb);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-}
-
-.btn-login:hover:not(:disabled) {
-  opacity: 0.92;
-  transform: translateY(-1px);
-}
-
-.btn-login:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.login-register {
+.login-footer {
+  margin-top: $spacing-lg;
   text-align: center;
-  margin-top: 1.25rem;
-  margin-bottom: 0;
-  font-size: 0.875rem;
-  color: #64748b;
-}
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
 
-.login-register a {
-  color: #0ea5e9;
-  font-weight: 600;
-  text-decoration: none;
-}
+  p {
+    font-size: 0.9rem;
+    color: $color-text-muted;
+    strong {
+      color: $color-primary;
+    }
+  }
 
-.login-register a:hover {
-  text-decoration: underline;
+  .forgot-password {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+    &:hover {
+      color: $color-primary;
+    }
+  }
 }
 </style>

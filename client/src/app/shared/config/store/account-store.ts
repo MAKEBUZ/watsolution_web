@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import axios from 'axios';
 
 export interface AccountStateStorable {
   logon: boolean;
@@ -45,6 +46,22 @@ export const useAccountStore = defineStore('main', {
     },
     setRibbonOnProfiles(ribbon) {
       this.ribbonOnProfiles = ribbon;
+    },
+    initAccount() {
+      const token = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
+      if (token) {
+        this.loadAccountAction();
+      }
+    },
+    async loadAccountAction() {
+      try {
+        const response = await axios.get<any>('api/account');
+        if (response.status === 200 && response.data?.login) {
+          this.setAuthentication(response.data);
+        }
+      } catch (error) {
+        this.logout();
+      }
     },
   },
 });
