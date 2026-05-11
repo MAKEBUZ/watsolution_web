@@ -56,10 +56,11 @@ const logout = () => {
 
 const navLinks = [
   { name: 'Inicio', path: '/' },
+  { name: 'Servicios', path: '/servicios' },
   { name: 'Noticias', path: '/noticias' },
   { name: 'Portal Usuario', path: '/portal', requiresAuth: true },
   { name: 'Pagos', path: '/pagos', requiresAuth: true },
-  { name: 'Admin', path: '/admin', requiresAuth: true, requiresAdmin: true, nameOverride: 'admin-summary' }
+  { name: 'Admin', path: '/admin', requiresAuth: true, requiresAdmin: true, nameOverride: 'admin-summary' },
 ];
 </script>
 
@@ -78,10 +79,7 @@ const navLinks = [
         <ul class="header__nav-list">
           <template v-for="link in navLinks" :key="link.path">
             <li v-if="(!link.requiresAuth || isAuthenticated) && (!link.requiresAdmin || isAdmin)">
-              <router-link 
-                :to="link.nameOverride ? { name: link.nameOverride } : link.path" 
-                class="header__nav-link"
-              >
+              <router-link :to="link.nameOverride ? { name: link.nameOverride } : link.path" class="header__nav-link">
                 {{ link.name }}
               </router-link>
             </li>
@@ -90,25 +88,16 @@ const navLinks = [
 
         <div class="header__actions">
           <template v-if="!isAuthenticated">
-            <router-link to="/login" class="btn btn--primary">
-              Ingresar
-            </router-link>
+            <router-link to="/login" class="btn btn--primary"> Ingresar </router-link>
           </template>
 
           <template v-else>
-            <button @click="logout" class="btn btn--outline">
-              Cerrar Sesión
-            </button>
+            <button @click="logout" class="btn btn--outline">Cerrar Sesión</button>
           </template>
         </div>
       </nav>
 
-      <button 
-        class="header__toggle" 
-        @click="toggleMenu" 
-        aria-label="Abrir menú"
-        :aria-expanded="isMenuOpen"
-      >
+      <button class="header__toggle" @click="toggleMenu" aria-label="Abrir menú" :aria-expanded="isMenuOpen">
         <font-awesome-icon v-if="!isMenuOpen" icon="bars" size="lg" />
         <font-awesome-icon v-else icon="times" size="lg" />
       </button>
@@ -118,11 +107,7 @@ const navLinks = [
           <ul class="header__nav-list">
             <template v-for="link in navLinks" :key="link.path">
               <li v-if="(!link.requiresAuth || isAuthenticated) && (!link.requiresAdmin || isAdmin)">
-                <router-link 
-                  :to="link.nameOverride ? { name: link.nameOverride } : link.path" 
-                  class="header__nav-link"
-                  @click="toggleMenu"
-                >
+                <router-link :to="link.nameOverride ? { name: link.nameOverride } : link.path" class="header__nav-link" @click="toggleMenu">
                   {{ link.name }}
                 </router-link>
               </li>
@@ -131,18 +116,15 @@ const navLinks = [
 
           <div class="header__actions">
             <template v-if="!isAuthenticated">
-              <router-link 
-                to="/login" 
-                class="btn btn--primary"
-                @click="toggleMenu"
-              >
-                Ingresar
-              </router-link>
+              <router-link to="/login" class="btn btn--primary" @click="toggleMenu"> Ingresar </router-link>
             </template>
 
             <template v-else>
-              <button 
-                @click="logout(); toggleMenu()" 
+              <button
+                @click="
+                  logout();
+                  toggleMenu();
+                "
                 class="btn btn--outline"
               >
                 Cerrar Sesión
@@ -159,10 +141,6 @@ const navLinks = [
 @use 'sass:color';
 @use '../../../content/scss/variables' as *;
 @use '../../../content/scss/mixins' as *;
-
-
-
-
 
 .header {
   position: fixed;

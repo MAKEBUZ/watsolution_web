@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAccountStore } from '@/shared/config/store/account-store';
 
@@ -9,8 +9,16 @@ const accountStore = useAccountStore();
 
 const isSidebarOpen = ref(window.innerWidth > 1024);
 const isMobile = ref(window.innerWidth <= 1024);
-
 const isNotifOpen = ref(false);
+
+const menuItems = [
+  { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
+  { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
+  { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
+  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
+  { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
+  { name: 'Gestión de Usuarios', routeName: 'AdminPortalUsuario', icon: 'user' },
+];
 
 const notifItems = [
   {
@@ -29,7 +37,14 @@ const notifItems = [
     type: 'payment',
     read: false,
   },
-  { id: 3, title: 'Reporte de fuga', desc: 'José Martínez reportó una fuga en Sector 7', time: 'Hace 1 hora', type: 'alert', read: true },
+  {
+    id: 3,
+    title: 'Reporte de fuga',
+    desc: 'José Martínez reportó una fuga en Sector 7',
+    time: 'Hace 1 hora',
+    type: 'alert',
+    read: true,
+  },
   {
     id: 4,
     title: 'Mantenimiento programado',
@@ -40,12 +55,121 @@ const notifItems = [
   },
 ];
 
+const notifications = [
+  {
+    id: 1,
+    title: 'Nuevo usuario registrado',
+    message: 'Carlos Rodríguez acaba de crear una cuenta en el portal. Revisa su información y aprueba el acceso.',
+    date: '2026-05-10 14:35',
+    type: 'user',
+    read: false,
+  },
+  {
+    id: 2,
+    title: 'Pago recibido',
+    message: 'La factura FAC-2026-002 ha sido marcada como pagada. Monto: $42,500 COP.',
+    date: '2026-05-10 14:15',
+    type: 'payment',
+    read: false,
+  },
+  {
+    id: 3,
+    title: 'Reporte de fuga',
+    message: 'José Martínez reportó una fuga de agua en el Sector 7, Calle 45 #12-34. Requiere atención urgente.',
+    date: '2026-05-10 13:40',
+    type: 'alert',
+    read: false,
+  },
+  {
+    id: 4,
+    title: 'Mantenimiento programado',
+    message: 'Se ha agendado un mantenimiento preventivo en la planta de tratamiento para el 20 de mayo de 2026.',
+    date: '2026-05-10 11:20',
+    type: 'info',
+    read: true,
+  },
+  {
+    id: 5,
+    title: 'Reclamación recibida',
+    message: 'María Fernández presentó una reclamación sobre el cobro del mes de abril.',
+    date: '2026-05-09 16:50',
+    type: 'alert',
+    read: true,
+  },
+  {
+    id: 6,
+    title: 'Consumo anómalo detectado',
+    message: 'El medidor MTR-1024 registró un consumo 40% superior al promedio en las últimas 48 horas.',
+    date: '2026-05-09 09:10',
+    type: 'alert',
+    read: true,
+  },
+  {
+    id: 7,
+    title: 'Certificado emitido',
+    message: 'Se emitió el certificado de servicio para Ana López. Disponible para descarga.',
+    date: '2026-05-08 17:00',
+    type: 'info',
+    read: true,
+  },
+  {
+    id: 8,
+    title: 'Usuario suspendido',
+    message: 'Luis García ha sido suspendido por morosidad. Facturas pendientes: 3.',
+    date: '2026-05-08 10:30',
+    type: 'user',
+    read: true,
+  },
+];
+
+const handleLogout = () => {
+  accountStore.logout();
+  router.push('/login');
+};
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
+
 const toggleNotif = () => {
   isNotifOpen.value = !isNotifOpen.value;
 };
 
 const closeNotif = () => {
   isNotifOpen.value = false;
+};
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 1024;
+  if (isMobile.value) {
+    isSidebarOpen.value = false;
+  } else {
+    isSidebarOpen.value = true;
+  }
+};
+
+const markAsRead = (id: number) => {
+  const n = notifications.find((x) => x.id === id);
+  if (n) n.read = true;
+};
+
+const markAllAsRead = () => {
+  notifications.forEach((n) => (n.read = true));
+};
+
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case 'user':
+      return 'user';
+    case 'payment':
+      return 'dollar-sign';
+    case 'alert':
+      return 'exclamation-circle';
+    case 'info':
+      return 'info-circle';
+    default:
+      return 'bell';
+  }
 };
 
 const getTypeColor = (type: string) => {
@@ -63,91 +187,10 @@ const getTypeColor = (type: string) => {
   }
 };
 
-const menuItems = [
-  { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
-  { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
-  { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
-  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
-  { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-  { name: 'Gestión de Usuarios', routeName: 'AdminPortalUsuario', icon: 'user' },
-];
-
-const handleLogout = () => {
-  accountStore.logout();
-  router.push('/login');
-};
-
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value;
-};
-
-const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024;
-  if (isMobile.value) {
-    isSidebarOpen.value = false;
-  } else {
-    isSidebarOpen.value = true;
-  }
-};
-
-if (typeof window !== 'undefined') {
+onMounted(() => {
   window.addEventListener('resize', handleResize);
   handleResize();
-}
-
-const logs = ref([
-  {
-    id: 1,
-    user: 'Maria Garcia',
-    action: 'Pago de Factura',
-    details: 'FAC-2026-0038',
-    amount: '$45,200',
-    type: 'payment',
-    time: 'Hace 5 min',
-  },
-  { id: 2, user: 'Juan Perez', action: 'Nueva Lectura', details: '1,265 m³ - Sector Sur', type: 'reading', time: 'Hace 12 min' },
-  { id: 3, user: 'Sistema', action: 'Nueva Noticia', details: 'Corte programado sector Norte', type: 'news', time: 'Hace 25 min' },
-  { id: 4, user: 'Carlos Ruiz', action: 'Registro Usuario', details: 'Nuevo suscriptor: ID #104', type: 'user', time: 'Hace 1 hora' },
-  {
-    id: 5,
-    user: 'Ana Lopez',
-    action: 'Pago de Factura',
-    details: 'FAC-2026-0039',
-    amount: '$32,100',
-    type: 'payment',
-    time: 'Hace 2 horas',
-  },
-]);
-
-const getLogIcon = (type: string) => {
-  switch (type) {
-    case 'payment':
-      return 'credit-card';
-    case 'reading':
-      return 'tint';
-    case 'news':
-      return 'newspaper';
-    case 'user':
-      return 'user-plus';
-    default:
-      return 'clock';
-  }
-};
-
-const getLogColor = (type: string) => {
-  switch (type) {
-    case 'payment':
-      return '#10b981';
-    case 'reading':
-      return '#3b82f6';
-    case 'news':
-      return '#f59e0b';
-    case 'user':
-      return '#8b5cf6';
-    default:
-      return '#94a3b8';
-  }
-};
+});
 </script>
 
 <template>
@@ -163,7 +206,7 @@ const getLogColor = (type: string) => {
           </div>
           <span class="logo-text">Wat<strong>Solution</strong></span>
         </router-link>
-        <button class="toggle-btn" @click="toggleSidebar">
+        <button class="toggle-btn" @click="toggleSidebar" aria-label="Alternar menú">
           <font-awesome-icon v-if="!isSidebarOpen" icon="bars" :size="20" />
           <font-awesome-icon v-else icon="times" :size="20" />
         </button>
@@ -190,8 +233,8 @@ const getLogColor = (type: string) => {
           <button class="extra-btn" @click="toggleNotif">
             <div class="extra-icon">
               <font-awesome-icon icon="bell" :size="20" />
-              <span class="extra-badge" v-if="notifItems.filter(n => !n.read).length">
-                {{ notifItems.filter(n => !n.read).length }}
+              <span class="extra-badge" v-if="notifItems.filter((n) => !n.read).length">
+                {{ notifItems.filter((n) => !n.read).length }}
               </span>
             </div>
             <span v-if="isSidebarOpen || isMobile">Notificaciones</span>
@@ -201,7 +244,7 @@ const getLogColor = (type: string) => {
             <div v-if="isNotifOpen && (isSidebarOpen || isMobile)" class="notif-dropdown">
               <div class="notif-dropdown__header">
                 <span class="notif-dropdown__title">Notificaciones</span>
-                <button class="notif-dropdown__mark" @click="closeNotif">Marcar leídas</button>
+                <button class="notif-dropdown__mark" @click="markAllAsRead">Marcar leídas</button>
               </div>
               <div class="notif-dropdown__list">
                 <div
@@ -209,9 +252,12 @@ const getLogColor = (type: string) => {
                   :key="n.id"
                   class="notif-dropdown__item"
                   :class="{ unread: !n.read }"
-                  @click="closeNotif"
+                  @click="markAsRead(n.id)"
                 >
-                  <div class="notif-dropdown__dot" :style="{ backgroundColor: getTypeColor(n.type) }"></div>
+                  <div
+                    class="notif-dropdown__dot"
+                    :style="{ backgroundColor: getTypeColor(n.type) }"
+                  ></div>
                   <div class="notif-dropdown__body">
                     <p class="notif-dropdown__item-title">{{ n.title }}</p>
                     <p class="notif-dropdown__item-desc">{{ n.desc }}</p>
@@ -225,6 +271,7 @@ const getLogColor = (type: string) => {
             </div>
           </Transition>
         </div>
+
         <router-link to="/portal" class="extra-btn">
           <div class="extra-icon">
             <font-awesome-icon icon="eye" :size="20" />
@@ -252,37 +299,40 @@ const getLogColor = (type: string) => {
 
     <main class="admin-main">
       <div class="admin-content-view">
-        <div class="activity-page">
-          <header class="activity-header">
+        <div class="notif-page">
+          <header class="page-header">
             <div>
-              <h1>Actividad Reciente</h1>
-              <p>Registros de eventos del sistema y acciones de usuarios.</p>
+              <h1>Notificaciones</h1>
+              <p>Revisa alertas, avisos y actividad reciente del sistema</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn--outline" @click="markAllAsRead">
+                <font-awesome-icon icon="check-double" :size="16" /> Marcar todo leído
+              </button>
             </div>
           </header>
 
-          <section class="logs-card" aria-label="Listado de actividad reciente">
-            <div class="logs-container">
-              <div v-for="log in logs" :key="log.id" class="log-entry">
-                <div class="log-icon" :style="{ color: getLogColor(log.type), backgroundColor: getLogColor(log.type) + '15' }">
-                  <font-awesome-icon :icon="getLogIcon(log.type)" :size="18" />
-                </div>
-                <div class="log-info">
-                  <div class="log-header">
-                    <strong>{{ log.user }}</strong>
-                    <span class="log-time">{{ log.time }}</span>
-                  </div>
-                  <p class="log-action">{{ log.action }}</p>
-                  <div class="log-meta">
-                    <span class="log-details">{{ log.details }}</span>
-                    <div v-if="log.amount" class="log-amount-wrapper">
-                      <span class="log-amount">{{ log.amount }}</span>
-                      <font-awesome-icon v-if="log.type === 'payment'" class="payment-check" icon="check-circle" :size="14" />
-                    </div>
-                  </div>
-                </div>
+          <div class="notif-list">
+            <div
+              v-for="n in notifications"
+              :key="n.id"
+              class="notif-card"
+              :class="{ unread: !n.read }"
+              @click="markAsRead(n.id)"
+            >
+              <div class="notif-card__icon" :style="{ backgroundColor: getTypeColor(n.type) + '15', color: getTypeColor(n.type) }">
+                <font-awesome-icon :icon="getTypeIcon(n.type)" :size="20" />
               </div>
+              <div class="notif-card__body">
+                <div class="notif-card__top">
+                  <h4 class="notif-card__title">{{ n.title }}</h4>
+                  <span class="notif-card__date">{{ n.date }}</span>
+                </div>
+                <p class="notif-card__message">{{ n.message }}</p>
+              </div>
+              <div v-if="!n.read" class="notif-card__unread-dot"></div>
             </div>
-          </section>
+          </div>
         </div>
       </div>
     </main>
@@ -290,16 +340,14 @@ const getLogColor = (type: string) => {
 </template>
 
 <style lang="scss" scoped>
+@use '../../../content/scss/variables' as *;
+@use '../../../content/scss/mixins' as *;
+
 $spacing-xs: 8px;
 $spacing-sm: 12px;
 $spacing-md: 16px;
 $spacing-lg: 24px;
 $spacing-xl: 32px;
-$color-primary: #0077be;
-$color-secondary: #00ced1;
-$color-text: #2c3e50;
-$color-text-muted: #64748b;
-$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
 .admin-layout {
   display: flex;
@@ -326,25 +374,35 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   height: 100vh;
-  z-index: 100;
-  min-height: 0;
+  z-index: 2000;
 
   &.is-closed {
     width: 80px;
+
     .logo-text,
     .nav-item span,
     .chevron,
-    .logout-btn span {
+    .logout-btn span,
+    .sidebar-profile .info,
+    .extra-btn span {
       display: none;
     }
+
     .nav-item,
-    .logout-btn {
+    .logout-btn,
+    .extra-btn {
       justify-content: center;
       padding: 1rem;
     }
+
     .sidebar-header {
       justify-content: center;
       padding: $spacing-md 0;
+    }
+
+    .sidebar-profile {
+      justify-content: center;
+      padding: 0.75rem;
     }
   }
 
@@ -355,7 +413,6 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     height: 100vh;
     width: 280px;
     transform: translateX(0);
-    z-index: 2000;
 
     &.is-closed {
       transform: translateX(-100%);
@@ -493,6 +550,11 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   flex-direction: column;
   gap: 4px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.extra-btn-wrapper {
+  position: relative;
 }
 
 .extra-btn {
@@ -544,211 +606,7 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 }
 
-.sidebar-footer {
-  padding: $spacing-md;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logout-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.75rem;
-  background: none;
-  border: none;
-  color: #f87171;
-  cursor: pointer;
-  border-radius: 8px;
-  white-space: nowrap;
-  &:hover {
-    background: rgba(239, 68, 68, 0.1);
-  }
-}
-
-.admin-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
-  min-width: 0;
-  background-color: #f8fafc;
-  min-height: 0;
-}
-
-.sidebar-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.75rem;
-  margin-bottom: $spacing-sm;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    background: $color-primary;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-  }
-
-  .info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    .name {
-      font-weight: 600;
-      font-size: 0.85rem;
-      color: white;
-      white-space: nowrap;
-    }
-    .role {
-      font-size: 0.7rem;
-      color: #94a3b8;
-      white-space: nowrap;
-    }
-  }
-}
-
-.admin-content-view {
-  flex: 1;
-  padding: $spacing-lg;
-  padding-bottom: $spacing-xl * 2;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  overflow-x: hidden;
-}
-
-.activity-page {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
-}
-
-.activity-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-
-  h1 {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: $color-text;
-    margin-bottom: 4px;
-  }
-  p {
-    color: $color-text-muted;
-    font-size: 0.95rem;
-  }
-}
-
-.logs-card {
-  background: white;
-  padding: $spacing-xl;
-  border-radius: 24px;
-  box-shadow: $shadow-sm;
-}
-
-.logs-container {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
-.log-entry {
-  display: flex;
-  gap: 12px;
-  position: relative;
-  padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
-
-  &:last-child {
-    border-bottom: 0;
-  }
-
-  .log-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .log-info {
-    flex: 1;
-    min-width: 0;
-
-    .log-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 2px;
-      strong {
-        font-size: 0.9rem;
-        color: $color-text;
-      }
-      .log-time {
-        font-size: 0.75rem;
-        color: $color-text-muted;
-        white-space: nowrap;
-      }
-    }
-
-    .log-action {
-      font-size: 0.85rem;
-      color: $color-text;
-      margin-bottom: 4px;
-    }
-
-    .log-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      .log-details {
-        font-size: 0.8rem;
-        color: $color-text-muted;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .log-amount-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        .log-amount {
-          font-size: 0.85rem;
-          font-weight: 700;
-          color: #10b981;
-          white-space: nowrap;
-        }
-        .payment-check {
-          color: #10b981;
-          flex-shrink: 0;
-        }
-      }
-    }
-  }
-}
-
-.extra-btn-wrapper {
-  position: relative;
-}
-
+/* Notif Dropdown */
 .notif-dropdown {
   position: absolute;
   left: 100%;
@@ -908,14 +766,258 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
 .notif-fade-enter-active,
 .notif-fade-leave-active {
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .notif-fade-enter-from,
 .notif-fade-leave-to {
   opacity: 0;
   transform: translateX(-10px);
+}
+
+.sidebar-footer {
+  padding: $spacing-md;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: #f87171;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
+}
+
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
+  margin-bottom: $spacing-sm;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    background: $color-primary;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+  }
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  min-width: 0;
+  background-color: #f8fafc;
+}
+
+.admin-content-view {
+  flex: 1;
+  padding: $spacing-lg;
+  padding-bottom: $spacing-xl * 2;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* Page Content */
+.notif-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @include tablet {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $color-text;
+    margin: 0;
+
+    @include tablet {
+      font-size: 1.8rem;
+    }
+  }
+
+  p {
+    color: $color-text-muted;
+    margin: 0.25rem 0 0;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notif-card {
+  background: white;
+  padding: 1.25rem 1.5rem;
+  border-radius: 20px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &.unread {
+    background: #f0faff;
+    border-left: 4px solid $color-primary;
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: $color-text;
+    margin: 0;
+  }
+
+  &__date {
+    font-size: 0.8rem;
+    color: $color-text-muted;
+    white-space: nowrap;
+  }
+
+  &__message {
+    font-size: 0.95rem;
+    color: $color-text-muted;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  &__unread-dot {
+    width: 10px;
+    height: 10px;
+    background: $color-primary;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-decoration: none;
+  font-size: 0.95rem;
+
+  &--primary {
+    background: $color-primary;
+    color: white;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+  }
+
+  &--outline {
+    background: transparent;
+    border: 2px solid $color-primary;
+    color: $color-primary;
+
+    &:hover {
+      background: $color-primary;
+      color: white;
+    }
+  }
 }
 </style>

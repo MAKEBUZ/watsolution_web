@@ -1,58 +1,108 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
-import { 
-  LayoutDashboard, Users, FileText, Newspaper, 
-  TrendingUp, LogOut, ChevronRight, Menu, X, User
-} from 'lucide-vue-next'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import { LayoutDashboard, Users, FileText, Newspaper, TrendingUp, LogOut, ChevronRight, Menu, X, User, Bell, Eye } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted } from 'vue';
 
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
-const isSidebarOpen = ref(true)
-const isMobile = ref(false)
+const router = useRouter();
+const route = useRoute();
+const accountStore = useAccountStore();
+const isSidebarOpen = ref(true);
+const isMobile = ref(false);
+
+const isNotifOpen = ref(false);
+
+const notifItems = [
+  {
+    id: 1,
+    title: 'Nuevo usuario registrado',
+    desc: 'Carlos Rodríguez acaba de crear una cuenta',
+    time: 'Hace 5 minutos',
+    type: 'user',
+    read: false,
+  },
+  {
+    id: 2,
+    title: 'Pago recibido',
+    desc: 'Factura FAC-2026-002 marcada como pagada',
+    time: 'Hace 25 minutos',
+    type: 'payment',
+    read: false,
+  },
+  { id: 3, title: 'Reporte de fuga', desc: 'José Martínez reportó una fuga en Sector 7', time: 'Hace 1 hora', type: 'alert', read: true },
+  {
+    id: 4,
+    title: 'Mantenimiento programado',
+    desc: 'Se agenda mantenimiento para el 20 de mayo',
+    time: 'Hace 3 horas',
+    type: 'info',
+    read: true,
+  },
+];
+
+const toggleNotif = () => {
+  isNotifOpen.value = !isNotifOpen.value;
+};
+
+const closeNotif = () => {
+  isNotifOpen.value = false;
+};
+
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case 'user':
+      return '#3b82f6';
+    case 'payment':
+      return '#10b981';
+    case 'alert':
+      return '#ef4444';
+    case 'info':
+      return '#f59e0b';
+    default:
+      return '#94a3b8';
+  }
+};
 
 const menuItems = [
   { name: 'Resumen', routeName: 'admin-summary', icon: LayoutDashboard },
   { name: 'Usuarios', routeName: 'admin-users', icon: Users },
   { name: 'Facturación', routeName: 'admin-billing', icon: FileText },
   { name: 'Noticias', routeName: 'admin-news', icon: Newspaper },
-  { name: 'Portal Usuario', routeName: 'AdminPortalUsuario', icon: User }
-]
+  { name: 'Gestión de Usuarios', routeName: 'AdminPortalUsuario', icon: User },
+];
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/')
-}
+  accountStore.logout();
+  router.push('/');
+};
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
+  isMobile.value = window.innerWidth <= 1024;
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   } else {
-    isSidebarOpen.value = true
+    isSidebarOpen.value = true;
   }
-}
+};
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  handleResize()
-})
+  window.addEventListener('resize', handleResize);
+  handleResize();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
+  window.removeEventListener('resize', handleResize);
+});
 
 const closeSidebarOnMobile = () => {
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   }
-}
+};
 </script>
 
 <template>
@@ -61,7 +111,13 @@ const closeSidebarOnMobile = () => {
 
     <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
       <div class="sidebar-header">
-        <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
+        <router-link to="/" class="logo-link" v-if="isSidebarOpen || !isMobile">
+          <div class="logo-icons">
+            <font-awesome-icon icon="tint" class="logo-icon primary" />
+            <font-awesome-icon icon="tint" class="logo-icon secondary" />
+          </div>
+          <span class="logo-text">Wat<strong>Solution</strong></span>
+        </router-link>
         <button class="toggle-btn" @click="toggleSidebar">
           <Menu v-if="!isSidebarOpen" :size="20" />
           <X v-else :size="20" />
@@ -69,12 +125,12 @@ const closeSidebarOnMobile = () => {
       </div>
 
       <nav class="sidebar-nav">
-        <router-link 
-          v-for="item in menuItems" 
-          :key="item.routeName" 
+        <router-link
+          v-for="item in menuItems"
+          :key="item.routeName"
           :to="{ name: item.routeName }"
           class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
+          :class="{ active: route.name === item.routeName }"
           @click="closeSidebarOnMobile"
         >
           <div class="nav-icon-container">
@@ -85,9 +141,59 @@ const closeSidebarOnMobile = () => {
         </router-link>
       </nav>
 
+      <div class="sidebar-extras">
+        <div class="extra-btn-wrapper">
+          <button class="extra-btn" @click="toggleNotif">
+            <div class="extra-icon">
+              <Bell :size="20" />
+              <span class="extra-badge" v-if="notifItems.filter(n => !n.read).length">
+                {{ notifItems.filter(n => !n.read).length }}
+              </span>
+            </div>
+            <span v-if="isSidebarOpen || isMobile">Notificaciones</span>
+          </button>
+
+          <Transition name="notif-fade">
+            <div v-if="isNotifOpen && (isSidebarOpen || isMobile)" class="notif-dropdown">
+              <div class="notif-dropdown__header">
+                <span class="notif-dropdown__title">Notificaciones</span>
+                <button class="notif-dropdown__mark" @click="closeNotif">Marcar leídas</button>
+              </div>
+              <div class="notif-dropdown__list">
+                <div
+                  v-for="n in notifItems.slice(0, 4)"
+                  :key="n.id"
+                  class="notif-dropdown__item"
+                  :class="{ unread: !n.read }"
+                  @click="closeNotif"
+                >
+                  <div class="notif-dropdown__dot" :style="{ backgroundColor: getTypeColor(n.type) }"></div>
+                  <div class="notif-dropdown__body">
+                    <p class="notif-dropdown__item-title">{{ n.title }}</p>
+                    <p class="notif-dropdown__item-desc">{{ n.desc }}</p>
+                    <span class="notif-dropdown__item-time">{{ n.time }}</span>
+                  </div>
+                </div>
+              </div>
+              <router-link to="/admin/notificaciones" class="notif-dropdown__footer" @click="closeNotif">
+                Ver todas las notificaciones
+              </router-link>
+            </div>
+          </Transition>
+        </div>
+        <router-link to="/portal" class="extra-btn">
+          <div class="extra-icon">
+            <Eye :size="20" />
+          </div>
+          <span v-if="isSidebarOpen || isMobile">Vista de Usuario</span>
+        </router-link>
+      </div>
+
       <div class="sidebar-footer">
         <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="avatar">
+            {{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}
+          </div>
           <div class="info" v-if="isSidebarOpen || isMobile">
             <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
             <span class="role">Administrador Principal</span>
@@ -142,9 +248,21 @@ const closeSidebarOnMobile = () => {
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span { display: none; }
-    .nav-item, .logout-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+    .logo-text,
+    .nav-item span,
+    .chevron,
+    .logout-btn span {
+      display: none;
+    }
+    .nav-item,
+    .logout-btn {
+      justify-content: center;
+      padding: 1rem;
+    }
+    .sidebar-header {
+      justify-content: center;
+      padding: $spacing-md 0;
+    }
   }
 
   &.is-mobile {
@@ -155,10 +273,10 @@ const closeSidebarOnMobile = () => {
     width: 280px;
     transform: translateX(0);
     z-index: 2000;
-    
+
     &.is-closed {
       transform: translateX(-100%);
-      width: 280px; 
+      width: 280px;
     }
   }
 }
@@ -171,21 +289,56 @@ const closeSidebarOnMobile = () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   min-height: 70px;
 
-  .logo-text { 
-    font-size: 1.15rem; 
-    color: $color-primary-light;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    strong { color: $color-secondary; }
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+
+    .logo-icons {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      position: absolute;
+
+      &.primary {
+        color: $color-primary;
+        font-size: 1.5rem;
+        bottom: 0;
+        right: 0;
+      }
+
+      &.secondary {
+        color: $color-secondary;
+        font-size: 1rem;
+        top: 2px;
+        left: 2px;
+      }
+    }
+
+    .logo-text {
+      font-size: 1.15rem;
+      color: $color-primary-light;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      strong {
+        color: $color-secondary;
+      }
+    }
   }
 
-  .toggle-btn { 
-    background: rgba(255, 255, 255, 0.1); 
-    border: none; 
-    color: white; 
+  .toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -197,7 +350,10 @@ const closeSidebarOnMobile = () => {
     flex-shrink: 0;
     margin-left: $spacing-xs;
 
-    &:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
   }
 }
 
@@ -230,7 +386,8 @@ const closeSidebarOnMobile = () => {
     flex-shrink: 0;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: white;
     background: rgba(255, 255, 255, 0.05);
   }
@@ -241,7 +398,67 @@ const closeSidebarOnMobile = () => {
     background: rgba($color-primary, 0.1);
   }
 
-  .chevron { margin-left: auto; opacity: 0.5; }
+  .chevron {
+    margin-left: auto;
+    opacity: 0.5;
+  }
+}
+
+.sidebar-extras {
+  padding: $spacing-md 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.extra-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem $spacing-md;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-size: 1rem;
+  text-decoration: none;
+
+  &:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .extra-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .extra-badge {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #1e293b;
+  }
 }
 
 .sidebar-footer {
@@ -261,7 +478,9 @@ const closeSidebarOnMobile = () => {
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .admin-main {
@@ -301,8 +520,17 @@ const closeSidebarOnMobile = () => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -317,5 +545,179 @@ const closeSidebarOnMobile = () => {
   @include tablet {
     padding: $spacing-lg;
   }
+}
+
+.extra-btn-wrapper {
+  position: relative;
+}
+
+.notif-dropdown {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 320px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  margin-left: 12px;
+  z-index: 3000;
+  overflow: hidden;
+  color: $color-text;
+
+  @media (max-width: 1024px) {
+    position: static;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
+    box-shadow: none;
+    border-radius: 12px;
+    background: #0f172a;
+    color: white;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+
+    @media (max-width: 1024px) {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  &__mark {
+    background: none;
+    border: none;
+    color: $color-primary;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    @media (max-width: 1024px) {
+      color: $color-secondary;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f8fafc;
+
+    @media (max-width: 1024px) {
+      border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &:hover {
+      background: #f8fafc;
+
+      @media (max-width: 1024px) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    &.unread {
+      background: #f0faff;
+
+      @media (max-width: 1024px) {
+        background: rgba(0, 119, 190, 0.15);
+      }
+    }
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+  }
+
+  &__item-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  &__item-desc {
+    font-size: 0.8rem;
+    color: $color-text-muted;
+    margin: 0;
+    line-height: 1.4;
+
+    @media (max-width: 1024px) {
+      color: #94a3b8;
+    }
+  }
+
+  &__item-time {
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    margin-top: 2px;
+  }
+
+  &__footer {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    color: $color-primary;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border-top: 1px solid #f1f5f9;
+    transition: background 0.2s;
+
+    @media (max-width: 1024px) {
+      border-top-color: rgba(255, 255, 255, 0.1);
+      color: $color-secondary;
+    }
+
+    &:hover {
+      background: #f8fafc;
+
+      @media (max-width: 1024px) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+}
+
+.notif-fade-enter-active,
+.notif-fade-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notif-fade-enter-from,
+.notif-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
 }
 </style>

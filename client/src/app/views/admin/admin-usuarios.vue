@@ -1,14 +1,67 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
+import { ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
 
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
+const router = useRouter();
+const route = useRoute();
+const accountStore = useAccountStore();
 
-const isSidebarOpen = ref(window.innerWidth > 1024)
-const isMobile = ref(window.innerWidth <= 1024)
+const isSidebarOpen = ref(window.innerWidth > 1024);
+const isMobile = ref(window.innerWidth <= 1024);
+
+const isNotifOpen = ref(false);
+
+const notifItems = [
+  {
+    id: 1,
+    title: 'Nuevo usuario registrado',
+    desc: 'Carlos Rodríguez acaba de crear una cuenta',
+    time: 'Hace 5 minutos',
+    type: 'user',
+    read: false,
+  },
+  {
+    id: 2,
+    title: 'Pago recibido',
+    desc: 'Factura FAC-2026-002 marcada como pagada',
+    time: 'Hace 25 minutos',
+    type: 'payment',
+    read: false,
+  },
+  { id: 3, title: 'Reporte de fuga', desc: 'José Martínez reportó una fuga en Sector 7', time: 'Hace 1 hora', type: 'alert', read: true },
+  {
+    id: 4,
+    title: 'Mantenimiento programado',
+    desc: 'Se agenda mantenimiento para el 20 de mayo',
+    time: 'Hace 3 horas',
+    type: 'info',
+    read: true,
+  },
+];
+
+const toggleNotif = () => {
+  isNotifOpen.value = !isNotifOpen.value;
+};
+
+const closeNotif = () => {
+  isNotifOpen.value = false;
+};
+
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case 'user':
+      return '#3b82f6';
+    case 'payment':
+      return '#10b981';
+    case 'alert':
+      return '#ef4444';
+    case 'info':
+      return '#f59e0b';
+    default:
+      return '#94a3b8';
+  }
+};
 
 const menuItems = [
   { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
@@ -16,63 +69,69 @@ const menuItems = [
   { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
   { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
   { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-  { name: 'Portal Usuario', routeName: 'AdminPortalUsuario', icon: 'user' }
-]
+  { name: 'Gestión de Usuarios', routeName: 'AdminPortalUsuario', icon: 'user' },
+];
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/login')
-}
+  accountStore.logout();
+  router.push('/login');
+};
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
+  isMobile.value = window.innerWidth <= 1024;
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   } else {
-    isSidebarOpen.value = true
+    isSidebarOpen.value = true;
   }
-}
+};
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('resize', handleResize)
-  handleResize()
+  window.addEventListener('resize', handleResize);
+  handleResize();
 }
 
 const users = ref([
   { id: '101', name: 'Juan Pérez', email: 'juan@email.com', status: 'activo', role: 'usuario', lastChange: '2026-04-20' },
   { id: '102', name: 'María García', email: 'maria@email.com', status: 'moroso', role: 'usuario', lastChange: '2026-04-15' },
   { id: '103', name: 'Admin Central', email: 'admin@watsolution.tech', status: 'activo', role: 'admin', lastChange: '2026-04-24' },
-  { id: '104', name: 'Carlos Ruiz', email: 'carlos@email.com', status: 'suspendido', role: 'usuario', lastChange: '2026-04-10' }
-])
+  { id: '104', name: 'Carlos Ruiz', email: 'carlos@email.com', status: 'suspendido', role: 'usuario', lastChange: '2026-04-10' },
+]);
 
-const searchQuery = ref('')
-const statusFilter = ref('todos')
+const searchQuery = ref('');
+const statusFilter = ref('todos');
 
 const getStatusClass = (status: string) => {
-  switch(status) {
-    case 'activo': return 'status--active';
-    case 'moroso': return 'status--debtor';
-    case 'suspendido': return 'status--suspended';
-    default: return '';
+  switch (status) {
+    case 'activo':
+      return 'status--active';
+    case 'moroso':
+      return 'status--debtor';
+    case 'suspendido':
+      return 'status--suspended';
+    default:
+      return '';
   }
-}
+};
 </script>
 
 <template>
   <div class="admin-layout">
-    <div
-      v-if="isMobile && isSidebarOpen"
-      class="sidebar-overlay"
-      @click="toggleSidebar"
-    ></div>
+    <div v-if="isMobile && isSidebarOpen" class="sidebar-overlay" @click="toggleSidebar"></div>
 
     <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
       <div class="sidebar-header">
-        <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
+        <router-link to="/" class="logo-link" v-if="isSidebarOpen || !isMobile">
+          <div class="logo-icons">
+            <font-awesome-icon icon="tint" class="logo-icon primary" />
+            <font-awesome-icon icon="tint" class="logo-icon secondary" />
+          </div>
+          <span class="logo-text">Wat<strong>Solution</strong></span>
+        </router-link>
         <button class="toggle-btn" @click="toggleSidebar">
           <font-awesome-icon v-if="!isSidebarOpen" icon="bars" :size="20" />
           <font-awesome-icon v-else icon="times" :size="20" />
@@ -85,7 +144,7 @@ const getStatusClass = (status: string) => {
           :key="item.routeName"
           :to="{ name: item.routeName }"
           class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
+          :class="{ active: route.name === item.routeName }"
         >
           <div class="nav-icon-container">
             <font-awesome-icon :icon="item.icon" :size="22" />
@@ -95,9 +154,59 @@ const getStatusClass = (status: string) => {
         </router-link>
       </nav>
 
+      <div class="sidebar-extras">
+        <div class="extra-btn-wrapper">
+          <button class="extra-btn" @click="toggleNotif">
+            <div class="extra-icon">
+              <font-awesome-icon icon="bell" :size="20" />
+              <span class="extra-badge" v-if="notifItems.filter(n => !n.read).length">
+                {{ notifItems.filter(n => !n.read).length }}
+              </span>
+            </div>
+            <span v-if="isSidebarOpen || isMobile">Notificaciones</span>
+          </button>
+
+          <Transition name="notif-fade">
+            <div v-if="isNotifOpen && (isSidebarOpen || isMobile)" class="notif-dropdown">
+              <div class="notif-dropdown__header">
+                <span class="notif-dropdown__title">Notificaciones</span>
+                <button class="notif-dropdown__mark" @click="closeNotif">Marcar leídas</button>
+              </div>
+              <div class="notif-dropdown__list">
+                <div
+                  v-for="n in notifItems.slice(0, 4)"
+                  :key="n.id"
+                  class="notif-dropdown__item"
+                  :class="{ unread: !n.read }"
+                  @click="closeNotif"
+                >
+                  <div class="notif-dropdown__dot" :style="{ backgroundColor: getTypeColor(n.type) }"></div>
+                  <div class="notif-dropdown__body">
+                    <p class="notif-dropdown__item-title">{{ n.title }}</p>
+                    <p class="notif-dropdown__item-desc">{{ n.desc }}</p>
+                    <span class="notif-dropdown__item-time">{{ n.time }}</span>
+                  </div>
+                </div>
+              </div>
+              <router-link to="/admin/notificaciones" class="notif-dropdown__footer" @click="closeNotif">
+                Ver todas las notificaciones
+              </router-link>
+            </div>
+          </Transition>
+        </div>
+        <router-link to="/portal" class="extra-btn">
+          <div class="extra-icon">
+            <font-awesome-icon icon="eye" :size="20" />
+          </div>
+          <span v-if="isSidebarOpen || isMobile">Vista de Usuario</span>
+        </router-link>
+      </div>
+
       <div class="sidebar-footer">
         <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="avatar">
+            {{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}
+          </div>
           <div class="info" v-if="isSidebarOpen || isMobile">
             <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
             <span class="role">Administrador Principal</span>
@@ -127,7 +236,7 @@ const getStatusClass = (status: string) => {
           <div class="mgmt-controls">
             <div class="search-box">
               <font-awesome-icon class="search-icon" icon="search" :size="18" />
-              <input type="text" v-model="searchQuery" placeholder="Buscar por nombre, ID o email...">
+              <input type="text" v-model="searchQuery" placeholder="Buscar por nombre, ID o email..." />
             </div>
 
             <div class="filter-group">
@@ -234,9 +343,21 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span { display: none; }
-    .nav-item, .logout-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+    .logo-text,
+    .nav-item span,
+    .chevron,
+    .logout-btn span {
+      display: none;
+    }
+    .nav-item,
+    .logout-btn {
+      justify-content: center;
+      padding: 1rem;
+    }
+    .sidebar-header {
+      justify-content: center;
+      padding: $spacing-md 0;
+    }
   }
 
   &.is-mobile {
@@ -263,15 +384,50 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   min-height: 70px;
 
-  .logo-text {
-    font-size: 1.15rem;
-    color: #94a3b8;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    strong { color: $color-secondary; }
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+
+    .logo-icons {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      position: absolute;
+
+      &.primary {
+        color: $color-primary;
+        font-size: 1.5rem;
+        bottom: 0;
+        right: 0;
+      }
+
+      &.secondary {
+        color: $color-secondary;
+        font-size: 1rem;
+        top: 2px;
+        left: 2px;
+      }
+    }
+
+    .logo-text {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      strong {
+        color: $color-secondary;
+      }
+    }
   }
 
   .toggle-btn {
@@ -325,7 +481,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: white;
     background: rgba(255, 255, 255, 0.05);
   }
@@ -336,7 +493,67 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     background: rgba($color-primary, 0.1);
   }
 
-  .chevron { margin-left: auto; opacity: 0.5; }
+  .chevron {
+    margin-left: auto;
+    opacity: 0.5;
+  }
+}
+
+.sidebar-extras {
+  padding: $spacing-md 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.extra-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem $spacing-md;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-size: 1rem;
+  text-decoration: none;
+
+  &:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .extra-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .extra-badge {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #1e293b;
+  }
 }
 
 .sidebar-footer {
@@ -356,7 +573,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .admin-main {
@@ -396,8 +615,17 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -421,8 +649,14 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  h1 { font-size: 1.5rem; color: $color-text; }
-  p { color: $color-text-muted; font-size: 0.9rem; }
+  h1 {
+    font-size: 1.5rem;
+    color: $color-text;
+  }
+  p {
+    color: $color-text-muted;
+    font-size: 0.9rem;
+  }
 }
 
 .mgmt-controls {
@@ -434,7 +668,13 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex: 1;
     min-width: 300px;
     position: relative;
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: $color-text-muted; }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $color-text-muted;
+    }
     input {
       width: 100%;
       padding: 0 12px 0 2.5rem;
@@ -501,8 +741,14 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 .user-info {
   display: flex;
   flex-direction: column;
-  .user-name { font-weight: 600; color: $color-text; }
-  .user-email { font-size: 0.85rem; color: $color-text-muted; }
+  .user-name {
+    font-weight: 600;
+    color: $color-text;
+  }
+  .user-email {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+  }
 }
 
 .role-badge {
@@ -524,9 +770,18 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 700;
   text-transform: uppercase;
 
-  &.status--active { background: #dcfce7; color: #166534; }
-  &.status--debtor { background: #fee2e2; color: #991b1b; }
-  &.status--suspended { background: #fef3c7; color: #92400e; }
+  &.status--active {
+    background: #dcfce7;
+    color: #166534;
+  }
+  &.status--debtor {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  &.status--suspended {
+    background: #fef3c7;
+    color: #92400e;
+  }
 }
 
 .actions-cell {
@@ -547,8 +802,15 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   color: $color-text-muted;
   transition: all 0.2s;
 
-  &:hover { background: #f1f5f9; color: $color-primary; }
-  &--danger:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+  &:hover {
+    background: #f1f5f9;
+    color: $color-primary;
+  }
+  &--danger:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fca5a5;
+  }
 }
 
 .btn {
@@ -566,7 +828,183 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   &--primary {
     background: $color-primary;
     color: white;
-    &:hover { background: darken($color-primary, 10%); }
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
   }
+}
+
+.extra-btn-wrapper {
+  position: relative;
+}
+
+.notif-dropdown {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 320px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  margin-left: 12px;
+  z-index: 3000;
+  overflow: hidden;
+  color: $color-text;
+
+  @media (max-width: 1024px) {
+    position: static;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
+    box-shadow: none;
+    border-radius: 12px;
+    background: #0f172a;
+    color: white;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+
+    @media (max-width: 1024px) {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  &__mark {
+    background: none;
+    border: none;
+    color: $color-primary;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    @media (max-width: 1024px) {
+      color: $color-secondary;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f8fafc;
+
+    @media (max-width: 1024px) {
+      border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &:hover {
+      background: #f8fafc;
+
+      @media (max-width: 1024px) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    &.unread {
+      background: #f0faff;
+
+      @media (max-width: 1024px) {
+        background: rgba(0, 119, 190, 0.15);
+      }
+    }
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+  }
+
+  &__item-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  &__item-desc {
+    font-size: 0.8rem;
+    color: $color-text-muted;
+    margin: 0;
+    line-height: 1.4;
+
+    @media (max-width: 1024px) {
+      color: #94a3b8;
+    }
+  }
+
+  &__item-time {
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    margin-top: 2px;
+  }
+
+  &__footer {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    color: $color-primary;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border-top: 1px solid #f1f5f9;
+    transition: background 0.2s;
+
+    @media (max-width: 1024px) {
+      border-top-color: rgba(255, 255, 255, 0.1);
+      color: $color-secondary;
+    }
+
+    &:hover {
+      background: #f8fafc;
+
+      @media (max-width: 1024px) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+}
+
+.notif-fade-enter-active,
+.notif-fade-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notif-fade-enter-from,
+.notif-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
 }
 </style>
