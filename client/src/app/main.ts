@@ -17,6 +17,7 @@ import { useStore, useTranslationStore } from '@/store';
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
+import '../content/scss/main.scss';
 import TranslationService from '@/locale/translation.service';
 import NoticiaService from '@/entities/noticia/noticia.service';
 import ReporteService from '@/entities/reporte/reporte.service';
@@ -97,7 +98,7 @@ const app = createApp({
     watch(
       () => store.account,
       async value => {
-        if (!translationService.getLocalStoreLanguage()) {
+        if (!translationService.getLocalStoreLanguage() && value?.langKey) {
           await changeLanguage(value.langKey);
         }
       },

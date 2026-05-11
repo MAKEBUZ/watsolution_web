@@ -1,179 +1,530 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useAccountStore } from '@/shared/config/store/account-store'
+
+const router = useRouter()
+const route = useRoute()
+const accountStore = useAccountStore()
+
+const isSidebarOpen = ref(window.innerWidth > 1024)
+const isMobile = ref(window.innerWidth <= 1024)
+
+const menuItems = [
+  { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
+  { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
+  { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
+  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
+  { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
+  { name: 'Portal Usuario', routeName: 'AdminPortalUsuario', icon: 'user' }
+]
+
+const handleLogout = () => {
+  accountStore.logout()
+  router.push('/login')
+}
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 1024
+  if (isMobile.value) {
+    isSidebarOpen.value = false
+  } else {
+    isSidebarOpen.value = true
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', handleResize)
+  handleResize()
+}
+
+interface NewsItem {
+  id: string
+  title: string
+  category: string
+  date: string
+  isArchived: boolean
+}
+
+const news = ref<NewsItem[]>([
+  { id: '1', title: 'Corte programado sector Norte', category: 'operativo', date: '2026-05-10', isArchived: false },
+  { id: '2', title: 'Nueva tarifa aplicada desde Mayo 2026', category: 'institucional', date: '2026-05-08', isArchived: false },
+  { id: '3', title: 'Campaña de ahorro de agua', category: 'comunidad', date: '2026-05-05', isArchived: false },
+  { id: '4', title: 'Mantenimiento reactor principal', category: 'operativo', date: '2026-04-28', isArchived: true }
+])
+
+const isModalOpen = ref(false)
+const searchQuery = ref('')
+
+const deleteNews = (id: string) => {
+  if (confirm('¿Estás seguro de eliminar esta noticia?')) {
+    const index = news.value.findIndex(n => n.id === id)
+    if (index !== -1) {
+      news.value.splice(index, 1)
+    }
+  }
+}
+</script>
+
 <template>
-  <div class="p-4">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h3 class="font-weight-bold mb-1">Gestión de Noticias</h3>
-        <p class="text-muted mb-0">Publica y administra el contenido informativo del acueducto</p>
-      </div>
-      <button class="btn btn-primary" @click="openCreate">
-        <font-awesome-icon icon="plus" class="mr-2" /> Nueva Noticia
-      </button>
-    </div>
+  <div class="admin-layout">
+    <div
+      v-if="isMobile && isSidebarOpen"
+      class="sidebar-overlay"
+      @click="toggleSidebar"
+    ></div>
 
-    <!-- Search -->
-    <div class="search-box mb-4" style="max-width: 440px;">
-      <font-awesome-icon icon="search" class="search-icon text-muted" />
-      <input
-        class="search-input form-control"
-        type="text"
-        placeholder="Buscar por título..."
-        v-model="searchQuery"
-      />
-    </div>
-
-    <!-- Table -->
-    <div class="card shadow-sm">
-      <div v-if="isFetching" class="text-center py-5">
-        <div class="spinner-border text-primary"></div>
-      </div>
-
-      <table v-else class="table table-hover mb-0">
-        <thead class="bg-light">
-          <tr>
-            <th class="border-0 text-muted small font-weight-600 px-4">FECHA</th>
-            <th class="border-0 text-muted small font-weight-600">TÍTULO</th>
-            <th class="border-0 text-muted small font-weight-600">CATEGORÍA</th>
-            <th class="border-0 text-muted small font-weight-600">ESTADO</th>
-            <th class="border-0 text-muted small font-weight-600">ACCIONES</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="n in filtered" :key="n.id">
-            <td class="align-middle text-muted small px-4">{{ formatDate(n.publishDate) }}</td>
-            <td class="align-middle font-weight-600">{{ n.title }}</td>
-            <td class="align-middle">
-              <span class="noticia-badge" :class="categoryClass(n.category)">{{ n.category }}</span>
-            </td>
-            <td class="align-middle">
-              <span class="status-badge" :class="n.status === 'ACTIVE' ? 'status-active' : 'status-inactive'">
-                {{ n.status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
-            <td class="align-middle">
-              <button class="btn btn-icon text-muted" @click="openEdit(n)" title="Editar">
-                <font-awesome-icon icon="pencil-alt" />
-              </button>
-              <button class="btn btn-icon text-muted" @click="archiveNoticia(n)" title="Archivar">
-                <font-awesome-icon icon="archive" />
-              </button>
-              <button class="btn btn-icon text-danger" @click="deleteNoticia(n.id)" title="Eliminar">
-                <font-awesome-icon icon="trash" />
-              </button>
-            </td>
-          </tr>
-          <tr v-if="!filtered.length">
-            <td colspan="5" class="text-center text-muted py-4">No hay noticias.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Create/Edit Modal -->
-    <b-modal v-model="showModal" :title="editForm.id ? 'Editar Noticia' : 'Nueva Noticia'" hide-footer size="lg">
-      <div class="form-group">
-        <label class="font-weight-600">Título *</label>
-        <input type="text" class="form-control" v-model="editForm.title" />
-      </div>
-      <div class="form-group">
-        <label class="font-weight-600">Resumen</label>
-        <textarea class="form-control" rows="2" v-model="editForm.summary"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="font-weight-600">Contenido</label>
-        <textarea class="form-control" rows="4" v-model="editForm.content"></textarea>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="font-weight-600">Categoría</label>
-            <select class="form-control" v-model="editForm.category">
-              <option value="OPERATIVO">Operativo</option>
-              <option value="INSTITUCIONAL">Institucional</option>
-              <option value="URGENTE">Urgente</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="font-weight-600">Estado</label>
-            <select class="form-control" v-model="editForm.status">
-              <option value="ACTIVE">Activo</option>
-              <option value="INACTIVE">Inactivo</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="font-weight-600">URL de Imagen</label>
-        <input type="text" class="form-control" placeholder="https://..." v-model="editForm.imageUrl" />
-      </div>
-      <div class="form-group">
-        <label class="font-weight-600">Fecha de Publicación</label>
-        <input type="date" class="form-control" v-model="editForm.publishDate" />
-      </div>
-      <div class="d-flex justify-content-end mt-3">
-        <button class="btn btn-secondary mr-2" @click="showModal = false">Cancelar</button>
-        <button class="btn btn-primary" @click="saveNoticia" :disabled="isSaving">
-          <font-awesome-icon :icon="isSaving ? 'spinner' : 'save'" :spin="isSaving" class="mr-1" />
-          {{ isSaving ? 'Guardando...' : 'Guardar' }}
+    <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
+      <div class="sidebar-header">
+        <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
+        <button class="toggle-btn" @click="toggleSidebar">
+          <font-awesome-icon v-if="!isSidebarOpen" icon="bars" :size="20" />
+          <font-awesome-icon v-else icon="times" :size="20" />
         </button>
       </div>
-    </b-modal>
+
+      <nav class="sidebar-nav">
+        <router-link
+          v-for="item in menuItems"
+          :key="item.routeName"
+          :to="{ name: item.routeName }"
+          class="nav-item"
+          :class="{ 'active': route.name === item.routeName }"
+        >
+          <div class="nav-icon-container">
+            <font-awesome-icon :icon="item.icon" :size="22" />
+          </div>
+          <span v-if="isSidebarOpen || isMobile">{{ item.name }}</span>
+          <font-awesome-icon v-if="isSidebarOpen && !isMobile" class="chevron" icon="chevron-right" :size="14" />
+        </router-link>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-profile">
+          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="info" v-if="isSidebarOpen || isMobile">
+            <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
+            <span class="role">Administrador Principal</span>
+          </div>
+        </div>
+        <button class="logout-btn" @click="handleLogout">
+          <font-awesome-icon icon="sign-out-alt" :size="20" />
+          <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-content-view">
+        <div class="news-mgmt">
+          <div class="mgmt-header">
+            <div>
+              <h1>Gestión de Noticias</h1>
+              <p>Publica y administra el contenido informativo del acueducto</p>
+            </div>
+            <button class="btn btn--primary" @click="isModalOpen = true">
+              <font-awesome-icon icon="plus" :size="20" />
+              <span>Nueva Noticia</span>
+            </button>
+          </div>
+
+          <div class="mgmt-filters">
+            <div class="search-box">
+              <font-awesome-icon class="search-icon" icon="search" :size="18" />
+              <input type="text" v-model="searchQuery" placeholder="Buscar por título...">
+            </div>
+          </div>
+
+          <div class="mgmt-table-wrapper">
+            <table class="mgmt-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Título</th>
+                  <th>Categoría</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in news" :key="item.id">
+                  <td>{{ item.date }}</td>
+                  <td class="title-cell">{{ item.title }}</td>
+                  <td>
+                    <span :class="['category-badge', item.category]">{{ item.category }}</span>
+                  </td>
+                  <td>
+                    <span :class="['status-badge', item.isArchived ? 'archived' : 'active']">
+                      {{ item.isArchived ? 'Archivado' : 'Activo' }}
+                    </span>
+                  </td>
+                  <td class="actions-cell">
+                    <button class="btn-icon" title="Editar"><font-awesome-icon icon="pencil-alt" :size="16" /></button>
+                    <button class="btn-icon" title="Archivar"><font-awesome-icon icon="archive" :size="16" /></button>
+                    <button class="btn-icon btn-icon--danger" @click="deleteNews(item.id)" title="Eliminar">
+                      <font-awesome-icon icon="trash" :size="16" />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </template>
 
-<script lang="ts" src="./admin-noticias.component.ts"></script>
+<style lang="scss" scoped>
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$color-primary: #0077be;
+$color-secondary: #00ced1;
+$color-text: #2c3e50;
+$color-text-muted: #64748b;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
-<style scoped>
-.font-weight-600 { font-weight: 600; }
-
-/* Search */
-.search-box { position: relative; }
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  font-size: 0.85rem;
-}
-.search-input {
-  padding-left: 36px;
-  border-radius: 8px;
-  border-color: #dee2e6;
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  position: relative;
 }
 
-/* Category badges */
-.noticia-badge {
-  display: inline-block;
-  padding: 0.3em 0.75em;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+  backdrop-filter: blur(2px);
 }
-.badge-urgente       { background: #fee2e2; color: #dc2626; }
-.badge-operativo     { background: #fef3c7; color: #d97706; }
-.badge-institucional { background: #dbeafe; color: #2563eb; }
 
-/* Status badges */
-.status-badge {
-  display: inline-block;
-  padding: 0.25em 0.65em;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
+.admin-sidebar {
+  width: 260px;
+  background: #1e293b;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+  min-height: 0;
+
+  &.is-closed {
+    width: 80px;
+    .logo-text, .nav-item span, .chevron, .logout-btn span { display: none; }
+    .nav-item, .logout-btn { justify-content: center; padding: 1rem; }
+    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+  }
+
+  &.is-mobile {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(0);
+    z-index: 2000;
+
+    &.is-closed {
+      transform: translateX(-100%);
+      width: 280px;
+    }
+  }
 }
-.status-active   { background: #dcfce7; color: #16a34a; }
-.status-inactive { background: #f3f4f6; color: #6b7280; }
 
-/* Action buttons */
-.btn-icon {
-  padding: 0.3rem 0.45rem;
-  line-height: 1;
+.sidebar-header {
+  padding: $spacing-sm $spacing-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 70px;
+
+  .logo-text {
+    font-size: 1.15rem;
+    color: #94a3b8;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    strong { color: $color-secondary; }
+  }
+
+  .toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin-left: $spacing-xs;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+  }
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: $spacing-md 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem $spacing-md;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  .nav-icon-container {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &:hover, &.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.active {
+    border-left: 4px solid $color-primary;
+    color: white;
+    background: rgba($color-primary, 0.1);
+  }
+
+  .chevron { margin-left: auto; opacity: 0.5; }
+}
+
+.sidebar-footer {
+  padding: $spacing-md;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
   background: none;
   border: none;
+  color: #f87171;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  &:hover { background: rgba(239, 68, 68, 0.1); }
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  min-width: 0;
+  background-color: #f8fafc;
+  min-height: 0;
+}
+
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
+  margin-bottom: $spacing-sm;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    background: $color-primary;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
+    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+  }
+}
+
+.admin-content-view {
+  flex: 1;
+  padding: $spacing-lg;
+  padding-bottom: $spacing-xl * 2;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+.news-mgmt {
+  background: white;
+  padding: $spacing-md;
+  border-radius: 16px;
+  box-shadow: $shadow-sm;
+}
+
+.mgmt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+
+  h1 { font-size: 1.5rem; color: $color-text; }
+  p { color: $color-text-muted; font-size: 0.9rem; }
+}
+
+.mgmt-filters {
+  margin-bottom: $spacing-md;
+  .search-box {
+    max-width: 400px;
+    position: relative;
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: $color-text-muted; }
+    input {
+      width: 100%;
+      padding: 0 12px 0 2.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      height: 44px;
+    }
+  }
+}
+
+.mgmt-table-wrapper {
+  overflow-x: auto;
+}
+
+.mgmt-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  th {
+    padding: $spacing-sm;
+    border-bottom: 2px solid #f1f5f9;
+    color: $color-text-muted;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  td {
+    padding: $spacing-sm;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+  }
+
+  .title-cell {
+    font-weight: 600;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.category-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: white;
+
+  &.operativo { background: #f59e0b; }
+  &.institucional { background: $color-primary; }
+  &.comunidad { background: #10b981; }
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  &.active { background: #dcfce7; color: #166534; }
+  &.archived { background: #f1f5f9; color: #64748b; }
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $color-text-muted;
+  transition: all 0.2s;
+
+  &:hover { background: #f1f5f9; color: $color-primary; }
+  &--danger:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
   font-size: 0.9rem;
+
+  &--primary {
+    background: $color-primary;
+    color: white;
+    &:hover { background: darken($color-primary, 10%); }
+  }
 }
 </style>

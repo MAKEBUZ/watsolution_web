@@ -71,6 +71,19 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons/faUserPlus';
 import { faUsers } from '@fortawesome/free-solid-svg-icons/faUsers';
 import { faUsersCog } from '@fortawesome/free-solid-svg-icons/faUsersCog';
 import { faWrench } from '@fortawesome/free-solid-svg-icons/faWrench';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
+import { faNetworkWired } from '@fortawesome/free-solid-svg-icons/faNetworkWired';
+import { faFile } from '@fortawesome/free-solid-svg-icons/faFile';
+import { faTabletAlt } from '@fortawesome/free-solid-svg-icons/faTabletAlt';
+import { faMobileAlt } from '@fortawesome/free-solid-svg-icons/faMobileAlt';
+import { faQuoteLeft } from '@fortawesome/free-solid-svg-icons/faQuoteLeft';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons/faEnvelope';
+import { faPhone } from '@fortawesome/free-solid-svg-icons/faPhone';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons/faMapMarkerAlt';
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
+import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator';
+import { faCode } from '@fortawesome/free-solid-svg-icons/faCode';
+import { faPrint } from '@fortawesome/free-solid-svg-icons/faPrint';
 
 const datetimeFormats: IntlDateTimeFormats = {
   es: {
@@ -174,6 +187,19 @@ export function initFortAwesome(vue) {
     faUsers,
     faUsersCog,
     faWrench,
+    faArrowRight,
+    faNetworkWired,
+    faFile,
+    faTabletAlt,
+    faMobileAlt,
+    faQuoteLeft,
+    faEnvelope,
+    faPhone,
+    faMapMarkerAlt,
+    faEyeSlash,
+    faCalculator,
+    faCode,
+    faPrint,
   );
 }
 export function initI18N(opts: any = {}) {

@@ -10,6 +10,7 @@ const AdminActividad = () => import('@/views/admin/admin-actividad.vue');
 const AdminUsuarios = () => import('@/views/admin/admin-usuarios.vue');
 const AdminFacturacion = () => import('@/views/admin/admin-facturacion.vue');
 const AdminNoticias = () => import('@/views/admin/admin-noticias.vue');
+const UserPortal = () => import('@/views/admin/admin-portal.vue');
 
 export default [
   {
@@ -36,15 +37,64 @@ export default [
   },
   {
     path: '/admin-panel',
+    name: 'AdminDashboard',
     component: AdminPanel,
     meta: { authorities: [Authority.ADMIN] },
-    children: [
-      { path: '', redirect: 'resumen' },
-      { path: 'resumen',     name: 'AdminResumen',     component: AdminResumen },
-      { path: 'actividad',   name: 'AdminActividad',   component: AdminActividad },
-      { path: 'usuarios',    name: 'AdminUsuarios',    component: AdminUsuarios },
-      { path: 'facturacion', name: 'AdminFacturacion', component: AdminFacturacion },
-      { path: 'noticias',    name: 'AdminNoticias',    component: AdminNoticias },
-    ],
+  },
+  {
+    path: '/admin/resumen',
+    name: 'AdminResumen',
+    component: AdminResumen,
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  {
+    path: '/admin/actividad',
+    name: 'AdminActividad',
+    component: AdminActividad,
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  {
+    path: '/admin/usuarios',
+    name: 'AdminUsuarios',
+    component: AdminUsuarios,
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  {
+    path: '/admin/facturacion',
+    name: 'AdminFacturacion',
+    component: AdminFacturacion,
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  {
+    path: '/admin/noticias',
+    name: 'AdminNoticias',
+    component: AdminNoticias,
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  {
+    path: '/admin/portal-usuario',
+    name: 'AdminPortalUsuario',
+    component: UserPortal,
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  {
+    path: '/admin',
+    name: 'admin-summary',
+    redirect: '/admin/resumen'
+  },
+  {
+    path: '/admin/usuarios',
+    name: 'admin-users',
+    redirect: '/admin/usuarios'
+  },
+  {
+    path: '/admin/facturacion',
+    name: 'admin-billing',
+    redirect: '/admin/facturacion'
+  },
+  {
+    path: '/admin/noticias',
+    name: 'admin-news',
+    redirect: '/admin/noticias'
   },
 ];

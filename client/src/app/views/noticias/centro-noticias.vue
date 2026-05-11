@@ -1,181 +1,287 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { Search, Calendar, Tag, ChevronRight } from 'lucide-vue-next'
+import { useNewsStore } from '@/shared/config/store/news-store'
+
+const newsStore = useNewsStore()
+const searchQuery = ref('')
+const selectedCategory = ref('todas')
+
+onMounted(() => {
+  newsStore.fetchNews()
+})
+
+const filteredNews = computed(() => {
+  return newsStore.activeNews.filter(n => {
+    const matchesSearch = n.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+                          n.content.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesCategory = selectedCategory.value === 'todas' || n.category === selectedCategory.value
+    return matchesSearch && matchesCategory
+  })
+})
+
+const categories = [
+  { label: 'Todas', value: 'todas' },
+  { label: 'Operativo', value: 'operativo' },
+  { label: 'Institucional', value: 'institucional' },
+  { label: 'Comunidad', value: 'comunidad' }
+]
+
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toLocaleDateString('es-ES', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  })
+}
+</script>
+
 <template>
-  <div>
-    <!-- Hero -->
-    <div class="noticias-hero text-white text-center">
-      <h1 class="display-4 font-weight-bold mb-2">Centro de Noticias</h1>
-      <p class="lead mb-0">Mantente informado sobre las novedades y el estado del servicio</p>
+  <div class="news-list-view">
+    <div class="news-hero">
+      <div class="container">
+        <h1>Centro de Noticias</h1>
+        <p>Mantente informado sobre las novedades y el estado del servicio</p>
+      </div>
     </div>
 
-    <!-- Content -->
-    <div class="container-fluid px-4 py-4" style="background: #f0f5fb; min-height: 60vh;">
-      <div class="row">
-        <!-- Sidebar -->
-        <div class="col-lg-3 mb-4">
-          <!-- Search -->
-          <div class="card shadow-sm mb-3">
-            <div class="card-body">
-              <h6 class="font-weight-bold mb-3">Búsqueda</h6>
-              <div class="search-box">
-                <font-awesome-icon icon="search" class="search-icon text-muted" />
-                <input
-                  type="text"
-                  class="search-input form-control"
-                  placeholder="Buscar noticias..."
-                  v-model="searchQuery"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Categories -->
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h6 class="font-weight-bold mb-3">Categorías</h6>
-              <ul class="cat-list list-unstyled mb-0">
-                <li
-                  class="cat-item"
-                  :class="{ 'cat-item-active': selectedCategory === '' }"
-                  @click="selectedCategory = ''"
-                >Todas</li>
-                <li
-                  v-for="cat in categories"
-                  :key="cat"
-                  class="cat-item"
-                  :class="{ 'cat-item-active': selectedCategory === cat }"
-                  @click="selectedCategory = cat"
-                >{{ categoryLabel(cat) }}</li>
-              </ul>
-            </div>
+    <div class="container news-content">
+      <aside class="news-filters">
+        <div class="filter-card">
+          <h3>Búsqueda</h3>
+          <div class="search-box">
+            <Search class="search-icon" :size="18" />
+            <input type="text" v-model="searchQuery" placeholder="Buscar noticias...">
           </div>
         </div>
 
-        <!-- News Grid -->
-        <div class="col-lg-9">
-          <div v-if="isFetching" class="text-center py-5">
-            <div class="spinner-border text-primary"></div>
-          </div>
-
-          <div v-else-if="!filtered.length" class="text-center py-5 text-muted">
-            <font-awesome-icon icon="newspaper" class="fa-3x mb-3" />
-            <p>No hay noticias disponibles.</p>
-          </div>
-
-          <div v-else class="row">
-            <div class="col-md-6 mb-4" v-for="noticia in filtered" :key="noticia.id">
-              <div class="card noticia-card h-100">
-                <!-- Image with badge overlay -->
-                <div class="noticia-img-wrap">
-                  <img
-                    v-if="noticia.imageUrl"
-                    :src="noticia.imageUrl"
-                    class="noticia-img"
-                    :alt="noticia.title"
-                  />
-                  <div v-else class="noticia-img-placeholder d-flex align-items-center justify-content-center">
-                    <font-awesome-icon icon="newspaper" class="fa-2x text-muted" />
-                  </div>
-                  <span class="noticia-badge" :class="categoryClass(noticia.category)">
-                    {{ noticia.category }}
-                  </span>
-                </div>
-
-                <!-- Body -->
-                <div class="card-body">
-                  <div class="d-flex align-items-center mb-2">
-                    <font-awesome-icon icon="calendar" class="text-muted mr-1" style="font-size:0.72rem;" />
-                    <small class="text-muted">{{ formatDate(noticia.publishDate) }}</small>
-                  </div>
-                  <h5 class="card-title font-weight-bold" style="font-size:1rem;">{{ noticia.title }}</h5>
-                  <p class="card-text text-muted small">{{ noticia.summary }}</p>
-                </div>
-              </div>
-            </div>
+        <div class="filter-card">
+          <h3>Categorías</h3>
+          <div class="category-list">
+            <button 
+              v-for="cat in categories" 
+              :key="cat.value"
+              :class="['category-btn', { active: selectedCategory === cat.value }]"
+              @click="selectedCategory = cat.value"
+            >
+              {{ cat.label }}
+            </button>
           </div>
         </div>
-      </div>
+      </aside>
+
+      <main class="news-grid">
+        <div v-if="filteredNews.length === 0" class="no-results">
+          No se encontraron noticias con los criterios seleccionados.
+        </div>
+        
+        <article v-for="item in filteredNews" :key="item.id" class="news-card">
+          <div class="news-card__image">
+            <img :src="item.image" :alt="item.title" loading="lazy">
+            <span :class="['news-card__category', item.category]">
+              {{ item.category }}
+            </span>
+          </div>
+          <div class="news-card__body">
+            <div class="news-card__meta">
+              <span><Calendar :size="14" /> {{ formatDate(item.date) }}</span>
+            </div>
+            <h2 class="news-card__title">{{ item.title }}</h2>
+            <p class="news-card__excerpt">{{ item.content.substring(0, 120) }}...</p>
+            <a href="#" class="news-card__link">Leer más <ChevronRight :size="16" /></a>
+          </div>
+        </article>
+      </main>
     </div>
   </div>
 </template>
 
-<script lang="ts" src="./centro-noticias.component.ts"></script>
+<style lang="scss" scoped>
+@use '../../../content/scss/variables' as *;
+@use '../../../content/scss/mixins' as *;
 
-<style scoped>
-/* Hero */
-.noticias-hero {
-  background: linear-gradient(160deg, #1a3a5c 0%, #1a6eb5 100%);
-  padding: 4.5rem 2rem;
-}
-
-/* Search */
-.search-box { position: relative; }
-.search-icon {
-  position: absolute;
-  left: 11px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  font-size: 0.8rem;
-}
-.search-input {
-  padding-left: 33px;
-  border-radius: 8px;
+.news-list-view {
+  padding-top: 70px;
+  background-color: $color-bg;
+  min-height: 100vh;
 }
 
-/* Category list */
-.cat-list { margin: 0; }
-.cat-item {
-  padding: 0.45rem 0.75rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.88rem;
-  color: #374151;
-  transition: background 0.15s, color 0.15s;
-  margin-bottom: 2px;
-}
-.cat-item:hover { background: #f0f5fb; }
-.cat-item-active {
-  background: #2563eb;
+.news-hero {
+  background: linear-gradient(135deg, $color-primary 0%, darken($color-primary, 20%) 100%);
   color: white;
-  font-weight: 600;
+  padding: $spacing-xl 0;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: $spacing-sm;
+  }
 }
 
-/* News cards */
-.noticia-card {
+.news-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @include desktop {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+.news-filters {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.filter-card {
+  background: white;
+  padding: $spacing-md;
+  border-radius: 16px;
+  box-shadow: $shadow-sm;
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: $spacing-md;
+    color: $color-text;
+  }
+}
+
+.search-box {
+  position: relative;
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-text-muted;
+  }
+  input {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.category-btn {
+  text-align: left;
+  padding: 0.75rem;
+  border-radius: 8px;
   border: none;
-  border-radius: 14px;
+  background: transparent;
+  color: $color-text;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover, &.active {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    font-weight: 600;
+  }
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.news-card {
+  background: white;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-  transition: transform 0.18s, box-shadow 0.18s;
-}
-.noticia-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: $shadow-sm;
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-md;
+  }
+
+  &__image {
+    height: 200px;
+    position: relative;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__category {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: white;
+
+    &.operativo { background: #f59e0b; }
+    &.institucional { background: $color-primary; }
+    &.comunidad { background: #10b981; }
+  }
+
+  &__body {
+    padding: $spacing-md;
+  }
+
+  &__meta {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+    display: flex;
+    gap: 12px;
+    margin-bottom: $spacing-xs;
+    span { display: flex; align-items: center; gap: 4px; }
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    margin-bottom: $spacing-sm;
+    color: $color-text;
+  }
+
+  &__excerpt {
+    font-size: 0.95rem;
+    color: $color-text-muted;
+    line-height: 1.5;
+    margin-bottom: $spacing-md;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: $color-primary;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
 }
 
-.noticia-img-wrap { position: relative; }
-.noticia-img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: $spacing-xl;
+  background: white;
+  border-radius: 16px;
+  color: $color-text-muted;
 }
-.noticia-img-placeholder {
-  height: 200px;
-  background: #e9ecef;
-}
-
-/* Category badge over image */
-.noticia-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 0.3em 0.75em;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-.badge-urgente       { background: #fee2e2; color: #dc2626; }
-.badge-operativo     { background: #fef3c7; color: #d97706; }
-.badge-institucional { background: #dbeafe; color: #2563eb; }
 </style>

@@ -1,164 +1,579 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useAccountStore } from '@/shared/config/store/account-store'
+
+const router = useRouter()
+const route = useRoute()
+const accountStore = useAccountStore()
+
+const isSidebarOpen = ref(window.innerWidth > 1024)
+const isMobile = ref(window.innerWidth <= 1024)
+
+const menuItems = [
+  { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
+  { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
+  { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
+  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
+  { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
+  { name: 'Portal Usuario', routeName: 'AdminPortalUsuario', icon: 'user' }
+]
+
+const handleLogout = () => {
+  accountStore.logout()
+  router.push('/login')
+}
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 1024
+  if (isMobile.value) {
+    isSidebarOpen.value = false
+  } else {
+    isSidebarOpen.value = true
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', handleResize)
+  handleResize()
+}
+
+const invoice = ref({
+  userId: '',
+  userName: '',
+  previousReading: 1250,
+  currentReading: 1265,
+  ratePerM3: 2500,
+  fixedCharge: 5000,
+  subsidy: 0.15,
+  recharge: 0
+})
+
+const consumption = computed(() => invoice.value.currentReading - invoice.value.previousReading)
+const subtotal = computed(() => (consumption.value * invoice.value.ratePerM3) + invoice.value.fixedCharge)
+const discount = computed(() => subtotal.value * invoice.value.subsidy)
+const total = computed(() => subtotal.value - discount.value + invoice.value.recharge)
+
+const handleSave = () => {
+  alert('Factura generada exitosamente con el consecutivo: FAC-2026-0042')
+}
+</script>
+
 <template>
-  <div class="p-4">
-    <div class="mb-4">
-      <h3 class="font-weight-bold mb-1">Facturación Manual</h3>
-      <p class="text-muted mb-0">Genera facturas individuales calculando automáticamente consumos y tarifas</p>
-    </div>
+  <div class="admin-layout">
+    <div
+      v-if="isMobile && isSidebarOpen"
+      class="sidebar-overlay"
+      @click="toggleSidebar"
+    ></div>
 
-    <div v-if="successMsg" class="alert alert-success d-flex align-items-center">
-      <font-awesome-icon icon="check-circle" class="mr-2" /> {{ successMsg }}
-    </div>
-    <div v-if="errorMsg" class="alert alert-danger d-flex align-items-center">
-      <font-awesome-icon icon="exclamation-circle" class="mr-2" /> {{ errorMsg }}
-    </div>
+    <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
+      <div class="sidebar-header">
+        <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
+        <button class="toggle-btn" @click="toggleSidebar">
+          <font-awesome-icon v-if="!isSidebarOpen" icon="bars" :size="20" />
+          <font-awesome-icon v-else icon="times" :size="20" />
+        </button>
+      </div>
 
-    <div class="row">
-      <!-- Left: Form -->
-      <div class="col-lg-7 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="text-primary mb-4">
-              <font-awesome-icon icon="clipboard-list" class="mr-2" /> Datos de Consumo
-            </h5>
+      <nav class="sidebar-nav">
+        <router-link
+          v-for="item in menuItems"
+          :key="item.routeName"
+          :to="{ name: item.routeName }"
+          class="nav-item"
+          :class="{ 'active': route.name === item.routeName }"
+        >
+          <div class="nav-icon-container">
+            <font-awesome-icon :icon="item.icon" :size="22" />
+          </div>
+          <span v-if="isSidebarOpen || isMobile">{{ item.name }}</span>
+          <font-awesome-icon v-if="isSidebarOpen && !isMobile" class="chevron" icon="chevron-right" :size="14" />
+        </router-link>
+      </nav>
 
-            <!-- User Search -->
-            <div class="form-group">
-              <label class="font-weight-600">Buscar Usuario (Nombre o ID)</label>
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Ej: Juan Pérez"
-                  v-model="personSearch"
-                  @keyup.enter="searchPeople"
-                />
-                <div class="input-group-append">
-                  <button class="btn btn-primary" @click="searchPeople" :disabled="isSearching">
-                    <font-awesome-icon :icon="isSearching ? 'spinner' : 'search'" :spin="isSearching" />
+      <div class="sidebar-footer">
+        <div class="sidebar-profile">
+          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="info" v-if="isSidebarOpen || isMobile">
+            <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
+            <span class="role">Administrador Principal</span>
+          </div>
+        </div>
+        <button class="logout-btn" @click="handleLogout">
+          <font-awesome-icon icon="sign-out-alt" :size="20" />
+          <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-content-view">
+        <div class="billing-view">
+          <div class="mgmt-header">
+            <h1>Facturación Manual</h1>
+            <p>Genera facturas individuales calculando automáticamente consumos y tarifas</p>
+          </div>
+
+          <div class="billing-grid">
+            <section class="billing-card billing-form">
+              <h2><font-awesome-icon icon="calculator" :size="20" /> Datos de Consumo</h2>
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label>Buscar Usuario (Nombre o ID)</label>
+                  <div class="input-with-search">
+                    <input type="text" v-model="invoice.userName" placeholder="Ej: Juan Pérez">
+                    <button class="btn-search"><font-awesome-icon icon="search" :size="18" /></button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Lectura Anterior (m³)</label>
+                  <input type="number" v-model="invoice.previousReading">
+                </div>
+
+                <div class="form-group">
+                  <label>Lectura Actual (m³)</label>
+                  <input type="number" v-model="invoice.currentReading">
+                </div>
+
+                <div class="form-group">
+                  <label>Tarifa por m³</label>
+                  <input type="number" v-model="invoice.ratePerM3">
+                </div>
+
+                <div class="form-group">
+                  <label>Cargo Fijo</label>
+                  <input type="number" v-model="invoice.fixedCharge">
+                </div>
+
+                <div class="form-group">
+                  <label>Subsidio (%)</label>
+                  <input type="number" step="0.01" v-model="invoice.subsidy">
+                </div>
+
+                <div class="form-group">
+                  <label>Recargos Adicionales</label>
+                  <input type="number" v-model="invoice.recharge">
+                </div>
+              </div>
+            </section>
+
+            <section class="billing-card billing-preview">
+              <h2><font-awesome-icon icon="file-invoice" :size="20" /> Resumen de Liquidación</h2>
+
+              <div class="preview-content">
+                <div class="preview-row">
+                  <span>Consumo del periodo:</span>
+                  <strong>{{ consumption }} m³</strong>
+                </div>
+                <div class="preview-row">
+                  <span>Valor Consumo:</span>
+                  <span>${{ (consumption * invoice.ratePerM3).toLocaleString() }}</span>
+                </div>
+                <div class="preview-row">
+                  <span>Cargo Fijo:</span>
+                  <span>${{ invoice.fixedCharge.toLocaleString() }}</span>
+                </div>
+                <hr>
+                <div class="preview-row">
+                  <span>Subtotal:</span>
+                  <span>${{ subtotal.toLocaleString() }}</span>
+                </div>
+                <div class="preview-row discount">
+                  <span>Subsidio Aplicado ({{ invoice.subsidy * 100 }}%):</span>
+                  <span>- ${{ discount.toLocaleString() }}</span>
+                </div>
+                <div class="preview-row recharge">
+                  <span>Recargos:</span>
+                  <span>+ ${{ invoice.recharge.toLocaleString() }}</span>
+                </div>
+                <div class="preview-total">
+                  <span>TOTAL A PAGAR:</span>
+                  <strong>${{ total.toLocaleString() }}</strong>
+                </div>
+              </div>
+
+              <div class="billing-actions">
+                <button @click="handleSave" class="btn btn--primary">
+                  <font-awesome-icon icon="save" :size="20" />
+                  <span>Generar Factura</span>
+                </button>
+                <div class="export-buttons">
+                  <button class="btn btn--outline">
+                    <font-awesome-icon icon="print" :size="20" />
+                    <span>PDF</span>
+                  </button>
+                  <button class="btn btn--outline">
+                    <font-awesome-icon icon="code" :size="20" />
+                    <span>XML</span>
                   </button>
                 </div>
               </div>
-              <div v-if="searchResults.length" class="list-group mt-1 shadow-sm">
-                <button
-                  v-for="person in searchResults"
-                  :key="person.id"
-                  class="list-group-item list-group-item-action"
-                  @click="selectPerson(person)"
-                >
-                  <strong>{{ person.fullName }}</strong>
-                  <small class="text-muted ml-2">{{ person.documentNumber }}</small>
-                </button>
-              </div>
-            </div>
-
-            <div v-if="selectedPerson" class="alert alert-info mb-3 py-2">
-              <font-awesome-icon icon="user" class="mr-2" />
-              Suscriptor seleccionado: <strong>{{ selectedPerson.fullName }}</strong>
-              (Doc: {{ selectedPerson.documentNumber }})
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="font-weight-600">Lectura Anterior (m³)</label>
-                  <input type="number" class="form-control" v-model.number="form.prevReading" min="0" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="font-weight-600">Lectura Actual (m³)</label>
-                  <input type="number" class="form-control" v-model.number="form.currentReading" min="0" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="font-weight-600">Tarifa por m³</label>
-                  <input type="number" class="form-control" v-model.number="form.rate" min="0" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="font-weight-600">Cargo Fijo</label>
-                  <input type="number" class="form-control" v-model.number="form.fixedCharge" min="0" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="font-weight-600">Subsidio (%)</label>
-                  <input type="number" class="form-control" v-model.number="form.subsidy" min="0" max="1" step="0.01" placeholder="Ej: 0.15" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="font-weight-600">Recargos Adicionales</label>
-                  <input type="number" class="form-control" v-model.number="form.surcharges" min="0" />
-                </div>
-              </div>
-            </div>
-
-            <button class="btn btn-primary btn-block mt-2" @click="generateInvoice" :disabled="isGenerating">
-              <font-awesome-icon :icon="isGenerating ? 'spinner' : 'file-invoice'" :spin="isGenerating" class="mr-2" />
-              {{ isGenerating ? 'Generando...' : 'Generar Factura' }}
-            </button>
+            </section>
           </div>
         </div>
       </div>
-
-      <!-- Right: Summary -->
-      <div class="col-lg-5 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="text-primary mb-4">
-              <font-awesome-icon icon="clipboard" class="mr-2" /> Resumen de Liquidación
-            </h5>
-
-            <div class="summary-row d-flex justify-content-between py-2">
-              <span class="text-muted">Consumo del periodo:</span>
-              <span class="font-weight-bold">{{ summary.consumption }} m³</span>
-            </div>
-            <div class="summary-row d-flex justify-content-between py-2">
-              <span class="text-muted">Valor Consumo:</span>
-              <span>{{ formatCurrency(summary.consumptionValue) }}</span>
-            </div>
-            <div class="summary-row d-flex justify-content-between py-2">
-              <span class="text-muted">Cargo Fijo:</span>
-              <span>{{ formatCurrency(form.fixedCharge) }}</span>
-            </div>
-            <div class="summary-row d-flex justify-content-between py-2">
-              <span class="font-weight-600">Subtotal:</span>
-              <span class="font-weight-600">{{ formatCurrency(summary.subtotal) }}</span>
-            </div>
-            <div class="summary-row d-flex justify-content-between py-2 text-success">
-              <span class="font-weight-600">
-                Subsidio Aplicado ({{ Math.round(form.subsidy * 100) }}%):
-              </span>
-              <span>- {{ formatCurrency(summary.subsidyApplied) }}</span>
-            </div>
-            <div class="summary-row d-flex justify-content-between py-2 text-danger">
-              <span>Recargos:</span>
-              <span>+ {{ formatCurrency(form.surcharges) }}</span>
-            </div>
-
-            <div class="mt-4 p-3 bg-primary rounded text-white d-flex justify-content-between align-items-center">
-              <span class="font-weight-bold">TOTAL A PAGAR:</span>
-              <span class="h4 mb-0 font-weight-800">{{ formatCurrency(summary.total) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </main>
   </div>
 </template>
 
-<script lang="ts" src="./admin-facturacion.component.ts"></script>
+<style lang="scss" scoped>
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$color-primary: #0077be;
+$color-secondary: #00ced1;
+$color-text: #2c3e50;
+$color-text-muted: #64748b;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
-<style scoped>
-.font-weight-600 { font-weight: 600; }
-.font-weight-800 { font-weight: 800; }
-.summary-row {
-  border-bottom: 1px solid #f0f0f0;
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  position: relative;
 }
-.summary-row:last-of-type {
-  border-bottom: none;
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+  backdrop-filter: blur(2px);
+}
+
+.admin-sidebar {
+  width: 260px;
+  background: #1e293b;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+  min-height: 0;
+
+  &.is-closed {
+    width: 80px;
+    .logo-text, .nav-item span, .chevron, .logout-btn span { display: none; }
+    .nav-item, .logout-btn { justify-content: center; padding: 1rem; }
+    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+  }
+
+  &.is-mobile {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(0);
+    z-index: 2000;
+
+    &.is-closed {
+      transform: translateX(-100%);
+      width: 280px;
+    }
+  }
+}
+
+.sidebar-header {
+  padding: $spacing-sm $spacing-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 70px;
+
+  .logo-text {
+    font-size: 1.15rem;
+    color: #94a3b8;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    strong { color: $color-secondary; }
+  }
+
+  .toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin-left: $spacing-xs;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+  }
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: $spacing-md 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem $spacing-md;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  .nav-icon-container {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &:hover, &.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.active {
+    border-left: 4px solid $color-primary;
+    color: white;
+    background: rgba($color-primary, 0.1);
+  }
+
+  .chevron { margin-left: auto; opacity: 0.5; }
+}
+
+.sidebar-footer {
+  padding: $spacing-md;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: #f87171;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  &:hover { background: rgba(239, 68, 68, 0.1); }
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  min-width: 0;
+  background-color: #f8fafc;
+  min-height: 0;
+}
+
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
+  margin-bottom: $spacing-sm;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    background: $color-primary;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
+    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+  }
+}
+
+.admin-content-view {
+  flex: 1;
+  padding: $spacing-lg;
+  padding-bottom: $spacing-xl * 2;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+.billing-view {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.mgmt-header {
+  h1 { font-size: 1.5rem; color: $color-text; }
+  p { color: $color-text-muted; font-size: 0.9rem; }
+}
+
+.billing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+}
+
+.billing-card {
+  background: white;
+  padding: $spacing-lg;
+  border-radius: 16px;
+  box-shadow: $shadow-sm;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    margin-bottom: $spacing-lg;
+    color: $color-primary;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  .full-width { grid-column: 1 / -1; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  label { font-weight: 600; font-size: 0.85rem; color: $color-text-muted; }
+  input {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+}
+
+.input-with-search {
+  display: flex;
+  gap: 8px;
+  input { flex: 1; }
+  .btn-search {
+    background: $color-primary;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 45px;
+    cursor: pointer;
+  }
+}
+
+.preview-content {
+  background: #f8fafc;
+  padding: $spacing-md;
+  border-radius: 12px;
+  margin-bottom: $spacing-lg;
+
+  .preview-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+
+    &.discount { color: #166534; font-weight: 600; }
+    &.recharge { color: #991b1b; font-weight: 600; }
+  }
+
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 12px 0; }
+
+  .preview-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing-md;
+    font-size: 1.25rem;
+    color: $color-text;
+    strong { color: $color-primary; }
+  }
+}
+
+.billing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  .export-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+
+  &--primary {
+    background: $color-primary;
+    color: white;
+    &:hover { background: darken($color-primary, 10%); }
+  }
+
+  &--outline {
+    background: transparent;
+    border: 2px solid $color-primary;
+    color: $color-primary;
+    &:hover { background: $color-primary; color: white; }
+  }
 }
 </style>
