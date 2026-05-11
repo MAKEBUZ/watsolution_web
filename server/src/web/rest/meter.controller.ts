@@ -49,6 +49,19 @@ export class MeterController {
     return results;
   }
 
+  @Get('/by-person/:personId')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Get all meter readings for a person' })
+  @ApiResponse({ status: 200, description: 'Meter readings for the person', type: MeterDTO })
+  async getByPerson(@Param('personId') personId: number): Promise<MeterDTO[]> {
+    const [results] = await this.meterService.findAndCount({
+      where: { person: { id: +personId } } as any,
+      order: { readingDate: 'DESC' } as any,
+      take: 100,
+    });
+    return results;
+  }
+
   @Get('/:id')
   @Roles(RoleType.USER)
   @ApiResponse({

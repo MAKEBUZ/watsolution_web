@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Logger,
+  NotFoundException,
   Param,
   Post as PostMethod,
   Put,
@@ -15,6 +16,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from '../../service/dto/invoice.dto';
 import { InvoiceService } from '../../service/invoice.service';
+import { BucketService } from '../../service/bucket.service';
 import { Page, PageRequest } from '../../domain/base/pagination.entity';
 import { AuthGuard, RoleType, Roles, RolesGuard } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
@@ -29,7 +31,10 @@ import { LoggingInterceptor } from '../../client/interceptors/logging.intercepto
 export class InvoiceController {
   logger = new Logger('InvoiceController');
 
-  constructor(private readonly invoiceService: InvoiceService) {}
+  constructor(
+    private readonly invoiceService: InvoiceService,
+    private readonly bucketService: BucketService,
+  ) {}
 
   @Get('/')
   @Roles(RoleType.USER)
@@ -47,6 +52,30 @@ export class InvoiceController {
     });
     HeaderUtil.addPaginationHeaders(req.res, new Page(results, count, pageRequest));
     return results;
+  }
+
+  @Get('/by-person/:personId')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Get all invoices for a person' })
+  @ApiResponse({ status: 200, description: 'Invoices for the person', type: InvoiceDTO })
+  async getByPerson(@Param('personId') personId: number): Promise<InvoiceDTO[]> {
+    const [results] = await this.invoiceService.findAndCount({
+      where: { person: { id: +personId } } as any,
+      order: { issueDate: 'DESC' } as any,
+      take: 50,
+    });
+    return results;
+  }
+
+  @Get('/download/:id')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Get presigned download URL for invoice PDF' })
+  @ApiResponse({ status: 200, description: 'Presigned URL' })
+  async getDownloadUrl(@Param('id') id: number): Promise<{ url: string }> {
+    const invoice = await this.invoiceService.findById(id);
+    if (!invoice?.pdfUrl) throw new NotFoundException('PDF not available for this invoice');
+    const url = await this.bucketService.getPresignedUrl(invoice.pdfUrl);
+    return { url };
   }
 
   @Get('/:id')

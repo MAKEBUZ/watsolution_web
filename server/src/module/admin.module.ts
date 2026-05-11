@@ -8,10 +8,13 @@ import { ActivityLog } from '../domain/activity-log.entity';
 import { AdminController } from '../web/rest/admin.controller';
 import { AdminStatsService } from '../service/admin-stats.service';
 import { InvoiceService } from '../service/invoice.service';
+import { MeterService } from '../service/meter.service';
+import { BucketService } from '../service/bucket.service';
+import { InvoicePdfService } from '../service/invoice-pdf.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Invoice, Meter, Person, ActivityLog])],
   controllers: [AdminController],
-  providers: [AdminStatsService, InvoiceService],
+  providers: [AdminStatsService, InvoiceService, MeterService, BucketService, InvoicePdfService],
 })
 export class AdminModule {}

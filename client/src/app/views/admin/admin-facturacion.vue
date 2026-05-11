@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAccountStore } from '@/shared/config/store/account-store'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -42,24 +43,103 @@ if (typeof window !== 'undefined') {
   handleResize()
 }
 
+// Person search
+const searchQuery = ref('')
+const searchResults = ref<any[]>([])
+const selectedPerson = ref<any>(null)
+const isSearching = ref(false)
+const showDropdown = ref(false)
+
+const searchPersons = async () => {
+  const q = searchQuery.value.trim()
+  if (!q) { searchResults.value = []; showDropdown.value = false; return }
+  isSearching.value = true
+  try {
+    const res = await axios.get('api/people', { params: { page: 0, size: 20, sort: 'id,asc' } })
+    const lower = q.toLowerCase()
+    searchResults.value = (res.data ?? []).filter((p: any) =>
+      p.fullName?.toLowerCase().includes(lower) || p.documentNumber?.includes(q)
+    )
+    showDropdown.value = true
+  } catch {
+    searchResults.value = []
+  } finally {
+    isSearching.value = false
+  }
+}
+
+const selectPerson = async (person: any) => {
+  selectedPerson.value = person
+  searchQuery.value = person.fullName
+  showDropdown.value = false
+  invoice.value.personId = person.id
+  // Auto-load last meter reading
+  try {
+    const res = await axios.get(`api/meters/by-person/${person.id}`)
+    const meters: any[] = res.data ?? []
+    if (meters.length > 0) {
+      invoice.value.currentReading = meters[0].currentReading ?? meters[0].reading ?? 0
+    }
+  } catch { /* no meter yet */ }
+}
+
 const invoice = ref({
-  userId: '',
-  userName: '',
-  previousReading: 1250,
-  currentReading: 1265,
+  personId: null as number | null,
+  currentReading: 0,
   ratePerM3: 2500,
   fixedCharge: 5000,
   subsidy: 0.15,
   recharge: 0
 })
 
-const consumption = computed(() => invoice.value.currentReading - invoice.value.previousReading)
-const subtotal = computed(() => (consumption.value * invoice.value.ratePerM3) + invoice.value.fixedCharge)
+const consumption = computed(() => invoice.value.currentReading)
+const subtotal = computed(() => consumption.value * invoice.value.ratePerM3 + invoice.value.fixedCharge)
 const discount = computed(() => subtotal.value * invoice.value.subsidy)
 const total = computed(() => subtotal.value - discount.value + invoice.value.recharge)
 
-const handleSave = () => {
-  alert('Factura generada exitosamente con el consecutivo: FAC-2026-0042')
+const isSaving = ref(false)
+const saveError = ref('')
+const savedInvoice = ref<any>(null)
+
+const handleSave = async () => {
+  if (!invoice.value.personId) {
+    saveError.value = 'Selecciona un usuario antes de generar la factura.'
+    return
+  }
+  saveError.value = ''
+  isSaving.value = true
+  try {
+    const res = await axios.post('api/admin/billing/generate', {
+      personId: invoice.value.personId,
+      prevReading: 0,
+      currentReading: invoice.value.currentReading,
+      rate: invoice.value.ratePerM3,
+      fixedCharge: invoice.value.fixedCharge,
+      subsidy: invoice.value.subsidy,
+      surcharges: invoice.value.recharge,
+    })
+    savedInvoice.value = res.data
+  } catch (err: any) {
+    saveError.value = err?.response?.data?.message ?? 'Error al generar la factura.'
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const downloadInvoice = async (invoiceId: number) => {
+  try {
+    const res = await axios.get(`api/invoices/download/${invoiceId}`)
+    window.open(res.data.url, '_blank')
+  } catch {
+    alert('No se pudo obtener el enlace de descarga.')
+  }
+}
+
+const resetForm = () => {
+  savedInvoice.value = null
+  selectedPerson.value = null
+  searchQuery.value = ''
+  invoice.value = { personId: null, currentReading: 0, ratePerM3: 2500, fixedCharge: 5000, subsidy: 0.15, recharge: 0 }
 }
 </script>
 
@@ -119,26 +199,67 @@ const handleSave = () => {
             <p>Genera facturas individuales calculando automáticamente consumos y tarifas</p>
           </div>
 
-          <div class="billing-grid">
+          <!-- Success state -->
+          <div v-if="savedInvoice" class="success-card">
+            <div class="success-icon"><font-awesome-icon icon="check-circle" :size="32" /></div>
+            <h2>Factura generada exitosamente</h2>
+            <p class="success-ref">Consecutivo: <strong>FAC-{{ savedInvoice.id }}</strong></p>
+            <p>Total: <strong>${{ Math.round(savedInvoice.amountDue).toLocaleString() }}</strong></p>
+            <div class="success-actions">
+              <button v-if="savedInvoice.pdfUrl" @click="downloadInvoice(savedInvoice.id)" class="btn btn--primary">
+                <font-awesome-icon icon="download" :size="18" />
+                <span>Descargar PDF</span>
+              </button>
+              <button @click="resetForm" class="btn btn--outline">
+                <font-awesome-icon icon="plus" :size="18" />
+                <span>Nueva Factura</span>
+              </button>
+            </div>
+          </div>
+
+          <div v-else class="billing-grid">
             <section class="billing-card billing-form">
               <h2><font-awesome-icon icon="calculator" :size="20" /> Datos de Consumo</h2>
               <div class="form-grid">
-                <div class="form-group full-width">
-                  <label>Buscar Usuario (Nombre o ID)</label>
+                <div class="form-group full-width" style="position:relative">
+                  <label>Buscar Usuario (Nombre o Documento)</label>
                   <div class="input-with-search">
-                    <input type="text" v-model="invoice.userName" placeholder="Ej: Juan Pérez">
-                    <button class="btn-search"><font-awesome-icon icon="search" :size="18" /></button>
+                    <input
+                      type="text"
+                      v-model="searchQuery"
+                      placeholder="Ej: Juan Pérez o 1234567890"
+                      @input="searchPersons"
+                      @focus="searchPersons"
+                      autocomplete="off"
+                    >
+                    <button class="btn-search" @click="searchPersons" :disabled="isSearching">
+                      <font-awesome-icon :icon="isSearching ? 'spinner' : 'search'" :spin="isSearching" :size="18" />
+                    </button>
+                  </div>
+                  <ul v-if="showDropdown && searchResults.length" class="search-dropdown">
+                    <li
+                      v-for="p in searchResults"
+                      :key="p.id"
+                      @mousedown.prevent="selectPerson(p)"
+                      class="search-dropdown-item"
+                    >
+                      <span class="person-name">{{ p.fullName }}</span>
+                      <span class="person-doc">{{ p.documentNumber }}</span>
+                    </li>
+                  </ul>
+                  <p v-if="showDropdown && searchResults.length === 0 && !isSearching" class="no-results">Sin resultados</p>
+                </div>
+
+                <div class="form-group full-width" v-if="selectedPerson">
+                  <div class="selected-person-badge">
+                    <font-awesome-icon icon="user-check" />
+                    {{ selectedPerson.fullName }} — {{ selectedPerson.documentNumber }}
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label>Lectura Anterior (m³)</label>
-                  <input type="number" v-model="invoice.previousReading">
-                </div>
-
-                <div class="form-group">
+                <div class="form-group full-width">
                   <label>Lectura Actual (m³)</label>
-                  <input type="number" v-model="invoice.currentReading">
+                  <input type="number" v-model="invoice.currentReading" min="0">
                 </div>
 
                 <div class="form-group">
@@ -153,7 +274,7 @@ const handleSave = () => {
 
                 <div class="form-group">
                   <label>Subsidio (%)</label>
-                  <input type="number" step="0.01" v-model="invoice.subsidy">
+                  <input type="number" step="0.01" v-model="invoice.subsidy" min="0" max="1">
                 </div>
 
                 <div class="form-group">
@@ -185,8 +306,8 @@ const handleSave = () => {
                   <span>${{ subtotal.toLocaleString() }}</span>
                 </div>
                 <div class="preview-row discount">
-                  <span>Subsidio Aplicado ({{ invoice.subsidy * 100 }}%):</span>
-                  <span>- ${{ discount.toLocaleString() }}</span>
+                  <span>Subsidio Aplicado ({{ (invoice.subsidy * 100).toFixed(0) }}%):</span>
+                  <span>- ${{ Math.round(discount).toLocaleString() }}</span>
                 </div>
                 <div class="preview-row recharge">
                   <span>Recargos:</span>
@@ -194,25 +315,17 @@ const handleSave = () => {
                 </div>
                 <div class="preview-total">
                   <span>TOTAL A PAGAR:</span>
-                  <strong>${{ total.toLocaleString() }}</strong>
+                  <strong>${{ Math.round(total).toLocaleString() }}</strong>
                 </div>
               </div>
 
+              <p v-if="saveError" class="save-error">{{ saveError }}</p>
+
               <div class="billing-actions">
-                <button @click="handleSave" class="btn btn--primary">
-                  <font-awesome-icon icon="save" :size="20" />
-                  <span>Generar Factura</span>
+                <button @click="handleSave" class="btn btn--primary" :disabled="isSaving">
+                  <font-awesome-icon :icon="isSaving ? 'spinner' : 'save'" :spin="isSaving" :size="20" />
+                  <span>{{ isSaving ? 'Generando...' : 'Generar Factura' }}</span>
                 </button>
-                <div class="export-buttons">
-                  <button class="btn btn--outline">
-                    <font-awesome-icon icon="print" :size="20" />
-                    <span>PDF</span>
-                  </button>
-                  <button class="btn btn--outline">
-                    <font-awesome-icon icon="code" :size="20" />
-                    <span>XML</span>
-                  </button>
-                </div>
               </div>
             </section>
           </div>
@@ -566,7 +679,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   &--primary {
     background: $color-primary;
     color: white;
-    &:hover { background: darken($color-primary, 10%); }
+    &:hover:not(:disabled) { background: darken($color-primary, 10%); }
+    &:disabled { opacity: 0.7; cursor: not-allowed; }
   }
 
   &--outline {
@@ -574,6 +688,93 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 2px solid $color-primary;
     color: $color-primary;
     &:hover { background: $color-primary; color: white; }
+  }
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  list-style: none;
+  padding: 4px 0;
+  margin: 4px 0 0;
+  z-index: 100;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.search-dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  &:hover { background: #f1f5f9; }
+
+  .person-name { font-weight: 600; color: #2c3e50; font-size: 0.9rem; }
+  .person-doc { font-size: 0.8rem; color: #64748b; }
+}
+
+.no-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 4px 0 0;
+  z-index: 100;
+}
+
+.selected-person-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  color: $color-primary;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.save-error {
+  color: #991b1b;
+  font-size: 0.85rem;
+  margin-bottom: $spacing-sm;
+}
+
+.success-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: $shadow-sm;
+  padding: $spacing-xl;
+  text-align: center;
+
+  .success-icon {
+    color: #16a34a;
+    margin-bottom: $spacing-md;
+  }
+
+  h2 { font-size: 1.4rem; color: #16a34a; margin-bottom: $spacing-sm; }
+  .success-ref { font-size: 1rem; color: $color-text-muted; margin-bottom: 4px; }
+  p { color: $color-text; font-size: 1.1rem; }
+
+  .success-actions {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
   }
 }
 </style>

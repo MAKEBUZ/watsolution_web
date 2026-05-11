@@ -29,6 +29,21 @@ export class InvoiceDTO extends BaseDTO {
   @ApiProperty({ description: 'amountDue field' })
   amountDue: number;
 
+  @ApiProperty({ description: 'ratePerM3 field', required: false })
+  ratePerM3?: number;
+
+  @ApiProperty({ description: 'fixedCharge field', required: false })
+  fixedCharge?: number;
+
+  @ApiProperty({ description: 'subsidyPercent field', required: false })
+  subsidyPercent?: number;
+
+  @ApiProperty({ description: 'additionalCharges field', required: false })
+  additionalCharges?: number;
+
+  @ApiProperty({ description: 'pdfUrl field', required: false })
+  pdfUrl?: string;
+
   @ApiProperty({ enum: InvoiceStatus, description: 'status enum field', required: false })
   status?: InvoiceStatus;
 
