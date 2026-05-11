@@ -7,7 +7,7 @@ import { Meter } from '../domain/meter.entity';
 import { Person } from '../domain/person.entity';
 import { ActivityLog } from '../domain/activity-log.entity';
 import { InvoiceStatus } from '../domain/enumeration/invoice-status';
-import { AdminStatsDTO, UserWithStatusDTO } from '../service/dto/admin-stats.dto';
+import { AdminStatsDTO, DashboardChartDataDTO, MonthlyDataPointDTO, UserWithStatusDTO } from '../service/dto/admin-stats.dto';
 import { ActivityLogDTO } from '../service/dto/activity-log.dto';
 import { ActivityLogMapper } from '../service/mapper/activity-log.mapper';
 
@@ -46,8 +46,41 @@ export class AdminStatsService {
       activeUsers,
       monthlyRevenue: parseFloat(revenueResult?.total ?? '0'),
       totalConsumption: parseFloat(consumptionResult?.total ?? '0'),
-      efficiency: 98.2,
     };
+  }
+
+  async getChartData(): Promise<DashboardChartDataDTO> {
+    const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const now = new Date();
+    const consumptionTrend: MonthlyDataPointDTO[] = [];
+    const monthlyRevenue: MonthlyDataPointDTO[] = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const from = new Date(d.getFullYear(), d.getMonth(), 1);
+      const to = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+      const label = MONTH_NAMES[d.getMonth()];
+
+      const consumptionResult = await this.meterRepository
+        .createQueryBuilder('m')
+        .select('SUM(m.water_measure)', 'total')
+        .where('m.reading_date >= :from', { from })
+        .andWhere('m.reading_date < :to', { to })
+        .getRawOne();
+
+      const revenueResult = await this.invoiceRepository
+        .createQueryBuilder('i')
+        .select('SUM(i.amount_due)', 'total')
+        .where('i.status = :status', { status: InvoiceStatus.PAID })
+        .andWhere('i.issue_date >= :from', { from })
+        .andWhere('i.issue_date < :to', { to })
+        .getRawOne();
+
+      consumptionTrend.push({ month: label, value: parseFloat(consumptionResult?.total ?? '0') });
+      monthlyRevenue.push({ month: label, value: parseFloat(revenueResult?.total ?? '0') });
+    }
+
+    return { consumptionTrend, monthlyRevenue };
   }
 
   async getActivityLog(limit = 10): Promise<ActivityLogDTO[]> {

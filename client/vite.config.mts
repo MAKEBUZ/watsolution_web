@@ -58,15 +58,24 @@ let config = defineConfig({
   server: {
     host: true,
     port: 9000,
-    proxy: Object.fromEntries(
-      ['/api', '/management', '/v3/api-docs'].map(res => [
-        res,
-        {
-          target: 'http://localhost:8080',
-          changeOrigin: true,
-        },
-      ]),
-    ),
+    proxy: {
+      ...Object.fromEntries(
+        ['/api', '/management', '/v3/api-docs'].map(res => [
+          res,
+          { target: 'http://localhost:8080', changeOrigin: true },
+        ]),
+      ),
+      '/tank': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        ws: true,
+      },
+      '/socket.io': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        ws: true,
+      },
+    },
   },
 });
 

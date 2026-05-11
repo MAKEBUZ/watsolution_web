@@ -9,9 +9,22 @@ export class AdminStatsDTO {
 
   @ApiProperty({ description: 'Total water consumption this month (m3)' })
   totalConsumption: number;
+}
 
-  @ApiProperty({ description: 'Operational efficiency percentage' })
-  efficiency: number;
+export class MonthlyDataPointDTO {
+  @ApiProperty()
+  month: string;
+
+  @ApiProperty()
+  value: number;
+}
+
+export class DashboardChartDataDTO {
+  @ApiProperty({ type: [MonthlyDataPointDTO] })
+  consumptionTrend: MonthlyDataPointDTO[];
+
+  @ApiProperty({ type: [MonthlyDataPointDTO] })
+  monthlyRevenue: MonthlyDataPointDTO[];
 }
 
 export class UserWithStatusDTO {

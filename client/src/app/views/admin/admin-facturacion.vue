@@ -17,7 +17,6 @@ const menuItems = [
   { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
   { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
   { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-  { name: 'Portal Usuario', routeName: 'AdminPortalUsuario', icon: 'user' }
 ]
 
 const handleLogout = () => {
@@ -184,6 +183,10 @@ const resetForm = () => {
             <span class="role">Administrador Principal</span>
           </div>
         </div>
+        <button class="home-btn" @click="router.push({ name: 'Home' })">
+          <font-awesome-icon icon="home" :size="20" />
+          <span v-if="isSidebarOpen || isMobile">Volver al Inicio</span>
+        </button>
         <button class="logout-btn" @click="handleLogout">
           <font-awesome-icon icon="sign-out-alt" :size="20" />
           <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
@@ -377,8 +380,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span { display: none; }
-    .nav-item, .logout-btn { justify-content: center; padding: 1rem; }
+    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
+    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
     .sidebar-header { justify-content: center; padding: $spacing-md 0; }
   }
 
@@ -485,6 +488,22 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 .sidebar-footer {
   padding: $spacing-md;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.home-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  margin-bottom: 4px;
+  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
 }
 
 .logout-btn {

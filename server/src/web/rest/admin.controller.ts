@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AdminStatsDTO, UserWithStatusDTO } from '../../service/dto/admin-stats.dto';
+import { AdminStatsDTO, DashboardChartDataDTO, UserWithStatusDTO } from '../../service/dto/admin-stats.dto';
 import { ActivityLogDTO } from '../../service/dto/activity-log.dto';
 import { BillingFormDTO } from '../../service/dto/billing-form.dto';
 import { InvoiceDTO } from '../../service/dto/invoice.dto';
@@ -54,6 +54,14 @@ export class AdminController {
   @ApiResponse({ status: 200, description: 'Dashboard stats', type: AdminStatsDTO })
   async getStats(): Promise<AdminStatsDTO> {
     return await this.adminStatsService.getStats();
+  }
+
+  @Get('/dashboard')
+  @Roles(RoleType.ADMIN)
+  @ApiOperation({ summary: 'Get chart data for the dashboard (6-month trends)' })
+  @ApiResponse({ status: 200, description: 'Chart data', type: DashboardChartDataDTO })
+  async getDashboardChartData(): Promise<DashboardChartDataDTO> {
+    return await this.adminStatsService.getChartData();
   }
 
   @Get('/activity')
