@@ -26,6 +26,21 @@ export class Invoice extends BaseEntity {
   @Column({ type: 'decimal', name: 'amount_due', precision: 10, scale: 2 })
   amountDue: number;
 
+  @Column({ type: 'decimal', name: 'rate_per_m3', precision: 10, scale: 2, nullable: true })
+  ratePerM3?: number;
+
+  @Column({ type: 'decimal', name: 'fixed_charge', precision: 10, scale: 2, nullable: true })
+  fixedCharge?: number;
+
+  @Column({ type: 'decimal', name: 'subsidy_percent', precision: 5, scale: 4, nullable: true })
+  subsidyPercent?: number;
+
+  @Column({ type: 'decimal', name: 'additional_charges', precision: 10, scale: 2, nullable: true })
+  additionalCharges?: number;
+
+  @Column({ type: 'varchar', name: 'pdf_url', nullable: true })
+  pdfUrl?: string;
+
   @Column({ type: 'varchar', name: 'status', enum: InvoiceStatus })
   status?: InvoiceStatus;
 

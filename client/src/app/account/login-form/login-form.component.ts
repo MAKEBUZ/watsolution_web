@@ -25,8 +25,13 @@ export default defineComponent({
       try {
         const result = await axios.post('api/authenticate', data);
         const bearerToken = result.headers.authorization;
+        let jwt: string | null = null;
         if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-          const jwt = bearerToken.slice(7, bearerToken.length);
+          jwt = bearerToken.slice(7, bearerToken.length);
+        } else if (result.data?.id_token) {
+          jwt = result.data.id_token;
+        }
+        if (jwt) {
           if (rememberMe.value) {
             localStorage.setItem('jhi-authenticationToken', jwt);
             sessionStorage.removeItem('jhi-authenticationToken');
