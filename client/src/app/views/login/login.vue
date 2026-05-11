@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { useAccountStore } from '@/shared/config/store/account-store';
 
 const router = useRouter();
@@ -14,28 +15,39 @@ const authenticationError = ref(false);
 
 const handleLogin = async () => {
   authenticationError.value = false;
+  try {
+    const result = await axios.post('api/authenticate', {
+      username: username.value,
+      password: password.value,
+      rememberMe: rememberMe.value,
+    });
 
-  if (username.value === 'admin@watsolution.tech' && password.value === 'admin123') {
-    const mockAccount = {
-      login: 'admin',
-      firstName: 'Administrador',
-      email: username.value,
-      authorities: ['ROLE_ADMIN']
-    };
-    store.setAuthentication(mockAccount);
-    localStorage.setItem('jhi-authenticationToken', 'mock-token-admin');
-    await router.replace('/admin');
-  } else if (username.value === 'usuario@watsolution.tech' && password.value === 'user123') {
-    const mockAccount = {
-      login: 'usuario',
-      firstName: 'Juan Pérez',
-      email: username.value,
-      authorities: ['ROLE_USER']
-    };
-    store.setAuthentication(mockAccount);
-    localStorage.setItem('jhi-authenticationToken', 'mock-token-user');
-    await router.replace('/portal');
-  } else {
+    const bearerToken = result.headers.authorization;
+    let jwt: string | null = null;
+    if (bearerToken && bearerToken.startsWith('Bearer ')) {
+      jwt = bearerToken.slice(7);
+    } else if (result.data?.id_token) {
+      jwt = result.data.id_token;
+    }
+
+    if (jwt) {
+      if (rememberMe.value) {
+        localStorage.setItem('jhi-authenticationToken', jwt);
+        sessionStorage.removeItem('jhi-authenticationToken');
+      } else {
+        sessionStorage.setItem('jhi-authenticationToken', jwt);
+        localStorage.removeItem('jhi-authenticationToken');
+      }
+    }
+
+    await store.loadAccountAction();
+    const authorities: string[] = store.account?.authorities ?? [];
+    if (authorities.includes('ROLE_ADMIN')) {
+      await router.replace('/admin');
+    } else {
+      await router.replace('/portal');
+    }
+  } catch {
     authenticationError.value = true;
   }
 };
@@ -94,7 +106,7 @@ const togglePasswordVisibility = () => {
         <h1 class="auth-title">LOGIN</h1>
 
         <div v-if="authenticationError" class="auth-error">
-          Credenciales inválidas. Prueba con admin@watsolution.tech / admin123
+          Usuario o contraseña incorrectos.
         </div>
 
         <form class="auth-form" @submit.prevent="handleLogin">
