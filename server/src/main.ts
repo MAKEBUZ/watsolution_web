@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
 import cloudConfigClient from 'cloud-config-client';
 import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
@@ -16,6 +17,7 @@ async function bootstrap(): Promise<void> {
 
   const appOptions = { cors: { origin: true, exposedHeaders: ['Authorization'] } };
   const app = await NestFactory.create(AppModule, appOptions);
+  app.useWebSocketAdapter(new IoAdapter(app));
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (): BadRequestException => new BadRequestException('Validation error'),

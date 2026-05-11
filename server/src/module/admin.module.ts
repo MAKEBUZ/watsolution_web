@@ -11,10 +11,11 @@ import { InvoiceService } from '../service/invoice.service';
 import { MeterService } from '../service/meter.service';
 import { BucketService } from '../service/bucket.service';
 import { InvoicePdfService } from '../service/invoice-pdf.service';
+import { TankLevelGateway } from '../web/rest/tank-level.gateway';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Invoice, Meter, Person, ActivityLog])],
   controllers: [AdminController],
-  providers: [AdminStatsService, InvoiceService, MeterService, BucketService, InvoicePdfService],
+  providers: [AdminStatsService, InvoiceService, MeterService, BucketService, InvoicePdfService, TankLevelGateway],
 })
 export class AdminModule {}
