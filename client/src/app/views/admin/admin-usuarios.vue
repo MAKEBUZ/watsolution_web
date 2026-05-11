@@ -167,15 +167,25 @@ const saveForm = async () => {
   }
 }
 
-// ── Drawer historial de mediciones ────────────────────────────────────────────
+// ── Drawer historial de mediciones / facturas ─────────────────────────────────
 const drawerOpen = ref(false)
 const drawerPerson = ref<IPerson | null>(null)
+
 const meters = ref<IMeter[]>([])
 const loadingMeters = ref(false)
+
+const drawerInvoices = ref<any[]>([])
+const loadingInvoices = ref(false)
+const updatingInvoiceId = ref<number | null>(null)
 
 const openDrawer = async (person: IPerson) => {
   drawerPerson.value = person
   drawerOpen.value = true
+  loadMeterData(person)
+  loadInvoiceData(person)
+}
+
+const loadMeterData = async (person: IPerson) => {
   loadingMeters.value = true
   meters.value = []
   try {
@@ -186,10 +196,65 @@ const openDrawer = async (person: IPerson) => {
   }
 }
 
+const loadInvoiceData = async (person: IPerson) => {
+  loadingInvoices.value = true
+  drawerInvoices.value = []
+  try {
+    const res = await axios.get(`api/invoices/by-person/${person.id}`)
+    drawerInvoices.value = (res.data ?? []).sort(
+      (a: any, b: any) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime(),
+    )
+  } finally {
+    loadingInvoices.value = false
+  }
+}
+
+const invoiceEffectiveStatus = (inv: any): string => {
+  if (inv.status === 'PAID') return 'PAID'
+  if (inv.status === 'CANCELLED') return 'CANCELLED'
+  if (inv.status === 'PENDING') {
+    return new Date(inv.dueDate) < new Date() ? 'OVERDUE' : 'PENDING'
+  }
+  return 'PENDING'
+}
+
+const invoiceStatusLabel: Record<string, string> = {
+  PAID: 'Pagado', PENDING: 'Pendiente', OVERDUE: 'En Mora', CANCELLED: 'Cancelado',
+}
+const invoiceStatusColor: Record<string, { color: string; bg: string }> = {
+  PAID:      { color: '#065f46', bg: '#d1fae5' },
+  PENDING:   { color: '#92400e', bg: '#fef3c7' },
+  OVERDUE:   { color: '#991b1b', bg: '#fee2e2' },
+  CANCELLED: { color: '#374151', bg: '#f3f4f6' },
+}
+
+const markAsPaid = async (inv: any) => {
+  if (inv.status === 'PAID') return
+  updatingInvoiceId.value = inv.id
+  try {
+    await axios.put(`api/invoices/${inv.id}`, { ...inv, status: 'PAID' })
+    const idx = drawerInvoices.value.findIndex((i: any) => i.id === inv.id)
+    if (idx !== -1) drawerInvoices.value[idx] = { ...drawerInvoices.value[idx], status: 'PAID' }
+  } catch {
+    alert('No se pudo actualizar el estado de la factura.')
+  } finally {
+    updatingInvoiceId.value = null
+  }
+}
+
+const fmtAmt = (amount: any) =>
+  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(amount ?? 0))
+
+const invNum = (inv: any) => {
+  const y = inv.issueDate ? new Date(inv.issueDate).getFullYear() : new Date().getFullYear()
+  return `FAC-${y}-${String(inv.id ?? 0).padStart(3, '0')}`
+}
+
 const closeDrawer = () => {
   drawerOpen.value = false
   drawerPerson.value = null
   meters.value = []
+  drawerInvoices.value = []
 }
 
 const formatAddress = (person: IPerson) => {
@@ -455,16 +520,16 @@ const executeDelete = async () => {
       </div>
     </div>
 
-    <!-- Drawer: historial de mediciones -->
+    <!-- Drawer: mediciones / facturas -->
     <transition name="drawer">
       <div v-if="drawerOpen" class="drawer-overlay" @click.self="closeDrawer">
         <aside class="drawer">
           <div class="drawer-header">
             <div>
-              <h2 class="drawer-title">Historial de Mediciones</h2>
+              <h2 class="drawer-title">Historial del Suscriptor</h2>
               <p class="drawer-subtitle" v-if="drawerPerson">
                 {{ drawerPerson.fullName }}
-                <span v-if="drawerPerson.subscriberNumber"> · Suscriptor {{ drawerPerson.subscriberNumber }}</span>
+                <span v-if="drawerPerson.subscriberNumber"> · #{{ drawerPerson.subscriberNumber }}</span>
               </p>
             </div>
             <button class="modal-close" @click="closeDrawer">
@@ -473,16 +538,18 @@ const executeDelete = async () => {
           </div>
 
           <div class="drawer-body">
+            <!-- ── Mediciones ──────────────────────────────────────────── -->
+            <div class="drawer-section-title">
+              <font-awesome-icon icon="tachometer-alt" :size="13" />
+              Mediciones
+            </div>
             <div v-if="loadingMeters" class="drawer-loading">
               <font-awesome-icon icon="spinner" spin />
               Cargando mediciones...
             </div>
-
-            <div v-else-if="meters.length === 0" class="drawer-empty">
-              <font-awesome-icon icon="tachometer-alt" :size="32" />
-              <p>No hay mediciones registradas para este usuario.</p>
+            <div v-else-if="meters.length === 0" class="drawer-empty drawer-empty--sm">
+              <p>No hay mediciones registradas.</p>
             </div>
-
             <div v-else class="meter-list">
               <div class="meter-item" v-for="meter in meters" :key="meter.id">
                 <div class="meter-icon-col">
@@ -498,6 +565,78 @@ const executeDelete = async () => {
                 <div class="meter-address" v-if="meter.address">
                   <font-awesome-icon icon="map-marker-alt" :size="12" />
                   {{ meter.address.neighborhood }}, {{ meter.address.city }}
+                </div>
+              </div>
+            </div>
+
+            <!-- ── Facturas ────────────────────────────────────────────── -->
+            <div class="drawer-section-title drawer-section-title--mt">
+              <font-awesome-icon icon="file-invoice-dollar" :size="13" />
+              Facturas
+              <span v-if="drawerInvoices.length" class="drawer-tab__count">{{ drawerInvoices.length }}</span>
+            </div>
+            <div v-if="loadingInvoices" class="drawer-loading">
+              <font-awesome-icon icon="spinner" spin />
+              Cargando facturas...
+            </div>
+            <div v-else-if="drawerInvoices.length === 0" class="drawer-empty drawer-empty--sm">
+              <p>No hay facturas registradas para este suscriptor.</p>
+            </div>
+            <div v-else class="inv-list">
+              <div
+                v-for="inv in drawerInvoices"
+                :key="inv.id"
+                :class="['inv-item', { 'inv-item--mora': invoiceEffectiveStatus(inv) === 'OVERDUE' }]"
+              >
+                <div class="inv-item__top">
+                  <div class="inv-item__info">
+                    <span class="inv-item__num">{{ invNum(inv) }}</span>
+                    <span
+                      class="inv-item__badge"
+                      :style="{
+                        color: invoiceStatusColor[invoiceEffectiveStatus(inv)]?.color,
+                        background: invoiceStatusColor[invoiceEffectiveStatus(inv)]?.bg,
+                      }"
+                    >{{ invoiceStatusLabel[invoiceEffectiveStatus(inv)] }}</span>
+                  </div>
+                  <span class="inv-item__amount">{{ fmtAmt(inv.amountDue) }}</span>
+                </div>
+
+                <div class="inv-item__meta">
+                  <span>
+                    <font-awesome-icon icon="calendar" :size="11" />
+                    Emisión: {{ formatDate(inv.issueDate) }}
+                  </span>
+                  <span :class="{ 'text-red': invoiceEffectiveStatus(inv) === 'OVERDUE' }">
+                    <font-awesome-icon icon="clock" :size="11" />
+                    Vence: {{ formatDate(inv.dueDate) }}
+                  </span>
+                  <span>
+                    <font-awesome-icon icon="tint" :size="11" />
+                    {{ Number(inv.consumptionM3 ?? 0).toFixed(1) }} m³
+                  </span>
+                </div>
+
+                <div class="inv-item__actions">
+                  <button
+                    v-if="inv.status !== 'PAID' && inv.status !== 'CANCELLED'"
+                    class="btn-mark-paid"
+                    :disabled="updatingInvoiceId === inv.id"
+                    @click="markAsPaid(inv)"
+                  >
+                    <font-awesome-icon
+                      v-if="updatingInvoiceId === inv.id"
+                      icon="spinner"
+                      spin
+                      :size="12"
+                    />
+                    <font-awesome-icon v-else icon="check-circle" :size="12" />
+                    {{ updatingInvoiceId === inv.id ? 'Guardando...' : 'Marcar como Pagada' }}
+                  </button>
+                  <span v-else-if="inv.status === 'PAID'" class="inv-paid-label">
+                    <font-awesome-icon icon="check-circle" :size="12" />
+                    Pagada
+                  </span>
                 </div>
               </div>
             </div>
@@ -1232,6 +1371,166 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   gap: 4px;
   white-space: nowrap;
   padding-top: 4px;
+}
+
+// ── Drawer section titles ─────────────────────────────────────────────────────
+.drawer-section-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $color-primary;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: $spacing-sm;
+
+  &--mt { margin-top: $spacing-lg; }
+}
+
+.drawer-tab__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-primary;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  padding: 0 5px;
+}
+
+.drawer-empty--sm {
+  padding: $spacing-md 0;
+  font-size: 0.85rem;
+}
+
+// ── Invoice list ──────────────────────────────────────────────────────────────
+.inv-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.inv-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: $spacing-md;
+  background: white;
+  transition: box-shadow 0.15s;
+
+  &:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+
+  &--mora {
+    border-left: 3px solid #ef4444;
+    background: #fffbfb;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: $spacing-sm;
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  &__num {
+    font-family: monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: $color-text;
+    white-space: nowrap;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__amount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $color-text;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: $color-text-muted;
+    margin-bottom: 10px;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.btn-mark-paid {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #eff6ff;
+  color: $color-primary;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: $color-primary;
+    color: white;
+    border-color: $color-primary;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.inv-paid-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #065f46;
+}
+
+.text-red {
+  color: #dc2626 !important;
 }
 
 // ── Drawer transition ─────────────────────────────────────────────────────────
