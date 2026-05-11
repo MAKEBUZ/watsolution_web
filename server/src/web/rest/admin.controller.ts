@@ -148,7 +148,8 @@ export class AdminController {
       await this.invoiceService.update({ ...saved, pdfUrl: key }, req.user?.login);
       saved.pdfUrl = key;
     } catch (err) {
-      this.logger.warn(`PDF generation/upload failed for invoice ${saved.id}: ${err.message}`);
+      this.logger.error(`PDF generation/upload failed for invoice ${saved.id}: ${err?.message ?? err}`);
+      this.logger.error(err?.stack);
     }
 
     const log = new ActivityLog();

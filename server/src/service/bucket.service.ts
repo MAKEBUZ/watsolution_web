@@ -17,7 +17,7 @@ export class BucketService {
         accessKeyId: process.env.BUCKET_ACCESS_KEY_ID ?? '',
         secretAccessKey: process.env.BUCKET_SECRET_ACCESS_KEY ?? '',
       },
-      forcePathStyle: true,
+      forcePathStyle: false,
     });
   }
 

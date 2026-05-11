@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAccountStore } from '@/shared/config/store/account-store'
+import axios from 'axios'
+import type { INoticia } from '@/shared/model/noticia.model'
 
 const router = useRouter()
 const route = useRoute()
@@ -42,32 +44,83 @@ if (typeof window !== 'undefined') {
   handleResize()
 }
 
-interface NewsItem {
-  id: string
-  title: string
-  category: string
-  date: string
-  isArchived: boolean
-}
-
-const news = ref<NewsItem[]>([
-  { id: '1', title: 'Corte programado sector Norte', category: 'operativo', date: '2026-05-10', isArchived: false },
-  { id: '2', title: 'Nueva tarifa aplicada desde Mayo 2026', category: 'institucional', date: '2026-05-08', isArchived: false },
-  { id: '3', title: 'Campaña de ahorro de agua', category: 'comunidad', date: '2026-05-05', isArchived: false },
-  { id: '4', title: 'Mantenimiento reactor principal', category: 'operativo', date: '2026-04-28', isArchived: true }
-])
-
+const news = ref<INoticia[]>([])
 const isModalOpen = ref(false)
+const saving = ref(false)
 const searchQuery = ref('')
 
-const deleteNews = (id: string) => {
-  if (confirm('¿Estás seguro de eliminar esta noticia?')) {
-    const index = news.value.findIndex(n => n.id === id)
-    if (index !== -1) {
-      news.value.splice(index, 1)
-    }
+const emptyForm = (): Partial<INoticia> => ({
+  title: '',
+  summary: '',
+  content: '',
+  category: undefined,
+  publishDate: new Date() as any,
+  imageUrl: '',
+  status: 'ACTIVE' as any,
+})
+
+const form = ref(emptyForm())
+
+const filteredNews = computed(() => {
+  const q = searchQuery.value.toLowerCase()
+  return news.value.filter(n => (n.title ?? '').toLowerCase().includes(q))
+})
+
+const loadNoticias = async () => {
+  try {
+    const res = await axios.get('api/noticias')
+    news.value = res.data
+  } catch (e) {
+    console.error('Error loading noticias:', e)
   }
 }
+
+const openModal = () => {
+  form.value = emptyForm()
+  isModalOpen.value = true
+}
+
+const saveNoticia = async () => {
+  saving.value = true
+  try {
+    await axios.post('api/noticias', { ...form.value, status: 'ACTIVE' })
+    isModalOpen.value = false
+    await loadNoticias()
+  } catch (e) {
+    console.error('Error saving noticia:', e)
+  } finally {
+    saving.value = false
+  }
+}
+
+const toggleStatus = async (item: INoticia) => {
+  const newStatus = item.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
+  try {
+    await axios.put(`api/noticias/${item.id}`, { ...item, status: newStatus })
+    await loadNoticias()
+  } catch (e) {
+    console.error('Error updating noticia:', e)
+  }
+}
+
+const deleteNews = async (id: number | undefined) => {
+  if (!id || !confirm('¿Estás seguro de eliminar esta noticia?')) return
+  try {
+    await axios.delete(`api/noticias/${id}`)
+    await loadNoticias()
+  } catch (e) {
+    console.error('Error deleting noticia:', e)
+  }
+}
+
+const formatDate = (dateStr: any) => {
+  if (!dateStr) return '—'
+  return new Date(dateStr).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+onMounted(() => {
+  loadNoticias()
+})
 </script>
 
 <template>
@@ -126,7 +179,7 @@ const deleteNews = (id: string) => {
               <h1>Gestión de Noticias</h1>
               <p>Publica y administra el contenido informativo del acueducto</p>
             </div>
-            <button class="btn btn--primary" @click="isModalOpen = true">
+            <button class="btn btn--primary" @click="openModal">
               <font-awesome-icon icon="plus" :size="20" />
               <span>Nueva Noticia</span>
             </button>
@@ -139,7 +192,11 @@ const deleteNews = (id: string) => {
             </div>
           </div>
 
-          <div class="mgmt-table-wrapper">
+          <div v-if="filteredNews.length === 0" class="empty-state">
+            No hay noticias publicadas aún.
+          </div>
+
+          <div class="mgmt-table-wrapper" v-else>
             <table class="mgmt-table">
               <thead>
                 <tr>
@@ -151,20 +208,25 @@ const deleteNews = (id: string) => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in news" :key="item.id">
-                  <td>{{ item.date }}</td>
+                <tr v-for="item in filteredNews" :key="item.id">
+                  <td>{{ formatDate(item.publishDate) }}</td>
                   <td class="title-cell">{{ item.title }}</td>
                   <td>
-                    <span :class="['category-badge', item.category]">{{ item.category }}</span>
+                    <span :class="['category-badge', (item.category ?? '').toLowerCase()]">{{ item.category }}</span>
                   </td>
                   <td>
-                    <span :class="['status-badge', item.isArchived ? 'archived' : 'active']">
-                      {{ item.isArchived ? 'Archivado' : 'Activo' }}
+                    <span :class="['status-badge', item.status === 'ACTIVE' ? 'active' : 'archived']">
+                      {{ item.status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}
                     </span>
                   </td>
                   <td class="actions-cell">
-                    <button class="btn-icon" title="Editar"><font-awesome-icon icon="pencil-alt" :size="16" /></button>
-                    <button class="btn-icon" title="Archivar"><font-awesome-icon icon="archive" :size="16" /></button>
+                    <button
+                      class="btn-icon"
+                      :title="item.status === 'ACTIVE' ? 'Desactivar' : 'Activar'"
+                      @click="toggleStatus(item)"
+                    >
+                      <font-awesome-icon :icon="item.status === 'ACTIVE' ? 'eye-slash' : 'eye'" :size="16" />
+                    </button>
                     <button class="btn-icon btn-icon--danger" @click="deleteNews(item.id)" title="Eliminar">
                       <font-awesome-icon icon="trash" :size="16" />
                     </button>
@@ -176,6 +238,57 @@ const deleteNews = (id: string) => {
         </div>
       </div>
     </main>
+
+    <!-- Create modal -->
+    <div v-if="isModalOpen" class="modal-overlay" @click.self="isModalOpen = false">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>Nueva Noticia</h2>
+          <button class="modal-close" @click="isModalOpen = false">
+            <font-awesome-icon icon="times" :size="18" />
+          </button>
+        </div>
+        <form @submit.prevent="saveNoticia" class="modal-form">
+          <div class="form-group">
+            <label>Título *</label>
+            <input v-model="form.title" type="text" required placeholder="Título de la noticia">
+          </div>
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select v-model="form.category" required>
+              <option value="" disabled>Seleccionar...</option>
+              <option value="OPERATIVO">Operativo</option>
+              <option value="INSTITUCIONAL">Institucional</option>
+              <option value="URGENTE">Urgente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Resumen</label>
+            <textarea v-model="form.summary" rows="2" placeholder="Breve descripción..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Contenido</label>
+            <textarea v-model="form.content" rows="4" placeholder="Contenido completo..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Fecha de publicación</label>
+              <input v-model="form.publishDate" type="date">
+            </div>
+            <div class="form-group">
+              <label>URL de imagen</label>
+              <input v-model="form.imageUrl" type="url" placeholder="https://...">
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn--secondary" @click="isModalOpen = false">Cancelar</button>
+            <button type="submit" class="btn btn--primary" :disabled="saving">
+              {{ saving ? 'Publicando...' : 'Publicar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -431,6 +544,13 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 }
 
+.empty-state {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-muted;
+  font-size: 0.95rem;
+}
+
 .mgmt-table-wrapper {
   overflow-x: auto;
 }
@@ -474,7 +594,7 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.operativo { background: #f59e0b; }
   &.institucional { background: $color-primary; }
-  &.comunidad { background: #10b981; }
+  &.urgente { background: #ef4444; }
 }
 
 .status-badge {
@@ -524,7 +644,111 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   &--primary {
     background: $color-primary;
     color: white;
-    &:hover { background: darken($color-primary, 10%); }
+    &:hover:not(:disabled) { background: darken($color-primary, 10%); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
   }
+
+  &--secondary {
+    background: #f1f5f9;
+    color: $color-text;
+    &:hover { background: #e2e8f0; }
+  }
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md;
+}
+
+.modal-card {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid #e2e8f0;
+
+  h2 { font-size: 1.2rem; color: $color-text; margin: 0; }
+
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-text-muted;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover { background: #f1f5f9; }
+  }
+}
+
+.modal-form {
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $color-text-muted;
+  }
+
+  input, select, textarea {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: $color-text;
+    background: white;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+  }
+
+  textarea { resize: vertical; }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  padding-top: $spacing-sm;
+  border-top: 1px solid #e2e8f0;
 }
 </style>

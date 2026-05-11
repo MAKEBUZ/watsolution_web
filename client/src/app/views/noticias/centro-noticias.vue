@@ -1,94 +1,118 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { Search, Calendar, Tag, ChevronRight } from 'lucide-vue-next'
-import { useNewsStore } from '@/shared/config/store/news-store'
+import axios from 'axios'
+import type { INoticia } from '@/shared/model/noticia.model'
 
-const newsStore = useNewsStore()
+const noticias = ref<INoticia[]>([])
 const searchQuery = ref('')
-const selectedCategory = ref('todas')
-
-onMounted(() => {
-  newsStore.fetchNews()
-})
-
-const filteredNews = computed(() => {
-  return newsStore.activeNews.filter(n => {
-    const matchesSearch = n.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-                          n.content.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesCategory = selectedCategory.value === 'todas' || n.category === selectedCategory.value
-    return matchesSearch && matchesCategory
-  })
-})
+const selectedCategory = ref('')
+const isFetching = ref(false)
 
 const categories = [
-  { label: 'Todas', value: 'todas' },
-  { label: 'Operativo', value: 'operativo' },
-  { label: 'Institucional', value: 'institucional' },
-  { label: 'Comunidad', value: 'comunidad' }
+  { label: 'Operativo', value: 'OPERATIVO' },
+  { label: 'Institucional', value: 'INSTITUCIONAL' },
+  { label: 'Urgente', value: 'URGENTE' },
 ]
 
-const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('es-ES', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  })
+onMounted(async () => {
+  isFetching.value = true
+  try {
+    const res = await axios.get('api/public/noticias')
+    noticias.value = res.data ?? []
+  } catch {
+    noticias.value = []
+  } finally {
+    isFetching.value = false
+  }
+})
+
+const filtered = computed(() =>
+  noticias.value.filter(n =>
+    (!searchQuery.value || (n.title ?? '').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      (n.summary ?? '').toLowerCase().includes(searchQuery.value.toLowerCase())) &&
+    (!selectedCategory.value || n.category === selectedCategory.value),
+  ),
+)
+
+const categoryLabel = (cat?: string | null) => {
+  const map: Record<string, string> = { OPERATIVO: 'Operativo', INSTITUCIONAL: 'Institucional', URGENTE: 'Urgente' }
+  return map[cat ?? ''] ?? (cat ?? '')
+}
+
+const categoryColor = (cat?: string | null) => {
+  if (cat === 'URGENTE') return '#ef4444'
+  if (cat === 'OPERATIVO') return '#f59e0b'
+  return '#0077be'
+}
+
+const formatDate = (date?: Date | null) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 </script>
 
 <template>
-  <div class="news-list-view">
-    <div class="news-hero">
-      <div class="container">
-        <h1>Centro de Noticias</h1>
-        <p>Mantente informado sobre las novedades y el estado del servicio</p>
+  <div class="cn-page">
+    <!-- Hero -->
+    <div class="cn-hero">
+      <div class="cn-hero__inner">
+        <h1 class="cn-hero__title">Centro de Noticias</h1>
+        <p class="cn-hero__sub">Mantente informado sobre las novedades y el estado del servicio</p>
       </div>
     </div>
 
-    <div class="container news-content">
-      <aside class="news-filters">
-        <div class="filter-card">
+    <!-- Body -->
+    <div class="cn-body">
+      <!-- Sidebar filters -->
+      <aside class="cn-filters">
+        <div class="cn-filter-card">
           <h3>Búsqueda</h3>
-          <div class="search-box">
-            <Search class="search-icon" :size="18" />
-            <input type="text" v-model="searchQuery" placeholder="Buscar noticias...">
+          <div class="cn-search">
+            <svg class="cn-search__icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+            <input v-model="searchQuery" type="text" placeholder="Buscar noticias...">
           </div>
         </div>
 
-        <div class="filter-card">
+        <div class="cn-filter-card">
           <h3>Categorías</h3>
-          <div class="category-list">
-            <button 
-              v-for="cat in categories" 
+          <div class="cn-categories">
+            <button
+              :class="['cn-cat-btn', { active: selectedCategory === '' }]"
+              @click="selectedCategory = ''"
+            >Todas</button>
+            <button
+              v-for="cat in categories"
               :key="cat.value"
-              :class="['category-btn', { active: selectedCategory === cat.value }]"
+              :class="['cn-cat-btn', { active: selectedCategory === cat.value }]"
               @click="selectedCategory = cat.value"
-            >
-              {{ cat.label }}
-            </button>
+            >{{ cat.label }}</button>
           </div>
         </div>
       </aside>
 
-      <main class="news-grid">
-        <div v-if="filteredNews.length === 0" class="no-results">
+      <!-- News grid -->
+      <main class="cn-grid">
+        <div v-if="isFetching" class="cn-empty">Cargando noticias...</div>
+
+        <div v-else-if="filtered.length === 0" class="cn-empty">
           No se encontraron noticias con los criterios seleccionados.
         </div>
-        
-        <article v-for="item in filteredNews" :key="item.id" class="news-card">
-          <div class="news-card__image">
-            <img :src="item.image" :alt="item.title" loading="lazy">
-            <span :class="['news-card__category', item.category]">
-              {{ item.category }}
+
+        <article v-for="item in filtered" :key="item.id" class="cn-card">
+          <div class="cn-card__img">
+            <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.title" loading="lazy">
+            <div v-else class="cn-card__placeholder"></div>
+            <span class="cn-card__badge" :style="{ background: categoryColor(item.category) }">
+              {{ categoryLabel(item.category) }}
             </span>
           </div>
-          <div class="news-card__body">
-            <div class="news-card__meta">
-              <span><Calendar :size="14" /> {{ formatDate(item.date) }}</span>
-            </div>
-            <h2 class="news-card__title">{{ item.title }}</h2>
-            <p class="news-card__excerpt">{{ item.content.substring(0, 120) }}...</p>
-            <a href="#" class="news-card__link">Leer más <ChevronRight :size="16" /></a>
+          <div class="cn-card__body">
+            <p class="cn-card__date">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+              {{ formatDate(item.publishDate) }}
+            </p>
+            <h2 class="cn-card__title">{{ item.title }}</h2>
+            <p class="cn-card__excerpt">{{ (item.summary || item.content || '').substring(0, 130) }}{{ (item.summary || item.content || '').length > 130 ? '...' : '' }}</p>
           </div>
         </article>
       </main>
@@ -96,192 +120,210 @@ const formatDate = (dateStr: string) => {
   </div>
 </template>
 
-<style lang="scss" scoped>
-@use '../../../content/scss/variables' as *;
-@use '../../../content/scss/mixins' as *;
-
-.news-list-view {
+<style scoped>
+.cn-page {
   padding-top: 70px;
-  background-color: $color-bg;
+  background: #f8fafc;
   min-height: 100vh;
 }
 
-.news-hero {
-  background: linear-gradient(135deg, $color-primary 0%, darken($color-primary, 20%) 100%);
-  color: white;
-  padding: $spacing-xl 0;
+.cn-hero {
+  background: linear-gradient(135deg, #0077be 0%, #004f82 100%);
+  padding: 48px 24px;
   text-align: center;
-  margin-bottom: $spacing-xl;
-
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: $spacing-sm;
-  }
+  margin-bottom: 32px;
 }
 
-.news-content {
+.cn-hero__title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px;
+}
+
+.cn-hero__sub {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+}
+
+.cn-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-lg;
+  gap: 24px;
+}
 
-  @include desktop {
-    grid-template-columns: 300px 1fr;
+@media (min-width: 1024px) {
+  .cn-body {
+    grid-template-columns: 280px 1fr;
   }
 }
 
-.news-filters {
+.cn-filters {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: 16px;
 }
 
-.filter-card {
-  background: white;
-  padding: $spacing-md;
-  border-radius: 16px;
-  box-shadow: $shadow-sm;
-
-  h3 {
-    font-size: 1.1rem;
-    margin-bottom: $spacing-md;
-    color: $color-text;
-  }
+.cn-filter-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-.search-box {
+.cn-filter-card h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 12px;
+}
+
+.cn-search {
   position: relative;
-  .search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $color-text-muted;
-  }
-  input {
-    width: 100%;
-    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-    }
-  }
 }
 
-.category-list {
+.cn-search__icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.cn-search input {
+  width: 100%;
+  padding: 8px 10px 8px 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #2c3e50;
+  box-sizing: border-box;
+}
+
+.cn-search input:focus {
+  outline: none;
+  border-color: #0077be;
+}
+
+.cn-categories {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs;
+  gap: 6px;
 }
 
-.category-btn {
+.cn-cat-btn {
   text-align: left;
-  padding: 0.75rem;
-  border-radius: 8px;
+  padding: 10px 12px;
   border: none;
+  border-radius: 8px;
   background: transparent;
-  color: $color-text;
+  color: #475569;
   cursor: pointer;
-  transition: all 0.3s;
-
-  &:hover, &.active {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    font-weight: 600;
-  }
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
 
-.news-grid {
+.cn-cat-btn:hover,
+.cn-cat-btn.active {
+  background: rgba(0, 119, 190, 0.1);
+  color: #0077be;
+  font-weight: 600;
+}
+
+.cn-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-md;
+  gap: 20px;
+  align-content: start;
+}
 
-  @include tablet {
+@media (min-width: 640px) {
+  .cn-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.news-card {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: $shadow-sm;
-  transition: transform 0.3s;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: $shadow-md;
-  }
-
-  &__image {
-    height: 200px;
-    position: relative;
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  &__category {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: white;
-
-    &.operativo { background: #f59e0b; }
-    &.institucional { background: $color-primary; }
-    &.comunidad { background: #10b981; }
-  }
-
-  &__body {
-    padding: $spacing-md;
-  }
-
-  &__meta {
-    font-size: 0.85rem;
-    color: $color-text-muted;
-    display: flex;
-    gap: 12px;
-    margin-bottom: $spacing-xs;
-    span { display: flex; align-items: center; gap: 4px; }
-  }
-
-  &__title {
-    font-size: 1.25rem;
-    margin-bottom: $spacing-sm;
-    color: $color-text;
-  }
-
-  &__excerpt {
-    font-size: 0.95rem;
-    color: $color-text-muted;
-    line-height: 1.5;
-    margin-bottom: $spacing-md;
-  }
-
-  &__link {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: $color-primary;
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-}
-
-.no-results {
+.cn-empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: $spacing-xl;
-  background: white;
-  border-radius: 16px;
-  color: $color-text-muted;
+  padding: 48px 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.cn-card {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cn-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.cn-card__img {
+  height: 180px;
+  position: relative;
+}
+
+.cn-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cn-card__placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+}
+
+.cn-card__badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.cn-card__body {
+  padding: 16px;
+}
+
+.cn-card__date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0 0 8px;
+}
+
+.cn-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+.cn-card__excerpt {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
 }
 </style>
