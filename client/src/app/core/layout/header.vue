@@ -14,8 +14,16 @@ const isScrolled = ref(false);
 const isAuthenticated = computed(() => !!accountStore.account);
 const isAdmin = computed(() => accountStore.account?.authorities?.includes('ROLE_ADMIN'));
 
+const isAdminOrPortal = computed(() => {
+  return route.path.startsWith('/admin') || route.path.startsWith('/portal') || route.path !== '/';
+});
+
 const isWhiteBackground = computed(() => {
-  return isScrolled.value || route.path !== '/';
+  return isScrolled.value;
+});
+
+const isScrolledState = computed(() => {
+  return isScrolled.value;
 });
 
 const toggleMenu = () => {
@@ -56,7 +64,7 @@ const navLinks = [
 </script>
 
 <template>
-  <header :class="['header', { 'header--scrolled': isWhiteBackground }]">
+  <header :class="['header', { 'header--scrolled': isScrolledState, 'header--white': isWhiteBackground && !isScrolledState }]">
     <div class="container header__content">
       <router-link to="/" class="header__logo">
         <div class="header__logo-icons">
@@ -152,20 +160,29 @@ const navLinks = [
 @use '../../../content/scss/variables' as *;
 @use '../../../content/scss/mixins' as *;
 
+
+
+
+
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  padding: $spacing-sm 0;
+  padding: 0.8rem 0;
   transition: all 0.3s ease;
   background: transparent;
+
+  &.header--white {
+    background-color: $color-white !important;
+    box-shadow: $shadow-sm !important;
+  }
 
   &.header--scrolled {
     background-color: $color-white !important;
     box-shadow: $shadow-sm !important;
-    padding: $spacing-xs / 1 0;
+    padding: $spacing-xs 0;
   }
 
   &__content {

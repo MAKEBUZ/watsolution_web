@@ -18,7 +18,7 @@ const menuItems = [
   { name: 'Usuarios', routeName: 'admin-users', icon: Users },
   { name: 'Facturación', routeName: 'admin-billing', icon: FileText },
   { name: 'Noticias', routeName: 'admin-news', icon: Newspaper },
-  { name: 'Portal Usuario', routeName: 'user-portal', icon: User }
+  { name: 'Portal Usuario', routeName: 'AdminPortalUsuario', icon: User }
 ]
 
 const handleLogout = () => {
@@ -86,6 +86,13 @@ const closeSidebarOnMobile = () => {
       </nav>
 
       <div class="sidebar-footer">
+        <div class="sidebar-profile">
+          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="info" v-if="isSidebarOpen || isMobile">
+            <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
+            <span class="role">Administrador Principal</span>
+          </div>
+        </div>
         <button class="logout-btn" @click="handleLogout">
           <LogOut :size="20" />
           <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
@@ -94,24 +101,6 @@ const closeSidebarOnMobile = () => {
     </aside>
 
     <main class="admin-main">
-      <header class="admin-topbar">
-        <div class="topbar-left">
-          <button v-if="isMobile" class="mobile-toggle" @click="toggleSidebar">
-            <Menu :size="24" />
-          </button>
-          <h2>{{ menuItems.find(i => i.routeName === route.name)?.name || 'Panel Administrativo' }}</h2>
-        </div>
-        <div class="topbar-right">
-          <div class="admin-profile">
-            <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
-            <div class="info" v-if="!isMobile">
-              <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
-              <span class="role">Administrador Principal</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div class="admin-content-view">
         <router-view />
       </div>
@@ -125,8 +114,7 @@ const closeSidebarOnMobile = () => {
 
 .admin-layout {
   display: flex;
-  min-height: calc(100vh - 70px);
-  margin-top: 70px;
+  min-height: 100vh;
   background-color: #f8fafc;
   position: relative;
 }
@@ -147,9 +135,10 @@ const closeSidebarOnMobile = () => {
   flex-direction: column;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: sticky;
-  top: 70px;
-  height: calc(100vh - 70px);
+  top: 0;
+  height: 100vh;
   z-index: 100;
+  min-height: 0;
 
   &.is-closed {
     width: 80px;
@@ -218,6 +207,8 @@ const closeSidebarOnMobile = () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow-x: hidden;
+  min-height: 0;
 }
 
 .nav-item {
@@ -277,50 +268,20 @@ const closeSidebarOnMobile = () => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   overflow-x: hidden;
   min-width: 0;
   background-color: #f8fafc;
+  min-height: 0;
 }
 
-.admin-topbar {
-  background: white;
-  padding: 0 $spacing-md;
-  height: 70px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e2e8f0;
-  position: sticky;
-  top: 0;
-  z-index: 80;
-
-  @include desktop {
-    padding: 0 $spacing-xl;
-  }
-
-  .topbar-left {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    .mobile-toggle {
-      background: none;
-      border: none;
-      color: $color-text;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
-  h2 { font-size: 1.1rem; color: $color-text; font-weight: 600; }
-}
-
-.admin-profile {
+.sidebar-profile {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 0.75rem;
+  margin-bottom: $spacing-sm;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
 
   .avatar {
     width: 36px;
@@ -333,21 +294,25 @@ const closeSidebarOnMobile = () => {
     justify-content: center;
     font-weight: 700;
     font-size: 0.85rem;
+    flex-shrink: 0;
   }
 
   .info {
     display: flex;
     flex-direction: column;
-    .name { font-weight: 600; font-size: 0.85rem; color: $color-text; }
-    .role { font-size: 0.7rem; color: $color-text-muted; }
+    overflow: hidden;
+    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
+    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
   }
 }
 
 .admin-content-view {
+  flex: 1;
   padding: $spacing-md;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  overflow-x: hidden;
 
   @include tablet {
     padding: $spacing-lg;

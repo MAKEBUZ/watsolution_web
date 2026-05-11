@@ -48,7 +48,7 @@ const testimonials = [
 ];
 
 const goToPortal = () => {
-  router.push('/portal');
+  router.push('/login');
 };
 </script>
 

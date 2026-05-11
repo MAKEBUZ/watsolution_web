@@ -71,7 +71,6 @@ import { ArrowRight } from 'lucide-vue-next'
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 60px;
   overflow: hidden;
   background: linear-gradient(180deg, #e0f2fe 0%, $color-white 100%);
 

@@ -129,7 +129,6 @@ onMounted(() => {
 @use '../../../content/scss/mixins' as *;
 
 .user-portal {
-  padding-top: 70px;
   background-color: $color-bg;
   min-height: 100vh;
 }
@@ -138,7 +137,7 @@ onMounted(() => {
   background: white;
   padding: $spacing-xl 0;
   border-bottom: 1px solid #e2e8f0;
-  margin-bottom: $spacing-xl;
+  margin-bottom: 0;
 
   .header-content {
     display: flex;

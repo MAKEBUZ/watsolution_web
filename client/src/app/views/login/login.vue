@@ -1,248 +1,391 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { LogIn, User, Lock } from 'lucide-vue-next'
-import { useAccountStore } from '@/shared/config/store/account-store'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
 
-const router = useRouter()
-const accountStore = useAccountStore()
+const router = useRouter();
+const store = useAccountStore();
 
-const email = ref('')
-const password = ref('')
-const error = ref('')
+const username = ref('');
+const password = ref('');
+const rememberMe = ref(false);
+const showPassword = ref(false);
+const authenticationError = ref(false);
 
 const handleLogin = async () => {
-  error.value = ''
-  
-  try {
-    const response = await fetch('api/authenticate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email.value, password: password.value })
-    })
-    
-    if (response.ok) {
-      const data = await response.json()
-      localStorage.setItem('jhi-authenticationToken', data.id_token)
-      await accountStore.loadAccountAction()
-      router.push('/portal')
-    } else {
-      error.value = 'Credenciales inválidas'
-    }
-  } catch (e) {
-    if (email.value === 'admin' && password.value === 'admin') {
-      const mockAccount = {
-        login: 'admin',
-        firstName: 'Administrador',
-        email: 'admin@watsolution.tech',
-        authorities: ['ROLE_ADMIN']
-      }
-      accountStore.setAuthentication(mockAccount)
-      localStorage.setItem('jhi-authenticationToken', 'mock-token')
-      router.push('/portal')
-    } else if (email.value === 'user' && password.value === 'user') {
-      const mockAccount = {
-        login: 'user',
-        firstName: 'Usuario',
-        email: 'user@watsolution.tech',
-        authorities: ['ROLE_USER']
-      }
-      accountStore.setAuthentication(mockAccount)
-      localStorage.setItem('jhi-authenticationToken', 'mock-token')
-      router.push('/portal')
-    } else {
-      error.value = 'Credenciales inválidas. Prueba con admin/admin o user/user'
-    }
+  authenticationError.value = false;
+
+  if (username.value === 'admin@watsolution.tech' && password.value === 'admin123') {
+    const mockAccount = {
+      login: 'admin',
+      firstName: 'Administrador',
+      email: username.value,
+      authorities: ['ROLE_ADMIN']
+    };
+    store.setAuthentication(mockAccount);
+    localStorage.setItem('jhi-authenticationToken', 'mock-token-admin');
+    await router.replace('/admin');
+  } else if (username.value === 'usuario@watsolution.tech' && password.value === 'user123') {
+    const mockAccount = {
+      login: 'usuario',
+      firstName: 'Juan Pérez',
+      email: username.value,
+      authorities: ['ROLE_USER']
+    };
+    store.setAuthentication(mockAccount);
+    localStorage.setItem('jhi-authenticationToken', 'mock-token-user');
+    await router.replace('/portal');
+  } else {
+    authenticationError.value = true;
   }
-}
+};
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 </script>
 
 <template>
-  <div class="login-view">
-    <div class="container login-container">
-      <div class="login-card">
-        <div class="login-header">
-          <div class="login-icon">
-            <LogIn :size="32" />
-          </div>
-          <h1>Bienvenido de nuevo</h1>
-          <p>Ingresa a tu cuenta de watsolution</p>
+  <section class="auth-scene">
+    <svg class="auth-art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9fc3ef" stop-opacity="0.65" />
+          <stop offset="1" stop-color="#5d93d3" stop-opacity="0.85" />
+        </linearGradient>
+
+        <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6ba1df" stop-opacity="0.75" />
+          <stop offset="1" stop-color="#2e5f9b" stop-opacity="0.9" />
+        </linearGradient>
+
+        <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1a4e73" stop-opacity="0.9" />
+          <stop offset="1" stop-color="#07192b" stop-opacity="1" />
+        </linearGradient>
+      </defs>
+
+      <g opacity="0.9" fill="#ffffff">
+        <path d="M115 260c35-60 120-80 175-40 20-35 62-52 102-40 25-45 80-65 130-45 55 23 70 85 38 127H115z" opacity="0.55" />
+        <path d="M980 240c35-55 115-74 168-38 18-32 58-48 96-38 24-40 70-58 116-40 52 21 66 78 36 116H980z" opacity="0.5" />
+      </g>
+
+      <path d="M0 585C190 500 350 520 470 575c120 56 260 55 360-10 120-79 260-112 610 20v330H0V585z" fill="url(#m1)" />
+      <path d="M0 650c190-110 360-100 520-32 160 68 320 58 430-12 140-90 280-110 490-22v360H0V650z" fill="url(#m2)" />
+      <path d="M0 735c190-110 390-120 560-40 170 80 340 70 470-10 170-104 280-108 410-55v340H0V735z" fill="url(#m3)" />
+
+      <g fill="#050d18" opacity="0.9">
+        <path d="M128 812l24-68 24 68h-14l-4 34h-12l-4-34h-14z" />
+        <path d="M184 826l18-50 18 50h-10l-3 24h-10l-3-24h-10z" />
+        <path d="M1248 812l24-68 24 68h-14l-4 34h-12l-4-34h-14z" />
+        <path d="M1192 826l18-50 18 50h-10l-3 24h-10l-3-24h-10z" />
+      </g>
+
+      <g fill="#050d18" opacity="0.92">
+        <path d="M0 900V610c22 30 36 58 44 86 10 34 10 76 10 204H0z" />
+        <path d="M40 900V640c34 34 54 70 60 108 8 50 7 90 7 152H40z" />
+        <path d="M1440 900V620c-22 28-36 56-44 84-10 34-10 76-10 196h54z" />
+        <path d="M1400 900V650c-34 34-54 70-60 108-8 50-7 90-7 142h67z" />
+      </g>
+    </svg>
+
+    <div class="auth-content">
+      <div class="auth-card">
+        <h1 class="auth-title">LOGIN</h1>
+
+        <div v-if="authenticationError" class="auth-error">
+          Credenciales inválidas. Prueba con admin@watsolution.tech / admin123
         </div>
 
-        <form @submit.prevent="handleLogin" class="login-form">
-          <div v-if="error" class="error-alert">{{ error }}</div>
-          
-          <div class="form-group">
-            <label for="email">Correo Electrónico / Usuario</label>
-            <div class="input-wrapper">
-              <User class="input-icon" :size="18" />
-              <input 
-                type="text" 
-                id="email" 
-                v-model="email" 
-                placeholder="usuario@correo.com" 
+        <form class="auth-form" @submit.prevent="handleLogin">
+          <div class="auth-field">
+            <label class="auth-label" for="username">Email</label>
+
+            <div class="auth-input">
+              <input
+                id="username"
+                v-model="username"
+                class="auth-input__control"
+                type="text"
+                autocomplete="username"
                 required
               >
+
+              <font-awesome-icon class="auth-input__icon" icon="envelope" :size="18" />
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="password">Contraseña</label>
-            <div class="input-wrapper">
-              <Lock class="input-icon" :size="18" />
-              <input 
-                type="password" 
-                id="password" 
-                v-model="password" 
-                placeholder="********" 
+          <div class="auth-field">
+            <label class="auth-label" for="password">Password</label>
+
+            <div class="auth-input">
+              <input
+                id="password"
+                v-model="password"
+                class="auth-input__control"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
                 required
               >
+
+              <button
+                type="button"
+                class="auth-input__button"
+                :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                @click="togglePasswordVisibility"
+              >
+                <font-awesome-icon v-if="showPassword" icon="eye-slash" :size="18" />
+                <font-awesome-icon v-else icon="eye" :size="18" />
+              </button>
+            </div>
+
+            <div class="auth-row">
+              <label class="auth-remember">
+                <input v-model="rememberMe" type="checkbox">
+                <span>Remember Me</span>
+              </label>
+
+              <router-link to="/account/reset/request" class="auth-forgot">
+                Forgot Password?
+              </router-link>
             </div>
           </div>
 
-          <button type="submit" class="btn btn--primary btn--block">Iniciar Sesión</button>
+          <button class="auth-submit" type="submit">
+            Login
+          </button>
         </form>
-
-        <div class="login-footer">
-          <p>Demo: <strong>admin/admin</strong> o <strong>user/user</strong></p>
-          <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-        </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>
+@use 'sass:color';
 @use '../../../content/scss/variables' as *;
-@use '../../../content/scss/mixins' as *;
 
-.login-view {
+.auth-scene {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, $color-bg 0%, #e0f2fe 100%);
-  padding: $spacing-xl 0;
-}
-
-.login-container {
-  display: flex;
-  justify-content: center;
-}
-
-.login-card {
-  background: white;
-  padding: $spacing-lg;
-  border-radius: 24px;
-  box-shadow: $shadow-lg;
-  width: 100%;
-  max-width: 450px;
-}
-
-.login-header {
-  text-align: center;
-  margin-bottom: $spacing-lg;
-
-  .login-icon {
-    width: 64px;
-    height: 64px;
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto $spacing-md;
-  }
-
-  h1 {
-    font-size: 1.75rem;
-    color: $color-text;
-    margin-bottom: $spacing-xs;
-  }
-
-  p {
-    color: $color-text-muted;
-  }
-}
-
-.login-form {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  padding: calc(clamp(18px, 3.4vw, 36px) + 70px) clamp(18px, 3.4vw, 36px) clamp(18px, 3.4vw, 36px);
+  background: linear-gradient(180deg, #d7e6ff 0%, #c8dcff 42%, #0f2f4b 100%);
 }
 
-.error-alert {
-  background: #fee2e2;
-  color: #ef4444;
-  padding: $spacing-sm;
-  border-radius: 8px;
+.auth-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.98) 0 140px, rgba(255, 255, 255, 0) 141px),
+    radial-gradient(circle at 18% 30%, rgba(255, 255, 255, 0.85) 0 88px, rgba(255, 255, 255, 0) 89px),
+    radial-gradient(circle at 26% 26%, rgba(255, 255, 255, 0.85) 0 70px, rgba(255, 255, 255, 0) 71px),
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.85) 0 92px, rgba(255, 255, 255, 0) 93px),
+    radial-gradient(circle at 74% 28%, rgba(255, 255, 255, 0.78) 0 84px, rgba(255, 255, 255, 0) 85px),
+    radial-gradient(circle at 82% 26%, rgba(255, 255, 255, 0.78) 0 66px, rgba(255, 255, 255, 0) 67px),
+    radial-gradient(circle at 90% 30%, rgba(255, 255, 255, 0.78) 0 88px, rgba(255, 255, 255, 0) 89px);
+  filter: blur(0.2px);
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.auth-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 38%, rgba(10, 22, 36, 0.18) 100%),
+    radial-gradient(circle at 22% 22%, rgba(90, 160, 220, 0.16) 0%, rgba(90, 160, 220, 0) 58%),
+    radial-gradient(circle at 78% 26%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 60%);
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.auth-art {
+  position: absolute;
+  inset: -2vh -8vw;
+  width: calc(100% + 16vw);
+  height: calc(100% + 4vh);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.92;
+  filter: saturate(0.92) brightness(0.96) contrast(1.05) blur(0.35px);
+}
+
+.auth-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.6vw, 22px) 0 clamp(26px, 5.8vw, 44px);
+}
+
+.auth-card {
+  width: min(560px, 92vw);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(248, 250, 255, 0.85) 0%, rgba(200, 225, 255, 0.62) 48%, rgba(28, 83, 125, 0.42) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 30px 80px rgba(9, 26, 45, 0.45);
+  backdrop-filter: blur(18px);
+  padding: clamp(22px, 4.5vw, 38px) clamp(20px, 4.2vw, 44px) clamp(18px, 4vw, 34px);
+}
+
+.auth-title {
+  text-align: center;
+  font-size: clamp(22px, 2.2vw, 30px);
+  letter-spacing: 0.06em;
+  font-weight: 800;
+  color: rgba(7, 14, 26, 0.9);
+  margin-bottom: clamp(16px, 2.4vw, 24px);
+}
+
+.auth-error {
+  margin: 0 auto 16px;
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 120, 120, 0.35);
+  color: rgba(140, 15, 15, 0.95);
   font-size: 0.9rem;
   text-align: center;
 }
 
-.form-group {
+.auth-form {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs;
-
-  label {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: $color-text;
-  }
+  gap: 18px;
 }
 
-.input-wrapper {
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(10, 20, 35, 0.72);
+}
+
+.auth-input {
   position: relative;
-  
-  .input-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $color-text-muted;
-  }
-
-  input {
-    width: 100%;
-    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-    }
-  }
-}
-
-.btn--block {
-  width: 100%;
-}
-
-.login-footer {
-  margin-top: $spacing-lg;
-  text-align: center;
   display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
+  align-items: center;
+  padding: 6px 40px 6px 0;
+  border-bottom: 1px solid rgba(10, 20, 35, 0.42);
+}
 
-  p {
-    font-size: 0.9rem;
-    color: $color-text-muted;
-    strong {
-      color: $color-primary;
-    }
-  }
+.auth-input__control {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 8px 0;
+  color: rgba(6, 12, 22, 0.92);
+}
 
-  .forgot-password {
-    font-size: 0.85rem;
-    color: $color-text-muted;
-    &:hover {
-      color: $color-primary;
-    }
-  }
+.auth-input__control::placeholder {
+  color: rgba(6, 12, 22, 0.45);
+}
+
+.auth-input:focus-within {
+  border-bottom-color: rgba(0, 0, 0, 0.7);
+}
+
+.auth-input__icon,
+.auth-input__button {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(10, 20, 35, 0.58);
+}
+
+.auth-input__button {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+.auth-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(10, 20, 35, 0.72);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.auth-remember input {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(10, 20, 35, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+  display: inline-grid;
+  place-items: center;
+}
+
+.auth-remember input:checked {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.auth-remember input:checked::after {
+  content: '';
+  width: 8px;
+  height: 5px;
+  border-left: 2px solid rgba(10, 20, 35, 0.7);
+  border-bottom: 2px solid rgba(10, 20, 35, 0.7);
+  transform: rotate(-45deg);
+}
+
+.auth-forgot {
+  font-size: 0.82rem;
+  color: rgba(10, 20, 35, 0.72);
+  font-weight: 700;
+}
+
+.auth-submit {
+  margin-top: 10px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: linear-gradient(180deg, rgba(168, 197, 255, 0.95) 0%, rgba(114, 144, 214, 0.95) 100%);
+  box-shadow: 0 18px 35px rgba(9, 26, 45, 0.35);
+  color: rgba(255, 255, 255, 0.96);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.auth-submit:active {
+  transform: translateY(1px);
 }
 </style>
