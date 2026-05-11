@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, computed, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import { useAccountStore } from '@/shared/config/store/account-store'
 import { useRouter } from 'vue-router'
@@ -30,16 +30,36 @@ const navItems = [
   { id: 'soporte', label: 'Soporte', icon: 'message-square' },
 ]
 
-// ── Dashboard state ───────────────────────────────────────────────────────────
-interface StatCard { label: string; value: string; detail: string; icon: string; iconBg: string; statusColor?: string }
-interface RecentInvoice { id: string; date: string; amount: string; status: string; pending: boolean }
+// ── State ─────────────────────────────────────────────────────────────────────
+interface RecentInvoice {
+  id: string
+  date: string
+  amount: string
+  statusLabel: string
+  statusClass: string
+}
 
 const loading = ref(true)
-const statCards = ref<StatCard[]>([
-  { label: 'Factura Actual', value: '–', detail: 'Sin facturas pendientes', icon: '🧾', iconBg: '#e0f2fe' },
-  { label: 'Consumo Mes', value: '–', detail: 'Mes en curso', icon: '💧', iconBg: '#d1fae5' },
-  { label: 'Estado Servicio', value: '–', detail: '', icon: '✅', iconBg: '#d1fae5' },
-])
+const errorMsg = ref('')
+
+// Card 1 — Factura Actual
+const invoiceAmount = ref('–')
+const invoiceDate = ref('')
+const invoiceStatusLabel = ref('')
+const invoiceStatusClass = ref('')
+
+// Card 2 — Consumo
+const consumoValue = ref('–')
+
+// Card 3 — Estado servicio
+const serviceLabel = ref('–')
+const serviceIcon = ref('✅')
+const serviceIconBg = ref('#d1fae5')
+const serviceDetail = ref('')
+
+// Chart data (stored so we can render after DOM is ready)
+const chartLabels = ref<string[]>([])
+const chartValues = ref<number[]>([])
 
 const recentInvoices = ref<RecentInvoice[]>([])
 
@@ -50,77 +70,101 @@ const quickActions = [
   { label: 'Actualizar Datos', desc: 'Modifica tu información', icon: '👤' },
 ]
 
-function formatCurrency(value: number): string {
-  return `$${value.toLocaleString('es-CO')}`
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function fmtDate(d: any): string {
+  if (!d) return '–'
+  return new Date(d).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-function formatDate(dateStr: any): string {
-  if (!dateStr) return '–'
-  return new Date(dateStr).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+function fmtCurrency(n: number): string {
+  return `$${Number(n).toLocaleString('es-CO')}`
 }
 
-function serviceStatusConfig(status: string): { label: string; icon: string; bg: string; color?: string } {
-  if (status === 'MOROSO') return { label: 'Mora', icon: '⚠️', bg: '#fef3c7', color: '#92400e' }
-  if (status === 'SUSPENDIDO') return { label: 'Suspendido', icon: '🚫', bg: '#fee2e2', color: '#991b1b' }
-  return { label: 'Activo', icon: '✅', bg: '#d1fae5' }
+function invoiceStatusInfo(status: string): { label: string; cls: string } {
+  if (status === 'PAID') return { label: 'Pagada', cls: 'paid' }
+  if (status === 'CANCELLED') return { label: 'Cancelada', cls: 'cancelled' }
+  return { label: 'Pendiente', cls: 'pending' }
 }
 
+// ── Load data ─────────────────────────────────────────────────────────────────
 async function loadDashboard() {
+  loading.value = true
+  errorMsg.value = ''
   try {
     const { data } = await axios.get('api/portal/dashboard')
 
-    // Card 1 — current invoice
+    // Card 1 — last invoice (any status)
     if (data.currentInvoice) {
-      const due = formatDate(data.currentInvoice.dueDate)
-      statCards.value[0].value = formatCurrency(data.currentInvoice.amountDue)
-      statCards.value[0].detail = `Vence: ${due}`
+      const si = invoiceStatusInfo(data.currentInvoice.status)
+      invoiceAmount.value = fmtCurrency(data.currentInvoice.amountDue)
+      invoiceDate.value = fmtDate(data.currentInvoice.issueDate)
+      invoiceStatusLabel.value = si.label
+      invoiceStatusClass.value = si.cls
     } else {
-      statCards.value[0].value = 'Al día'
-      statCards.value[0].detail = 'Sin facturas pendientes'
+      invoiceAmount.value = 'Sin facturas'
+      invoiceDate.value = ''
+      invoiceStatusLabel.value = ''
+      invoiceStatusClass.value = ''
     }
 
-    // Card 2 — monthly consumption
-    statCards.value[1].value = `${parseFloat(data.monthlyConsumption).toLocaleString('es-CO')} m³`
-    statCards.value[1].detail = 'Lecturas del mes en curso'
+    // Card 2 — latest meter reading
+    consumoValue.value = `${Number(data.monthlyConsumption).toLocaleString('es-CO')} m³`
 
     // Card 3 — service status
-    const sc = serviceStatusConfig(data.serviceStatus)
-    statCards.value[2].value = sc.label
-    statCards.value[2].icon = sc.icon
-    statCards.value[2].iconBg = sc.bg
-    statCards.value[2].detail = data.serviceStatus === 'ACTIVO' ? 'Sin novedades' : 'Contacte al administrador'
+    if (data.serviceStatus === 'MOROSO') {
+      serviceLabel.value = 'En mora'
+      serviceIcon.value = '⚠️'
+      serviceIconBg.value = '#fef3c7'
+      serviceDetail.value = 'Tiene facturas vencidas'
+    } else if (data.serviceStatus === 'SUSPENDIDO') {
+      serviceLabel.value = 'Suspendido'
+      serviceIcon.value = '🚫'
+      serviceIconBg.value = '#fee2e2'
+      serviceDetail.value = 'Contacte al administrador'
+    } else {
+      serviceLabel.value = 'Activo'
+      serviceIcon.value = '✅'
+      serviceIconBg.value = '#d1fae5'
+      serviceDetail.value = 'Sin novedades'
+    }
 
-    // Recent invoices (last 5)
-    recentInvoices.value = data.invoiceHistory.map((inv: any) => ({
-      id: `FAC-${String(inv.id).padStart(3, '0')}`,
-      date: formatDate(inv.issueDate),
-      amount: inv.amountDue.toLocaleString('es-CO'),
-      status: inv.status === 'PENDING' ? 'Pendiente' : inv.status === 'PAID' ? 'Pagada' : 'Cancelada',
-      pending: inv.status === 'PENDING',
-    }))
+    // Last 5 invoices list
+    recentInvoices.value = (data.invoiceHistory ?? []).map((inv: any) => {
+      const si = invoiceStatusInfo(inv.status)
+      return {
+        id: `FAC-${String(inv.id).padStart(3, '0')}`,
+        date: fmtDate(inv.issueDate),
+        amount: fmtCurrency(inv.amountDue),
+        statusLabel: si.label,
+        statusClass: si.cls,
+      }
+    })
 
-    // Render chart with real data
-    renderChart(
-      data.consumptionTrend.map((p: any) => p.month),
-      data.consumptionTrend.map((p: any) => p.value),
-    )
-  } catch {
-    // leave placeholders on error
+    // Store chart data and render after DOM update
+    chartLabels.value = (data.consumptionTrend ?? []).map((p: any) => p.month)
+    chartValues.value = (data.consumptionTrend ?? []).map((p: any) => Number(p.value))
+    await nextTick()
+    renderChart()
+  } catch (err: any) {
+    const msg = err?.response?.data?.message ?? err?.message ?? 'Error al cargar datos'
+    errorMsg.value = msg
+    console.error('Portal dashboard error:', err)
   } finally {
     loading.value = false
   }
 }
 
-function renderChart(labels: string[], values: number[]) {
-  if (!lineChartRef.value) return
+// ── Chart ─────────────────────────────────────────────────────────────────────
+function renderChart() {
+  if (!lineChartRef.value || chartLabels.value.length === 0) return
   lineChart?.destroy()
   lineChart = new Chart(lineChartRef.value, {
     type: 'line',
     data: {
-      labels,
+      labels: chartLabels.value,
       datasets: [{
         label: 'Consumo m³',
-        data: values,
+        data: chartValues.value,
         borderColor: '#0077be',
         backgroundColor: 'rgba(0,119,190,0.08)',
         tension: 0.4,
@@ -141,6 +185,14 @@ function renderChart(labels: string[], values: number[]) {
     },
   })
 }
+
+// Re-render chart when user navigates back to Resumen tab
+watch(activeSection, async (val) => {
+  if (val === 'resumen' && chartLabels.value.length > 0) {
+    await nextTick()
+    renderChart()
+  }
+})
 
 onMounted(() => { loadDashboard() })
 onUnmounted(() => { lineChart?.destroy() })
@@ -192,15 +244,52 @@ onUnmounted(() => { lineChart?.destroy() })
 
       <!-- Resumen section -->
       <div v-if="activeSection === 'resumen'" class="portal-content">
-        <!-- Stat cards (3 cards: Factura Actual, Consumo Mes, Estado Servicio) -->
+
+        <!-- Error banner -->
+        <div v-if="errorMsg" class="error-banner">
+          ⚠️ {{ errorMsg }}
+        </div>
+
+        <!-- 3 KPI cards -->
         <div class="stat-cards stat-cards--3">
-          <div v-for="card in statCards" :key="card.label" class="stat-card">
-            <div class="stat-card__icon" :style="{ background: card.iconBg }">{{ card.icon }}</div>
+
+          <!-- Card 1: Factura Actual (latest invoice + status) -->
+          <div class="stat-card">
+            <div class="stat-card__icon" style="background:#e0f2fe">🧾</div>
             <div class="stat-card__info">
-              <p class="stat-card__label">{{ card.label }}</p>
-              <p class="stat-card__value" v-if="!loading">{{ card.value }}</p>
-              <p class="stat-card__value stat-card__value--loading" v-else>···</p>
-              <p class="stat-card__detail">{{ card.detail }}</p>
+              <p class="stat-card__label">Factura Actual</p>
+              <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
+                {{ loading ? '···' : invoiceAmount }}
+              </p>
+              <div class="stat-card__row" v-if="!loading && invoiceStatusLabel">
+                <span :class="['inv-badge', invoiceStatusClass]">{{ invoiceStatusLabel }}</span>
+                <span class="stat-card__detail" v-if="invoiceDate">{{ invoiceDate }}</span>
+              </div>
+              <p class="stat-card__detail" v-else-if="!loading">Sin facturas registradas</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Consumo (latest meter reading) -->
+          <div class="stat-card">
+            <div class="stat-card__icon" style="background:#d1fae5">💧</div>
+            <div class="stat-card__info">
+              <p class="stat-card__label">Último Consumo</p>
+              <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
+                {{ loading ? '···' : consumoValue }}
+              </p>
+              <p class="stat-card__detail">Última lectura registrada</p>
+            </div>
+          </div>
+
+          <!-- Card 3: Estado Servicio -->
+          <div class="stat-card">
+            <div class="stat-card__icon" :style="{ background: serviceIconBg }">{{ serviceIcon }}</div>
+            <div class="stat-card__info">
+              <p class="stat-card__label">Estado Servicio</p>
+              <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
+                {{ loading ? '···' : serviceLabel }}
+              </p>
+              <p class="stat-card__detail">{{ serviceDetail }}</p>
             </div>
           </div>
         </div>
@@ -239,8 +328,8 @@ onUnmounted(() => { lineChart?.destroy() })
                   </div>
                 </div>
                 <div class="invoice-item__right">
-                  <span class="invoice-item__amount">${{ inv.amount }}</span>
-                  <span :class="['invoice-item__status', inv.pending ? 'pending' : 'paid']">{{ inv.status }}</span>
+                  <span class="invoice-item__amount">{{ inv.amount }}</span>
+                  <span :class="['invoice-item__status', inv.statusClass]">{{ inv.statusLabel }}</span>
                 </div>
               </div>
             </div>
@@ -539,11 +628,44 @@ onUnmounted(() => { lineChart?.destroy() })
   letter-spacing: 2px;
 }
 
+.stat-card__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.inv-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.inv-badge.pending  { background: #fef3c7; color: #92400e; }
+.inv-badge.paid     { background: #d1fae5; color: #065f46; }
+.inv-badge.cancelled{ background: #f1f5f9; color: #64748b; }
+
 .invoice-empty {
   font-size: 0.88rem;
   color: #94a3b8;
   text-align: center;
   padding: 16px 0;
+}
+
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.invoice-item__status.cancelled {
+  background: #f1f5f9;
+  color: #64748b;
 }
 
 .stat-card {

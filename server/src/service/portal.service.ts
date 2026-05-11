@@ -23,26 +23,27 @@ export class PortalService {
   ) {}
 
   async getPortalData(userLogin: string): Promise<PortalDataDTO> {
+    this.logger.log(`getPortalData for login: ${userLogin}`);
+
     const person = await this.personRepository.findOne({
       relations: { address: true },
       where: [{ userId: userLogin }, { email: userLogin }],
     });
 
     if (!person) {
+      this.logger.warn(`No person found for login: ${userLogin}`);
       throw new HttpException(
         'No se encontró perfil de suscriptor para este usuario. Contacte al administrador.',
         HttpStatus.NOT_FOUND,
       );
     }
 
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const firstDayNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    this.logger.log(`Found person id=${person.id} for login: ${userLogin}`);
 
-    // Latest pending invoice
-    const [pendingInvoice] = await this.invoiceRepository.find({
-      where: { person: { id: person.id }, status: InvoiceStatus.PENDING },
-      order: { dueDate: 'DESC' } as any,
+    // Most recent invoice (any status) — shown as "Factura Actual"
+    const [latestInvoice] = await this.invoiceRepository.find({
+      where: { person: { id: person.id } },
+      order: { issueDate: 'DESC' } as any,
       take: 1,
       relations: { meter: true, person: true },
     });
@@ -55,22 +56,19 @@ export class PortalService {
       relations: { meter: true, person: true },
     });
 
-    // Monthly consumption from meter readings this month for this person
-    const consumptionResult = await this.meterRepository
-      .createQueryBuilder('m')
-      .select('SUM(m.water_measure)', 'total')
-      .where('m.person_id = :personId', { personId: person.id })
-      .andWhere('m.reading_date >= :from', { from: firstDayOfMonth })
-      .andWhere('m.reading_date < :to', { to: firstDayNextMonth })
-      .getRawOne();
-
-    const monthlyConsumption = parseFloat(consumptionResult?.total ?? '0');
+    // Latest meter reading value for this person
+    const latestMeter = await this.meterRepository.findOne({
+      where: { person: { id: person.id } },
+      order: { readingDate: 'DESC' } as any,
+    });
+    const monthlyConsumption = latestMeter ? parseFloat(String(latestMeter.waterMeasure)) : 0;
 
     // Service status
     let serviceStatus = 'ACTIVO';
     if (person.status === PersonStatus.INACTIVE) {
       serviceStatus = 'SUSPENDIDO';
     } else {
+      const now = new Date();
       const overdueInvoice = await this.invoiceRepository.findOne({
         where: {
           person: { id: person.id },
@@ -82,8 +80,9 @@ export class PortalService {
       if (overdueInvoice) serviceStatus = 'MOROSO';
     }
 
-    // 6-month consumption trend for this person
+    // 6-month consumption trend — use JOIN to reliably filter by person
     const consumptionTrend: PortalMonthlyPointDTO[] = [];
+    const now = new Date();
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const from = new Date(d.getFullYear(), d.getMonth(), 1);
@@ -91,18 +90,21 @@ export class PortalService {
 
       const result = await this.meterRepository
         .createQueryBuilder('m')
-        .select('SUM(m.water_measure)', 'total')
-        .where('m.person_id = :personId', { personId: person.id })
-        .andWhere('m.reading_date >= :from', { from })
-        .andWhere('m.reading_date < :to', { to })
+        .innerJoin('m.person', 'p')
+        .select('SUM(m.waterMeasure)', 'total')
+        .where('p.id = :personId', { personId: person.id })
+        .andWhere('m.readingDate >= :from', { from })
+        .andWhere('m.readingDate < :to', { to })
         .getRawOne();
 
       consumptionTrend.push({ month: MONTH_NAMES[d.getMonth()], value: parseFloat(result?.total ?? '0') });
     }
 
+    this.logger.log(`Portal data loaded: invoices=${invoiceHistory.length}, consumption=${monthlyConsumption}, status=${serviceStatus}`);
+
     return {
       person: PersonMapper.fromEntityToDTO(person),
-      currentInvoice: pendingInvoice ? InvoiceMapper.fromEntityToDTO(pendingInvoice) : null,
+      currentInvoice: latestInvoice ? InvoiceMapper.fromEntityToDTO(latestInvoice) : null,
       invoiceHistory: invoiceHistory.map(inv => InvoiceMapper.fromEntityToDTO(inv)),
       monthlyConsumption,
       serviceStatus,
