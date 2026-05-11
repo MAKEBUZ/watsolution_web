@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import { useRouter, useRoute } from 'vue-router'
 import { useAccountStore } from '@/shared/config/store/account-store'
+import axios from 'axios'
+import { io, Socket } from 'socket.io-client'
 
 Chart.register(...registerables)
 
@@ -19,7 +21,6 @@ const menuItems = [
   { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
   { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
   { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-  { name: 'Portal Usuario', routeName: 'AdminPortalUsuario', icon: 'user' }
 ]
 
 const handleLogout = () => {
@@ -33,117 +34,166 @@ const toggleSidebar = () => {
 
 const handleResize = () => {
   isMobile.value = window.innerWidth <= 1024
-  if (isMobile.value) {
-    isSidebarOpen.value = false
-  } else {
-    isSidebarOpen.value = true
+  isSidebarOpen.value = !isMobile.value
+}
+
+// ── Stats ────────────────────────────────────────────────────────────────────
+interface Stat {
+  label: string
+  value: string
+  icon: string
+  color: string
+  trend: string
+  isPositive: boolean
+  description: string
+  raw: number
+}
+
+const stats = ref<Stat[]>([
+  { label: 'Usuarios Activos', value: '–', icon: 'users', color: '#3b82f6', trend: '', isPositive: true, description: 'Suscriptores con servicio activo', raw: 0 },
+  { label: 'Recaudo Mensual', value: '–', icon: 'dollar-sign', color: '#10b981', trend: '', isPositive: true, description: 'Total recaudado este mes', raw: 0 },
+  { label: 'Consumo Total', value: '–', icon: 'tint', color: '#0ea5e9', trend: '', isPositive: true, description: 'Consumo del mes en curso', raw: 0 },
+])
+
+async function loadStats() {
+  try {
+    const { data } = await axios.get('api/admin/stats')
+    stats.value[0].value = data.activeUsers.toLocaleString('es-CO')
+    stats.value[0].raw = data.activeUsers
+
+    const revM = (data.monthlyRevenue / 1_000_000).toFixed(1)
+    stats.value[1].value = `$${revM}M`
+    stats.value[1].raw = data.monthlyRevenue
+
+    stats.value[2].value = `${parseFloat(data.totalConsumption).toLocaleString('es-CO')} m³`
+    stats.value[2].raw = data.totalConsumption
+  } catch {
+    // keep placeholder values
   }
+}
+
+// ── Charts ───────────────────────────────────────────────────────────────────
+const consumptionChartRef = ref<HTMLCanvasElement | null>(null)
+const revenueChartRef = ref<HTMLCanvasElement | null>(null)
+let consumptionChart: Chart | null = null
+let revenueChart: Chart | null = null
+
+async function loadCharts() {
+  try {
+    const { data } = await axios.get('api/admin/dashboard')
+    const labels = data.consumptionTrend.map((p: any) => p.month)
+    const consumptionValues = data.consumptionTrend.map((p: any) => p.value)
+    const revenueValues = data.monthlyRevenue.map((p: any) => p.value / 1_000_000)
+
+    if (consumptionChartRef.value) {
+      consumptionChart?.destroy()
+      consumptionChart = new Chart(consumptionChartRef.value, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Consumo (m³)',
+            data: consumptionValues,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#3b82f6',
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { display: false } },
+            x: { grid: { display: false } },
+          },
+        },
+      })
+    }
+
+    if (revenueChartRef.value) {
+      revenueChart?.destroy()
+      revenueChart = new Chart(revenueChartRef.value, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Recaudo ($)',
+            data: revenueValues,
+            backgroundColor: '#10b981',
+            borderRadius: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#f1f5f9' },
+              ticks: { callback: (val) => `$${val}M` },
+            },
+            x: { grid: { display: false } },
+          },
+        },
+      })
+    }
+  } catch {
+    // charts remain empty on error
+  }
+}
+
+// ── Tank level WebSocket ──────────────────────────────────────────────────────
+interface TankLevelEvent {
+  level: number
+  alert: boolean
+  timestamp: string
+}
+
+const tankLevel = ref(75)
+const tankAlert = ref(false)
+const tankTimestamp = ref('')
+const tankConnected = ref(false)
+let socket: Socket | null = null
+
+function connectTankSocket() {
+  const wsUrl = import.meta.env.DEV ? 'http://localhost:8080' : window.location.origin
+  socket = io(`${wsUrl}/tank`, { transports: ['websocket', 'polling'] })
+
+  socket.on('connect', () => { tankConnected.value = true })
+  socket.on('disconnect', () => { tankConnected.value = false })
+  socket.on('tank-level', (event: TankLevelEvent) => {
+    tankLevel.value = event.level
+    tankAlert.value = event.alert
+    tankTimestamp.value = new Date(event.timestamp).toLocaleTimeString('es-CO')
+  })
 }
 
 onMounted(() => {
   window.addEventListener('resize', handleResize)
   handleResize()
+  loadStats()
+  loadCharts()
+  connectTankSocket()
 })
 
-const stats = [
-  {
-    label: 'Usuarios Activos',
-    value: '1,284',
-    icon: 'users',
-    color: '#3b82f6',
-    trend: '+12.5%',
-    isPositive: true,
-    description: 'Suscriptores con servicio activo'
-  },
-  {
-    label: 'Recaudo Mensual',
-    value: '$12.4M',
-    icon: 'dollar-sign',
-    color: '#10b981',
-    trend: '+8.2%',
-    isPositive: true,
-    description: 'Total recaudado este mes'
-  },
-  {
-    label: 'Consumo Total',
-    value: '4,560 m³',
-    icon: 'tint',
-    color: '#0ea5e9',
-    trend: '-2.4%',
-    isPositive: false,
-    description: 'Promedio de consumo por sector'
-  },
-  {
-    label: 'Eficiencia Op.',
-    value: '98.2%',
-    icon: 'chart-line',
-    color: '#f59e0b',
-    trend: '+0.5%',
-    isPositive: true,
-    description: 'Disponibilidad del sistema'
-  }
-]
-
-const consumptionChartRef = ref<HTMLCanvasElement | null>(null)
-const revenueChartRef = ref<HTMLCanvasElement | null>(null)
-
-onMounted(() => {
-  if (consumptionChartRef.value) {
-    new Chart(consumptionChartRef.value, {
-      type: 'line',
-      data: {
-        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-        datasets: [{
-          label: 'Consumo (m³)',
-          data: [1200, 1350, 1100, 1500, 1400, 1600],
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointBackgroundColor: '#3b82f6'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, grid: { display: false } },
-          x: { grid: { display: false } }
-        }
-      }
-    })
-  }
-
-  if (revenueChartRef.value) {
-    new Chart(revenueChartRef.value, {
-      type: 'bar',
-      data: {
-        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-        datasets: [{
-          label: 'Recaudo ($)',
-          data: [4.5, 5.2, 4.8, 6.1, 5.9, 6.5],
-          backgroundColor: '#10b981',
-          borderRadius: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: { color: '#f1f5f9' },
-            ticks: { callback: (val) => `$${val}M` }
-          },
-          x: { grid: { display: false } }
-        }
-      }
-    })
-  }
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  socket?.disconnect()
+  consumptionChart?.destroy()
+  revenueChart?.destroy()
 })
+
+// Gauge fill color based on level
+function tankColor(level: number): string {
+  if (level < 65) return '#ef4444'
+  if (level < 80) return '#f59e0b'
+  return '#10b981'
+}
 </script>
 
 <template>
@@ -187,6 +237,10 @@ onMounted(() => {
             <span class="role">Administrador Principal</span>
           </div>
         </div>
+        <button class="home-btn" @click="router.push({ name: 'Home' })">
+          <font-awesome-icon icon="home" :size="20" />
+          <span v-if="isSidebarOpen || isMobile">Volver al Inicio</span>
+        </button>
         <button class="logout-btn" @click="handleLogout">
           <font-awesome-icon icon="sign-out-alt" :size="20" />
           <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
@@ -200,7 +254,7 @@ onMounted(() => {
           <header class="summary-header">
             <div class="header-info">
               <h1>Resumen Ejecutivo</h1>
-              <p><font-awesome-icon icon="calendar" :size="16" /> Periodo actual: <strong>Abril 2026</strong></p>
+              <p><font-awesome-icon icon="calendar" :size="16" /> Periodo actual: <strong>{{ new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }) }}</strong></p>
             </div>
             <div class="header-actions">
               <button class="btn btn--outline"><font-awesome-icon icon="filter" :size="18" /> Filtros</button>
@@ -208,6 +262,7 @@ onMounted(() => {
             </div>
           </header>
 
+          <!-- KPI cards -->
           <div class="metrics-grid">
             <div v-for="stat in stats" :key="stat.label" class="stat-card">
               <div class="stat-icon" :style="{ backgroundColor: stat.color + '15', color: stat.color }">
@@ -217,17 +272,13 @@ onMounted(() => {
                 <span class="stat-label">{{ stat.label }}</span>
                 <div class="stat-value-group">
                   <span class="stat-value">{{ stat.value }}</span>
-                  <span :class="['stat-trend', stat.isPositive ? 'positive' : 'negative']">
-                    <font-awesome-icon v-if="stat.isPositive" icon="arrow-up" :size="14" />
-                    <font-awesome-icon v-else icon="arrow-down" :size="14" />
-                    {{ stat.trend }}
-                  </span>
                 </div>
                 <p class="stat-desc">{{ stat.description }}</p>
               </div>
             </div>
           </div>
 
+          <!-- Charts + Tank widget -->
           <div class="dashboard-layout">
             <div class="main-stats">
               <div class="chart-card">
@@ -251,23 +302,68 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="info-card">
-              <h3>Estado del Sistema</h3>
-              <div class="status-list">
-                <div class="status-item">
-                  <div class="status-row">
-                    <span class="status-label">Presión de Red</span>
-                    <span class="status-value">85%</span>
+            <!-- Right column: system status + tank -->
+            <div class="side-column">
+              <div class="info-card">
+                <h3>Estado del Sistema</h3>
+                <div class="status-list">
+                  <div class="status-item">
+                    <div class="status-row">
+                      <span class="status-label">Presión de Red</span>
+                      <span class="status-value">85%</span>
+                    </div>
+                    <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
                   </div>
-                  <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
-                </div>
-                <div class="status-item">
-                  <div class="status-row">
-                    <span class="status-label">Calidad Agua</span>
-                    <span class="status-value">99%</span>
+                  <div class="status-item">
+                    <div class="status-row">
+                      <span class="status-label">Calidad Agua</span>
+                      <span class="status-value">99%</span>
+                    </div>
+                    <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
                   </div>
-                  <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
                 </div>
+              </div>
+
+              <!-- Tank level widget -->
+              <div class="tank-card" :class="{ 'tank-card--alert': tankAlert }">
+                <div class="tank-card__header">
+                  <h3>Nivel del Tanque</h3>
+                  <span class="tank-connection" :class="tankConnected ? 'connected' : 'disconnected'">
+                    <span class="dot"></span>
+                    {{ tankConnected ? 'En vivo' : 'Conectando…' }}
+                  </span>
+                </div>
+
+                <!-- Alert banner -->
+                <div v-if="tankAlert" class="tank-alert-banner">
+                  <font-awesome-icon icon="exclamation-triangle" />
+                  Nivel crítico — por debajo del 65%
+                </div>
+
+                <!-- Gauge -->
+                <div class="tank-gauge-wrap">
+                  <div class="tank-body">
+                    <div
+                      class="tank-fill"
+                      :style="{
+                        height: tankLevel + '%',
+                        backgroundColor: tankColor(tankLevel),
+                      }"
+                    ></div>
+                    <div class="tank-level-label">{{ tankLevel.toFixed(1) }}%</div>
+                    <div class="tank-threshold-line" title="Umbral 65%"></div>
+                  </div>
+                  <div class="tank-scale">
+                    <span>100%</span>
+                    <span>75%</span>
+                    <span class="threshold-mark">65%</span>
+                    <span>50%</span>
+                    <span>25%</span>
+                    <span>0%</span>
+                  </div>
+                </div>
+
+                <p class="tank-timestamp" v-if="tankTimestamp">Última lectura: {{ tankTimestamp }}</p>
               </div>
             </div>
           </div>
@@ -319,8 +415,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span { display: none; }
-    .nav-item, .logout-btn { justify-content: center; padding: 1rem; }
+    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
+    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
     .sidebar-header { justify-content: center; padding: $spacing-md 0; }
   }
 
@@ -427,6 +523,22 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 .sidebar-footer {
   padding: $spacing-md;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.home-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  margin-bottom: 4px;
+  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
 }
 
 .logout-btn {
@@ -559,32 +671,33 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
       align-items: baseline;
       gap: 12px;
       margin: 4px 0;
-
       .stat-value { font-size: 1.75rem; font-weight: 800; color: $color-text; }
-      .stat-trend {
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        &.positive { color: #10b981; }
-        &.negative { color: #ef4444; }
-      }
     }
     .stat-desc { font-size: 0.8rem; color: $color-text-muted; }
   }
 }
 
 .dashboard-layout {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 320px;
   gap: $spacing-xl;
+  align-items: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .main-stats {
   display: flex;
   flex-direction: column;
   gap: $spacing-xl;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
 }
 
 .chart-card {
@@ -622,7 +735,6 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: $spacing-xl;
   border-radius: 24px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
 
   h3 { font-size: 1.1rem; margin-bottom: $spacing-lg; }
 
@@ -645,16 +757,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
       gap: 12px;
     }
 
-    .status-label {
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .status-value {
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.9);
-      font-variant-numeric: tabular-nums;
-    }
+    .status-label { font-weight: 600; color: rgba(255, 255, 255, 0.9); }
+    .status-value { font-weight: 700; color: rgba(255, 255, 255, 0.9); font-variant-numeric: tabular-nums; }
 
     .status-bar {
       height: 6px;
@@ -668,6 +772,132 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
     }
   }
+}
+
+// ── Tank widget ──────────────────────────────────────────────────────────────
+.tank-card {
+  background: white;
+  border-radius: 24px;
+  padding: $spacing-xl;
+  box-shadow: $shadow-sm;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+
+  &--alert {
+    border-color: #ef4444;
+    animation: pulse-border 1.5s infinite;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+
+    h3 { font-size: 1rem; font-weight: 700; color: $color-text; margin: 0; }
+  }
+}
+
+.tank-connection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  &.connected { color: #10b981; .dot { background: #10b981; animation: blink 1.5s infinite; } }
+  &.disconnected { color: #94a3b8; .dot { background: #94a3b8; } }
+}
+
+.tank-alert-banner {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: $spacing-md;
+}
+
+.tank-gauge-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-md;
+}
+
+.tank-body {
+  flex: 1;
+  height: 200px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+}
+
+.tank-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: height 0.8s ease, background-color 0.5s ease;
+  border-radius: 0 0 10px 10px;
+}
+
+.tank-level-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: $color-text;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+  z-index: 1;
+}
+
+// The 65% threshold line — positioned at 35% from the top (= 65% from bottom)
+.tank-threshold-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 65%;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #ef4444 0, #ef4444 6px, transparent 6px, transparent 12px);
+  z-index: 2;
+  opacity: 0.7;
+}
+
+.tank-scale {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 200px;
+  padding: 2px 0;
+  font-size: 0.65rem;
+  color: $color-text-muted;
+  font-weight: 600;
+  white-space: nowrap;
+
+  .threshold-mark { color: #ef4444; font-weight: 700; }
+}
+
+.tank-timestamp {
+  font-size: 0.72rem;
+  color: $color-text-muted;
+  margin-top: $spacing-sm;
+  text-align: right;
 }
 
 .btn {
@@ -694,5 +924,15 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     color: $color-primary;
     &:hover { background: $color-primary; color: white; }
   }
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: #ef4444; }
+  50% { border-color: #fca5a5; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 </style>
