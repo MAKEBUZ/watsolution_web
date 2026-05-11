@@ -42,6 +42,16 @@ export class PersonController {
     private readonly authService: AuthService,
   ) {}
 
+  @Get('/me')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Get person linked to the current authenticated user' })
+  @ApiResponse({ status: 200, description: 'Person record for the logged-in user', type: PersonDTO })
+  async getMyPerson(@Req() req: Request): Promise<PersonDTO | undefined> {
+    return await this.personService.findByFields({
+      where: { userId: String((req.user as any).id) } as any,
+    });
+  }
+
   @Get('/')
   @Roles(RoleType.USER)
   @ApiResponse({ status: 200, description: 'List all records', type: PersonDTO })

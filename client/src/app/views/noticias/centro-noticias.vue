@@ -92,10 +92,20 @@ const formatDate = (date?: Date | null) => {
 
       <!-- News grid -->
       <main class="cn-grid">
-        <div v-if="isFetching" class="cn-empty">Cargando noticias...</div>
+        <div v-if="isFetching" class="cn-empty">
+          <div class="cn-empty__icon">🔄</div>
+          <p>Cargando noticias...</p>
+        </div>
 
         <div v-else-if="filtered.length === 0" class="cn-empty">
-          No se encontraron noticias con los criterios seleccionados.
+          <div class="cn-empty__icon">📰</div>
+          <p class="cn-empty__title">Sin noticias disponibles</p>
+          <p class="cn-empty__sub">
+            {{ searchQuery || selectedCategory ? 'No hay noticias que coincidan con tu búsqueda.' : 'Por el momento no hay noticias publicadas. Vuelve pronto.' }}
+          </p>
+          <button v-if="searchQuery || selectedCategory" class="cn-empty__reset" @click="searchQuery = ''; selectedCategory = ''">
+            Ver todas las noticias
+          </button>
         </div>
 
         <article v-for="item in filtered" :key="item.id" class="cn-card">
@@ -122,7 +132,6 @@ const formatDate = (date?: Date | null) => {
 
 <style scoped>
 .cn-page {
-  padding-top: 70px;
   background: #f8fafc;
   min-height: 100vh;
 }
@@ -250,11 +259,47 @@ const formatDate = (date?: Date | null) => {
 .cn-empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 48px 24px;
+  padding: 64px 24px;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
   color: #64748b;
-  font-size: 0.95rem;
+}
+
+.cn-empty__icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.cn-empty__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+
+.cn-empty__sub {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0 0 20px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cn-empty__reset {
+  background: #0077be;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cn-empty__reset:hover {
+  background: #005f99;
 }
 
 .cn-card {
