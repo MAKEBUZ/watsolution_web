@@ -12,6 +12,7 @@ const password = ref('');
 const rememberMe = ref(false);
 const showPassword = ref(false);
 const authenticationError = ref(false);
+const privacyAccepted = ref(false);
 
 const handleLogin = async () => {
   authenticationError.value = false;
@@ -163,7 +164,17 @@ const togglePasswordVisibility = () => {
             </div>
           </div>
 
-          <button class="auth-submit" type="submit">
+          <label class="auth-privacy">
+            <input v-model="privacyAccepted" type="checkbox" class="auth-privacy__check">
+            <span>
+              He leído y acepto la
+              <router-link to="/politica-privacidad" target="_blank" class="auth-privacy__link">
+                Política de Privacidad
+              </router-link>
+            </span>
+          </label>
+
+          <button class="auth-submit" type="submit" :disabled="!privacyAccepted">
             Login
           </button>
         </form>
@@ -399,5 +410,66 @@ const togglePasswordVisibility = () => {
 
 .auth-submit:active {
   transform: translateY(1px);
+}
+
+.auth-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.auth-submit:disabled:active {
+  transform: none;
+}
+
+.auth-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: rgba(10, 20, 35, 0.72);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  user-select: none;
+  cursor: pointer;
+  margin-top: -4px;
+}
+
+.auth-privacy__check {
+  appearance: none;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 4px;
+  border: 1px solid rgba(10, 20, 35, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.auth-privacy__check:checked {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.auth-privacy__check:checked::after {
+  content: '';
+  width: 8px;
+  height: 5px;
+  border-left: 2px solid rgba(10, 20, 35, 0.7);
+  border-bottom: 2px solid rgba(10, 20, 35, 0.7);
+  transform: rotate(-45deg);
+}
+
+.auth-privacy__link {
+  color: rgba(30, 80, 160, 0.9);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.auth-privacy__link:hover {
+  color: rgba(30, 80, 160, 1);
 }
 </style>

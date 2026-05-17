@@ -11,12 +11,18 @@ const AdminUsuarios = () => import('@/views/admin/admin-usuarios.vue');
 const AdminFacturacion = () => import('@/views/admin/admin-facturacion.vue');
 const AdminNoticias = () => import('@/views/admin/admin-noticias.vue');
 const UserPortal = () => import('@/views/admin/admin-portal.vue');
+const PoliticaPrivacidad = () => import('@/views/politica/politica-privacidad.vue');
 
 export default [
   {
     path: '/login',
     name: 'Login',
     component: LoginPage,
+  },
+  {
+    path: '/politica-privacidad',
+    name: 'PoliticaPrivacidad',
+    component: PoliticaPrivacidad,
   },
   {
     path: '/noticias',
