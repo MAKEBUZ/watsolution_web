@@ -31,6 +31,7 @@
           <li><a href="#">Blog</a></li>
           <li><a href="#">Carreras</a></li>
           <li><a href="#">Contacto</a></li>
+          <li><router-link to="/politica-privacidad">Política de Privacidad</router-link></li>
         </ul>
       </div>
 
@@ -48,7 +49,7 @@
       <div class="container footer__bottom-content">
         <p>&copy; 2026 watsolution. Todos los derechos reservados.</p>
         <div class="footer__legal">
-          <a href="#">Privacidad</a>
+          <router-link to="/politica-privacidad">Privacidad</router-link>
           <a href="#">Términos</a>
           <a href="#">Cookies</a>
         </div>
