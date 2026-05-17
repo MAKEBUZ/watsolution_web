@@ -30,6 +30,10 @@ function scrollTo(id: string) {
   if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function onScroll() {
   showBackTop.value = window.scrollY > 400;
   for (const s of [...sections].reverse()) {
@@ -497,17 +501,12 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll));
     </div>
 
     <!-- Back to top -->
-    <button v-if="showBackTop" class="pp-back-top" @click="window.scrollTo({top:0,behavior:'smooth'})">
+    <button v-if="showBackTop" class="pp-back-top" @click="scrollToTop()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
     </button>
 
   </div>
 </template>
-
-<script lang="ts">
-// expose window for template
-const window = globalThis;
-</script>
 
 <style lang="scss" scoped>
 /* ── Root ─────────────────────────────────────────────────────── */
