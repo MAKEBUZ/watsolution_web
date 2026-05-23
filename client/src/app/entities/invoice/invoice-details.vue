@@ -59,14 +59,30 @@
             </div>
           </dd>
         </dl>
-        <button type="submit" @click.prevent="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-          <font-awesome-icon icon="arrow-left"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.back')"></span>
-        </button>
-        <router-link v-if="invoice.id" :to="{ name: 'InvoiceEdit', params: { invoiceId: invoice.id } }" custom v-slot="{ navigate }">
-          <button @click="navigate" class="btn btn-primary">
-            <font-awesome-icon icon="pencil-alt"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.edit')"></span>
+
+        <!-- Bold Payment Button — only for PENDING invoices -->
+        <div v-if="invoice.status === 'PENDING'" class="mt-4">
+          <h5>Pagar factura</h5>
+          <p v-if="boldLoading" class="text-muted">Cargando botón de pago...</p>
+          <p v-if="boldError" class="text-danger">{{ boldError }}</p>
+          <div id="bold-button-container"></div>
+        </div>
+
+        <div v-if="invoice.status === 'PAID'" class="alert alert-success mt-3">
+          <strong>Factura pagada.</strong>
+          <span v-if="invoice.boldTransactionId"> Transacción Bold: {{ invoice.boldTransactionId }}</span>
+        </div>
+
+        <div class="mt-3">
+          <button type="submit" @click.prevent="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+            <font-awesome-icon icon="arrow-left"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.back')"></span>
           </button>
-        </router-link>
+          <router-link v-if="invoice.id" :to="{ name: 'InvoiceEdit', params: { invoiceId: invoice.id } }" custom v-slot="{ navigate }">
+            <button @click="navigate" class="btn btn-primary ml-2">
+              <font-awesome-icon icon="pencil-alt"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.edit')"></span>
+            </button>
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
