@@ -16,6 +16,7 @@ const MeterDetails = () => import('@/entities/meter/meter-details.vue');
 const Invoice = () => import('@/entities/invoice/invoice.vue');
 const InvoiceUpdate = () => import('@/entities/invoice/invoice-update.vue');
 const InvoiceDetails = () => import('@/entities/invoice/invoice-details.vue');
+const InvoicePaymentResult = () => import('@/entities/invoice/invoice-payment-result.vue');
 
 // jhipster-needle-add-entity-to-router-import - JHipster will import entities to the router here
 
@@ -117,6 +118,12 @@ export default {
       path: 'invoice/:invoiceId/view',
       name: 'InvoiceView',
       component: InvoiceDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'invoice/:invoiceId/payment-result',
+      name: 'InvoicePaymentResult',
+      component: InvoicePaymentResult,
       meta: { authorities: [Authority.USER] },
     },
     // jhipster-needle-add-entity-to-router - JHipster will add entities to the router here

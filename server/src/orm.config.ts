@@ -6,6 +6,7 @@ import { SeedUsersRoles1570200490072 } from './migrations/1570200490072-SeedUser
 import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTables';
 import { AddInvoiceRateFields1747000000000 } from './migrations/1747000000000-AddInvoiceRateFields';
 import { FixInvoiceColumns1747000000001 } from './migrations/1747000000001-FixInvoiceColumns';
+import { AddBoldFieldsToInvoice1748000000000 } from './migrations/1748000000000-AddBoldFieldsToInvoice';
 import { User } from './domain/user.entity';
 import { Authority } from './domain/authority.entity';
 import { Address } from './domain/address.entity';
@@ -88,6 +89,7 @@ function ormConfig(): TypeOrmModuleOptions {
       SeedUsersRoles1570200490072,
       AddInvoiceRateFields1747000000000,
       FixInvoiceColumns1747000000001,
+      AddBoldFieldsToInvoice1748000000000,
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
     autoLoadEntities: true,

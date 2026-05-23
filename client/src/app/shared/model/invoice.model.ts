@@ -12,6 +12,8 @@ export interface IInvoice {
   createdAt?: Date | null;
   meter?: IMeter | null;
   person?: IPerson | null;
+  boldOrderId?: string | null;
+  boldTransactionId?: string | null;
 }
 
 export class Invoice implements IInvoice {
@@ -25,5 +27,7 @@ export class Invoice implements IInvoice {
     public createdAt?: Date | null,
     public meter?: IMeter | null,
     public person?: IPerson | null,
+    public boldOrderId?: string | null,
+    public boldTransactionId?: string | null,
   ) {}
 }

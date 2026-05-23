@@ -50,6 +50,12 @@ export class InvoiceDTO extends BaseDTO {
   @ApiProperty({ description: 'createdAt field', required: false })
   createdAt?: any;
 
+  @ApiProperty({ description: 'boldOrderId field', required: false })
+  boldOrderId?: string;
+
+  @ApiProperty({ description: 'boldTransactionId field', required: false })
+  boldTransactionId?: string;
+
   @ApiProperty({ type: () => MeterDTO, description: 'meter relationship' })
   meter?: MeterDTO;
   @ApiProperty({ type: () => PersonDTO, description: 'person relationship' })

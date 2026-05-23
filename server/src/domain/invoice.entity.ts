@@ -47,6 +47,12 @@ export class Invoice extends BaseEntity {
   @Column({ type: 'timestamp', name: 'created_at', nullable: true })
   createdAt?: any;
 
+  @Column({ type: 'varchar', name: 'bold_order_id', nullable: true })
+  boldOrderId?: string;
+
+  @Column({ type: 'varchar', name: 'bold_transaction_id', nullable: true })
+  boldTransactionId?: string;
+
   @ManyToOne(type => Meter)
   meter?: Meter;
 
