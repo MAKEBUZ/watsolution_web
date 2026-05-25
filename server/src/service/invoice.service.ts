@@ -66,11 +66,15 @@ export class InvoiceService {
     const result = await this.invoiceRepository.save(entity);
 
     if (!invoiceDTO.id) {
-      const saved = await this.invoiceRepository.findOne({ where: { id: result.id }, relations: { person: true } });
-      const login = await this.resolveLogin(saved?.person?.userId);
-      if (login) {
-        const num = `FAC-${new Date(result.issueDate).getFullYear()}-${String(result.id).padStart(3, '0')}`;
-        await this.notificationService.send(login, 'invoice.created', 'Nueva factura generada', `Se generó la factura ${num} por $${result.amountDue}. Vence el ${new Date(result.dueDate).toLocaleDateString('es-CO')}.`, result.id);
+      try {
+        const saved = await this.invoiceRepository.findOne({ where: { id: result.id }, relations: { person: true } });
+        const login = await this.resolveLogin(saved?.person?.userId);
+        if (login) {
+          const num = `FAC-${new Date(result.issueDate).getFullYear()}-${String(result.id).padStart(3, '0')}`;
+          await this.notificationService.send(login, 'invoice.created', 'Nueva factura generada', `Se generó la factura ${num} por $${result.amountDue}. Vence el ${new Date(result.dueDate).toLocaleDateString('es-CO')}.`, result.id);
+        }
+      } catch (err) {
+        this.logger.error(`Notification send failed for invoice ${result.id}: ${err?.message ?? err}`);
       }
     }
 
