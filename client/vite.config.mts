@@ -59,6 +59,16 @@ let config = defineConfig({
     host: true,
     port: 9000,
     proxy: {
+      '/api/notifications/stream': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on('proxyRes', (proxyRes) => {
+            proxyRes.headers['x-accel-buffering'] = 'no';
+            proxyRes.headers['cache-control'] = 'no-cache';
+          });
+        },
+      },
       ...Object.fromEntries(
         ['/api', '/management', '/v3/api-docs'].map(res => [
           res,

@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Invoice } from '../domain/invoice.entity';
 import { ActivityLog } from '../domain/activity-log.entity';
+import { User } from '../domain/user.entity';
 import { ActivityAction } from '../domain/enumeration/activity-action';
 import { InvoiceStatus } from '../domain/enumeration/invoice-status';
 import { InvoiceDTO } from '../service/dto/invoice.dto';
 import { InvoiceMapper } from '../service/mapper/invoice.mapper';
+import { NotificationService } from './notification.service';
 
 const relations = {
   meter: true,
@@ -20,7 +22,15 @@ export class InvoiceService {
   constructor(
     @InjectRepository(Invoice) private invoiceRepository: Repository<Invoice>,
     @InjectRepository(ActivityLog) private activityLogRepository: Repository<ActivityLog>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private readonly notificationService: NotificationService,
   ) {}
+
+  private async resolveLogin(userId?: string): Promise<string | null> {
+    if (!userId) return null;
+    const user = await this.userRepository.findOne({ where: { id: parseInt(userId, 10) } as any });
+    return user?.login ?? null;
+  }
 
   async findById(id: number): Promise<InvoiceDTO | undefined> {
     const result = await this.invoiceRepository.findOne({
@@ -54,6 +64,16 @@ export class InvoiceService {
       entity.lastModifiedBy = creator;
     }
     const result = await this.invoiceRepository.save(entity);
+
+    if (!invoiceDTO.id) {
+      const saved = await this.invoiceRepository.findOne({ where: { id: result.id }, relations: { person: true } });
+      const login = await this.resolveLogin(saved?.person?.userId);
+      if (login) {
+        const num = `FAC-${new Date(result.issueDate).getFullYear()}-${String(result.id).padStart(3, '0')}`;
+        await this.notificationService.send(login, 'invoice.created', 'Nueva factura generada', `Se generó la factura ${num} por $${result.amountDue}. Vence el ${new Date(result.dueDate).toLocaleDateString('es-CO')}.`, result.id);
+      }
+    }
+
     return InvoiceMapper.fromEntityToDTO(result);
   }
 
@@ -74,6 +94,12 @@ export class InvoiceService {
       log.personName = prevEntity?.person?.fullName ?? null;
       log.createdAt = new Date();
       await this.activityLogRepository.save(log).catch(() => {});
+
+      const login = await this.resolveLogin(prevEntity?.person?.userId);
+      if (login) {
+        const num = `FAC-${new Date(result.issueDate).getFullYear()}-${String(result.id).padStart(3, '0')}`;
+        await this.notificationService.send(login, 'invoice.paid', 'Pago confirmado', `Tu pago de la factura ${num} fue registrado exitosamente.`, result.id);
+      }
     }
 
     return InvoiceMapper.fromEntityToDTO(result);

@@ -5,6 +5,7 @@
       <router-view></router-view>
     </main>
     <Footer v-if="!isAdminRoute" />
+    <ChatBot />
   </div>
 </template>
 
@@ -13,12 +14,14 @@ import { defineComponent, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from '@/core/layout/header.vue';
 import Footer from '@/core/layout/footer.vue';
+import ChatBot from '@/core/chatbot/chatbot.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
     Header,
     Footer,
+    ChatBot,
   },
   setup() {
     const route = useRoute();

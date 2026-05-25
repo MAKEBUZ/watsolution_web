@@ -22,6 +22,7 @@ import { AuthGuard, RoleType, Roles, RolesGuard } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
 import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+import { NotificationService } from '../../service/notification.service';
 
 @Controller('api/invoices')
 @UseGuards(AuthGuard, RolesGuard)
@@ -34,6 +35,7 @@ export class InvoiceController {
   constructor(
     private readonly invoiceService: InvoiceService,
     private readonly bucketService: BucketService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   @Get('/')
@@ -101,6 +103,17 @@ export class InvoiceController {
   async post(@Req() req: Request, @Body() invoiceDTO: InvoiceDTO): Promise<InvoiceDTO> {
     const created = await this.invoiceService.save(invoiceDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Invoice', created.id);
+
+    try {
+      const full = await this.invoiceService.findById(created.id);
+      const login = full?.person?.userId ?? full?.person?.email;
+      if (login) {
+        const year = new Date(created.issueDate).getFullYear();
+        const num = `FAC-${year}-${String(created.id).padStart(3, '0')}`;
+        await this.notificationService.send(login, 'invoice.created', 'Nueva factura generada', `Se generó la factura ${num} por $${Number(created.amountDue).toLocaleString('es-CO')} COP. Fecha límite: ${new Date(created.dueDate).toLocaleDateString('es-CO')}.`, created.id);
+      }
+    } catch {}
+
     return created;
   }
 

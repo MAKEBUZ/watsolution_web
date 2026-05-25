@@ -7,6 +7,7 @@ import { CreateTables1570200270081 } from './migrations/1570200270081-CreateTabl
 import { AddInvoiceRateFields1747000000000 } from './migrations/1747000000000-AddInvoiceRateFields';
 import { FixInvoiceColumns1747000000001 } from './migrations/1747000000001-FixInvoiceColumns';
 import { AddBoldFieldsToInvoice1748000000000 } from './migrations/1748000000000-AddBoldFieldsToInvoice';
+import { AddDocumentEmbeddings1749000000001 } from './migrations/1749000000001-AddDocumentEmbeddings';
 import { User } from './domain/user.entity';
 import { Authority } from './domain/authority.entity';
 import { Address } from './domain/address.entity';
@@ -16,6 +17,8 @@ import { Invoice } from './domain/invoice.entity';
 import { Noticia } from './domain/noticia.entity';
 import { Reporte } from './domain/reporte.entity';
 import { ActivityLog } from './domain/activity-log.entity';
+import { Notification } from './domain/notification.entity';
+import { AddNotifications1749100000000 } from './migrations/1749100000000-AddNotifications';
 // jhipster-needle-add-entity-to-ormconfig-imports - JHipster will add code here, do not remove
 
 function ormConfig(): TypeOrmModuleOptions {
@@ -82,6 +85,7 @@ function ormConfig(): TypeOrmModuleOptions {
       Noticia,
       Reporte,
       ActivityLog,
+      Notification,
       // jhipster-needle-add-entity-to-ormconfig-entities - JHipster will add code here, do not remove
     ],
     migrations: [
@@ -90,6 +94,8 @@ function ormConfig(): TypeOrmModuleOptions {
       AddInvoiceRateFields1747000000000,
       FixInvoiceColumns1747000000001,
       AddBoldFieldsToInvoice1748000000000,
+      AddDocumentEmbeddings1749000000001,
+      AddNotifications1749100000000,
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
     autoLoadEntities: true,

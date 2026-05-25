@@ -6,6 +6,7 @@ import { Invoice } from '../domain/invoice.entity';
 import { InvoiceStatus } from '../domain/enumeration/invoice-status';
 import { ActivityLog } from '../domain/activity-log.entity';
 import { ActivityAction } from '../domain/enumeration/activity-action';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class BoldService {
@@ -14,6 +15,7 @@ export class BoldService {
   constructor(
     @InjectRepository(Invoice) private readonly invoiceRepository: Repository<Invoice>,
     @InjectRepository(ActivityLog) private readonly activityLogRepository: Repository<ActivityLog>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async getHashForInvoice(invoiceId: number): Promise<{ boldOrderId: string; hash: string; apiKey: string; amount: number }> {
@@ -70,6 +72,13 @@ export class BoldService {
       log.personName = invoice.person?.fullName ?? null;
       log.createdAt = new Date();
       await this.activityLogRepository.save(log).catch(() => {});
+
+      const login = invoice.person?.userId ?? invoice.person?.email;
+      if (login) {
+        const year = new Date(invoice.issueDate).getFullYear();
+        const num = `FAC-${year}-${String(invoice.id).padStart(3, '0')}`;
+        await this.notificationService.send(login, 'invoice.paid', 'Pago exitoso', `Tu pago de la factura ${num} fue procesado exitosamente. ¡Gracias!`, invoice.id).catch(() => {});
+      }
     } else if (['REJECTED', 'FAILED', 'VOIDED'].includes(payment_status)) {
       await this.invoiceRepository.update(invoice.id, { status: InvoiceStatus.CANCELLED });
     }
@@ -97,6 +106,14 @@ export class BoldService {
     if (boldStatus === 'APPROVED' && invoice.status !== InvoiceStatus.PAID) {
       await this.invoiceRepository.update(invoiceId, { status: InvoiceStatus.PAID });
       invoice.status = InvoiceStatus.PAID;
+
+      const fullInvoice = await this.invoiceRepository.findOne({ where: { id: invoiceId }, relations: ['person'] });
+      const login = fullInvoice?.person?.userId ?? fullInvoice?.person?.email;
+      if (login) {
+        const year = new Date(fullInvoice.issueDate).getFullYear();
+        const num = `FAC-${year}-${String(invoiceId).padStart(3, '0')}`;
+        await this.notificationService.send(login, 'invoice.paid', 'Pago exitoso', `Tu pago de la factura ${num} fue procesado exitosamente. ¡Gracias!`, invoiceId).catch(() => {});
+      }
     }
 
     return { boldStatus, invoiceStatus: invoice.status };
