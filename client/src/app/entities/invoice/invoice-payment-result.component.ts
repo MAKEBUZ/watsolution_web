@@ -12,24 +12,30 @@ export default defineComponent({
     const loading = ref(true);
     const boldStatus = ref('');
     const invoiceStatus = ref('');
+    const boldOrderId = ref('');
+    const invoiceLabel = ref('');
     const error = ref('');
 
     onMounted(async () => {
       const invoiceId = route.params.invoiceId as string;
-      const boldOrderId = (route.query['bold-order-id'] as string) ?? '';
+      boldOrderId.value = (route.query['bold-order-id'] as string) ?? '';
 
-      if (!boldOrderId) {
+      invoiceLabel.value = `Factura #${invoiceId}`;
+
+      if (!boldOrderId.value) {
         error.value = 'No se recibió referencia de pago de Bold.';
         loading.value = false;
         return;
       }
 
       try {
-        const res = await axios.get(`api/bold/result/${invoiceId}?boldOrderId=${encodeURIComponent(boldOrderId)}`);
+        const res = await axios.get(
+          `api/bold/result/${invoiceId}?boldOrderId=${encodeURIComponent(boldOrderId.value)}`,
+        );
         boldStatus.value = res.data.boldStatus;
         invoiceStatus.value = res.data.invoiceStatus;
-      } catch (err) {
-        error.value = 'Error al verificar el pago. Intente de nuevo o contacte soporte.';
+      } catch {
+        error.value = 'Error al verificar el pago. Intenta de nuevo o contacta soporte.';
       } finally {
         loading.value = false;
       }
@@ -39,6 +45,10 @@ export default defineComponent({
       router.push({ name: 'InvoiceView', params: { invoiceId: route.params.invoiceId } });
     };
 
-    return { loading, boldStatus, invoiceStatus, error, goToInvoice };
+    const goToPagos = () => {
+      router.push('/pagos');
+    };
+
+    return { loading, boldStatus, invoiceStatus, boldOrderId, invoiceLabel, error, goToInvoice, goToPagos };
   },
 });
