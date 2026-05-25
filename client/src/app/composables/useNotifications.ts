@@ -1,5 +1,6 @@
-import { ref, onUnmounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import axios from 'axios';
+import { defineStore, storeToRefs } from 'pinia';
 import { useAccountStore } from '@/shared/config/store/account-store';
 
 export interface AppNotification {
@@ -12,7 +13,7 @@ export interface AppNotification {
   createdAt: string;
 }
 
-export function useNotifications() {
+export const useNotificationStore = defineStore('notifications', () => {
   const accountStore = useAccountStore();
   const notifications = ref<AppNotification[]>([]);
   const unreadCount = ref(0);
@@ -30,7 +31,7 @@ export function useNotifications() {
     const login = getLogin();
     if (!login) return;
     try {
-      const res = await axios.get<AppNotification[]>('/api/notifications', { params: { login } });
+      const res = await axios.get<AppNotification[]>('api/notifications', { params: { login } });
       notifications.value = res.data;
       unreadCount.value = res.data.filter(n => !n.read).length;
     } catch {}
@@ -40,7 +41,7 @@ export function useNotifications() {
     const login = getLogin();
     if (!login) return;
     try {
-      await axios.patch('/api/notifications/read-all', null, { params: { login } });
+      await axios.patch('api/notifications/read-all', null, { params: { login } });
       notifications.value = notifications.value.map(n => ({ ...n, read: true }));
       unreadCount.value = 0;
     } catch {}
@@ -55,8 +56,9 @@ export function useNotifications() {
     eventSource.onmessage = (e) => {
       try {
         const notif: AppNotification = JSON.parse(e.data);
-        notifications.value.unshift({ ...notif, read: false });
-        unreadCount.value += 1;
+        if (!notif?.id) return;
+        notifications.value = [{ ...notif, read: false }, ...notifications.value];
+        unreadCount.value = notifications.value.filter(n => !n.read).length;
       } catch {}
     };
 
@@ -72,6 +74,8 @@ export function useNotifications() {
   function disconnect() {
     eventSource?.close();
     eventSource = null;
+    notifications.value = [];
+    unreadCount.value = 0;
   }
 
   watch(
@@ -82,14 +86,16 @@ export function useNotifications() {
         connect();
       } else {
         disconnect();
-        notifications.value = [];
-        unreadCount.value = 0;
       }
     },
     { immediate: true },
   );
 
-  onUnmounted(disconnect);
-
   return { notifications, unreadCount, markAllRead, fetchAll };
+});
+
+export function useNotifications() {
+  const store = useNotificationStore();
+  const { notifications, unreadCount } = storeToRefs(store);
+  return { notifications, unreadCount, markAllRead: store.markAllRead, fetchAll: store.fetchAll };
 }

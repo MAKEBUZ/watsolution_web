@@ -5,6 +5,7 @@ import { Subject, Observable } from 'rxjs';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Notification, NotificationType } from '../domain/notification.entity';
 import { Invoice } from '../domain/invoice.entity';
+import { User } from '../domain/user.entity';
 import { InvoiceStatus } from '../domain/enumeration/invoice-status';
 
 interface SseEvent {
@@ -19,7 +20,14 @@ export class NotificationService {
   constructor(
     @InjectRepository(Notification) private readonly notifRepo: Repository<Notification>,
     @InjectRepository(Invoice) private readonly invoiceRepo: Repository<Invoice>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
   ) {}
+
+  private async resolveLogin(userId?: string): Promise<string | null> {
+    if (!userId) return null;
+    const user = await this.userRepo.findOne({ where: { id: parseInt(userId, 10) } as any });
+    return user?.login ?? null;
+  }
 
   subscribe(userLogin: string): Observable<SseEvent> {
     const prev = this.streams.get(userLogin);
@@ -81,7 +89,7 @@ export class NotificationService {
     });
 
     for (const inv of dueSoon) {
-      const login = inv.person?.userId ?? inv.person?.email;
+      const login = await this.resolveLogin(inv.person?.userId);
       if (!login) continue;
       const num = `FAC-${new Date(inv.issueDate).getFullYear()}-${String(inv.id).padStart(3, '0')}`;
       await this.send(login, 'invoice.due_soon', 'Factura próxima a vencer', `Tu factura ${num} vence en 3 días. Evita recargos pagando a tiempo.`, inv.id);
@@ -93,7 +101,7 @@ export class NotificationService {
     });
 
     for (const inv of overdue) {
-      const login = inv.person?.userId ?? inv.person?.email;
+      const login = await this.resolveLogin(inv.person?.userId);
       if (!login) continue;
       const num = `FAC-${new Date(inv.issueDate).getFullYear()}-${String(inv.id).padStart(3, '0')}`;
       await this.send(login, 'invoice.overdue', 'Factura vencida', `Tu factura ${num} está vencida. Realiza el pago para evitar suspensión del servicio.`, inv.id);

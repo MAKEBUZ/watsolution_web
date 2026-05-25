@@ -12,9 +12,10 @@ import { MeterService } from '../service/meter.service';
 import { BucketService } from '../service/bucket.service';
 import { InvoicePdfService } from '../service/invoice-pdf.service';
 import { TankLevelGateway } from '../web/rest/tank-level.gateway';
+import { NotificationModule } from './notification.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Invoice, Meter, Person, ActivityLog])],
+  imports: [TypeOrmModule.forFeature([User, Invoice, Meter, Person, ActivityLog]), NotificationModule],
   controllers: [AdminController],
   providers: [AdminStatsService, InvoiceService, MeterService, BucketService, InvoicePdfService, TankLevelGateway],
 })

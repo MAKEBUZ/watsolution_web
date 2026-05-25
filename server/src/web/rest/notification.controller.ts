@@ -1,6 +1,6 @@
-import { Controller, Get, MessageEvent, Param, Patch, Query, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Header, MessageEvent, Patch, Query, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Observable } from 'rxjs';
+import { Observable, interval, merge, map } from 'rxjs';
 import * as jwt from 'jsonwebtoken';
 import { AuthGuard, RoleType, Roles, RolesGuard } from '../../security';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
@@ -15,6 +15,9 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Sse('/stream')
+  @Header('X-Accel-Buffering', 'no')
+  @Header('Cache-Control', 'no-cache')
+  @Header('Connection', 'keep-alive')
   @ApiOperation({ summary: 'SSE stream for real-time notifications (token via query param)' })
   stream(@Query('token') token: string): Observable<MessageEvent> {
     let userLogin = 'anonymous';
@@ -25,7 +28,10 @@ export class NotificationController {
     } catch {
       // invalid token — stream will receive nothing meaningful
     }
-    return this.notificationService.subscribe(userLogin) as unknown as Observable<MessageEvent>;
+
+    const notifications$ = this.notificationService.subscribe(userLogin) as unknown as Observable<MessageEvent>;
+    const ping$ = interval(25000).pipe(map(() => ({ data: ':ping' } as unknown as MessageEvent)));
+    return merge(notifications$, ping$);
   }
 
   @Get('/')

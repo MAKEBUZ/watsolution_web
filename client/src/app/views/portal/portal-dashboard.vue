@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import MisFacturas from './mis-facturas.vue'
 import MiConsumo from './mi-consumo.vue'
+import NotificationBell from '@/core/notifications/notification-bell.vue'
+import { useNotifications } from '@/composables/useNotifications'
 
 Chart.register(...registerables)
 
@@ -26,9 +28,27 @@ const navItems = [
   { id: 'resumen', label: 'Resumen', icon: 'grid' },
   { id: 'facturas', label: 'Mis Facturas', icon: 'file-text' },
   { id: 'consumo', label: 'Mi Consumo', icon: 'droplet' },
+  { id: 'notificaciones', label: 'Notificaciones', icon: 'bell' },
   { id: 'tramites', label: 'Trámites', icon: 'clipboard' },
   { id: 'soporte', label: 'Soporte', icon: 'message-square' },
 ]
+
+const { notifications: allNotifs } = useNotifications()
+
+const notifIconMap: Record<string, string> = {
+  'invoice.created': '📄',
+  'invoice.due_soon': '⏰',
+  'invoice.overdue': '⚠️',
+  'invoice.paid': '✅',
+}
+const notifLabelMap: Record<string, string> = {
+  'invoice.created': 'Nueva factura',
+  'invoice.due_soon': 'Por vencer',
+  'invoice.overdue': 'Vencida',
+  'invoice.paid': 'Pagada',
+}
+function notifIcon(type: string) { return notifIconMap[type] ?? '🔔' }
+function notifLabel(type: string) { return notifLabelMap[type] ?? type }
 
 // ── State ─────────────────────────────────────────────────────────────────────
 interface RecentInvoice {
@@ -219,6 +239,7 @@ onUnmounted(() => { lineChart?.destroy() })
             <svg v-if="item.icon === 'file-text'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0121 9.414V19a2 2 0 01-2 2z"/></svg>
             <svg v-if="item.icon === 'droplet'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3C12 3 5 10 5 15a7 7 0 0014 0c0-5-7-12-7-12z"/></svg>
             <svg v-if="item.icon === 'clipboard'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <svg v-if="item.icon === 'bell'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
             <svg v-if="item.icon === 'message-square'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
           </span>
           <span class="sidebar-nav__label">{{ item.label }}</span>
@@ -235,9 +256,7 @@ onUnmounted(() => { lineChart?.destroy() })
           <p class="portal-topbar__sub">Bienvenido a tu portal personal</p>
         </div>
         <div class="portal-topbar__right">
-          <button class="topbar-icon-btn" title="Notificaciones">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-          </button>
+          <NotificationBell />
           <div class="topbar-avatar">{{ userInitial }}</div>
         </div>
       </div>
@@ -359,6 +378,37 @@ onUnmounted(() => { lineChart?.destroy() })
       <!-- Mis Facturas section -->
       <div v-else-if="activeSection === 'facturas'" class="portal-content">
         <MisFacturas />
+      </div>
+
+      <!-- Notificaciones section -->
+      <div v-else-if="activeSection === 'notificaciones'" class="portal-content">
+        <div class="notif-history">
+          <h2 class="notif-history__title">Mis Notificaciones</h2>
+          <p class="notif-history__sub">Últimos 30 movimientos registrados en tu cuenta</p>
+          <div v-if="allNotifs.length === 0" class="notif-history__empty">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#ccc"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <p>Sin notificaciones</p>
+          </div>
+          <div v-else class="notif-history__list">
+            <div
+              v-for="n in allNotifs.slice(0, 30)"
+              :key="n.id"
+              class="notif-history__item"
+              :class="{ 'notif-history__item--unread': !n.read }"
+            >
+              <span class="notif-history__icon">{{ notifIcon(n.type) }}</span>
+              <div class="notif-history__body">
+                <div class="notif-history__row">
+                  <span class="notif-history__item-title">{{ n.title }}</span>
+                  <span class="notif-history__badge" :class="`notif-history__badge--${n.type.split('.')[1]}`">{{ notifLabel(n.type) }}</span>
+                </div>
+                <p class="notif-history__msg">{{ n.message }}</p>
+                <p class="notif-history__date">{{ fmtDate(n.createdAt) }}</p>
+              </div>
+              <span v-if="!n.read" class="notif-history__dot" title="No leída" />
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Mi Consumo section -->
@@ -1011,6 +1061,122 @@ onUnmounted(() => { lineChart?.destroy() })
 @media (max-width: 768px) {
   .portal-sidebar {
     display: none;
+  }
+}
+
+.notif-history {
+  max-width: 720px;
+
+  &__title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a2a3a;
+    margin: 0 0 4px;
+  }
+
+  &__sub {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0 0 24px;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px 0;
+    color: #aaa;
+    font-size: 0.95rem;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f5f5f5;
+    background: #fff;
+    transition: background 0.15s;
+    position: relative;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #fafafa; }
+
+    &--unread { background: #fff8f0; }
+  }
+
+  &__icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  &__item-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1a2a3a;
+  }
+
+  &__badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: #e8f4fd;
+    color: #0077be;
+
+    &--paid { background: #d1fae5; color: #065f46; }
+    &--overdue { background: #fee2e2; color: #991b1b; }
+    &--due_soon { background: #fef3c7; color: #92400e; }
+    &--created { background: #e8f4fd; color: #0077be; }
+  }
+
+  &__msg {
+    margin: 0 0 4px;
+    font-size: 0.82rem;
+    color: #555;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__date {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #aaa;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e67e22;
+    flex-shrink: 0;
+    margin-top: 6px;
   }
 }
 </style>
