@@ -1,21 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
 import type { IInvoice } from '@/shared/model/invoice.model'
 
-// ─── Step machine: 1=select invoice | 2=bold-button | 3=result ───────────────
+// ─── Step machine: 1=select invoice | 2=bold-button ──────────────────────────
 const step = ref(1)
 const loadingInvoices = ref(false)
 const loadingBold = ref(false)
-const loadingResult = ref(false)
 const invoices = ref<IInvoice[]>([])
 const selectedInvoice = ref<IInvoice | null>(null)
 const personId = ref<number | null>(null)
 const fetchError = ref('')
 const boldError = ref('')
-const resultStatus = ref<'APPROVED' | 'REJECTED' | 'PENDING' | 'UNKNOWN'>('UNKNOWN')
-let boldOrderIdCurrent = ''
-let resultPollTimer: ReturnType<typeof setTimeout> | null = null
 
 // ─── Load user invoices ───────────────────────────────────────────────────────
 onMounted(async () => {
@@ -66,7 +62,6 @@ const loadBoldButton = async (inv: IInvoice) => {
   try {
     const res = await axios.get(`api/bold/hash?invoiceId=${inv.id}`)
     const { boldOrderId, hash, apiKey, amount } = res.data
-    boldOrderIdCurrent = boldOrderId
 
     // Must reveal container before accessing it — v-else hides it while loadingBold=true
     loadingBold.value = false
@@ -99,62 +94,12 @@ const loadBoldButton = async (inv: IInvoice) => {
   }
 }
 
-async function checkResult() {
-  if (!selectedInvoice.value || !boldOrderIdCurrent) return
-  loadingResult.value = true
-  step.value = 3
-  try {
-    const res = await axios.get(`api/bold/result/${selectedInvoice.value.id}?boldOrderId=${boldOrderIdCurrent}`)
-    const boldStatus: string = res.data?.boldStatus ?? 'UNKNOWN'
-    if (boldStatus === 'APPROVED') {
-      resultStatus.value = 'APPROVED'
-      const inv = invoices.value.find(i => i.id === selectedInvoice.value!.id)
-      if (inv) inv.status = 'PAID' as any
-    } else if (['REJECTED', 'FAILED', 'VOIDED'].includes(boldStatus)) {
-      resultStatus.value = 'REJECTED'
-    } else {
-      resultStatus.value = 'PENDING'
-      // Bold not confirmed yet — retry once after 4s
-      resultPollTimer = setTimeout(checkResult, 4000)
-    }
-  } catch {
-    resultStatus.value = 'UNKNOWN'
-  } finally {
-    loadingResult.value = false
-  }
-}
-
-function handleBoldMessage(event: MessageEvent) {
-  const data = event.data
-  if (!data || typeof data !== 'object') return
-  // Bold SDK fires postMessage on modal close/payment result
-  const type: string = data.type ?? data.event ?? ''
-  if (
-    type.toLowerCase().includes('bold') ||
-    data.payment_status !== undefined ||
-    data.boldStatus !== undefined ||
-    data.status !== undefined
-  ) {
-    if (resultPollTimer) clearTimeout(resultPollTimer)
-    checkResult()
-  }
-}
-
-onMounted(() => { window.addEventListener('message', handleBoldMessage) })
-onUnmounted(() => {
-  window.removeEventListener('message', handleBoldMessage)
-  if (resultPollTimer) clearTimeout(resultPollTimer)
-})
-
 const goBack = () => {
   const prev = document.getElementById('bold-sdk')
   if (prev) prev.remove()
-  if (resultPollTimer) clearTimeout(resultPollTimer)
   step.value = 1
   selectedInvoice.value = null
   boldError.value = ''
-  boldOrderIdCurrent = ''
-  resultStatus.value = 'UNKNOWN'
 }
 
 const retryBold = () => {
@@ -183,7 +128,7 @@ const invNum = (inv: IInvoice) => {
       <!-- ── Progress bar ───────────────────────────────────────────── -->
       <div class="pse-progress">
         <div
-          v-for="(s, i) in ['Seleccionar Factura', 'Pagar con Bold', 'Resultado']"
+          v-for="(s, i) in ['Seleccionar Factura', 'Pagar con Bold']"
           :key="i"
           :class="['pse-step', { active: step === i + 1, done: step > i + 1 }]"
         >
@@ -194,7 +139,7 @@ const invNum = (inv: IInvoice) => {
             <span v-else>{{ i + 1 }}</span>
           </div>
           <span class="pse-step__label">{{ s }}</span>
-          <div v-if="i < 2" class="pse-step__line"></div>
+          <div v-if="i < 1" class="pse-step__line"></div>
         </div>
       </div>
 
@@ -312,42 +257,6 @@ const invNum = (inv: IInvoice) => {
 
         <div class="bold-footer">
           <button type="button" class="btn btn--ghost" @click="goBack">← Volver</button>
-          <button type="button" class="btn btn--primary" style="margin-left:12px" @click="checkResult">Ya pagué →</button>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════════════════════════ -->
-      <!-- STEP 3 — Resultado                                             -->
-      <!-- ══════════════════════════════════════════════════════════════ -->
-      <div v-else-if="step === 3" class="pse-card pse-result">
-        <!-- Loading -->
-        <div v-if="loadingResult" class="pse-loading">
-          <div class="pse-spinner"></div>
-          <p>Verificando pago con Bold...</p>
-        </div>
-
-        <!-- Approved -->
-        <div v-else-if="resultStatus === 'APPROVED'" class="pse-result__body">
-          <div class="pse-result__icon pse-result__icon--ok">✅</div>
-          <h2 class="pse-result__title">¡Pago exitoso!</h2>
-          <p class="pse-result__sub">Tu factura <strong>{{ selectedInvoice ? invNum(selectedInvoice) : '' }}</strong> ha sido marcada como pagada.</p>
-          <button class="btn btn--primary" @click="goBack">Ver mis facturas</button>
-        </div>
-
-        <!-- Rejected -->
-        <div v-else-if="resultStatus === 'REJECTED'" class="pse-result__body">
-          <div class="pse-result__icon pse-result__icon--err">❌</div>
-          <h2 class="pse-result__title">Pago rechazado</h2>
-          <p class="pse-result__sub">El pago no fue aprobado. Puedes intentar nuevamente.</p>
-          <button class="btn btn--primary" @click="goBack">Intentar de nuevo</button>
-        </div>
-
-        <!-- Pending / Unknown -->
-        <div v-else class="pse-result__body">
-          <div class="pse-result__icon">⏳</div>
-          <h2 class="pse-result__title">Verificando...</h2>
-          <p class="pse-result__sub">Bold aún está procesando el pago. Espera unos segundos.</p>
-          <button class="btn btn--ghost" @click="checkResult" :disabled="loadingResult">Verificar ahora</button>
         </div>
       </div>
 
@@ -697,43 +606,4 @@ const invNum = (inv: IInvoice) => {
 .btn--sm { padding: 6px 12px; font-size: 0.8rem; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
-
-.pse-result {
-  text-align: center;
-}
-
-.pse-result__body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 48px 32px;
-  gap: 14px;
-}
-
-.pse-result__icon {
-  font-size: 3rem;
-  line-height: 1;
-}
-
-.pse-result__title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-}
-
-.pse-result__sub {
-  font-size: 0.9rem;
-  color: #64748b;
-  margin: 0 0 8px;
-}
-
-.btn--primary {
-  background: #0077be;
-  color: white;
-  border: none;
-}
-
-.btn--primary:hover { background: #005f9e; }
-.btn--primary:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>
