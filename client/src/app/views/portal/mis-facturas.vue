@@ -214,8 +214,8 @@ const downloadInvoice = async (inv: IInvoice) => {
                 <div class="action-btns">
                   <button
                     class="dl-btn"
-                    :class="{ 'dl-btn--loading': downloadingId === inv.id }"
-                    :disabled="downloadingId === inv.id"
+                    :class="{ 'dl-btn--loading': downloadingId === inv.id, 'dl-btn--unavailable': !inv.pdfUrl }"
+                    :disabled="downloadingId === inv.id || !inv.pdfUrl"
                     :title="inv.pdfUrl ? 'Descargar PDF' : 'PDF no disponible'"
                     @click="downloadInvoice(inv)"
                   >
@@ -551,6 +551,11 @@ const downloadInvoice = async (inv: IInvoice) => {
 .dl-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.dl-btn--unavailable {
+  color: #94a3b8;
+  border-color: #e2e8f0;
 }
 
 .dl-btn--loading {

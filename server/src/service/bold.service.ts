@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
 import { Invoice } from '../domain/invoice.entity';
+import { User } from '../domain/user.entity';
 import { InvoiceStatus } from '../domain/enumeration/invoice-status';
 import { ActivityLog } from '../domain/activity-log.entity';
 import { ActivityAction } from '../domain/enumeration/activity-action';
@@ -15,8 +16,15 @@ export class BoldService {
   constructor(
     @InjectRepository(Invoice) private readonly invoiceRepository: Repository<Invoice>,
     @InjectRepository(ActivityLog) private readonly activityLogRepository: Repository<ActivityLog>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly notificationService: NotificationService,
   ) {}
+
+  private async resolveLogin(userId?: string): Promise<string | null> {
+    if (!userId) return null;
+    const user = await this.userRepository.findOne({ where: { id: parseInt(userId, 10) } as any });
+    return user?.login ?? null;
+  }
 
   async getHashForInvoice(invoiceId: number): Promise<{ boldOrderId: string; hash: string; apiKey: string; amount: number }> {
     const invoice = await this.invoiceRepository.findOne({ where: { id: invoiceId } });
@@ -73,7 +81,7 @@ export class BoldService {
       log.createdAt = new Date();
       await this.activityLogRepository.save(log).catch(() => {});
 
-      const login = invoice.person?.userId ?? invoice.person?.email;
+      const login = await this.resolveLogin(invoice.person?.userId);
       if (login) {
         const year = new Date(invoice.issueDate).getFullYear();
         const num = `FAC-${year}-${String(invoice.id).padStart(3, '0')}`;
@@ -108,7 +116,7 @@ export class BoldService {
       invoice.status = InvoiceStatus.PAID;
 
       const fullInvoice = await this.invoiceRepository.findOne({ where: { id: invoiceId }, relations: ['person'] });
-      const login = fullInvoice?.person?.userId ?? fullInvoice?.person?.email;
+      const login = await this.resolveLogin(fullInvoice?.person?.userId);
       if (login) {
         const year = new Date(fullInvoice.issueDate).getFullYear();
         const num = `FAC-${year}-${String(invoiceId).padStart(3, '0')}`;

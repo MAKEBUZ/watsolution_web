@@ -8,6 +8,11 @@ export interface IInvoice {
   dueDate?: Date;
   consumptionM3?: number;
   amountDue?: number;
+  ratePerM3?: number;
+  fixedCharge?: number;
+  subsidyPercent?: number;
+  additionalCharges?: number;
+  pdfUrl?: string | null;
   status?: keyof typeof InvoiceStatus | null;
   createdAt?: Date | null;
   meter?: IMeter | null;
@@ -23,6 +28,11 @@ export class Invoice implements IInvoice {
     public dueDate?: Date,
     public consumptionM3?: number,
     public amountDue?: number,
+    public ratePerM3?: number,
+    public fixedCharge?: number,
+    public subsidyPercent?: number,
+    public additionalCharges?: number,
+    public pdfUrl?: string | null,
     public status?: keyof typeof InvoiceStatus | null,
     public createdAt?: Date | null,
     public meter?: IMeter | null,

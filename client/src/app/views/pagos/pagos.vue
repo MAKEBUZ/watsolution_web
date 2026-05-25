@@ -80,10 +80,8 @@ const loadBoldButton = async (inv: IInvoice) => {
     btn.setAttribute('data-integrity-signature', hash)
     btn.setAttribute('data-description', `Pago Factura #${inv.id}`)
     btn.setAttribute('data-tax', 'vat-19')
-    // data-render-mode="embedded" removed — test if modal mode causes BTN-001
     container.appendChild(btn)
 
-    // Remove previous SDK instance so browser re-executes it after button is in DOM
     const prev = document.getElementById('bold-sdk')
     if (prev) prev.remove()
     const sdk = document.createElement('script')
@@ -128,7 +126,7 @@ const invNum = (inv: IInvoice) => {
     <div class="pse-wrap">
 
       <!-- ── Progress bar ───────────────────────────────────────────── -->
-      <div v-if="step < 3" class="pse-progress">
+      <div class="pse-progress">
         <div
           v-for="(s, i) in ['Seleccionar Factura', 'Pagar con Bold']"
           :key="i"
