@@ -63,6 +63,8 @@ const loadBoldButton = async (inv: IInvoice) => {
     const res = await axios.get(`api/bold/hash?invoiceId=${inv.id}`)
     const { boldOrderId, hash, apiKey, amount } = res.data
 
+    // Must reveal container before accessing it — v-else hides it while loadingBold=true
+    loadingBold.value = false
     await nextTick()
 
     const container = document.getElementById('bold-payment-container')
@@ -76,22 +78,20 @@ const loadBoldButton = async (inv: IInvoice) => {
     btn.setAttribute('data-currency', 'COP')
     btn.setAttribute('data-amount', String(amount))
     btn.setAttribute('data-integrity-signature', hash)
-    btn.setAttribute('data-redirection-url', `${window.location.origin}/invoice/${inv.id}/payment-result`)
-    btn.setAttribute('data-origin-url', window.location.href)
     btn.setAttribute('data-description', `Pago Factura #${inv.id}`)
     btn.setAttribute('data-tax', 'vat-19')
-    btn.setAttribute('data-render-mode', 'embedded')
+    // data-render-mode="embedded" removed — test if modal mode causes BTN-001
     container.appendChild(btn)
 
+    // Remove previous SDK instance so browser re-executes it after button is in DOM
     const prev = document.getElementById('bold-sdk')
     if (prev) prev.remove()
     const sdk = document.createElement('script')
     sdk.id = 'bold-sdk'
-    sdk.src = 'https://checkout.bold.co/library/boldPaymentButton.js'
+    sdk.src = `https://checkout.bold.co/library/boldPaymentButton.js?t=${Date.now()}`
     document.head.appendChild(sdk)
   } catch {
     boldError.value = 'No se pudo cargar el botón de pago. Intenta de nuevo.'
-  } finally {
     loadingBold.value = false
   }
 }
