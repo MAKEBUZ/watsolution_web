@@ -26,9 +26,7 @@ export class BoldService {
     const boldOrderId = `INV-${invoiceId}-${timestamp}`;
     const amount = Math.round(Number(invoice.amountDue));
 
-    const hashInput = `${boldOrderId}${amount}COP${secretKey}`;
-    const hash = crypto.createHash('sha256').update(hashInput).digest('hex');
-    this.logger.debug(`[Bold hash] input="${hashInput}" → hash="${hash}"`);
+    const hash = crypto.createHash('sha256').update(`${boldOrderId}${amount}COP${secretKey}`).digest('hex');
 
     await this.invoiceRepository.update(invoiceId, { boldOrderId });
 

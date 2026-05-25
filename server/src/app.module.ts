@@ -14,6 +14,7 @@ import { ActivityLogModule } from './module/activity-log.module';
 import { AdminModule } from './module/admin.module';
 import { PortalModule } from './module/portal.module';
 import { BoldModule } from './module/bold.module';
+import { AiModule } from './module/ai.module';
 // jhipster-needle-add-entity-module-to-main-import - JHipster will import entity modules here, do not remove
 // jhipster-needle-add-controller-module-to-main-import - JHipster will import controller modules here, do not remove
 // jhipster-needle-add-service-module-to-main-import - JHipster will import service modules here, do not remove
@@ -35,6 +36,7 @@ import { BoldModule } from './module/bold.module';
     AdminModule,
     PortalModule,
     BoldModule,
+    AiModule,
     // jhipster-needle-add-entity-module-to-main - JHipster will add entity modules here, do not remove
   ],
   controllers: [
