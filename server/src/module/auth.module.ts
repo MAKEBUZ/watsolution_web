@@ -19,7 +19,7 @@ import { AccountController } from '../web/rest/account.controller';
     PassportModule,
     JwtModule.register({
       secret: config['jhipster.security.authentication.jwt.base64-secret'],
-      signOptions: { expiresIn: '300s' },
+      signOptions: { expiresIn: '86400s' },
     }),
   ],
   controllers: [UserJWTController, PublicUserController, AccountController],
