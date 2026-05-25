@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useAccountStore } from '@/shared/config/store/account-store';
+import NotificationBell from '@/core/notifications/notification-bell.vue';
 
 const accountStore = useAccountStore();
 const router = useRouter();
@@ -96,6 +97,7 @@ const navLinks = [
           </template>
 
           <template v-else>
+            <NotificationBell />
             <button @click="logout" class="btn btn--outline">
               Cerrar Sesión
             </button>
