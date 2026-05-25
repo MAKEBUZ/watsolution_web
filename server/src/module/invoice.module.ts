@@ -8,10 +8,12 @@ import { InvoiceService } from '../service/invoice.service';
 import { BucketService } from '../service/bucket.service';
 import { NotificationModule } from './notification.module';
 
+import { InvoicePdfService } from '../service/invoice-pdf.service';
+
 @Module({
   imports: [TypeOrmModule.forFeature([Invoice, ActivityLog, User]), NotificationModule],
   controllers: [InvoiceController],
-  providers: [InvoiceService, BucketService],
+  providers: [InvoiceService, InvoicePdfService, BucketService],
   exports: [InvoiceService],
 })
 export class InvoiceModule {}
