@@ -16,6 +16,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from '../../service/dto/invoice.dto';
 import { InvoiceService } from '../../service/invoice.service';
+import { InvoicePdfService } from '../../service/invoice-pdf.service';
 import { BucketService } from '../../service/bucket.service';
 import { Page, PageRequest } from '../../domain/base/pagination.entity';
 import { AuthGuard, RoleType, Roles, RolesGuard } from '../../security';
@@ -34,6 +35,7 @@ export class InvoiceController {
 
   constructor(
     private readonly invoiceService: InvoiceService,
+    private readonly invoicePdfService: InvoicePdfService,
     private readonly bucketService: BucketService,
     private readonly notificationService: NotificationService,
   ) {}
@@ -115,6 +117,49 @@ export class InvoiceController {
     } catch {}
 
     return created;
+  }
+
+  @PostMethod('/:id/generate-pdf')
+  @Roles(RoleType.USER)
+  @ApiOperation({ summary: 'Generate PDF for existing invoice and upload to S3' })
+  @ApiResponse({ status: 200, description: 'Invoice PDF generated', type: InvoiceDTO })
+  async generatePdf(@Req() req: Request, @Param('id') id: number): Promise<InvoiceDTO> {
+    const invoice = await this.invoiceService.findById(id);
+    if (!invoice) {
+      throw new NotFoundException('Invoice not found');
+    }
+    if (!invoice.meter || !invoice.person) {
+      throw new NotFoundException('Invoice missing meter or person data');
+    }
+
+    const person = invoice.person;
+    const meter = invoice.meter;
+
+    // Generate PDF
+    const pdfBuffer = await this.invoicePdfService.generate({
+      invoiceId: invoice.id!,
+      personName: person.fullName ?? `Suscriptor ${person.id}`,
+      documentNumber: person.documentNumber,
+      subscriberNumber: person.subscriberNumber,
+      issueDate: new Date(invoice.issueDate),
+      dueDate: new Date(invoice.dueDate),
+      consumptionM3: Number(invoice.consumptionM3 ?? 0),
+      ratePerM3: Number(invoice.ratePerM3 ?? 0),
+      fixedCharge: Number(invoice.fixedCharge ?? 0),
+      subsidyPercent: Number(invoice.subsidyPercent ?? 0),
+      additionalCharges: Number(invoice.additionalCharges ?? 0),
+      amountDue: Number(invoice.amountDue ?? 0),
+    });
+
+    const key = `facturacion/FAC-${invoice.id}.pdf`;
+    await this.bucketService.uploadPdf(key, pdfBuffer);
+
+    // Persist pdfUrl
+    const updated = await this.invoiceService.update({ ...invoice, pdfUrl: key }, req.user?.login);
+    if (!updated) {
+      throw new NotFoundException('Failed to update invoice with pdfUrl');
+    }
+    return updated;
   }
 
   @Put('/')
