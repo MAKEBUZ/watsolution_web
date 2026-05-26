@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
+import QRCode from 'qrcode'
 import { useAccountStore } from '@/shared/config/store/account-store'
 import PersonService from '@/entities/person/person.service'
 import type { IPerson } from '@/shared/model/person.model'
@@ -284,6 +285,59 @@ const executeDelete = async () => {
     deleting.value = false
   }
 }
+
+// ── QR Modal ─────────────────────────────────────────────────────────────────
+const showQrModal = ref(false)
+const qrPerson = ref<IPerson | null>(null)
+const qrDataUrl = ref<string>('')
+const generatingQr = ref(false)
+
+const openQrModal = async (person: IPerson) => {
+  qrPerson.value = person
+  showQrModal.value = true
+  generatingQr.value = true
+  qrDataUrl.value = ''
+  try {
+    const payload = JSON.stringify({
+      v: 1,
+      personId: person.id,
+      name: person.fullName,
+      doc: person.documentNumber,
+      sub: person.subscriberNumber ?? '',
+      stratum: person.stratum ?? 1,
+      address: formatAddress(person),
+      rate: 2500,
+      fixedCharge: 5000,
+      subsidy: 0.15,
+    })
+    qrDataUrl.value = await QRCode.toDataURL(payload, {
+      width: 380,
+      margin: 2,
+      color: { dark: '#1e293b', light: '#ffffff' },
+      errorCorrectionLevel: 'M',
+    })
+  } catch (err) {
+    console.error('QR generation failed', err)
+  } finally {
+    generatingQr.value = false
+  }
+}
+
+const closeQrModal = () => {
+  showQrModal.value = false
+  qrPerson.value = null
+  qrDataUrl.value = ''
+}
+
+const downloadQr = () => {
+  if (!qrDataUrl.value || !qrPerson.value) return
+  const link = document.createElement('a')
+  link.href = qrDataUrl.value
+  const slug = (qrPerson.value.subscriberNumber ?? qrPerson.value.documentNumber ?? `id${qrPerson.value.id}`)
+    .toString().replace(/\s+/g, '-')
+  link.download = `QR-WatSolution-${slug}.png`
+  link.click()
+}
 </script>
 
 <template>
@@ -411,6 +465,12 @@ const executeDelete = async () => {
                   <td class="actions-cell">
                     <button class="btn-icon btn-icon--history" title="Historial de mediciones" @click="openDrawer(person)">
                       <font-awesome-icon icon="tachometer-alt" :size="15" />
+                    </button>
+                    <button class="btn-icon btn-icon--qr" title="Generar QR para app móvil" @click="openQrModal(person)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/>
+                        <path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
+                      </svg>
                     </button>
                     <button class="btn-icon" title="Editar" @click="openEdit(person)">
                       <font-awesome-icon icon="pencil-alt" :size="15" />
@@ -647,6 +707,47 @@ const executeDelete = async () => {
         </aside>
       </div>
     </transition>
+
+    <!-- QR Modal -->
+    <div v-if="showQrModal" class="modal-overlay" @click.self="closeQrModal">
+      <div class="modal-card modal-card--qr">
+        <div class="modal-header">
+          <h2>QR del Suscriptor</h2>
+          <button class="modal-close" @click="closeQrModal">
+            <font-awesome-icon icon="times" :size="18" />
+          </button>
+        </div>
+        <div class="modal-body qr-modal-body">
+          <div class="qr-person-info" v-if="qrPerson">
+            <p class="qr-name">{{ qrPerson.fullName }}</p>
+            <p class="qr-meta">
+              <span v-if="qrPerson.documentNumber">Doc: {{ qrPerson.documentNumber }}</span>
+              <span v-if="qrPerson.subscriberNumber"> · Sub: {{ qrPerson.subscriberNumber }}</span>
+              <span v-if="qrPerson.stratum"> · Estrato {{ qrPerson.stratum }}</span>
+            </p>
+            <p class="qr-meta qr-meta--addr">{{ formatAddress(qrPerson) }}</p>
+          </div>
+          <div class="qr-display">
+            <div v-if="generatingQr" class="qr-loading">
+              <font-awesome-icon icon="spinner" spin />
+              <span>Generando QR...</span>
+            </div>
+            <img v-else-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="qr-image" />
+          </div>
+          <div class="qr-hint">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span>Escanea con la app móvil para cargar los datos del suscriptor. Solo ingresas la lectura del medidor.</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn--secondary" @click="closeQrModal">Cerrar</button>
+          <button class="btn btn--primary" @click="downloadQr" :disabled="!qrDataUrl || generatingQr">
+            <font-awesome-icon icon="download" :size="15" />
+            Descargar PNG
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Delete confirmation -->
     <div v-if="showDeleteConfirm" class="modal-overlay" @click.self="cancelDelete">
@@ -1250,6 +1351,87 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   background: #eff6ff;
   color: #2563eb;
   border-color: #bfdbfe;
+}
+
+.btn-icon--qr:hover {
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+// ── QR Modal ──────────────────────────────────────────────────────────────────
+.modal-card--qr {
+  max-width: 460px;
+  width: 100%;
+}
+
+.qr-modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+}
+
+.qr-person-info {
+  text-align: center;
+  width: 100%;
+}
+
+.qr-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px;
+}
+
+.qr-meta {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0 0 2px;
+}
+
+.qr-meta--addr {
+  font-style: italic;
+}
+
+.qr-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
+}
+
+.qr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.qr-image {
+  width: 240px;
+  height: 240px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: block;
+}
+
+.qr-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  color: #0369a1;
+  width: 100%;
+
+  svg { flex-shrink: 0; margin-top: 1px; }
 }
 
 // ── Drawer ────────────────────────────────────────────────────────────────────
