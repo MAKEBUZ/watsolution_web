@@ -214,9 +214,9 @@ const downloadInvoice = async (inv: IInvoice) => {
                 <div class="action-btns">
                   <button
                     class="dl-btn"
-                    :class="{ 'dl-btn--loading': downloadingId === inv.id, 'dl-btn--unavailable': !inv.pdfUrl }"
-                    :disabled="downloadingId === inv.id || !inv.pdfUrl"
-                    :title="inv.pdfUrl ? 'Descargar PDF' : 'PDF no disponible'"
+                    :class="{ 'dl-btn--loading': downloadingId === inv.id }"
+                    :disabled="downloadingId === inv.id"
+                    title="Descargar PDF"
                     @click="downloadInvoice(inv)"
                   >
                     <svg v-if="downloadingId !== inv.id" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -553,10 +553,6 @@ const downloadInvoice = async (inv: IInvoice) => {
   cursor: not-allowed;
 }
 
-.dl-btn--unavailable {
-  color: #94a3b8;
-  border-color: #e2e8f0;
-}
 
 .dl-btn--loading {
   color: #64748b;

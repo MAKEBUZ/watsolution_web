@@ -73,12 +73,40 @@ export class InvoiceController {
 
   @Get('/download/:id')
   @Roles(RoleType.USER)
-  @ApiOperation({ summary: 'Get presigned download URL for invoice PDF' })
+  @ApiOperation({ summary: 'Get presigned download URL for invoice PDF (generates on-demand if missing)' })
   @ApiResponse({ status: 200, description: 'Presigned URL' })
   async getDownloadUrl(@Param('id') id: number): Promise<{ url: string }> {
     const invoice = await this.invoiceService.findById(id);
-    if (!invoice?.pdfUrl) throw new NotFoundException('PDF not available for this invoice');
-    const url = await this.bucketService.getPresignedUrl(invoice.pdfUrl);
+    if (!invoice) throw new NotFoundException('Invoice not found');
+
+    let pdfKey = invoice.pdfUrl;
+
+    if (!pdfKey) {
+      try {
+        const pdfBuffer = await this.invoicePdfService.generate({
+          invoiceId: invoice.id,
+          personName: (invoice as any).person?.fullName ?? `Suscriptor ${invoice.id}`,
+          documentNumber: (invoice as any).person?.documentNumber,
+          subscriberNumber: (invoice as any).person?.subscriberNumber,
+          issueDate: new Date(invoice.issueDate),
+          dueDate: new Date(invoice.dueDate),
+          consumptionM3: Number(invoice.consumptionM3 ?? 0),
+          ratePerM3: Number(invoice.ratePerM3 ?? 0),
+          fixedCharge: Number(invoice.fixedCharge ?? 0),
+          subsidyPercent: Number(invoice.subsidyPercent ?? 0),
+          additionalCharges: Number(invoice.additionalCharges ?? 0),
+          amountDue: Number(invoice.amountDue ?? 0),
+        });
+        pdfKey = `facturacion/FAC-${invoice.id}.pdf`;
+        await this.bucketService.uploadPdf(pdfKey, pdfBuffer);
+        await this.invoiceService.update({ ...invoice, pdfUrl: pdfKey });
+      } catch (err) {
+        this.logger.error(`On-demand PDF generation failed for invoice ${id}: ${err?.message ?? err}`);
+        throw new NotFoundException('PDF generation failed for this invoice');
+      }
+    }
+
+    const url = await this.bucketService.getPresignedUrl(pdfKey);
     return { url };
   }
 
