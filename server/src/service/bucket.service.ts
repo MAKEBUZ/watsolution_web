@@ -22,12 +22,16 @@ export class BucketService {
   }
 
   async uploadPdf(key: string, buffer: Buffer): Promise<string> {
+    return this.uploadFile(key, buffer, 'application/pdf');
+  }
+
+  async uploadFile(key: string, buffer: Buffer, contentType: string): Promise<string> {
     await this.s3.send(
       new PutObjectCommand({
         Bucket: this.bucket,
         Key: key,
         Body: buffer,
-        ContentType: 'application/pdf',
+        ContentType: contentType,
       }),
     );
     return key;

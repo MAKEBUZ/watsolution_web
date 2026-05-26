@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
-import QRCode from 'qrcode'
 import { useAccountStore } from '@/shared/config/store/account-store'
 import PersonService from '@/entities/person/person.service'
 import type { IPerson } from '@/shared/model/person.model'
@@ -290,34 +289,23 @@ const executeDelete = async () => {
 const showQrModal = ref(false)
 const qrPerson = ref<IPerson | null>(null)
 const qrDataUrl = ref<string>('')
+const qrFilename = ref<string>('')
 const generatingQr = ref(false)
+const qrError = ref('')
 
 const openQrModal = async (person: IPerson) => {
   qrPerson.value = person
   showQrModal.value = true
   generatingQr.value = true
   qrDataUrl.value = ''
+  qrFilename.value = ''
+  qrError.value = ''
   try {
-    const payload = JSON.stringify({
-      v: 1,
-      personId: person.id,
-      name: person.fullName,
-      doc: person.documentNumber,
-      sub: person.subscriberNumber ?? '',
-      stratum: person.stratum ?? 1,
-      address: formatAddress(person),
-      rate: 2500,
-      fixedCharge: 5000,
-      subsidy: 0.15,
-    })
-    qrDataUrl.value = await QRCode.toDataURL(payload, {
-      width: 380,
-      margin: 2,
-      color: { dark: '#1e293b', light: '#ffffff' },
-      errorCorrectionLevel: 'M',
-    })
-  } catch (err) {
-    console.error('QR generation failed', err)
+    const res = await axios.get<{ url: string; filename: string }>(`api/admin/people/${person.id}/qr`)
+    qrDataUrl.value = res.data.url
+    qrFilename.value = res.data.filename
+  } catch (err: any) {
+    qrError.value = err?.response?.data?.message ?? 'Error al generar el QR.'
   } finally {
     generatingQr.value = false
   }
@@ -327,15 +315,16 @@ const closeQrModal = () => {
   showQrModal.value = false
   qrPerson.value = null
   qrDataUrl.value = ''
+  qrFilename.value = ''
+  qrError.value = ''
 }
 
 const downloadQr = () => {
-  if (!qrDataUrl.value || !qrPerson.value) return
+  if (!qrDataUrl.value) return
   const link = document.createElement('a')
   link.href = qrDataUrl.value
-  const slug = (qrPerson.value.subscriberNumber ?? qrPerson.value.documentNumber ?? `id${qrPerson.value.id}`)
-    .toString().replace(/\s+/g, '-')
-  link.download = `QR-WatSolution-${slug}.png`
+  link.download = qrFilename.value || 'QR-WatSolution.png'
+  link.target = '_blank'
   link.click()
 }
 </script>
@@ -732,7 +721,8 @@ const downloadQr = () => {
               <font-awesome-icon icon="spinner" spin />
               <span>Generando QR...</span>
             </div>
-            <img v-else-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="qr-image" />
+            <div v-else-if="qrError" class="qr-error">{{ qrError }}</div>
+            <img v-else-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="qr-image" referrerpolicy="no-referrer" />
           </div>
           <div class="qr-hint">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
@@ -741,7 +731,7 @@ const downloadQr = () => {
         </div>
         <div class="modal-footer">
           <button class="btn btn--secondary" @click="closeQrModal">Cerrar</button>
-          <button class="btn btn--primary" @click="downloadQr" :disabled="!qrDataUrl || generatingQr">
+          <button class="btn btn--primary" @click="downloadQr" :disabled="!qrDataUrl || generatingQr || !!qrError">
             <font-awesome-icon icon="download" :size="15" />
             Descargar PNG
           </button>
@@ -1417,6 +1407,13 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   display: block;
+}
+
+.qr-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 12px;
 }
 
 .qr-hint {
