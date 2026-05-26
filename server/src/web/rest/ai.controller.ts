@@ -22,6 +22,17 @@ export class AiController {
     return this.aiService.chat(req.user?.login ?? '', body.message);
   }
 
+  @Post('/admin/chat')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Admin AI assistant — query any subscriber billing by cedula' })
+  async adminChat(
+    @Body() body: { message: string },
+  ): Promise<{ reply: string }> {
+    return this.aiService.adminChat(body.message);
+  }
+
   @Post('/admin/seed-faqs')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.ADMIN)

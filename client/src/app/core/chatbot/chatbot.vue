@@ -2,9 +2,13 @@
 import { ref, computed, inject, nextTick, type ComputedRef } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import { useAccountStore } from '@/shared/config/store/account-store'
 
 const route = useRoute()
 const authenticated = inject<ComputedRef<boolean>>('authenticated')
+const accountStore = useAccountStore()
+
+const isAdmin = computed(() => accountStore.account?.authorities?.includes('ROLE_ADMIN') ?? false)
 
 const open = ref(false)
 const input = ref('')
@@ -12,15 +16,25 @@ const loading = ref(false)
 const messagesEl = ref<HTMLElement | null>(null)
 
 type Msg = { role: 'user' | 'bot'; text: string }
-const messages = ref<Msg[]>([
-  { role: 'bot', text: '¡Hola! Soy el asistente de WatSolution. ¿En qué te puedo ayudar con tus facturas o pagos?' },
-])
+
+const welcomeMsg = computed<string>(() =>
+  isAdmin.value
+    ? '¡Hola, administrador! Puedo consultar facturas y deudas de cualquier suscriptor. Proporciona el número de cédula para comenzar.'
+    : '¡Hola! Soy el asistente de WatSolution. ¿En qué te puedo ayudar con tus facturas o pagos?'
+)
+
+const messages = ref<Msg[]>([])
 
 const hidden = computed(() =>
   !authenticated?.value || route.path.startsWith('/pagos'),
 )
 
-const toggle = () => { open.value = !open.value }
+const toggle = () => {
+  if (!open.value && messages.value.length === 0) {
+    messages.value.push({ role: 'bot', text: welcomeMsg.value })
+  }
+  open.value = !open.value
+}
 
 const scrollBottom = async () => {
   await nextTick()
@@ -35,7 +49,8 @@ const send = async () => {
   await scrollBottom()
   loading.value = true
   try {
-    const { data } = await axios.post<{ reply: string }>('api/ai/chat', { message: text })
+    const endpoint = isAdmin.value ? 'api/ai/admin/chat' : 'api/ai/chat'
+    const { data } = await axios.post<{ reply: string }>(endpoint, { message: text })
     messages.value.push({ role: 'bot', text: data.reply })
   } catch {
     messages.value.push({ role: 'bot', text: 'Ocurrió un error. Intenta de nuevo.' })
