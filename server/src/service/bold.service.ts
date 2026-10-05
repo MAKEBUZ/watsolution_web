@@ -27,21 +27,21 @@ export class BoldService {
   }
 
   async getHashForInvoice(invoiceId: number): Promise<{ boldOrderId: string; hash: string; apiKey: string; amount: number }> {
-    const invoice = await this.invoiceRepository.findOne({ where: { id: invoiceId } });
-    if (!invoice) throw new NotFoundException('Invoice not found');
-
     const secretKey = process.env.BOLD_SECRET_KEY ?? '';
     const apiKey = process.env.BOLD_API_KEY ?? '';
     if (!secretKey || !apiKey) throw new ServiceUnavailableException('Payment configuration unavailable');
-    if (invoice.status !== InvoiceStatus.PENDING) throw new BadRequestException('Invoice is not payable');
-    const boldOrderId = invoice.boldOrderId ?? `INV-${invoiceId}-${crypto.randomUUID()}`;
-    const amount = Number(invoice.amountDue);
-
-    const hash = crypto.createHash('sha256').update(`${boldOrderId}${amount}COP${secretKey}`).digest('hex');
-
-    await this.invoiceRepository.update(invoiceId, { boldOrderId });
-
-    return { boldOrderId, hash, apiKey, amount };
+    return this.invoiceRepository.manager.transaction(async manager => {
+      const repo = manager.getRepository(Invoice);
+      const invoice = await repo.findOne({ where: { id: invoiceId }, lock: { mode: 'pessimistic_write' } });
+      if (!invoice) throw new NotFoundException('Invoice not found');
+      if (invoice.status !== InvoiceStatus.PENDING) throw new BadRequestException('Invoice is not payable');
+      const amount = Number(invoice.amountDue);
+      if (!Number.isFinite(amount) || amount <= 0) throw new BadRequestException('Invalid invoice amount');
+      const boldOrderId = invoice.boldOrderId || `INV-${invoiceId}-${crypto.randomUUID()}`;
+      if (!invoice.boldOrderId) await repo.update(invoiceId, { boldOrderId });
+      const hash = crypto.createHash('sha256').update(`${boldOrderId}${amount}COP${secretKey}`).digest('hex');
+      return { boldOrderId, hash, apiKey, amount };
+    });
   }
 
   async processWebhook(payload: any, rawBody: Buffer, signature: string): Promise<void> {
