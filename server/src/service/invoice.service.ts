@@ -109,6 +109,15 @@ export class InvoiceService {
     return InvoiceMapper.fromEntityToDTO(result);
   }
 
+  async updatePdfKey(id: number, pdfUrl: string, updater?: string): Promise<InvoiceDTO | undefined> {
+    // A PDF may finish after a payment. Never save the earlier invoice snapshot.
+    const changes: Partial<Invoice> = { pdfUrl };
+    if (updater) changes.lastModifiedBy = updater;
+    const result = await this.invoiceRepository.update(id, changes);
+    if (result.affected === 0) return undefined;
+    return this.findById(id);
+  }
+
   async deleteById(id: number): Promise<void | undefined> {
     await this.invoiceRepository.delete(id);
     const entityFind = await this.findById(id);
