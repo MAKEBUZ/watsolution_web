@@ -14,4 +14,7 @@ export function setRefreshCookie(res: Response, token: string) {
   res.cookie(refreshCookie, token, { httpOnly: true, secure: true, sameSite: 'strict', path: '/', maxAge: 7 * 86400000 });
   res.setHeader('Cache-Control', 'no-store');
 }
-export function clearRefreshCookie(res: Response) { res.clearCookie(refreshCookie, { httpOnly: true, secure: true, sameSite: 'strict', path: '/' }); }
+export function clearRefreshCookie(res: Response) {
+  res.clearCookie(refreshCookie, { httpOnly: true, secure: true, sameSite: 'strict', path: '/' });
+  res.setHeader('Cache-Control', 'no-store');
+}

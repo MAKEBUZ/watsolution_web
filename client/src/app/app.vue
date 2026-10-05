@@ -1,5 +1,12 @@
 <template>
   <div id="app">
+    <div v-if="accountStore.logoutStatus === 'pending'" role="status" class="logout-feedback alert alert-info">
+      Cerrando la sesión en el servidor…
+    </div>
+    <div v-if="accountStore.logoutStatus === 'failed'" role="alert" class="logout-feedback alert alert-warning">
+      Se ocultaron tus datos, pero no pudimos confirmar el cierre en el servidor. Comprueba tu conexión y vuelve a intentarlo.
+      <button type="button" class="btn btn-warning" @click="accountStore.logout()">Reintentar cierre de sesión</button>
+    </div>
     <Header v-if="!isAdminRoute" />
     <main :class="['main-content', { 'no-header': isAdminRoute }]">
       <router-view></router-view>
@@ -10,7 +17,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import { logoutStorageKey } from '@/shared/config/web-session';
 import { useRoute } from 'vue-router';
 import Header from '@/core/layout/header.vue';
 import Footer from '@/core/layout/footer.vue';
@@ -24,11 +33,18 @@ export default defineComponent({
     ChatBot,
   },
   setup() {
+    const accountStore = useAccountStore();
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === logoutStorageKey && event.newValue) accountStore.applyRemoteLogout();
+    };
+    onMounted(() => window.addEventListener('storage', onStorage));
+    onBeforeUnmount(() => window.removeEventListener('storage', onStorage));
     const route = useRoute();
     const isAdminRoute = computed(() => {
       return route.path.startsWith('/admin') || route.name?.toString().startsWith('Admin') || route.name?.toString().startsWith('admin');
     });
     return {
+      accountStore,
       route,
       isAdminRoute,
     };
@@ -37,6 +53,7 @@ export default defineComponent({
 </script>
 
 <style>
+.logout-feedback { position: fixed; top: 0; left: 0; right: 0; z-index: 10001; margin: 0; }
 #app {
   min-height: 100vh;
   display: flex;

@@ -29,4 +29,28 @@ describe('Refresh rotation', () => {
     const f = fixture(); f.row.expiresAt = new Date(0);
     await expect(f.service.rotate(f.token)).rejects.toThrow(); expect(f.repo.save).not.toHaveBeenCalled();
   });
+  it('revokes by refresh without an access token and tolerates repeated logout', async () => {
+    const f = fixture();
+    await f.service.revokeByRefresh(f.token);
+    await f.service.revokeByRefresh(f.token);
+    expect(f.row.revoked).toBe(true);
+    expect(f.repo.save).toHaveBeenCalledTimes(1);
+    await expect(f.service.rotate(f.token)).rejects.toThrow();
+  });
+  it('revokes the family when a refresh won the lock before logout', async () => {
+    const f = fixture(); const replacement = await f.service.rotate(f.token);
+    await f.service.revokeByRefresh(f.token);
+    await expect(f.service.rotate(replacement.refreshToken)).rejects.toThrow();
+    expect(f.row.revoked).toBe(true);
+  });
+  it('does not revoke a guessed refresh secret', async () => {
+    const f = fixture();
+    await f.service.revokeByRefresh(`${f.row.id}.${randomBytes(48).toString('base64url')}`);
+    expect(f.row.revoked).toBe(false);
+    expect(f.repo.save).not.toHaveBeenCalled();
+  });
+  it.each(['', 'invalid', undefined])('ignores absent or malformed refresh %s', async token => {
+    const f = fixture(); await f.service.revokeByRefresh(token);
+    expect(f.repo.findOne).not.toHaveBeenCalled();
+  });
 });
