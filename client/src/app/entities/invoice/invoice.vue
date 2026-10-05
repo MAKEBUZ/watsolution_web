@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="alert alert-info" role="status" data-cy="financial-containment-notice">La edición y eliminación directa de facturas están suspendidas para proteger pagos y saldos. Para emitir una factura, use Facturación.
+      <router-link to="/admin/facturacion">Ir a Facturación</router-link>
+    </div>
     <h2 id="page-heading" data-cy="InvoiceHeading">
       <span v-text="t$('watsolutionApp.invoice.home.title')" id="invoice-heading"></span>
       <div class="d-flex justify-content-end">
@@ -7,17 +10,7 @@
           <font-awesome-icon icon="sync" :spin="isFetching"></font-awesome-icon>
           <span v-text="t$('watsolutionApp.invoice.home.refreshListLabel')"></span>
         </button>
-        <router-link :to="{ name: 'InvoiceCreate' }" custom v-slot="{ navigate }">
-          <button
-            @click="navigate"
-            id="jh-create-entity"
-            data-cy="entityCreateButton"
-            class="btn btn-primary jh-create-entity create-invoice"
-          >
-            <font-awesome-icon icon="plus"></font-awesome-icon>
-            <span v-text="t$('watsolutionApp.invoice.home.createLabel')"></span>
-          </button>
-        </router-link>
+
       </div>
     </h2>
     <br />
@@ -96,22 +89,8 @@
                     <span class="d-none d-md-inline" v-text="t$('entity.action.view')"></span>
                   </button>
                 </router-link>
-                <router-link :to="{ name: 'InvoiceEdit', params: { invoiceId: invoice.id } }" custom v-slot="{ navigate }">
-                  <button @click="navigate" class="btn btn-primary btn-sm edit" data-cy="entityEditButton">
-                    <font-awesome-icon icon="pencil-alt"></font-awesome-icon>
-                    <span class="d-none d-md-inline" v-text="t$('entity.action.edit')"></span>
-                  </button>
-                </router-link>
-                <b-button
-                  @click="prepareRemove(invoice)"
-                  variant="danger"
-                  class="btn btn-sm"
-                  data-cy="entityDeleteButton"
-                  v-b-modal.removeEntity
-                >
-                  <font-awesome-icon icon="times"></font-awesome-icon>
-                  <span class="d-none d-md-inline" v-text="t$('entity.action.delete')"></span>
-                </b-button>
+
+
               </div>
             </td>
           </tr>
@@ -128,14 +107,7 @@
       <template #modal-footer>
         <div>
           <button type="button" class="btn btn-secondary" v-text="t$('entity.action.cancel')" @click="closeDialog()"></button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            id="jhi-confirm-delete-invoice"
-            data-cy="entityConfirmDeleteButton"
-            v-text="t$('entity.action.delete')"
-            @click="removeInvoice()"
-          ></button>
+
         </div>
       </template>
     </b-modal>

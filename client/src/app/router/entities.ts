@@ -10,11 +10,9 @@ const PersonUpdate = () => import('@/entities/person/person-update.vue');
 const PersonDetails = () => import('@/entities/person/person-details.vue');
 
 const Meter = () => import('@/entities/meter/meter.vue');
-const MeterUpdate = () => import('@/entities/meter/meter-update.vue');
 const MeterDetails = () => import('@/entities/meter/meter-details.vue');
 
 const Invoice = () => import('@/entities/invoice/invoice.vue');
-const InvoiceUpdate = () => import('@/entities/invoice/invoice-update.vue');
 const InvoiceDetails = () => import('@/entities/invoice/invoice-details.vue');
 const InvoicePaymentResult = () => import('@/entities/invoice/invoice-payment-result.vue');
 
@@ -81,13 +79,13 @@ export default {
     {
       path: 'meter/new',
       name: 'MeterCreate',
-      component: MeterUpdate,
+      redirect: { name: 'Meter' },
       meta: { authorities: [Authority.USER] },
     },
     {
       path: 'meter/:meterId/edit',
       name: 'MeterEdit',
-      component: MeterUpdate,
+      redirect: { name: 'Meter' },
       meta: { authorities: [Authority.USER] },
     },
     {
@@ -105,13 +103,13 @@ export default {
     {
       path: 'invoice/new',
       name: 'InvoiceCreate',
-      component: InvoiceUpdate,
+      redirect: '/admin/facturacion',
       meta: { authorities: [Authority.USER] },
     },
     {
       path: 'invoice/:invoiceId/edit',
       name: 'InvoiceEdit',
-      component: InvoiceUpdate,
+      redirect: { name: 'Invoice' },
       meta: { authorities: [Authority.USER] },
     },
     {

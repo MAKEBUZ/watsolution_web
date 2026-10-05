@@ -207,8 +207,9 @@ export class InvoiceController {
     type: InvoiceDTO,
   })
   async put(@Req() req: Request, @Body() invoiceDTO: InvoiceDTO): Promise<InvoiceDTO> {
+    const updated = await this.invoiceService.update(invoiceDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Invoice', invoiceDTO.id);
-    return await this.invoiceService.update(invoiceDTO, req.user?.login);
+    return updated;
   }
 
   @Put('/:id')
@@ -220,8 +221,9 @@ export class InvoiceController {
     type: InvoiceDTO,
   })
   async putId(@Req() req: Request, @Body() invoiceDTO: InvoiceDTO): Promise<InvoiceDTO> {
+    const updated = await this.invoiceService.update(invoiceDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Invoice', invoiceDTO.id);
-    return await this.invoiceService.update(invoiceDTO, req.user?.login);
+    return updated;
   }
 
   @Delete('/:id')
@@ -232,7 +234,7 @@ export class InvoiceController {
     description: 'The record has been successfully deleted.',
   })
   async deleteById(@Req() req: Request, @Param('id') id: number): Promise<void> {
+    await this.invoiceService.deleteById(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, 'Invoice', id);
-    return await this.invoiceService.deleteById(id);
   }
 }

@@ -1,11 +1,9 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Invoice } from '../domain/invoice.entity';
 import { ActivityLog } from '../domain/activity-log.entity';
 import { User } from '../domain/user.entity';
-import { ActivityAction } from '../domain/enumeration/activity-action';
-import { InvoiceStatus } from '../domain/enumeration/invoice-status';
 import { InvoiceDTO } from '../service/dto/invoice.dto';
 import { InvoiceMapper } from '../service/mapper/invoice.mapper';
 import { NotificationService } from './notification.service';
@@ -25,12 +23,6 @@ export class InvoiceService {
     @InjectRepository(User) private userRepository: Repository<User>,
     private readonly notificationService: NotificationService,
   ) {}
-
-  private async resolveLogin(userId?: string): Promise<string | null> {
-    if (!userId) return null;
-    const user = await this.userRepository.findOne({ where: { id: parseInt(userId, 10) } as any });
-    return user?.login ?? null;
-  }
 
   async findById(id: number): Promise<InvoiceDTO | undefined> {
     const result = await this.invoiceRepository.findOne({
@@ -55,58 +47,12 @@ export class InvoiceService {
     return resultList;
   }
 
-  async save(invoiceDTO: InvoiceDTO, creator?: string): Promise<InvoiceDTO | undefined> {
-    const entity = InvoiceMapper.fromDTOtoEntity(invoiceDTO);
-    if (creator) {
-      if (!entity.createdBy) {
-        entity.createdBy = creator;
-      }
-      entity.lastModifiedBy = creator;
-    }
-    const result = await this.invoiceRepository.save(entity);
-
-    if (!invoiceDTO.id) {
-      try {
-        const saved = await this.invoiceRepository.findOne({ where: { id: result.id }, relations: { person: true } });
-        const login = await this.resolveLogin(saved?.person?.userId);
-        if (login) {
-          const num = `FAC-${new Date(result.issueDate).getFullYear()}-${String(result.id).padStart(3, '0')}`;
-          await this.notificationService.send(login, 'invoice.created', 'Nueva factura generada', `Se generó la factura ${num} por $${result.amountDue}. Vence el ${new Date(result.dueDate).toLocaleDateString('es-CO')}.`, result.id);
-        }
-      } catch (err) {
-        this.logger.error(`Notification send failed for invoice ${result.id}: ${err?.message ?? err}`);
-      }
-    }
-
-    return InvoiceMapper.fromEntityToDTO(result);
+  async save(_dto: InvoiceDTO, _creator?: string): Promise<InvoiceDTO | undefined> {
+    throw new ConflictException('La modificación directa de facturas está suspendida. Emita facturas desde Facturación; los pagos se registran por el flujo verificado.');
   }
 
-  async update(invoiceDTO: InvoiceDTO, updater?: string): Promise<InvoiceDTO | undefined> {
-    const prevEntity = invoiceDTO.id ? await this.invoiceRepository.findOne({ where: { id: invoiceDTO.id }, relations: { person: true } }) : null;
-    const entity = InvoiceMapper.fromDTOtoEntity(invoiceDTO);
-    if (updater) {
-      entity.lastModifiedBy = updater;
-    }
-    const result = await this.invoiceRepository.save(entity);
-
-    if (entity.status === InvoiceStatus.PAID && prevEntity?.status !== InvoiceStatus.PAID) {
-      const log = new ActivityLog();
-      log.action = ActivityAction.PAGO_FACTURA;
-      log.description = 'Pago de Factura';
-      log.reference = `FAC-${result.id}`;
-      log.amount = result.amountDue;
-      log.personName = prevEntity?.person?.fullName ?? null;
-      log.createdAt = new Date();
-      await this.activityLogRepository.save(log).catch(() => {});
-
-      const login = await this.resolveLogin(prevEntity?.person?.userId);
-      if (login) {
-        const num = `FAC-${new Date(result.issueDate).getFullYear()}-${String(result.id).padStart(3, '0')}`;
-        await this.notificationService.send(login, 'invoice.paid', 'Pago confirmado', `Tu pago de la factura ${num} fue registrado exitosamente.`, result.id);
-      }
-    }
-
-    return InvoiceMapper.fromEntityToDTO(result);
+  async update(_dto: InvoiceDTO, _updater?: string): Promise<InvoiceDTO | undefined> {
+    throw new ConflictException('La modificación directa de facturas está suspendida. Emita facturas desde Facturación; los pagos se registran por el flujo verificado.');
   }
 
   async updatePdfKey(id: number, pdfUrl: string, updater?: string): Promise<InvoiceDTO | undefined> {
@@ -118,11 +64,7 @@ export class InvoiceService {
     return this.findById(id);
   }
 
-  async deleteById(id: number): Promise<void | undefined> {
-    await this.invoiceRepository.delete(id);
-    const entityFind = await this.findById(id);
-    if (entityFind) {
-      throw new HttpException('Error, entity not deleted!', HttpStatus.NOT_FOUND);
-    }
+  async deleteById(_id: number): Promise<void | undefined> {
+    throw new ConflictException('La modificación directa de facturas está suspendida. Emita facturas desde Facturación; los pagos se registran por el flujo verificado.');
   }
 }

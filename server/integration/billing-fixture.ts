@@ -5,13 +5,14 @@ import { Meter } from '../src/domain/meter.entity';
 import { Person } from '../src/domain/person.entity';
 import { Address } from '../src/domain/address.entity';
 import { ActivityLog } from '../src/domain/activity-log.entity';
+import { MobileOperation } from '../src/domain/mobile-operation.entity';
 import { integrationTarget } from './target';
 
 export async function createBillingFixture() {
   const target = integrationTarget();
   const schema = `ws_test_${randomUUID().replace(/-/g, '')}`;
   const db = new DataSource({ type: 'postgres', ...target, schema,
-    entities: [Invoice, Meter, Person, Address, ActivityLog], synchronize: false,
+    entities: [Invoice, Meter, Person, Address, ActivityLog, MobileOperation], synchronize: false,
     migrationsRun: false, dropSchema: false, logging: false,
     extra: { max: 24, connectionTimeoutMillis: 5000, application_name: schema } });
   let created = false;
@@ -51,6 +52,10 @@ export async function createBillingFixture() {
     await db.query(`CREATE TABLE "${schema}".activity_log (
       id serial PRIMARY KEY, ${audit}, action varchar NOT NULL, description text NOT NULL,
       reference varchar, amount numeric(12,2), person_name varchar, created_at timestamp NOT NULL)`);
+    await db.query(`CREATE TABLE "${schema}".mobile_operation (
+      id varchar(36) NOT NULL, "userId" integer NOT NULL, "payloadHash" varchar(64) NOT NULL,
+      "personId" integer NOT NULL, result text NOT NULL, "createdAt" timestamp NOT NULL,
+      PRIMARY KEY (id, "userId"))`);
     return { db, schema, close };
   } catch (error) { await close(); throw error; }
 }
