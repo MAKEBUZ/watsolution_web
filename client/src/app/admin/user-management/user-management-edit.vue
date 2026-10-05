@@ -109,11 +109,15 @@
               ></small>
             </div>
           </div>
+          <div class="form-group" v-if="!userAccount.id">
+            <label for="initialPassword">Contraseña inicial</label>
+            <input id="initialPassword" class="form-control" type="password" autocomplete="new-password" v-model="userAccount.password" minlength="12" maxlength="72" required />
+            <small class="form-text text-muted">Usa una contraseña única de al menos 12 caracteres. Compártela por un canal seguro con su titular.</small>
+          </div>
           <div class="form-check">
             <label class="form-check-label" for="activated">
               <input
                 class="form-check-input"
-                :disabled="userAccount.id === null"
                 type="checkbox"
                 id="activated"
                 name="activated"
@@ -140,7 +144,7 @@
           <button type="button" class="btn btn-secondary" @click="previousState()">
             <font-awesome-icon icon="ban"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.cancel')"></span>
           </button>
-          <button type="submit" :disabled="v$.userAccount.$invalid || isSaving" class="btn btn-primary">
+          <button type="submit" :disabled="v$.userAccount.$invalid || isSaving || (!userAccount.id && (userAccount.password?.length ?? 0) < 12)" class="btn btn-primary">
             <font-awesome-icon icon="save"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.save')"></span>
           </button>
         </div>

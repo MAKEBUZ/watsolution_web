@@ -1,5 +1,7 @@
 import {
   Body,
+  BadRequestException,
+  NotFoundException,
   ClassSerializerInterceptor,
   Controller,
   Delete,
@@ -20,6 +22,8 @@ import { HeaderUtil } from '../../client/header-util';
 import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { UserService } from '../../service/user.service';
+import { DataSource } from 'typeorm';
+import { AuthSession } from '../../domain/auth-session.entity';
 
 @Controller('api/admin/users')
 @UseGuards(AuthGuard, RolesGuard)
@@ -29,7 +33,12 @@ import { UserService } from '../../service/user.service';
 export class UserController {
   logger = new Logger('UserController');
 
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly db: DataSource) {}
+
+  private fields(input: UserDTO): Partial<UserDTO> {
+    if (!Array.isArray(input.authorities) || input.authorities.some(role => !['ROLE_USER', 'ROLE_OPERATOR', 'ROLE_ADMIN'].includes(role)) || typeof input.activated !== 'boolean') throw new BadRequestException('Invalid account permissions');
+    return { login: input.login, email: input.email, firstName: input.firstName, lastName: input.lastName, langKey: input.langKey, activated: input.activated, authorities: input.authorities };
+  }
 
   @Get('/')
   @Roles(RoleType.ADMIN)
@@ -60,8 +69,8 @@ export class UserController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async createUser(@Req() req: Request, @Body() userDTO: UserDTO): Promise<UserDTO> {
-    userDTO.password = userDTO.login;
-    const created = await this.userService.save(userDTO, req.user?.login);
+    if (userDTO.id != null) throw new BadRequestException('New account cannot include an id');
+    const created = await this.userService.save({ ...this.fields(userDTO), password: userDTO.password } as UserDTO, req.user?.login, true);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'User', created.id);
     return created;
   }
@@ -75,15 +84,16 @@ export class UserController {
     type: UserDTO,
   })
   async updateUser(@Req() req: Request, @Body() userDTO: UserDTO): Promise<UserDTO> {
-    const userOnDb = await this.userService.find({ where: { login: userDTO.login } });
+    const userOnDb = await this.userService.findByFields({ where: { login: userDTO.login } });
     let updated = false;
     if (userOnDb && userOnDb.id) {
-      userDTO.id = userOnDb.id;
+      userDTO = { ...userOnDb, ...this.fields(userDTO), id: userOnDb.id, password: userOnDb.password };
       updated = true;
     } else {
-      userDTO.password = userDTO.login;
+      throw new NotFoundException('Account not found');
     }
     const createdOrUpdated = await this.userService.update(userDTO, req.user?.login);
+    await this.db.getRepository(AuthSession).update({ userId: userOnDb.id }, { revoked: true });
     if (updated) {
       HeaderUtil.addEntityUpdatedHeaders(req.res, 'User', createdOrUpdated.id);
     } else {

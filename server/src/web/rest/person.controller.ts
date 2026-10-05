@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -43,7 +45,7 @@ export class PersonController {
   ) {}
 
   @Get('/me')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.USER, RoleType.ADMIN)
   @ApiOperation({ summary: 'Get person linked to the current authenticated user' })
   @ApiResponse({ status: 200, description: 'Person record for the logged-in user', type: PersonDTO })
   async getMyPerson(@Req() req: Request): Promise<PersonDTO | undefined> {
@@ -53,7 +55,7 @@ export class PersonController {
   }
 
   @Get('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiResponse({ status: 200, description: 'List all records', type: PersonDTO })
   async getAll(@Req() req: Request): Promise<PersonDTO[]> {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
@@ -67,14 +69,15 @@ export class PersonController {
   }
 
   @Get('/:id')
-  @Roles(RoleType.USER)
+  @UseGuards(RecordAccessGuard)
+  @Roles(RoleType.USER, RoleType.ADMIN)
   @ApiResponse({ status: 200, description: 'The found record', type: PersonDTO })
   async getOne(@Param('id') id: number): Promise<PersonDTO> {
     return await this.personService.findById(id);
   }
 
   @PostMethod('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Create person with address and auth user' })
   @ApiResponse({ status: 201, description: 'Record created successfully', type: PersonDTO })
   @ApiResponse({ status: 400, description: 'Email or document already in use' })
@@ -90,15 +93,15 @@ export class PersonController {
       req.user?.login,
     );
 
-    // 2. Create auth user (login = email, password = phone, activated = true)
+    // Account is inactive until a separate verified activation flow. Never use the phone as a password.
     let savedUser: any;
     try {
       savedUser = await this.authService.registerNewUser({
         login: dto.email,
         email: dto.email,
-        password: dto.phone,
+        password: randomBytes(48).toString('base64url'),
         firstName: dto.fullName,
-        activated: true,
+        activated: false,
         authorities: ['ROLE_USER'],
       } as any);
     } catch (err) {
@@ -136,7 +139,7 @@ export class PersonController {
   }
 
   @Put('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @HttpCode(200)
   @ApiOperation({ summary: 'Update person (and address if provided)' })
   @ApiResponse({ status: 200, description: 'Record updated successfully', type: PersonDTO })
@@ -154,7 +157,7 @@ export class PersonController {
   }
 
   @Put('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @HttpCode(200)
   @ApiOperation({ summary: 'Update person by id' })
   @ApiResponse({ status: 200, description: 'Record updated successfully', type: PersonDTO })
@@ -171,7 +174,7 @@ export class PersonController {
   }
 
   @Delete('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Delete person' })
   @ApiResponse({ status: 204, description: 'Record deleted successfully' })
   async deleteById(@Req() req: Request, @Param('id') id: number): Promise<void> {

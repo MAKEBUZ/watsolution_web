@@ -1,3 +1,5 @@
+import { SessionService } from './session.service';
+import { LoginRateLimitService } from '../security/login-rate-limit.service';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
@@ -14,6 +16,8 @@ export class AuthService {
   logger = new Logger('AuthService');
   constructor(
     private readonly jwtService: JwtService,
+    private readonly sessions: SessionService,
+    private readonly loginLimit: LoginRateLimitService,
     @InjectRepository(Authority) private authorityRepository: Repository<Authority>,
     private userService: UserService,
   ) {}
@@ -21,10 +25,11 @@ export class AuthService {
   async login(userLogin: UserLoginDTO): Promise<any> {
     const loginUserName = userLogin.username;
     const loginPassword = userLogin.password;
-    if (!loginUserName || !loginPassword) {
+    if (typeof loginUserName !== 'string' || !loginUserName || loginUserName.length > 254 || typeof loginPassword !== 'string' || !loginPassword || Buffer.byteLength(loginPassword, 'utf8') > 72) {
       throw new HttpException('Username and password are required!', HttpStatus.BAD_REQUEST);
     }
 
+    await this.loginLimit.consume(loginUserName);
     const userFind = await this.userService.findByFields({ where: { login: loginUserName } });
     const validPassword = !!userFind && comparePassword(loginPassword, userFind.password);
     if (!userFind || !validPassword) {
@@ -37,22 +42,35 @@ export class AuthService {
 
     const user = await this.findUserWithAuthById(userFind.id);
 
-    const payload: Payload = { id: user.id, username: user.login, authorities: user.authorities };
+    const session = await this.sessions.create(user.id);
+    const payload: Payload = { id: user.id, username: user.login, sid: session.id };
 
     /* eslint-disable */
     return {
       id_token: this.jwtService.sign(payload),
+      refresh_token: session.refreshToken,
     };
   }
 
   /* eslint-enable */
   async validateUser(payload: Payload): Promise<UserDTO | undefined> {
-    return await this.findUserWithAuthById(payload.id);
+    const user = await this.findUserWithAuthById(payload.id);
+    return user?.activated && await this.sessions.validate(payload.sid, user.id) ? Object.assign(user, { sessionId: payload.sid }) : undefined;
   }
 
   async findUserWithAuthById(userId: number): Promise<UserDTO | undefined> {
     const userDTO: UserDTO = await this.userService.findByFields({ where: { id: userId } });
     return userDTO;
+  }
+
+  async refresh(token: string) {
+    const session = await this.sessions.rotate(token);
+    const user = await this.findUserWithAuthById(session.userId);
+    if (!user?.activated) {
+      await this.sessions.revoke(session.id, session.userId);
+      throw new HttpException('Session unavailable', HttpStatus.UNAUTHORIZED);
+    }
+    return { id_token: this.jwtService.sign({ id: user.id, username: user.login, sid: session.id }), refresh_token: session.refreshToken };
   }
 
   async getAccount(userId: number): Promise<UserDTO | undefined> {
@@ -74,6 +92,7 @@ export class AuthService {
     }
     userFind.password = newPassword;
     await this.userService.save(userFind, userLogin, true);
+    await this.sessions.revokeAll(userFind.id);
   }
 
   async registerNewUser(newUser: UserDTO): Promise<UserDTO> {

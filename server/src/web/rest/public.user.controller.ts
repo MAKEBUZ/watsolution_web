@@ -1,10 +1,11 @@
-import { ClassSerializerInterceptor, Controller, Get, Logger, Req, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, Logger, Req, UseInterceptors, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { Page, PageRequest } from '../../domain/base/pagination.entity';
 import { UserDTO } from '../../service/dto/user.dto';
 import { HeaderUtil } from '../../client/header-util';
+import { AuthGuard, RolesGuard, Roles, RoleType } from '../../security';
 import { AuthService } from '../../service/auth.service';
 
 @Controller('api')
@@ -16,6 +17,8 @@ export class PublicUserController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('/users')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Get the list of users' })
   @ApiResponse({
     status: 200,
@@ -34,6 +37,7 @@ export class PublicUserController {
   }
 
   @Get('/authorities')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get the list of user roles' })
   @ApiResponse({
     status: 200,

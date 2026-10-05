@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Headers, Logger, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, Logger, Param, Post, Query, Req, RawBodyRequest, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard, RoleType, Roles, RolesGuard } from '../../security';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { BoldService } from '../../service/bold.service';
+import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 
 @ApiTags('bold')
 @Controller('api/bold')
@@ -13,7 +15,7 @@ export class BoldController {
   constructor(private readonly boldService: BoldService) {}
 
   @Get('/hash')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard, RecordAccessGuard)
   @Roles(RoleType.USER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Generate Bold payment hash for an invoice' })
@@ -23,18 +25,20 @@ export class BoldController {
   }
 
   @Post('/webhook')
+  @HttpCode(200)
   @ApiOperation({ summary: 'Bold payment webhook' })
   @ApiResponse({ status: 200, description: 'OK' })
   async webhook(
     @Body() body: any,
     @Headers('x-bold-signature') signature: string,
+    @Req() req: RawBodyRequest<Request>,
   ): Promise<string> {
-    await this.boldService.processWebhook(body, JSON.stringify(body), signature ?? '');
+    await this.boldService.processWebhook(body, req.rawBody, signature ?? '');
     return 'OK';
   }
 
   @Get('/result/:invoiceId')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard, RecordAccessGuard)
   @Roles(RoleType.USER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Confirm Bold payment result for an invoice' })

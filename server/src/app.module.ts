@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MobileModule } from './module/mobile.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { AuthModule } from './module/auth.module';
@@ -23,6 +24,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    MobileModule,
     TypeOrmModule.forRootAsync({ useFactory: ormConfig }),
     ServeStaticModule.forRoot({
       rootPath: config.getClientPath(),

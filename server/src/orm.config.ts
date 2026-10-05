@@ -1,3 +1,6 @@
+import { AuthSession } from './domain/auth-session.entity';
+import { MobileOperation } from './domain/mobile-operation.entity';
+import { SecureMobile1791158400000 } from './migrations/1791158400000-SecureMobile';
 import { Logger } from '@nestjs/common';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
@@ -30,7 +33,7 @@ function ormConfig(): TypeOrmModuleOptions {
     if (!dbUrl) {
       ormLogger.error('DATABASE_URL is not set! Add it in Railway → service → Variables tab as ${{Postgres.DATABASE_URL}}');
     } else {
-      ormLogger.log(`Connecting to: ${dbUrl.replace(/:([^:@]+)@/, ':***@')}`);
+      ormLogger.log('Database configuration loaded');
     }
     ormconfig = {
       name: 'default',
@@ -51,14 +54,14 @@ function ormConfig(): TypeOrmModuleOptions {
     };
   } else if (backendEnv === 'dev') {
     const dbUrl = process.env.DATABASE_PUBLIC_URL;
-    ormLogger.log(`Connecting to: ${dbUrl ? dbUrl.replace(/:([^:@]+)@/, ':***@') : 'UNDEFINED – check server/.env'}`);
+    ormLogger.log('Database configuration loaded');
     ormconfig = {
       name: 'default',
       type: 'postgres',
       // typeorm fails to auto load driver due to workspaces resolution
       driver: require('pg'),
       url: dbUrl,
-      ssl: { rejectUnauthorized: false },
+      ssl: { rejectUnauthorized: true },
       logging: false,
     };
   } else {
@@ -73,9 +76,11 @@ function ormConfig(): TypeOrmModuleOptions {
   }
 
   return {
-    synchronize: backendEnv === 'test' || backendEnv === 'prod',
-    migrationsRun: true,
+    synchronize: backendEnv === 'test',
+    migrationsRun: backendEnv === 'test',
     entities: [
+      AuthSession,
+      MobileOperation,
       User,
       Authority,
       Address,
@@ -96,6 +101,7 @@ function ormConfig(): TypeOrmModuleOptions {
       AddBoldFieldsToInvoice1748000000000,
       AddDocumentEmbeddings1749000000001,
       AddNotifications1749100000000,
+      SecureMobile1791158400000,
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
     autoLoadEntities: true,

@@ -32,7 +32,7 @@ export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
   @Get('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -50,7 +50,7 @@ export class AddressController {
   }
 
   @Get('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'The found record',
@@ -61,7 +61,7 @@ export class AddressController {
   }
 
   @PostMethod('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Create address' })
   @ApiResponse({
     status: 201,
@@ -76,7 +76,7 @@ export class AddressController {
   }
 
   @Put('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update address' })
   @ApiResponse({
     status: 200,
@@ -89,7 +89,7 @@ export class AddressController {
   }
 
   @Put('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update address with id' })
   @ApiResponse({
     status: 200,
@@ -102,7 +102,7 @@ export class AddressController {
   }
 
   @Delete('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Delete address' })
   @ApiResponse({
     status: 204,

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
@@ -32,9 +32,10 @@ export class BoldService {
 
     const secretKey = process.env.BOLD_SECRET_KEY ?? '';
     const apiKey = process.env.BOLD_API_KEY ?? '';
-    const timestamp = Math.floor(Date.now() / 1000);
-    const boldOrderId = `INV-${invoiceId}-${timestamp}`;
-    const amount = Math.round(Number(invoice.amountDue));
+    if (!secretKey || !apiKey) throw new ServiceUnavailableException('Payment configuration unavailable');
+    if (invoice.status !== InvoiceStatus.PENDING) throw new BadRequestException('Invoice is not payable');
+    const boldOrderId = invoice.boldOrderId ?? `INV-${invoiceId}-${crypto.randomUUID()}`;
+    const amount = Number(invoice.amountDue);
 
     const hash = crypto.createHash('sha256').update(`${boldOrderId}${amount}COP${secretKey}`).digest('hex');
 
@@ -43,87 +44,41 @@ export class BoldService {
     return { boldOrderId, hash, apiKey, amount };
   }
 
-  async processWebhook(payload: any, rawBody: string, signature: string): Promise<void> {
-    const secretKey = process.env.BOLD_SECRET_KEY ?? '';
-    const skipVerify = process.env.BOLD_WEBHOOK_SKIP_VERIFY === 'true';
-
-    if (!skipVerify && secretKey) {
-      const expected = crypto.createHmac('sha256', secretKey).update(rawBody).digest('hex');
-      if (signature !== expected) {
-        throw new UnauthorizedException('Invalid Bold webhook signature');
-      }
-    }
-
-    const { reference_id, payment_status, transaction_id } = payload ?? {};
-    if (!reference_id) return;
-
-    const invoice = await this.invoiceRepository.findOne({
-      where: { boldOrderId: reference_id } as any,
-      relations: ['person'],
+  async processWebhook(payload: any, rawBody: Buffer, signature: string): Promise<void> {
+    const secret = process.env.BOLD_SECRET_KEY;
+    if (!secret || !Buffer.isBuffer(rawBody)) throw new ServiceUnavailableException('Webhook verification unavailable');
+    if (!/^[a-f0-9]{64}$/i.test(signature)) throw new UnauthorizedException('Invalid signature');
+    // Bold signs base64(raw HTTP bytes), not a reserialized JSON object.
+    const expected = crypto.createHmac('sha256', secret).update(rawBody.toString('base64')).digest();
+    if (!crypto.timingSafeEqual(expected, Buffer.from(signature, 'hex'))) throw new UnauthorizedException('Invalid signature');
+    if (payload?.type !== 'SALE_APPROVED') return; // Rejections never cancel an outstanding or already paid invoice.
+    const data = payload.data;
+    const reference = data?.metadata?.reference;
+    if (typeof reference !== 'string' || reference.length > 160 || typeof data?.payment_id !== 'string' || data.payment_id.length > 160) throw new BadRequestException('Invalid payment event');
+    const paid = await this.invoiceRepository.manager.transaction(async manager => {
+      const repo = manager.getRepository(Invoice);
+      const invoice = await repo.findOne({ where: { boldOrderId: reference }, lock: { mode: 'pessimistic_write' } });
+      if (!invoice) return null;
+      if (data.amount?.currency !== 'COP' || !Number.isFinite(data.amount?.total) || Math.round(data.amount.total * 100) !== Math.round(Number(invoice.amountDue) * 100)) throw new BadRequestException('Payment amount mismatch');
+      if (invoice.status === InvoiceStatus.PAID) return null;
+      if (invoice.status !== InvoiceStatus.PENDING) throw new BadRequestException('Invoice requires payment review');
+      invoice.status = InvoiceStatus.PAID; invoice.boldTransactionId = data.payment_id;
+      await repo.save(invoice);
+      await manager.getRepository(ActivityLog).save({ action: ActivityAction.PAGO_FACTURA, description: 'Pago Bold verificado', reference: 'FAC-' + invoice.id, amount: invoice.amountDue, createdAt: new Date() });
+      return invoice.id;
     });
-    if (!invoice) {
-      this.logger.warn(`No invoice found for bold_order_id: ${reference_id}`);
-      return;
-    }
-
-    if (payment_status === 'APPROVED' && invoice.status !== InvoiceStatus.PAID) {
-      await this.invoiceRepository.update(invoice.id, {
-        status: InvoiceStatus.PAID,
-        boldTransactionId: transaction_id ?? null,
-      });
-
-      const log = new ActivityLog();
-      log.action = ActivityAction.PAGO_FACTURA;
-      log.description = 'Pago Bold aprobado';
-      log.reference = `FAC-${invoice.id}`;
-      log.amount = invoice.amountDue;
-      log.personName = invoice.person?.fullName ?? null;
-      log.createdAt = new Date();
-      await this.activityLogRepository.save(log).catch(() => {});
-
+    if (paid) {
+      const invoice = await this.invoiceRepository.findOne({where:{id:paid},relations:['person']});
       const login = await this.resolveLogin(invoice.person?.userId);
-      if (login) {
-        const year = new Date(invoice.issueDate).getFullYear();
-        const num = `FAC-${year}-${String(invoice.id).padStart(3, '0')}`;
-        await this.notificationService.send(login, 'invoice.paid', 'Pago exitoso', `Tu pago de la factura ${num} fue procesado exitosamente. ¡Gracias!`, invoice.id).catch(() => {});
-      }
-    } else if (['REJECTED', 'FAILED', 'VOIDED'].includes(payment_status)) {
-      await this.invoiceRepository.update(invoice.id, { status: InvoiceStatus.CANCELLED });
+      if (login) await this.notificationService.send(login, 'invoice.paid', 'Pago confirmado', 'Se confirmó el pago de tu factura.', paid).catch(() => { this.logger.warn('Payment notification pending delivery'); });
     }
   }
 
   async processResult(invoiceId: number, boldOrderId: string): Promise<{ boldStatus: string; invoiceStatus: InvoiceStatus }> {
-    const apiKey = process.env.BOLD_API_KEY ?? '';
-    let boldStatus = 'UNKNOWN';
-
-    try {
-      const res = await fetch(`https://payments.api.bold.co/v2/payment-voucher/${encodeURIComponent(boldOrderId)}`, {
-        headers: { 'x-api-key': apiKey },
-      });
-      if (res.ok) {
-        const data = (await res.json()) as any;
-        boldStatus = data?.payment_status ?? 'UNKNOWN';
-      }
-    } catch (err) {
-      this.logger.warn(`Bold API query failed for ${boldOrderId}: ${err.message}`);
-    }
-
     const invoice = await this.invoiceRepository.findOne({ where: { id: invoiceId } });
     if (!invoice) throw new NotFoundException('Invoice not found');
-
-    if (boldStatus === 'APPROVED' && invoice.status !== InvoiceStatus.PAID) {
-      await this.invoiceRepository.update(invoiceId, { status: InvoiceStatus.PAID });
-      invoice.status = InvoiceStatus.PAID;
-
-      const fullInvoice = await this.invoiceRepository.findOne({ where: { id: invoiceId }, relations: ['person'] });
-      const login = await this.resolveLogin(fullInvoice?.person?.userId);
-      if (login) {
-        const year = new Date(fullInvoice.issueDate).getFullYear();
-        const num = `FAC-${year}-${String(invoiceId).padStart(3, '0')}`;
-        await this.notificationService.send(login, 'invoice.paid', 'Pago exitoso', `Tu pago de la factura ${num} fue procesado exitosamente. ¡Gracias!`, invoiceId).catch(() => {});
-      }
-    }
-
-    return { boldStatus, invoiceStatus: invoice.status };
+    if (!boldOrderId || invoice.boldOrderId !== boldOrderId) throw new BadRequestException('Order does not belong to this invoice');
+    // A browser redirect is not payment proof. Only the verified webhook changes financial state.
+    return { boldStatus: invoice.status === InvoiceStatus.PAID ? 'APPROVED' : 'UNKNOWN', invoiceStatus: invoice.status };
   }
 }

@@ -6,7 +6,7 @@ import { Request } from 'express';
 export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req: Request = context.switchToHttp().getRequest();
-    Logger.debug(`${context.getClass().name}.${context.getHandler().name}() : ${req.method} ${req.url}`, 'LoggingInterceptor');
+    Logger.debug(`${context.getClass().name}.${context.getHandler().name}() : ${req.method} ${req.route?.path ?? req.path}`, 'LoggingInterceptor');
     return next.handle();
   }
 }

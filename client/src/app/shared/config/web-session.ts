@@ -1,0 +1,25 @@
+import axios from 'axios';
+
+let token: string | null = null;
+let refreshing: Promise<void> | undefined;
+let generation = 0;
+export const getAccessToken = () => token;
+export const getSessionGeneration = () => generation;
+export function setAccessToken(value: string | null) {
+  generation++;
+  token = value;
+  // Remove tokens stored by older releases. Credentials now live only in memory.
+  localStorage.removeItem('jhi-authenticationToken');
+  sessionStorage.removeItem('jhi-authenticationToken');
+}
+export function refreshAccessToken(): Promise<void> {
+  const started = generation;
+  const rotate = async () => {
+    if (started !== generation) throw new Error('Session changed');
+    const result = await axios.create().post(`${SERVER_API_URL}api/session/refresh`, {}, { withCredentials: true, headers: { 'X-Session-Transport': 'web' } });
+    if (started !== generation) throw new Error('Session changed');
+    if (typeof result.data.id_token !== 'string') throw new Error('Invalid session response');
+    token = result.data.id_token;
+  };
+  return refreshing ??= (navigator.locks ? navigator.locks.request('watsolution-refresh', rotate) : rotate()).finally(() => { refreshing = undefined; });
+}

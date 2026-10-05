@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { setAccessToken } from '@/shared/config/web-session';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -33,10 +34,10 @@ const handleLogin = async () => {
 
     if (jwt) {
       if (rememberMe.value) {
-        localStorage.setItem('jhi-authenticationToken', jwt);
+        setAccessToken(jwt);
         sessionStorage.removeItem('jhi-authenticationToken');
       } else {
-        sessionStorage.setItem('jhi-authenticationToken', jwt);
+        setAccessToken(jwt);
         localStorage.removeItem('jhi-authenticationToken');
       }
     }

@@ -49,7 +49,7 @@ export default defineComponent({
     const userManagementService = inject('userManagementService', () => new UserManagementService(), true);
     const previousState = () => router.go(-1);
 
-    const userAccount: Ref<IUser> = ref({ ...new User(), authorities: [] });
+    const userAccount: Ref<IUser> = ref({ ...new User(), activated: false, authorities: [] });
     const isSaving: Ref<boolean> = ref(false);
     const authorities: Ref<string[]> = ref([]);
 
@@ -92,7 +92,7 @@ export default defineComponent({
             this.alertService.showInfo(this.getToastMessageFromHeader(res));
           })
           .catch(error => {
-            this.isSaving = true;
+            this.isSaving = false;
             this.alertService.showHttpError(error.response);
           });
       } else {
@@ -103,7 +103,7 @@ export default defineComponent({
             this.alertService.showSuccess(this.getToastMessageFromHeader(res));
           })
           .catch(error => {
-            this.isSaving = true;
+            this.isSaving = false;
             this.alertService.showHttpError(error.response);
           });
       }

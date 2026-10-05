@@ -37,6 +37,9 @@ export class Person extends BaseEntity {
   @Column({ name: 'stratum', type: 'int', nullable: true, default: 1 })
   stratum?: number;
 
+  @Column({ name: 'assigned_operator_id', type: 'integer', nullable: true })
+  assignedOperatorId?: number;
+
   @Column({ name: 'user_id', nullable: true })
   userId?: string;
 

@@ -1,3 +1,4 @@
+import { getAccessToken, setAccessToken, refreshAccessToken, getSessionGeneration } from '@/shared/config/web-session';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
@@ -34,6 +35,9 @@ export const useAccountStore = defineStore('main', {
       this.logon = null;
     },
     logout() {
+      const currentToken = getAccessToken();
+      if (currentToken) void axios.create().post(`${SERVER_API_URL}api/session/logout`, {}, { withCredentials: true, headers: { Authorization: `Bearer ${currentToken}` } }).catch(() => {});
+      setAccessToken(null);
       this.userIdentity = null;
       this.authenticated = false;
       this.logon = null;
@@ -49,20 +53,20 @@ export const useAccountStore = defineStore('main', {
     setRibbonOnProfiles(ribbon) {
       this.ribbonOnProfiles = ribbon;
     },
-    initAccount() {
-      const token = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
-      if (token) {
-        this.loadAccountAction();
-      }
+    async initAccount() {
+      const generation = getSessionGeneration();
+      try { await refreshAccessToken(); await this.loadAccountAction(); } catch { if (generation === getSessionGeneration()) this.logout(); }
     },
     async loadAccountAction() {
+      const generation = getSessionGeneration();
       try {
         const response = await axios.get<any>('api/account');
+        if (generation !== getSessionGeneration()) return;
         if (response.status === 200 && response.data?.login) {
           this.setAuthentication(response.data);
         }
       } catch (error) {
-        this.logout();
+        if (generation === getSessionGeneration()) this.logout();
       }
     },
   },

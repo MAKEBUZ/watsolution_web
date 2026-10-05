@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import OpenAI from 'openai';
@@ -8,133 +8,46 @@ import { Person } from '../domain/person.entity';
 @Injectable()
 export class AiService {
   private readonly logger = new Logger('AiService');
-  private readonly openai: OpenAI;
+  private get openai(): OpenAI {
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) throw new ServiceUnavailableException('Public FAQ indexing is not configured');
+    return new OpenAI({apiKey:key});
+  }
 
   constructor(
     @InjectRepository(Invoice) private readonly invoiceRepository: Repository<Invoice>,
     @InjectRepository(Person) private readonly personRepository: Repository<Person>,
     private readonly dataSource: DataSource,
   ) {
-    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY ?? '' });
+
   }
 
-  async chat(userLogin: string, message: string): Promise<{ reply: string }> {
-    const invoices = await this.invoiceRepository
-      .createQueryBuilder('invoice')
-      .leftJoinAndSelect('invoice.person', 'person')
-      .where('person.userId = :login OR person.email = :login', { login: userLogin })
-      .orderBy('invoice.issueDate', 'DESC')
-      .take(10)
-      .getMany();
+  private validateMessage(message: string) {
+    if (typeof message !== 'string' || !message.trim() || message.length > 1000) throw new BadRequestException('Invalid message');
+  }
 
-    const invoiceContext = this.buildInvoiceContext(invoices);
-    const ragDocs = await this.searchRelevantDocs(message, 3);
-    const ragContext = ragDocs.map(d => d.content).join('\n\n');
-
-    const systemPrompt = `Eres un asistente de servicio al cliente de WatSolution, sistema de gestión de agua potable. Eres amigable, conciso y respondes siempre en español.
-
-FACTURAS DEL USUARIO:
-${invoiceContext}
-${ragContext ? `\nINFORMACIÓN ADICIONAL:\n${ragContext}` : ''}
-
-Responde únicamente sobre facturas, pagos y el servicio de agua. Si preguntan sobre otro tema, indica amablemente que no puedes ayudar con eso.`;
-
-    const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: message },
-      ],
-      max_tokens: 500,
-      temperature: 0.5,
-    });
-
-    return { reply: completion.choices[0].message.content ?? 'No pude generar una respuesta.' };
+  async chat(userId: number, message: string): Promise<{ reply: string }> {
+    this.validateMessage(message);
+    const invoices = await this.invoiceRepository.find({ where: { person: { userId: String(userId) } }, order: { issueDate: 'DESC' }, take: 20 });
+    return { reply: this.localSummary(invoices) };
   }
 
   async adminChat(message: string): Promise<{ reply: string }> {
-    const docMatch = message.match(/\b\d{6,12}\b/);
-    const ragDocs = await this.searchRelevantDocs(message, 3);
-    const ragContext = ragDocs.map(d => d.content).join('\n\n');
+    this.validateMessage(message);
+    const document = message.match(/\b\d{6,12}\b/)?.[0];
+    if (!document) return { reply: 'Indica la cédula del suscriptor para consultar su facturación. La consulta se procesa dentro de WatSolution.' };
+    const person = await this.personRepository.findOne({ where: { documentNumber: document } });
+    if (!person) return { reply: 'No se encontró el suscriptor.' };
+    const invoices = await this.invoiceRepository.find({ where: { person: { id: person.id } }, order: { issueDate: 'DESC' }, take: 20 });
+    return { reply: this.localSummary(invoices) };
+  }
 
-    let subscriberContext = '';
-
-    if (docMatch) {
-      const docNumber = docMatch[0];
-      const person = await this.personRepository.findOne({
-        where: { documentNumber: docNumber },
-        relations: { address: true },
-      });
-
-      if (person) {
-        const invoices = await this.invoiceRepository
-          .createQueryBuilder('invoice')
-          .leftJoinAndSelect('invoice.person', 'person')
-          .where('person.id = :personId', { personId: person.id })
-          .orderBy('invoice.issueDate', 'DESC')
-          .take(20)
-          .getMany();
-
-        const now = new Date();
-        const pending = invoices.filter(i => i.status === 'PENDING');
-        const overdue = invoices.filter(i => i.status === 'PENDING' && new Date(i.dueDate) < now);
-        const paid = invoices.filter(i => i.status === 'PAID');
-        const totalDebt = pending.reduce((acc, i) => acc + Number(i.amountDue ?? 0), 0);
-
-        const address = person.address
-          ? [person.address.street, person.address.houseNumber, person.address.neighborhood, person.address.city]
-              .filter(Boolean).join(', ')
-          : 'Sin dirección registrada';
-
-        subscriberContext = `
-SUSCRIPTOR ENCONTRADO (Cédula: ${docNumber}):
-- Nombre: ${person.fullName}
-- N° Suscriptor: ${person.subscriberNumber ?? 'N/A'}
-- Estrato: ${person.stratum ?? 'N/A'}
-- Estado: ${person.status}
-- Dirección: ${address}
-- Email: ${person.email ?? 'N/A'}
-- Teléfono: ${person.phone ?? 'N/A'}
-
-RESUMEN DE FACTURACIÓN:
-- Total facturas: ${invoices.length}
-- Pendientes: ${pending.length} (${overdue.length} en mora)
-- Pagadas: ${paid.length}
-- Deuda total pendiente: $${Number(totalDebt).toLocaleString('es-CO')} COP
-
-FACTURAS DETALLADAS:
-${this.buildInvoiceContext(invoices)}`;
-      } else {
-        subscriberContext = `No se encontró ningún suscriptor con cédula ${docNumber}.`;
-      }
-    }
-
-    const needsCedula =
-      !docMatch &&
-      /factura|deuda|mora|pago|cobro|saldo|cuánto|cuanto|debe|pendiente|historial|suscriptor|usuario/i.test(message);
-
-    const systemPrompt = `Eres el asistente administrativo de WatSolution para el equipo de administración. Tienes acceso completo a datos de suscriptores y facturación.
-
-${subscriberContext ? subscriberContext : needsCedula ? 'Para consultar la información de un suscriptor específico, necesitas el número de cédula. Pídela.' : 'No hay suscriptor seleccionado. Puedes consultar información general o pedir la cédula de un suscriptor.'}
-${ragContext ? `\nINFORMACIÓN ADICIONAL:\n${ragContext}` : ''}
-
-INSTRUCCIONES:
-- Si el administrador pregunta por un suscriptor sin proporcionar cédula, PIDE la cédula antes de responder.
-- Si hay datos de suscriptor, responde con detalle: facturas pendientes, montos, fechas de vencimiento, estado de mora.
-- Puedes dar resúmenes de deuda, listar facturas vencidas, recomendar acciones.
-- Responde siempre en español, de forma clara y estructurada.`;
-
-    const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: message },
-      ],
-      max_tokens: 700,
-      temperature: 0.4,
-    });
-
-    return { reply: completion.choices[0].message.content ?? 'No pude generar una respuesta.' };
+  private localSummary(invoices: Invoice[]): string {
+    // Personal billing and free-form prompts never leave the application backend.
+    if (!invoices.length) return 'No hay facturas disponibles para esta cuenta.';
+    const pending = invoices.filter(invoice => invoice.status === 'PENDING');
+    const cents = pending.reduce((sum, invoice) => sum + Math.round(Number(invoice.amountDue) * 100), 0);
+    return 'Consulta de las últimas ' + invoices.length + ' facturas. Pendientes: ' + pending.length + '. Saldo pendiente de esta consulta: $' + (cents / 100).toLocaleString('es-CO') + ' COP. Revisa el detalle de facturas para ver el historial completo.';
   }
 
   async indexDocument(content: string, metadata: Record<string, any> = {}): Promise<void> {
@@ -187,7 +100,7 @@ INSTRUCCIONES:
         [`[${embedding.join(',')}]`, limit],
       );
     } catch (err) {
-      this.logger.warn(`RAG search failed: ${err?.message}`);
+      this.logger.warn('Public FAQ search unavailable');
       return [];
     }
   }

@@ -4,6 +4,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserLoginDTO } from '../../service/dto/user-login.dto';
 import { AuthService } from '../../service/auth.service';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
+import { isWebSession, requireWebOrigin, setRefreshCookie } from '../../security/web-session';
 
 @Controller('api')
 @UseInterceptors(LoggingInterceptor)
@@ -21,7 +22,12 @@ export class UserJWTController {
     description: 'Authorized',
   })
   async authorize(@Req() req: Request, @Body() user: UserLoginDTO, @Res() res: Response): Promise<any> {
+    if (isWebSession(req)) requireWebOrigin(req);
     const jwt = await this.authService.login(user);
+    if (isWebSession(req)) {
+      setRefreshCookie(res, jwt.refresh_token);
+      return res.json({ id_token: jwt.id_token });
+    }
     res.setHeader('Authorization', `Bearer ${jwt.id_token}`);
     return res.json(jwt);
   }

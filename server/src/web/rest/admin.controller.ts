@@ -1,3 +1,4 @@
+import { BillingService } from '../../service/billing.service';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -43,6 +44,7 @@ export class AdminController {
   logger = new Logger('AdminController');
 
   constructor(
+    private readonly billing: BillingService,
     private readonly adminStatsService: AdminStatsService,
     private readonly invoiceService: InvoiceService,
     private readonly meterService: MeterService,
@@ -100,18 +102,7 @@ export class AdminController {
           .filter(Boolean).join(', ')
       : '';
 
-    const payload = JSON.stringify({
-      v: 1,
-      personId: person.id,
-      name: person.fullName,
-      doc: person.documentNumber,
-      sub: person.subscriberNumber ?? '',
-      stratum: person.stratum ?? 1,
-      address,
-      rate: 2500,
-      fixedCharge: 5000,
-      subsidy: 0.15,
-    });
+    const payload = JSON.stringify({ v: 2, personId: person.id });
 
     const pngBuffer: Buffer = await QRCode.toBuffer(payload, {
       type: 'png',
@@ -121,13 +112,12 @@ export class AdminController {
       errorCorrectionLevel: 'M',
     });
 
-    const slug = (person.subscriberNumber ?? person.documentNumber ?? String(person.id))
-      .replace(/\s+/g, '-');
+    const slug = String(person.id);
     const key = `qr-suscriptores/QR-${slug}.png`;
 
     await this.bucketService.uploadFile(key, pngBuffer, 'image/png');
 
-    const url = await this.bucketService.getPresignedUrl(key, 3600);
+    const url = await this.bucketService.getPresignedUrl(key, 300);
     const filename = `QR-WatSolution-${slug}.png`;
     return { url, filename };
   }
@@ -137,89 +127,6 @@ export class AdminController {
   @ApiOperation({ summary: 'Generate invoice from billing form' })
   @ApiResponse({ status: 201, description: 'Invoice created', type: InvoiceDTO })
   async generateInvoice(@Req() req: Request, @Body() dto: BillingFormDTO): Promise<InvoiceDTO> {
-    const subsidy = dto.subsidy ?? 0;
-    const surcharges = dto.surcharges ?? 0;
-    const now = new Date();
-
-    // 1. Fetch person so we can link address to meter
-    const person = await this.personRepository.findOne({
-      where: { id: dto.personId },
-      relations: { address: true },
-    });
-
-    // 2. Create meter reading
-    const savedMeter = await this.meterService.save(
-      {
-        waterMeasure: dto.currentReading,
-        readingDate: now,
-        observation: `Lectura generada por facturación FAC`,
-        createdAt: now,
-        person: { id: dto.personId } as any,
-        address: person?.address ? ({ id: person.address.id } as any) : undefined,
-      },
-      req.user?.login,
-    );
-
-    // 3. Compute invoice totals
-    const prevReading = dto.prevReading ?? 0;
-    const consumption = dto.currentReading - prevReading;
-    const subtotal = consumption * dto.rate + dto.fixedCharge;
-    const subsidyApplied = subtotal * subsidy;
-    const total = subtotal - subsidyApplied + surcharges;
-    const dueDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-
-    const invoiceDTO: InvoiceDTO = {
-      issueDate: now,
-      dueDate,
-      consumptionM3: consumption,
-      amountDue: Math.round(total),
-      ratePerM3: dto.rate,
-      fixedCharge: dto.fixedCharge,
-      subsidyPercent: subsidy,
-      additionalCharges: surcharges,
-      status: InvoiceStatus.PENDING,
-      person: { id: dto.personId } as any,
-      meter: { id: savedMeter.id } as any,
-    };
-
-    const saved = await this.invoiceService.save(invoiceDTO, req.user?.login);
-
-    // Generate PDF and upload to bucket
-    try {
-      const pdfBuffer = await this.invoicePdfService.generate({
-        invoiceId: saved.id,
-        personName: person?.fullName ?? `Suscriptor ${dto.personId}`,
-        documentNumber: person?.documentNumber,
-        subscriberNumber: person?.subscriberNumber,
-        issueDate: now,
-        dueDate,
-        consumptionM3: consumption,
-        ratePerM3: dto.rate,
-        fixedCharge: dto.fixedCharge,
-        subsidyPercent: subsidy,
-        additionalCharges: surcharges,
-        amountDue: Math.round(total),
-      });
-
-      const key = `facturacion/FAC-${saved.id}.pdf`;
-      await this.bucketService.uploadPdf(key, pdfBuffer);
-
-      // Persist pdfUrl on invoice
-      await this.invoiceService.update({ ...saved, pdfUrl: key }, req.user?.login);
-      saved.pdfUrl = key;
-    } catch (err) {
-      this.logger.error(`PDF generation/upload failed for invoice ${saved.id}: ${err?.message ?? err}`);
-      this.logger.error(err?.stack);
-    }
-
-    const log = new ActivityLog();
-    log.action = ActivityAction.PAGO_FACTURA;
-    log.description = 'Nueva Factura generada';
-    log.reference = `FAC-${saved.id}`;
-    log.amount = saved.amountDue;
-    log.createdAt = new Date();
-    await this.activityLogRepository.save(log).catch(() => {});
-
-    return saved;
+    return this.billing.generate(req.user.login, dto);
   }
 }
