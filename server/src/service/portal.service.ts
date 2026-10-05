@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThan, Repository } from 'typeorm';
 import { Person } from '../domain/person.entity';
@@ -22,23 +22,26 @@ export class PortalService {
     @InjectRepository(Meter) private meterRepository: Repository<Meter>,
   ) {}
 
-  async getPortalData(userLogin: string): Promise<PortalDataDTO> {
-    this.logger.log(`getPortalData for login: ${userLogin}`);
-
-    const person = await this.personRepository.findOne({
-      relations: { address: true },
-      where: [{ userId: userLogin }, { email: userLogin }],
-    });
-
-    if (!person) {
-      this.logger.warn(`No person found for login: ${userLogin}`);
-      throw new HttpException(
-        'No se encontró perfil de suscriptor para este usuario. Contacte al administrador.',
-        HttpStatus.NOT_FOUND,
-      );
+  async getPortalData(userId: number): Promise<PortalDataDTO> {
+    if (!Number.isSafeInteger(userId) || userId <= 0) {
+      throw new ForbiddenException('Identidad de usuario inválida.');
     }
 
-    this.logger.log(`Found person id=${person.id} for login: ${userLogin}`);
+    const profiles = await this.personRepository.find({
+      relations: { address: true },
+      where: { userId: String(userId) },
+      take: 2,
+    });
+    if (profiles.length > 1) {
+      throw new ForbiddenException('El vínculo del suscriptor requiere revisión. Contacte al administrador.');
+    }
+    const [person] = profiles;
+
+    if (!person) {
+      throw new NotFoundException(
+        'No se encontró perfil de suscriptor para este usuario. Contacte al administrador.',
+      );
+    }
 
     // Most recent invoice (any status) — shown as "Factura Actual"
     const [latestInvoice] = await this.invoiceRepository.find({
