@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { Response } from 'express';
 import { isWebSession, requireWebOrigin, readRefreshCookie, setRefreshCookie, clearRefreshCookie } from '../../security/web-session';
-import { AuthGuard } from '../../security';
+import { SessionLogoutGuard } from '../../security/guards/session-logout.guard';
 import { AuthService } from '../../service/auth.service';
 import { SessionService } from '../../service/session.service';
 
@@ -20,9 +20,13 @@ export class SessionController {
   }
 
   @Post('/logout')
-  @UseGuards(AuthGuard)
+  @UseGuards(SessionLogoutGuard)
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
-    await this.sessions.revoke(req.user.sessionId, req.user.id);
+    if (isWebSession(req)) {
+      await this.sessions.revokeByRefresh(readRefreshCookie(req));
+    } else {
+      await this.sessions.revoke(req.user.sessionId, req.user.id);
+    }
     clearRefreshCookie(res);
     return { revoked: true };
   }

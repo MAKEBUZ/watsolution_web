@@ -5,6 +5,35 @@ on:
 permissions:
   contents: read
 jobs:
+  postgres-sessions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: ws_integration
+          POSTGRES_USER: ws_test
+          POSTGRES_PASSWORD: ws_test_only
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U ws_test -d ws_integration"
+          --health-interval 2s --health-timeout 3s --health-retries 20
+    env:
+      BACKEND_ENV: test
+      WATSOLUTION_TEST_DATABASE: local-disposable
+      TEST_DATABASE_URL: postgresql://ws_test:ws_test_only@127.0.0.1:55432/ws_integration
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-fund
+      - run: node node_modules/jest/bin/jest.js --config server/integration/jest.config.json --runInBand --coverage=false
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20

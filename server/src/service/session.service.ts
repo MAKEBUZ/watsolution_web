@@ -47,6 +47,21 @@ export class SessionService {
     return result;
   }
 
+  async revokeByRefresh(token: string): Promise<void> {
+    if (typeof token !== 'string' || !/^[0-9a-f-]{36}\.[A-Za-z0-9_-]{64}$/.test(token)) return;
+    await this.db.transaction(async manager => {
+      const repo = manager.getRepository(AuthSession);
+      const session = await repo.findOne({ where: { id: token.split('.')[0] }, lock: { mode: 'pessimistic_write' } });
+      if (!session || session.revoked) return;
+      const supplied = this.hash(token);
+      // A refresh already in flight may have rotated the cookie before logout acquired the lock.
+      const used: string[] = JSON.parse(session.usedRefreshHashes || '[]');
+      if (session.refreshHash !== supplied && !used.includes(supplied)) return;
+      session.revoked = true;
+      await repo.save(session);
+    });
+  }
+
   async revoke(id: string, userId: number) { await this.db.getRepository(AuthSession).update({ id, userId }, { revoked: true }); }
   async revokeAll(userId: number) { await this.db.getRepository(AuthSession).update({ userId }, { revoked: true }); }
 }

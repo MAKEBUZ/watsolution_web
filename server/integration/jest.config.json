@@ -1,0 +1,7 @@
+{
+  "rootDir": "..",
+  "testEnvironment": "node",
+  "testMatch": ["<rootDir>/integration/*.integration.ts"],
+  "transform": { "^.+\\.ts$": ["ts-jest", { "tsconfig": "<rootDir>/tsconfig.json" }] },
+  "testTimeout": 30000
+}
