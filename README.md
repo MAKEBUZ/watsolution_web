@@ -1,5 +1,35 @@
 # watsolution
 
+## Gitflow y remediación
+
+- `main`: base de versiones publicadas. Las correcciones se revisan y validan antes de integrar aquí.
+- `develop`: integración; parte del commit `595a7b6`, que conserva los cambios locales previos de seguridad y acceso móvil.
+- `fix/portal-invoice-isolation`: primera entrega de remediación, con un commit por corrección. Su destino de revisión es `develop`.
+- Las siguientes tareas salen de `develop` en ramas `fix/<tema>` o `feature/<tema>` y se integran mediante pull request.
+- Una entrega validada se prepara en `release/<version>`. Se actualizan los manifiestos y el lockfile juntos, se integra en `main` y `develop`, y se etiqueta `vMAJOR.MINOR.PATCH`. Las correcciones compatibles incrementan PATCH, las funcionalidades compatibles MINOR y las incompatibles MAJOR. No se etiqueta una versión estable antes de validar staging.
+- Los commits usan la identidad Git del responsable. No se añaden coautores automáticos.
+
+Estado del primer lote, 2026-10-05:
+
+| Plan / hallazgo | Cambio | Validación y pendiente |
+| --- | --- | --- |
+| T-005 / WS-001 | El portal identifica al propietario mediante el ID autenticado; rechaza identidades inválidas y vínculos duplicados; elimina alternativas por login/correo. | 12 pruebas de regresión. Pendientes integración HTTP/PostgreSQL y revisión de vínculos históricos. |
+| T-006 / WS-002 | Generar o descargar el PDF actualiza solo su clave y el autor de modificación, sin regrabar la instantánea financiera. | 9 pruebas, incluidos pago y eliminación durante la subida. Pendiente concurrencia real PDF/webhook sobre PostgreSQL. |
+
+Los cuerpos iniciales de los commits de este lote usan las abreviaturas T005/H-001 y T006/H-002; corresponden respectivamente a T-005/WS-001 y T-006/WS-002 del plan.
+
+Comprobaciones locales: 63 pruebas de backend, 182 de frontend y TypeScript del servidor aprobados. Las nuevas regresiones reprodujeron los defectos antes de aplicar las correcciones. Los repositorios de las pruebas son simulados: estos resultados no cierran la validación de PostgreSQL, staging ni los demás hallazgos del plan. Persisten advertencias previas de pruebas y formato del proyecto.
+
+```sh
+# Desde la raíz
+node node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit
+node node_modules/jest/bin/jest.js --config server/package.json --runInBand --coverage=false
+# Desde client/
+node ../node_modules/vitest/vitest.mjs run
+```
+
+Antes de una entrega de producción siguen pendientes el respaldo/restauración, la rotación verificada de credenciales históricas, el entorno aislado y las pruebas de integración del plan. Los informes de auditoría y planificación locales se conservan como evidencia; no forman parte de los commits de código de este lote. Para retirar una corrección ya integrada, usar un commit de reversión de esa corrección y repetir la validación, sin reescribir ramas compartidas.
+
 This application was generated using JHipster 8.10.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.10.0](https://www.jhipster.tech/documentation-archive/v8.10.0).
 
 This application was generated using the [NodeJS blueprint](https://github.com/jhipster/generator-jhipster-nodejs) of JHipster 8.10.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.10.0](https://www.jhipster.tech/documentation-archive/v8.10.0). For any questions you can refer to the stream lead: [Angelo Manganiello](https://github.com/amanganiello90).
