@@ -100,8 +100,9 @@ export class MeterController {
     type: MeterDTO,
   })
   async put(@Req() req: Request, @Body() meterDTO: MeterDTO): Promise<MeterDTO> {
+    const updated = await this.meterService.update(meterDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Meter', meterDTO.id);
-    return await this.meterService.update(meterDTO, req.user?.login);
+    return updated;
   }
 
   @Put('/:id')
@@ -113,8 +114,9 @@ export class MeterController {
     type: MeterDTO,
   })
   async putId(@Req() req: Request, @Body() meterDTO: MeterDTO): Promise<MeterDTO> {
+    const updated = await this.meterService.update(meterDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Meter', meterDTO.id);
-    return await this.meterService.update(meterDTO, req.user?.login);
+    return updated;
   }
 
   @Delete('/:id')
@@ -125,7 +127,7 @@ export class MeterController {
     description: 'The record has been successfully deleted.',
   })
   async deleteById(@Req() req: Request, @Param('id') id: number): Promise<void> {
+    await this.meterService.deleteById(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, 'Meter', id);
-    return await this.meterService.deleteById(id);
   }
 }
