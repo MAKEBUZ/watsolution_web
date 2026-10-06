@@ -34,6 +34,7 @@ import { InvoicePdfService } from '../src/service/invoice-pdf.service';
 import { BucketService } from '../src/service/bucket.service';
 import { NotificationService } from '../src/service/notification.service';
 import { JwtStrategy } from '../src/security/passport.jwt.strategy';
+import { refreshCookie } from '../src/security/web-session';
 import { jwtSettings } from '../src/security/jwt-settings';
 import { PersonStatus } from '../src/domain/enumeration/person-status';
 import { InvoiceStatus } from '../src/domain/enumeration/invoice-status';
@@ -43,12 +44,15 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   let app: INestApplication;
   let adminToken: string;
   let userToken: string;
+  const originalOrigins = process.env.WEB_ORIGINS;
+  const webOrigin = 'https://app.example.test';
   const password = randomBytes(24).toString('base64url');
   const login = async (username: string) => (await request(app.getHttpServer()).post('/api/authenticate').send({ username, password }).expect(200)).body;
   const seed = async (name: string, role = 'ROLE_USER', activated = true) => fixture.db.getRepository(User).save({
     login: name, email: name + '@example.invalid', activated, password: await encodePassword(password), authorities: [{ name: role }],
   });
   beforeAll(async () => {
+    process.env.WEB_ORIGINS = webOrigin;
     fixture = await createBillingFixture();
     const db = fixture.db;
     const logs = db.getRepository(ActivityLog);
@@ -73,7 +77,13 @@ describe('Financial routes with real guards and PostgreSQL', () => {
     adminToken = (await login('admin')).id_token;
     userToken = (await login('subscriber')).id_token;
   });
-  afterAll(async () => { if (app) await app.close(); if (fixture) await fixture.close(); });
+  afterAll(async () => {
+    try { if (app) await app.close(); if (fixture) await fixture.close(); }
+    finally {
+      if (originalOrigins === undefined) delete process.env.WEB_ORIGINS;
+      else process.env.WEB_ORIGINS = originalOrigins;
+    }
+  });
   const call = (method: string, path: string, token = adminToken) => {
     const req = request(app.getHttpServer())[method](path);
     return token ? req.set('Authorization', `Bearer ${token}`) : req;
@@ -185,6 +195,99 @@ describe('Financial routes with real guards and PostgreSQL', () => {
     expect(await fixture.db.getRepository(AuthSession).count()).toBe(before);
     const rows = await fixture.db.query('SELECT attempts FROM auth_rate_limit WHERE attempts = 11');
     expect(rows).toHaveLength(1);
+  });
+
+  // Cookies are supplied manually: these are HTTP contract tests, not browser/TLS tests.
+  const web = (path: string, cookie?: string, origin = webOrigin) => {
+    const req = request(app.getHttpServer()).post(path).set('X-Session-Transport', 'web');
+    if (origin) req.set('Origin', origin);
+    if (cookie) req.set('Cookie', cookie);
+    return req;
+  };
+  const cookieOf = (response: request.Response) => response.headers['set-cookie'][0].split(';')[0];
+  const assertCookie = (response: request.Response) => {
+    const value = response.headers['set-cookie'][0];
+    expect(value).toMatch(new RegExp('^' + refreshCookie + '='));
+    for (const attribute of ['Path=/', 'HttpOnly', 'Secure', 'SameSite=Strict']) expect(value).toContain(attribute);
+    expect(value).not.toMatch(/Domain=/i);
+    expect(response.headers['cache-control']).toBe('no-store');
+    expect(response.body.refresh_token).toBeUndefined();
+  };
+  const webLogin = (username: string) => web('/api/authenticate').send({ username, password }).expect(200);
+
+  it('issues and rotates a host-only secure refresh cookie without exposing it in JSON', async () => {
+    await seed('web-admin', 'ROLE_ADMIN');
+    const first = await webLogin('web-admin'); assertCookie(first);
+    const second = await web('/api/session/refresh', cookieOf(first)).send({}).expect(201); assertCookie(second);
+    expect(cookieOf(second)).not.toBe(cookieOf(first));
+    await call('get', '/api/invoices', second.body.id_token).expect(200);
+    const id = cookieOf(first).split('=')[1].split('.')[0];
+    const stored = await fixture.db.getRepository(AuthSession).findOneBy({ id });
+    expect(stored.revoked).toBe(false);
+    expect(JSON.parse(stored.usedRefreshHashes)).toHaveLength(1);
+    expect(stored.refreshHash).not.toBe(cookieOf(second).split('=')[1]);
+  });
+
+  it.each(['https://evil.example.test', ''])('rejects web requests from origin %s before mutating session state', async origin => {
+    const name = 'origin-' + randomUUID(); await seed(name);
+    const first = await webLogin(name);
+    const before = await fixture.db.getRepository(AuthSession).find({ order: { id: 'ASC' } });
+    for (const path of ['/api/authenticate', '/api/session/refresh', '/api/session/logout']) {
+      const response = await web(path, cookieOf(first), origin).send({ username: name, password }).expect(403);
+      expect(response.headers['set-cookie']).toBeUndefined();
+    }
+    expect(await fixture.db.getRepository(AuthSession).find({ order: { id: 'ASC' } })).toEqual(before);
+  });
+
+  it('does not accept body refresh tokens in web mode or cookies as native credentials', async () => {
+    await seed('transport-admin', 'ROLE_ADMIN');
+    const native = await login('transport-admin');
+    await web('/api/session/refresh').send({ refresh_token: native.refresh_token }).expect(401);
+    const browser = await webLogin('transport-admin');
+    await request(app.getHttpServer()).post('/api/session/refresh').set('Cookie', cookieOf(browser)).send({}).expect(401);
+    await request(app.getHttpServer()).post('/api/session/logout').set('Cookie', cookieOf(browser)).expect(401);
+    await call('get', '/api/invoices', browser.body.id_token).expect(200);
+    await call('get', '/api/invoices', native.id_token).expect(200);
+  });
+
+  it('logs out with expired access, clears the cookie and revokes only its persisted family', async () => {
+    const user = await seed('web-logout', 'ROLE_ADMIN');
+    const first = await webLogin(user.login), other = await webLogin(user.login);
+    const id = cookieOf(first).split('=')[1].split('.')[0];
+    const jwt = new JwtService({ secret: jwtSettings.secret, signOptions: { issuer: jwtSettings.issuer, audience: jwtSettings.audience } });
+    const expired = jwt.sign({ id: user.id, sid: id }, { expiresIn: -1 });
+    const response = await web('/api/session/logout', cookieOf(first)).set('Authorization', 'Bearer ' + expired).expect(201);
+    assertCookie(response);
+    expect(response.headers['set-cookie'][0]).toContain('Expires=Thu, 01 Jan 1970');
+    await call('get', '/api/invoices', first.body.id_token).expect(401);
+    await web('/api/session/refresh', cookieOf(first)).send({}).expect(401);
+    await call('get', '/api/invoices', other.body.id_token).expect(200);
+    await web('/api/session/logout', cookieOf(first)).expect(201);
+    expect((await fixture.db.getRepository(AuthSession).findOneBy({ id })).revoked).toBe(true);
+  });
+
+  it('does not revoke a web session using a forged refresh with its known family id', async () => {
+    await seed('web-forged', 'ROLE_ADMIN'); const first = await webLogin('web-forged');
+    const id = cookieOf(first).split('=')[1].split('.')[0];
+    await web('/api/session/logout', refreshCookie + '=' + id + '.' + randomBytes(48).toString('base64url')).expect(201);
+    await call('get', '/api/invoices', first.body.id_token).expect(200);
+    expect((await fixture.db.getRepository(AuthSession).findOneBy({ id })).revoked).toBe(false);
+  });
+
+  it('serializes concurrent web refresh requests and revokes a proven replay family', async () => {
+    await seed('web-race', 'ROLE_ADMIN'); const first = await webLogin('web-race');
+    const results = await Promise.all([web('/api/session/refresh', cookieOf(first)).send({}), web('/api/session/refresh', cookieOf(first)).send({})]);
+    expect(results.map(r => r.status).sort()).toEqual([201, 401]);
+    const rotated = results.find(r => r.status === 201)!;
+    await call('get', '/api/invoices', rotated.body.id_token).expect(401);
+    await web('/api/session/refresh', cookieOf(rotated)).send({}).expect(401);
+  });
+
+  it('denies web refresh after account deactivation and persists revocation', async () => {
+    const user = await seed('web-disabled'); const first = await webLogin(user.login);
+    await fixture.db.getRepository(User).update(user.id, { activated: false });
+    await web('/api/session/refresh', cookieOf(first)).send({}).expect(401);
+    expect((await fixture.db.getRepository(AuthSession).findOneBy({ userId: user.id })).revoked).toBe(true);
   });
 
 });
