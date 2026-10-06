@@ -4,7 +4,6 @@ import { Chart, registerables } from 'chart.js'
 import { useRouter, useRoute } from 'vue-router'
 import { useAccountStore } from '@/shared/config/store/account-store'
 import axios from 'axios'
-import { io, Socket } from 'socket.io-client'
 
 Chart.register(...registerables)
 
@@ -147,53 +146,19 @@ async function loadCharts() {
   }
 }
 
-// ── Tank level WebSocket ──────────────────────────────────────────────────────
-interface TankLevelEvent {
-  level: number
-  alert: boolean
-  timestamp: string
-}
-
-const tankLevel = ref(75)
-const tankAlert = ref(false)
-const tankTimestamp = ref('')
-const tankConnected = ref(false)
-let socket: Socket | null = null
-
-function connectTankSocket() {
-  const wsUrl = import.meta.env.DEV ? 'http://localhost:8080' : window.location.origin
-  socket = io(`${wsUrl}/tank`, { transports: ['websocket', 'polling'] })
-
-  socket.on('connect', () => { tankConnected.value = true })
-  socket.on('disconnect', () => { tankConnected.value = false })
-  socket.on('tank-level', (event: TankLevelEvent) => {
-    tankLevel.value = event.level
-    tankAlert.value = event.alert
-    tankTimestamp.value = new Date(event.timestamp).toLocaleTimeString('es-CO')
-  })
-}
-
 onMounted(() => {
   window.addEventListener('resize', handleResize)
   handleResize()
   loadStats()
   loadCharts()
-  connectTankSocket()
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
-  socket?.disconnect()
   consumptionChart?.destroy()
   revenueChart?.destroy()
 })
 
-// Gauge fill color based on level
-function tankColor(level: number): string {
-  if (level < 65) return '#ef4444'
-  if (level < 80) return '#f59e0b'
-  return '#10b981'
-}
 </script>
 
 <template>
@@ -304,67 +269,12 @@ function tankColor(level: number): string {
 
             <!-- Right column: system status + tank -->
             <div class="side-column">
-              <div class="info-card">
+              <section class="info-card" aria-label="Estado de telemetría" data-cy="telemetry-unavailable">
                 <h3>Estado del Sistema</h3>
-                <div class="status-list">
-                  <div class="status-item">
-                    <div class="status-row">
-                      <span class="status-label">Presión de Red</span>
-                      <span class="status-value">85%</span>
-                    </div>
-                    <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
-                  </div>
-                  <div class="status-item">
-                    <div class="status-row">
-                      <span class="status-label">Calidad Agua</span>
-                      <span class="status-value">99%</span>
-                    </div>
-                    <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tank level widget -->
-              <div class="tank-card" :class="{ 'tank-card--alert': tankAlert }">
-                <div class="tank-card__header">
-                  <h3>Nivel del Tanque</h3>
-                  <span class="tank-connection" :class="tankConnected ? 'connected' : 'disconnected'">
-                    <span class="dot"></span>
-                    {{ tankConnected ? 'En vivo' : 'Conectando…' }}
-                  </span>
-                </div>
-
-                <!-- Alert banner -->
-                <div v-if="tankAlert" class="tank-alert-banner">
-                  <font-awesome-icon icon="exclamation-triangle" />
-                  Nivel crítico — por debajo del 65%
-                </div>
-
-                <!-- Gauge -->
-                <div class="tank-gauge-wrap">
-                  <div class="tank-body">
-                    <div
-                      class="tank-fill"
-                      :style="{
-                        height: tankLevel + '%',
-                        backgroundColor: tankColor(tankLevel),
-                      }"
-                    ></div>
-                    <div class="tank-level-label">{{ tankLevel.toFixed(1) }}%</div>
-                    <div class="tank-threshold-line" title="Umbral 65%"></div>
-                  </div>
-                  <div class="tank-scale">
-                    <span>100%</span>
-                    <span>75%</span>
-                    <span class="threshold-mark">65%</span>
-                    <span>50%</span>
-                    <span>25%</span>
-                    <span>0%</span>
-                  </div>
-                </div>
-
-                <p class="tank-timestamp" v-if="tankTimestamp">Última lectura: {{ tankTimestamp }}</p>
-              </div>
+                <p role="status">Sin datos verificados</p>
+                <p>Presión de red, calidad del agua y nivel del tanque: fuente de sensores no integrada.</p>
+                <p>Última medición: no disponible. Calidad del dato: no verificada.</p>
+              </section>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
+import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
 import { useAccountStore } from '@/shared/config/store/account-store'
 
@@ -36,24 +37,44 @@ const handleResize = () => {
   }
 }
 
-if (typeof window !== 'undefined') {
+interface ActivityRecord {
+  id: number; personName?: string; action: string; description: string;
+  reference?: string; amount?: number | string; createdAt?: string;
+}
+const logs = ref<ActivityRecord[]>([])
+const loading = ref(true)
+const loadError = ref(false)
+const checkedAt = ref('')
+async function loadActivity() {
+  loading.value = true
+  loadError.value = false
+  logs.value = []
+  try {
+    const { data } = await axios.get('api/admin/activity', { params: { limit: 50 } })
+    if (!Array.isArray(data) || data.some(row => !row || !Number.isSafeInteger(row.id) || typeof row.action !== 'string' || typeof row.description !== 'string')) throw new Error('Invalid activity response')
+    logs.value = data
+    checkedAt.value = new Date().toLocaleString('es-CO')
+  } catch { loadError.value = true }
+  finally { loading.value = false }
+}
+function formatDate(value?: string) {
+  return value && !Number.isNaN(Date.parse(value)) ? new Date(value).toLocaleString('es-CO') : 'Fecha no disponible'
+}
+function formatAmount(value: number | string) {
+  return Number.isFinite(Number(value)) ? Number(value).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) : 'Importe no disponible'
+}
+onMounted(() => {
   window.addEventListener('resize', handleResize)
   handleResize()
-}
-
-const logs = ref([
-  { id: 1, user: 'Maria Garcia', action: 'Pago de Factura', details: 'FAC-2026-0038', amount: '$45,200', type: 'payment', time: 'Hace 5 min' },
-  { id: 2, user: 'Juan Perez', action: 'Nueva Lectura', details: '1,265 m³ - Sector Sur', type: 'reading', time: 'Hace 12 min' },
-  { id: 3, user: 'Sistema', action: 'Nueva Noticia', details: 'Corte programado sector Norte', type: 'news', time: 'Hace 25 min' },
-  { id: 4, user: 'Carlos Ruiz', action: 'Registro Usuario', details: 'Nuevo suscriptor: ID #104', type: 'user', time: 'Hace 1 hora' },
-  { id: 5, user: 'Ana Lopez', action: 'Pago de Factura', details: 'FAC-2026-0039', amount: '$32,100', type: 'payment', time: 'Hace 2 horas' }
-])
+  loadActivity()
+})
+onUnmounted(() => window.removeEventListener('resize', handleResize))
 
 const getLogIcon = (type: string) => {
   switch (type) {
-    case 'payment': return 'credit-card'
-    case 'reading': return 'tint'
-    case 'news': return 'newspaper'
+    case 'PAGO_FACTURA': return 'credit-card'
+    case 'LECTURA_CONTADOR': return 'tint'
+    case 'NUEVA_NOTICIA': return 'newspaper'
     case 'user': return 'user-plus'
     default: return 'clock'
   }
@@ -61,9 +82,9 @@ const getLogIcon = (type: string) => {
 
 const getLogColor = (type: string) => {
   switch (type) {
-    case 'payment': return '#10b981'
-    case 'reading': return '#3b82f6'
-    case 'news': return '#f59e0b'
+    case 'PAGO_FACTURA': return '#10b981'
+    case 'LECTURA_CONTADOR': return '#3b82f6'
+    case 'NUEVA_NOTICIA': return '#f59e0b'
     case 'user': return '#8b5cf6'
     default: return '#94a3b8'
   }
@@ -133,22 +154,26 @@ const getLogColor = (type: string) => {
           </header>
 
           <section class="logs-card" aria-label="Listado de actividad reciente">
+            <p v-if="loading" role="status">Consultando actividad…</p>
+            <p v-else-if="loadError" role="alert">Sin datos verificados: no se pudo consultar la actividad.</p>
+            <p v-else-if="!logs.length" role="status">No hay actividad registrada.</p>
+            <p v-if="checkedAt && !loading && !loadError">Fuente: registros de la aplicación. Consulta: {{ checkedAt }}.</p>
+            <button type="button" :disabled="loading" @click="loadActivity">Actualizar actividad</button>
             <div class="logs-container">
               <div v-for="log in logs" :key="log.id" class="log-entry">
-                <div class="log-icon" :style="{ color: getLogColor(log.type), backgroundColor: getLogColor(log.type) + '15' }">
-                  <font-awesome-icon :icon="getLogIcon(log.type)" :size="18" />
+                <div class="log-icon" :style="{ color: getLogColor(log.action), backgroundColor: getLogColor(log.action) + '15' }">
+                  <font-awesome-icon :icon="getLogIcon(log.action)" :size="18" />
                 </div>
                 <div class="log-info">
                   <div class="log-header">
-                    <strong>{{ log.user }}</strong>
-                    <span class="log-time">{{ log.time }}</span>
+                    <strong>{{ log.personName || 'Sin persona asociada' }}</strong>
+                    <span class="log-time">{{ formatDate(log.createdAt) }}</span>
                   </div>
-                  <p class="log-action">{{ log.action }}</p>
+                  <p class="log-action">{{ log.action.replaceAll('_', ' ') }}</p>
                   <div class="log-meta">
-                    <span class="log-details">{{ log.details }}</span>
-                    <div v-if="log.amount" class="log-amount-wrapper">
-                      <span class="log-amount">{{ log.amount }}</span>
-                      <font-awesome-icon v-if="log.type === 'payment'" class="payment-check" icon="check-circle" :size="14" />
+                    <span class="log-details">{{ log.description }} · {{ log.reference || 'Sin referencia' }}</span>
+                    <div v-if="log.amount != null" class="log-amount-wrapper">
+                      <span class="log-amount">{{ formatAmount(log.amount) }}</span>
                     </div>
                   </div>
                 </div>
