@@ -20,6 +20,21 @@ import { JwtStrategy } from '../../src/security/passport.jwt.strategy';
 import { AuthGuard } from '../../src/security/guards/auth.guard';
 import { jwtSettings } from '../../src/security/jwt-settings';
 import { UserJWTController } from '../../src/web/rest/user.jwt.controller';
+import express from 'express';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { AccountController } from '../../src/web/rest/account.controller';
+import { AdminController } from '../../src/web/rest/admin.controller';
+import { AdminStatsService } from '../../src/service/admin-stats.service';
+import { BillingService } from '../../src/service/billing.service';
+import { InvoiceService } from '../../src/service/invoice.service';
+import { MeterService } from '../../src/service/meter.service';
+import { BucketService } from '../../src/service/bucket.service';
+import { InvoicePdfService } from '../../src/service/invoice-pdf.service';
+import { Invoice } from '../../src/domain/invoice.entity';
+import { Meter } from '../../src/domain/meter.entity';
+import { Person } from '../../src/domain/person.entity';
+import { ActivityLog } from '../../src/domain/activity-log.entity';
 import { SessionController } from '../../src/web/rest/session.controller';
 
 // A minimal protected probe, not a replacement for testing the complete application UI.
@@ -43,6 +58,9 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
 
   beforeAll(async () => {
     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+    if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+    const webDist = resolve(process.env.TEST_WEB_DIST);
+    readFileSync(resolve(webDist, 'index.html'));
     fixture = await createBillingFixture();
     const db = fixture.db;
     const sessions = new SessionService(db);
@@ -50,12 +68,22 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
       issuer: jwtSettings.issuer, audience: jwtSettings.audience, expiresIn: '5m',
     } });
     const auth = new AuthService(jwt, sessions, new LoginRateLimitService(db), db.getRepository(Authority), new UserService(db.getRepository(User)));
-    await db.getRepository(Authority).save({ name: 'ROLE_USER' });
+    await db.getRepository(Authority).save([{ name: 'ROLE_USER' }, { name: 'ROLE_ADMIN' }]);
     await db.getRepository(User).save({ login: 'browser-user', email: 'browser@example.invalid', activated: true,
       password: await encodePassword(password), authorities: [{ name: 'ROLE_USER' }] });
+    await db.getRepository(User).save({ login: 'ui-admin', firstName: 'Administrador de prueba', email: 'ui@example.invalid', activated: true,
+      password: await encodePassword(password), authorities: [{ name: 'ROLE_ADMIN' }] });
+    const logs = db.getRepository(ActivityLog);
     const module = await Test.createTestingModule({ imports: [PassportModule],
-      controllers: [UserJWTController, SessionController, BrowserProbe], providers: [JwtStrategy,
-        { provide: AuthService, useValue: auth }, { provide: SessionService, useValue: sessions }],
+      controllers: [UserJWTController, SessionController, BrowserProbe, AccountController, AdminController], providers: [JwtStrategy,
+        { provide: AuthService, useValue: auth }, { provide: SessionService, useValue: sessions },
+        { provide: DataSource, useValue: db },
+        { provide: AdminStatsService, useValue: new AdminStatsService(db.getRepository(User), db.getRepository(Invoice), db.getRepository(Meter), db.getRepository(Person), logs) },
+        { provide: BillingService, useValue: new BillingService(db) },
+        { provide: InvoiceService, useValue: new InvoiceService(db.getRepository(Invoice), logs, db.getRepository(User), { send: jest.fn() } as any) },
+        { provide: MeterService, useValue: new MeterService(db.getRepository(Meter), logs) },
+        { provide: getRepositoryToken(ActivityLog), useValue: logs }, { provide: getRepositoryToken(Person), useValue: db.getRepository(Person) },
+        { provide: BucketService, useValue: {} }, { provide: InvoicePdfService, useValue: {} }],
     }).compile();
     app = module.createNestApplication({ httpsOptions: {
       key: readFileSync(process.env.TEST_TLS_KEY), cert: readFileSync(process.env.TEST_TLS_CERT),
@@ -80,6 +108,11 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
         catch { document.querySelector('#result').textContent='rejected'; }
       };
       </script></html>`));
+    app.use(express.static(webDist));
+    app.use((req, res, next) => {
+      if (req.method !== 'GET' || /^\/(api|management|i18n)(\/|$)/.test(req.path) || req.path.includes('.')) return next();
+      res.sendFile(resolve(webDist, 'index.html'));
+    });
     await app.listen(0, '127.0.0.1');
     origin = await app.getUrl();
     process.env.WEB_ORIGINS = origin;
@@ -133,4 +166,38 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     expect(await responseStatus(second)).toBe(401);
     await second.locator('#refresh').click(); await second.waitForFunction(`document.querySelector('#result').textContent === 'rejected'`);
   });
+  const loginUi = async () => {
+    const page = await context.newPage();
+    await page.goto(origin + '/login');
+    await page.locator('#username').fill('ui-admin');
+    await page.locator('#password').fill(password);
+    await page.locator('.auth-privacy__check').check();
+    // Let the initial anonymous account lookup and logout finish before submitting credentials.
+    await page.waitForFunction('localStorage.getItem("watsolution-logout")?.startsWith("confirmed:")');
+    await page.locator('button[type="submit"]').click();
+    await page.waitForURL('**/admin/resumen');
+    await page.locator('.sidebar-profile .name').filter({ hasText: 'Administrador de prueba' }).waitFor();
+    return page;
+  };
+  it('logs in through the actual Vue UI and restores identity after a protected-page reload', async () => {
+    const page = await loginUi();
+    const account = page.waitForResponse(r => r.url().endsWith('/api/account') && r.status() === 200);
+    await page.reload(); await account;
+    await page.locator('.sidebar-profile .name').filter({ hasText: 'Administrador de prueba' }).waitFor();
+    expect(page.url()).toContain('/admin/resumen');
+    expect(await page.evaluate('localStorage.getItem("jhi-authenticationToken")')).toBeNull();
+  });
+  it('removes protected content from both real UI tabs after logout and prevents reload recovery', async () => {
+    const first = await loginUi(), second = await context.newPage();
+    await second.goto(origin + '/admin/actividad');
+    await second.locator('.logs-card').waitFor();
+    const logout = first.waitForResponse(r => r.url().endsWith('/api/session/logout') && r.status() === 201);
+    await first.locator('.logout-btn').click(); await logout;
+    await first.waitForURL('**/login'); await second.waitForURL('**/login');
+    expect(await second.locator('.logs-card').count()).toBe(0);
+    expect((await context.cookies()).some(c => c.name === '__Host-watsolution-refresh')).toBe(false);
+    await second.reload(); await second.locator('#username').waitFor();
+    expect(await second.evaluate('localStorage.getItem("watsolution-logout")?.startsWith("confirmed:")')).toBe(true);
+  });
+
 });
