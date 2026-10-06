@@ -1,0 +1,136 @@
+import { Controller, Get, INestApplication, Req, UseGuards } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { PassportModule } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
+import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import { build } from 'esbuild';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import { randomBytes } from 'crypto';
+import { createBillingFixture } from '../billing-fixture';
+import { User } from '../../src/domain/user.entity';
+import { Authority } from '../../src/domain/authority.entity';
+import { AuthSession } from '../../src/domain/auth-session.entity';
+import { UserService } from '../../src/service/user.service';
+import { AuthService } from '../../src/service/auth.service';
+import { SessionService } from '../../src/service/session.service';
+import { LoginRateLimitService } from '../../src/security/login-rate-limit.service';
+import { encodePassword } from '../../src/security/password-util';
+import { JwtStrategy } from '../../src/security/passport.jwt.strategy';
+import { AuthGuard } from '../../src/security/guards/auth.guard';
+import { jwtSettings } from '../../src/security/jwt-settings';
+import { UserJWTController } from '../../src/web/rest/user.jwt.controller';
+import { SessionController } from '../../src/web/rest/session.controller';
+
+// A minimal protected probe, not a replacement for testing the complete application UI.
+@Controller('api/browser-probe')
+class BrowserProbe {
+  @Get() @UseGuards(AuthGuard)
+  get(@Req() req: any) { return { id: req.user.id }; }
+}
+
+describe('Chromium HTTPS sessions with PostgreSQL', () => {
+  let fixture: Awaited<ReturnType<typeof createBillingFixture>>;
+  let app: INestApplication;
+  let browser: Browser;
+  let context: BrowserContext;
+  let origin: string;
+  const oldOrigins = process.env.WEB_ORIGINS;
+  const password = randomBytes(24).toString('base64url');
+  const responseStatus = (page: Page) => page.evaluate(`fetch('/api/browser-probe', {
+    headers: { Authorization: 'Bearer ' + ws.getAccessToken() }
+  }).then(r => r.status)`);
+
+  beforeAll(async () => {
+    if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+    fixture = await createBillingFixture();
+    const db = fixture.db;
+    const sessions = new SessionService(db);
+    const jwt = new JwtService({ secret: jwtSettings.secret, signOptions: {
+      issuer: jwtSettings.issuer, audience: jwtSettings.audience, expiresIn: '5m',
+    } });
+    const auth = new AuthService(jwt, sessions, new LoginRateLimitService(db), db.getRepository(Authority), new UserService(db.getRepository(User)));
+    await db.getRepository(Authority).save({ name: 'ROLE_USER' });
+    await db.getRepository(User).save({ login: 'browser-user', email: 'browser@example.invalid', activated: true,
+      password: await encodePassword(password), authorities: [{ name: 'ROLE_USER' }] });
+    const module = await Test.createTestingModule({ imports: [PassportModule],
+      controllers: [UserJWTController, SessionController, BrowserProbe], providers: [JwtStrategy,
+        { provide: AuthService, useValue: auth }, { provide: SessionService, useValue: sessions }],
+    }).compile();
+    app = module.createNestApplication({ httpsOptions: {
+      key: readFileSync(process.env.TEST_TLS_KEY), cert: readFileSync(process.env.TEST_TLS_CERT),
+    } });
+    const bundled = await build({ entryPoints: [resolve(__dirname, '../../../client/src/app/shared/config/web-session.ts')],
+      bundle: true, write: false, platform: 'browser', format: 'iife', globalName: 'ws',
+      define: { SERVER_API_URL: JSON.stringify('/') },
+    });
+    app.use('/session-client.js', (_req, res) => res.type('application/javascript').send(bundled.outputFiles[0].text));
+    app.use('/test-session', (_req, res) => res.type('html').send(`<!doctype html><html lang="es"><title>Prueba aislada de sesión</title>
+      <input id="password" type="password" aria-label="Contraseña de prueba"><button id="login">Entrar</button>
+      <button id="refresh">Renovar</button><output id="result"></output><script src="/session-client.js"></script>
+      <script>
+      document.querySelector('#login').onclick = async () => {
+        const r = await fetch('/api/authenticate', { method:'POST', headers:{'Content-Type':'application/json','X-Session-Transport':'web'},
+          body:JSON.stringify({username:'browser-user',password:document.querySelector('#password').value}) });
+        const data=await r.json(); window.loginResponse=data; ws.setAccessToken(data.id_token);
+        document.querySelector('#result').textContent=String(r.status);
+      };
+      document.querySelector('#refresh').onclick = async () => {
+        try { await ws.refreshAccessToken(); document.querySelector('#result').textContent='renewed'; }
+        catch { document.querySelector('#result').textContent='rejected'; }
+      };
+      </script></html>`));
+    await app.listen(0, '127.0.0.1');
+    origin = await app.getUrl();
+    process.env.WEB_ORIGINS = origin;
+    browser = await chromium.launch({ headless: true });
+  });
+  beforeEach(async () => { context = await browser.newContext({ ignoreHTTPSErrors: true }); });
+  afterEach(async () => { await context?.close(); });
+  afterAll(async () => {
+    try { await browser?.close(); await app?.close(); await fixture?.close(); }
+    finally { if (oldOrigins === undefined) delete process.env.WEB_ORIGINS; else process.env.WEB_ORIGINS = oldOrigins; }
+  });
+  const login = async () => {
+    const page = await context.newPage(); await page.goto(origin + '/test-session');
+    await page.locator('#password').fill(password); await page.locator('#login').click();
+    await page.waitForFunction(`document.querySelector('#result').textContent === '200'`);
+    return page;
+  };
+
+  it('stores a host-only HttpOnly secure cookie without exposing refresh to page JavaScript', async () => {
+    const page = await login();
+    expect(await page.evaluate('isSecureContext')).toBe(true);
+    const cookies = await context.cookies();
+    const cookie = cookies.find(c => c.name === '__Host-watsolution-refresh');
+    expect(cookie).toMatchObject({ httpOnly: true, secure: true, sameSite: 'Strict', path: '/', domain: '127.0.0.1' });
+    expect(await page.evaluate('document.cookie')).not.toContain('__Host-watsolution-refresh');
+    expect(await page.evaluate('Object.keys(loginResponse)')).toEqual(['id_token']);
+    expect(await page.evaluate('localStorage.getItem("jhi-authenticationToken")')).toBeNull();
+    expect(await page.evaluate('sessionStorage.getItem("jhi-authenticationToken")')).toBeNull();
+    expect(await responseStatus(page)).toBe(200);
+  });
+  it('renews after a reload using the browser-managed cookie and real session module', async () => {
+    const page = await login(); await page.reload();
+    expect(await page.evaluate('ws.getAccessToken()')).toBeNull();
+    await page.locator('#refresh').click(); await page.waitForFunction(`document.querySelector('#result').textContent === 'renewed'`);
+    expect(await responseStatus(page)).toBe(200);
+  });
+  it('serializes two tabs with navigator.locks and keeps the rotated family active', async () => {
+    const first = await login(), second = await context.newPage(); await second.goto(origin + '/test-session');
+    expect(await first.evaluate('!!navigator.locks')).toBe(true);
+    await Promise.all([first.evaluate('ws.refreshAccessToken()'), second.evaluate('ws.refreshAccessToken()')]);
+    expect(await responseStatus(first)).toBe(200); expect(await responseStatus(second)).toBe(200);
+    const cookie = (await context.cookies()).find(c => c.name === '__Host-watsolution-refresh')!;
+    const session = await fixture.db.getRepository(AuthSession).findOneBy({ id: cookie.value.split('.')[0] });
+    expect(session.revoked).toBe(false); expect(JSON.parse(session.usedRefreshHashes)).toHaveLength(2);
+  });
+  it('clears the browser cookie and invalidates access in a second tab after server logout', async () => {
+    const first = await login(), second = await context.newPage(); await second.goto(origin + '/test-session');
+    await second.evaluate('ws.refreshAccessToken()');
+    expect(await first.evaluate(`fetch('/api/session/logout', {method:'POST',headers:{'X-Session-Transport':'web'}}).then(r=>r.status)`)).toBe(201);
+    expect((await context.cookies()).some(c => c.name === '__Host-watsolution-refresh')).toBe(false);
+    expect(await responseStatus(second)).toBe(401);
+    await second.locator('#refresh').click(); await second.waitForFunction(`document.querySelector('#result').textContent === 'rejected'`);
+  });
+});
