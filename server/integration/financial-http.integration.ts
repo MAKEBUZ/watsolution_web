@@ -4,9 +4,18 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { randomUUID } from 'crypto';
+import { randomUUID, randomBytes } from 'crypto';
 import request from 'supertest';
 import { createBillingFixture } from './billing-fixture';
+import { User } from '../src/domain/user.entity';
+import { Authority } from '../src/domain/authority.entity';
+import { AuthSession } from '../src/domain/auth-session.entity';
+import { UserService } from '../src/service/user.service';
+import { SessionService } from '../src/service/session.service';
+import { LoginRateLimitService } from '../src/security/login-rate-limit.service';
+import { encodePassword } from '../src/security/password-util';
+import { UserJWTController } from '../src/web/rest/user.jwt.controller';
+import { SessionController } from '../src/web/rest/session.controller';
 import { Invoice } from '../src/domain/invoice.entity';
 import { Person } from '../src/domain/person.entity';
 import { Meter } from '../src/domain/meter.entity';
@@ -34,19 +43,26 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   let app: INestApplication;
   let adminToken: string;
   let userToken: string;
+  const password = randomBytes(24).toString('base64url');
+  const login = async (username: string) => (await request(app.getHttpServer()).post('/api/authenticate').send({ username, password }).expect(200)).body;
+  const seed = async (name: string, role = 'ROLE_USER', activated = true) => fixture.db.getRepository(User).save({
+    login: name, email: name + '@example.invalid', activated, password: await encodePassword(password), authorities: [{ name: role }],
+  });
   beforeAll(async () => {
     fixture = await createBillingFixture();
     const db = fixture.db;
     const logs = db.getRepository(ActivityLog);
     const notices = { send: jest.fn() };
-    const users = { findOne: jest.fn() };
-    // Only identity lookup is synthetic. JWT signature/expiry and role guards remain real.
-    const auth = { validateUser: async ({ id }) => id === 1 || id === 2
-      ? { id, login: `synthetic-${id}`, authorities: [id === 1 ? 'ROLE_ADMIN' : 'ROLE_USER'] } : undefined };
+    const users = db.getRepository(User);
+    const sessions = new SessionService(db);
+    const jwt = new JwtService({ secret: jwtSettings.secret, signOptions: { issuer: jwtSettings.issuer, audience: jwtSettings.audience, expiresIn: '5m' } });
+    const auth = new AuthService(jwt, sessions, new LoginRateLimitService(db), db.getRepository(Authority), new UserService(users));
+    await db.getRepository(Authority).save([{ name: 'ROLE_ADMIN' }, { name: 'ROLE_USER' }]);
+    await seed('admin', 'ROLE_ADMIN'); await seed('subscriber');
     const module = await Test.createTestingModule({ imports: [PassportModule],
-      controllers: [InvoiceController, MeterController, AdminController, MobileController],
-      providers: [JwtStrategy, { provide: AuthService, useValue: auth }, { provide: DataSource, useValue: db },
-        { provide: InvoiceService, useValue: new InvoiceService(db.getRepository(Invoice), logs, users as any, notices as any) },
+      controllers: [InvoiceController, MeterController, AdminController, MobileController, UserJWTController, SessionController],
+      providers: [JwtStrategy, { provide: SessionService, useValue: sessions }, { provide: AuthService, useValue: auth }, { provide: DataSource, useValue: db },
+        { provide: InvoiceService, useValue: new InvoiceService(db.getRepository(Invoice), logs, users, notices as any) },
         { provide: MeterService, useValue: new MeterService(db.getRepository(Meter), logs) },
         { provide: BillingService, useValue: new BillingService(db) }, { provide: MobileService, useValue: new MobileService(db) },
         { provide: getRepositoryToken(ActivityLog), useValue: logs }, { provide: getRepositoryToken(Person), useValue: db.getRepository(Person) },
@@ -54,8 +70,8 @@ describe('Financial routes with real guards and PostgreSQL', () => {
         { provide: InvoicePdfService, useValue: {} }, { provide: BucketService, useValue: {} }],
     }).compile();
     app = module.createNestApplication(); await app.init();
-    const jwt = new JwtService({ secret: jwtSettings.secret, signOptions: { issuer: jwtSettings.issuer, audience: jwtSettings.audience, expiresIn: '5m' } });
-    adminToken = jwt.sign({ id: 1 }); userToken = jwt.sign({ id: 2 });
+    adminToken = (await login('admin')).id_token;
+    userToken = (await login('subscriber')).id_token;
   });
   afterAll(async () => { if (app) await app.close(); if (fixture) await fixture.close(); });
   const call = (method: string, path: string, token = adminToken) => {
@@ -109,4 +125,66 @@ describe('Financial routes with real guards and PostgreSQL', () => {
     expect(repeated.body.id).toBe(generated.body.id);
     expect(await fixture.db.getRepository(Invoice).countBy({ meter: { id: second.body.meterId } })).toBe(1);
   });
+  it('rejects wrong passwords and disabled accounts without creating sessions', async () => {
+    await seed('disabled', 'ROLE_USER', false);
+    const before = await fixture.db.getRepository(AuthSession).count();
+    for (const credentials of [{ username: 'subscriber', password: 'wrong-password' }, { username: 'disabled', password }]) {
+      await request(app.getHttpServer()).post('/api/authenticate').send(credentials).expect(401);
+    }
+    expect(await fixture.db.getRepository(AuthSession).count()).toBe(before);
+  });
+
+  it('scopes invoice and meter reads to the persisted owner', async () => {
+    const owner = await seed('owner'); await seed('outsider');
+    const person = await fixture.db.getRepository(Person).save({ fullName: 'Owner', documentNumber: randomUUID(), status: PersonStatus.ACTIVE, userId: String(owner.id) });
+    const meter = await fixture.db.getRepository(Meter).save({ person, readingDate: '2020-01-01', waterMeasure: 10 });
+    const invoice = await fixture.db.getRepository(Invoice).save({ person, meter, issueDate: '2020-01-01', dueDate: '2020-02-01', consumptionM3: 10, amountDue: 25, status: InvoiceStatus.PENDING });
+    const own = await login('owner'), other = await login('outsider');
+    for (const path of [`/api/invoices/${invoice.id}`, `/api/meters/${meter.id}`, `/api/invoices/by-person/${person.id}`, `/api/meters/by-person/${person.id}`]) {
+      await call('get', path, own.id_token).expect(200);
+      await call('get', path, other.id_token).expect(403);
+    }
+  });
+
+  it('rechecks persisted roles and activation for an already issued access token', async () => {
+    const user = await seed('changing-admin', 'ROLE_ADMIN');
+    const token = (await login(user.login)).id_token;
+    await call('get', '/api/invoices', token).expect(200);
+    await fixture.db.getRepository(User).save({ id: user.id, authorities: [{ name: 'ROLE_USER' }] });
+    await call('get', '/api/invoices', token).expect(403);
+    await fixture.db.getRepository(User).update(user.id, { activated: false });
+    await call('get', '/api/invoices', token).expect(401);
+  });
+
+  it('revokes persisted access and refresh through HTTP logout', async () => {
+    const user = await seed('logout-admin', 'ROLE_ADMIN'); const tokens = await login(user.login);
+    await call('post', '/api/session/logout', tokens.id_token).expect(201);
+    await call('get', '/api/invoices', tokens.id_token).expect(401);
+    await call('post', '/api/session/refresh', '').send({ refresh_token: tokens.refresh_token }).expect(401);
+    const session = await fixture.db.getRepository(AuthSession).findOneBy({ userId: user.id });
+    expect(session.revoked).toBe(true);
+    expect(session.refreshHash).not.toBe(tokens.refresh_token);
+  });
+
+  it('rotates refresh and revokes the family on proven replay through HTTP', async () => {
+    await seed('refresh-admin', 'ROLE_ADMIN'); const original = await login('refresh-admin');
+    const renewed = await call('post', '/api/session/refresh', '').send({ refresh_token: original.refresh_token }).expect(201);
+    expect(renewed.body.refresh_token).not.toBe(original.refresh_token);
+    await call('get', '/api/invoices', renewed.body.id_token).expect(200);
+    await call('post', '/api/session/refresh', '').send({ refresh_token: original.refresh_token }).expect(401);
+    await call('get', '/api/invoices', renewed.body.id_token).expect(401);
+    await call('post', '/api/session/refresh', '').send({ refresh_token: renewed.body.refresh_token }).expect(401);
+  });
+
+  it('persists login throttling in the disposable schema without creating a session', async () => {
+    const before = await fixture.db.getRepository(AuthSession).count();
+    for (let attempt = 0; attempt < 10; attempt++) {
+      await request(app.getHttpServer()).post('/api/authenticate').send({ username: 'unknown', password }).expect(401);
+    }
+    await request(app.getHttpServer()).post('/api/authenticate').send({ username: 'unknown', password }).expect(429);
+    expect(await fixture.db.getRepository(AuthSession).count()).toBe(before);
+    const rows = await fixture.db.query('SELECT attempts FROM auth_rate_limit WHERE attempts = 11');
+    expect(rows).toHaveLength(1);
+  });
+
 });

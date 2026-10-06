@@ -6,15 +6,18 @@ import { Person } from '../src/domain/person.entity';
 import { Address } from '../src/domain/address.entity';
 import { ActivityLog } from '../src/domain/activity-log.entity';
 import { MobileOperation } from '../src/domain/mobile-operation.entity';
+import { User } from '../src/domain/user.entity';
+import { Authority } from '../src/domain/authority.entity';
+import { AuthSession } from '../src/domain/auth-session.entity';
 import { integrationTarget } from './target';
 
 export async function createBillingFixture() {
   const target = integrationTarget();
   const schema = `ws_test_${randomUUID().replace(/-/g, '')}`;
   const db = new DataSource({ type: 'postgres', ...target, schema,
-    entities: [Invoice, Meter, Person, Address, ActivityLog, MobileOperation], synchronize: false,
+    entities: [Invoice, Meter, Person, Address, ActivityLog, MobileOperation, User, Authority, AuthSession], synchronize: false,
     migrationsRun: false, dropSchema: false, logging: false,
-    extra: { max: 24, connectionTimeoutMillis: 5000, application_name: schema } });
+    extra: { max: 24, connectionTimeoutMillis: 5000, application_name: schema, options: `-c search_path=${schema}` } });
   let created = false;
   const close = async () => {
     if (!db.isInitialized) return;
@@ -56,6 +59,19 @@ export async function createBillingFixture() {
       id varchar(36) NOT NULL, "userId" integer NOT NULL, "payloadHash" varchar(64) NOT NULL,
       "personId" integer NOT NULL, result text NOT NULL, "createdAt" timestamp NOT NULL,
       PRIMARY KEY (id, "userId"))`);
+    await db.query(`CREATE TABLE "${schema}".jhi_authority (name varchar PRIMARY KEY)`);
+    await db.query(`CREATE TABLE "${schema}".jhi_user (
+      id serial PRIMARY KEY, ${audit}, login varchar UNIQUE NOT NULL, email varchar NOT NULL,
+      "firstName" varchar, "lastName" varchar, activated boolean DEFAULT false, "langKey" varchar DEFAULT 'en',
+      password varchar NOT NULL, "imageUrl" varchar, "activationKey" varchar, "resetKey" varchar, "resetDate" timestamp)`);
+    await db.query(`CREATE TABLE "${schema}".jhi_user_authorities_jhi_authority (
+      "jhiUserId" integer REFERENCES "${schema}".jhi_user(id), "jhiAuthorityName" varchar REFERENCES "${schema}".jhi_authority(name),
+      PRIMARY KEY ("jhiUserId", "jhiAuthorityName"))`);
+    await db.query(`CREATE TABLE "${schema}".auth_session (
+      id varchar(36) PRIMARY KEY, "userId" integer NOT NULL REFERENCES "${schema}".jhi_user(id),
+      "refreshHash" varchar(64) NOT NULL, "usedRefreshHashes" text NOT NULL DEFAULT '[]',
+      "expiresAt" timestamp NOT NULL, revoked boolean NOT NULL DEFAULT false)`);
+    await db.query(`CREATE TABLE "${schema}".auth_rate_limit (key varchar PRIMARY KEY, attempts integer NOT NULL, expires_at bigint NOT NULL)`);
     return { db, schema, close };
   } catch (error) { await close(); throw error; }
 }
