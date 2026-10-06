@@ -9,7 +9,7 @@
     </div>
     <Header v-if="!isAdminRoute" />
     <main :class="['main-content', { 'no-header': isAdminRoute }]">
-      <router-view></router-view>
+      <router-view v-if="!requiresAuthentication || accountStore.authenticated"></router-view>
     </main>
     <Footer v-if="!isAdminRoute" />
     <ChatBot />
@@ -17,10 +17,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted, onBeforeUnmount } from 'vue';
+import { defineComponent, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useAccountStore } from '@/shared/config/store/account-store';
 import { logoutStorageKey } from '@/shared/config/web-session';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Header from '@/core/layout/header.vue';
 import Footer from '@/core/layout/footer.vue';
 import ChatBot from '@/core/chatbot/chatbot.vue';
@@ -40,6 +40,11 @@ export default defineComponent({
     onMounted(() => window.addEventListener('storage', onStorage));
     onBeforeUnmount(() => window.removeEventListener('storage', onStorage));
     const route = useRoute();
+    const router = useRouter();
+    const requiresAuthentication = computed(() => route.matched.some(record => record.meta.authorities?.length));
+    watch(() => accountStore.authenticated, (authenticated, wasAuthenticated) => {
+      if (wasAuthenticated && !authenticated && requiresAuthentication.value) void router.replace('/login');
+    });
     const isAdminRoute = computed(() => {
       return route.path.startsWith('/admin') || route.name?.toString().startsWith('Admin') || route.name?.toString().startsWith('admin');
     });
@@ -47,6 +52,7 @@ export default defineComponent({
       accountStore,
       route,
       isAdminRoute,
+      requiresAuthentication,
     };
   },
 });

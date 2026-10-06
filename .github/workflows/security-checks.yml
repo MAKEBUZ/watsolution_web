@@ -39,8 +39,12 @@ jobs:
         run: |
           mkdir -p tmp/browser-tls
           openssl req -x509 -newkey rsa:2048 -nodes -days 1 -keyout tmp/browser-tls/key.pem -out tmp/browser-tls/cert.pem -subj '/CN=127.0.0.1' -addext 'subjectAltName=IP:127.0.0.1'
+      - name: Build real UI for HTTPS browser tests
+        working-directory: client
+        run: node ../node_modules/vite/bin/vite.js build --outDir "$GITHUB_WORKSPACE/tmp/browser-app"
       - name: Chromium HTTPS session regression
         env:
+          TEST_WEB_DIST: tmp/browser-app
           TEST_TLS_KEY: tmp/browser-tls/key.pem
           TEST_TLS_CERT: tmp/browser-tls/cert.pem
         run: node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false
