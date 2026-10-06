@@ -34,6 +34,16 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts --no-fund
       - run: node node_modules/jest/bin/jest.js --config server/integration/jest.config.json --runInBand --coverage=false
+      - run: npx --no-install playwright install --with-deps chromium
+      - name: Generate disposable loopback TLS certificate
+        run: |
+          mkdir -p tmp/browser-tls
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 -keyout tmp/browser-tls/key.pem -out tmp/browser-tls/cert.pem -subj '/CN=127.0.0.1' -addext 'subjectAltName=IP:127.0.0.1'
+      - name: Chromium HTTPS session regression
+        env:
+          TEST_TLS_KEY: tmp/browser-tls/key.pem
+          TEST_TLS_CERT: tmp/browser-tls/cert.pem
+        run: node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
