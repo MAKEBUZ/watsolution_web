@@ -38,3 +38,11 @@ El job PostgreSQL instala Chromium mediante `npx --no-install playwright install
 Además de las variables de la base descartable, exige `TEST_TLS_KEY` y `TEST_TLS_CERT` con rutas explícitas. El certificado debe incluir SAN IP:127.0.0.1. No se versionan claves; el servidor escucha solo en loopback y un puerto efímero. Chromium acepta el certificado autofirmado mediante ignoreHTTPSErrors: no se certifica confianza TLS pública, Nginx, otros navegadores, fallback sin navigator.locks ni toda la interfaz de logout.
 
 [GitHub Actions 37410916114](https://github.com/MAKEBUZ/watsolution_web/actions/runs/37410916114), commit `62fdd4a`: ambos jobs aprobados, incluidos 27 casos PostgreSQL y cuatro casos Chromium HTTPS. T-014 conserva pendientes la interfaz completa, proxy y staging.
+
+## Flujo de sesión en el build real de Vue
+
+El arnés también exige `TEST_WEB_DIST`, ruta al directorio que contiene el index.html generado por Vite. CI construye en `tmp/browser-app` y sirve esos assets sobre el mismo HTTPS aislado. AccountController y AdminController usan identidad, estadísticas y actividad persistidas; servicios externos ajenos al recorrido siguen sustituidos.
+
+Dos casos adicionales rellenan el login real, recargan una página protegida y cierran sesión mediante el botón de la interfaz con otra pestaña en Actividad. El primer CI reprodujo que la segunda pestaña permanecía en la vista protegida. App ahora desmonta esa vista al perder autenticación y redirige a login.
+
+[GitHub Actions 37414612969](https://github.com/MAKEBUZ/watsolution_web/actions/runs/37414612969), commit `05df11f`: seis casos Chromium HTTPS y 27 PostgreSQL aprobados, junto con validate. Esto cubre dos recorridos de sesión del frontend completo, no todas sus pantallas ni AppModule completo. Proxy, otros navegadores y staging siguen pendientes.
