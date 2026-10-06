@@ -11,8 +11,8 @@ const features = [
     color: '#0077be'
   },
   {
-    title: 'Monitoreo en Tiempo Real',
-    description: 'Visualiza flujos, presiones y niveles de tanques al instante.',
+    title: 'Integración de sensores pendiente',
+    description: 'El prototipo no recibe mediciones verificadas de flujo, presión o nivel.',
     icon: 'chart-line',
     color: '#00ced1'
   },
@@ -24,7 +24,7 @@ const features = [
   },
   {
     title: 'Alertas de Mantenimiento',
-    description: 'Sistema predictivo de fallas para prevenir fugas y roturas.',
+    description: 'Capacidad propuesta para una futura integración; no disponible en el prototipo.',
     icon: 'bell',
     color: '#3498db'
   }
@@ -75,7 +75,7 @@ const goToPortal = () => {
         <div class="hero__text">
           <h1 class="hero__title">Gestión Inteligente de <span>Acueductos</span></h1>
           <p class="hero__description">
-            Optimiza la distribución, monitorea en tiempo real y garantiza la sostenibilidad hídrica con la plataforma PWA líder en el sector.
+            Prototipo académico para explorar la gestión de acueductos. La integración de sensores está pendiente.
           </p>
           <div class="hero__actions">
             <button class="btn btn--primary" @click="goToPortal">Comenzar Ahora <font-awesome-icon icon="arrow-right" /></button>
@@ -90,7 +90,8 @@ const goToPortal = () => {
               <div class="hero__card-dot"></div>
             </div>
             <div class="hero__card-body">
-              <div class="mockup-graph">
+              <p role="note">Demostración visual: valores ilustrativos, sin mediciones de sensores.</p>
+            <div class="mockup-graph">
                 <div class="mockup-bar" style="height: 60%"></div>
                 <div class="mockup-bar" style="height: 80%"></div>
                 <div class="mockup-bar" style="height: 45%"></div>
@@ -99,7 +100,7 @@ const goToPortal = () => {
               </div>
               <div class="mockup-stats">
                 <div class="mockup-stat">
-                  <span class="mockup-label">Flujo Actual</span>
+                  <span class="mockup-label">Flujo ilustrativo</span>
                   <span class="mockup-value">1,240 L/s</span>
                 </div>
                 <div class="mockup-stat">
@@ -178,10 +179,11 @@ const goToPortal = () => {
 
     <!-- Testimonials Section -->
     <section id="testimonios" class="testimonials">
+      <p role="note">Ejemplos ficticios de presentación; no son testimonios ni resultados operativos verificados.</p>
       <div class="container">
         <div class="testimonials__header">
-          <h2 class="testimonials__title">Casos de Éxito</h2>
-          <p class="testimonials__subtitle">Empresas que ya están optimizando su gestión hídrica con nosotros.</p>
+          <h2 class="testimonials__title">Ejemplos de presentación</h2>
+          <p class="testimonials__subtitle">Contenido ficticio utilizado para ilustrar el diseño del prototipo.</p>
         </div>
 
         <div class="testimonials__grid">
