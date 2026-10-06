@@ -26,3 +26,15 @@ El fixture crea explícitamente las tablas de identidad/sesiones y configura el 
 Ocho casos web adicionales verifican atributos de cookie y ausencia de refresh en JSON, origen incorrecto/ausente sin efectos persistidos, separación del transporte nativo, logout con acceso vencido e independencia entre familias, refresh falso, renovación concurrente/replay y cuenta desactivada. Supertest envía cookies manualmente: estos casos no acreditan TLS, aplicación de SameSite/Secure por el navegador, CORS ni varias pestañas reales.
 
 Estado: veintisiete casos PostgreSQL aprobados en [GitHub Actions 37410088785](https://github.com/MAKEBUZ/watsolution_web/actions/runs/37410088785), commit `79f0e8d`. Ambos jobs, `postgres-sessions` y `validate`, terminaron correctamente. T-014 permanece parcial: faltan navegador HTTPS, multipestaña, proxy y staging. Las pruebas locales sin destino explícito deben fallar antes de conectar y no cuentan como integración aprobada.
+
+## Navegador HTTPS aislado
+
+`browser/session.browser.ts` sirve una página mínima con el módulo real `web-session.ts`, controladores de autenticación reales y PostgreSQL. Cuatro casos Chromium verifican cookie HttpOnly/Secure y ausencia de refresh en JSON, renovación tras recarga, renovación desde dos pestañas con navigator.locks y revocación tras logout. No es la interfaz completa del producto.
+
+El job PostgreSQL instala Chromium mediante `npx --no-install playwright install --with-deps chromium`, genera un certificado efímero loopback y ejecuta:
+
+`node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false`
+
+Además de las variables de la base descartable, exige `TEST_TLS_KEY` y `TEST_TLS_CERT` con rutas explícitas. El certificado debe incluir SAN IP:127.0.0.1. No se versionan claves; el servidor escucha solo en loopback y un puerto efímero. Chromium acepta el certificado autofirmado mediante ignoreHTTPSErrors: no se certifica confianza TLS pública, Nginx, otros navegadores, fallback sin navigator.locks ni toda la interfaz de logout.
+
+[GitHub Actions 37410916114](https://github.com/MAKEBUZ/watsolution_web/actions/runs/37410916114), commit `62fdd4a`: ambos jobs aprobados, incluidos 27 casos PostgreSQL y cuatro casos Chromium HTTPS. T-014 conserva pendientes la interfaz completa, proxy y staging.
