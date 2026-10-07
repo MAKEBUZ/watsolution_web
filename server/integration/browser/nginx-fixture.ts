@@ -18,7 +18,7 @@ export async function startNginx(upstream: string, webDist: string, key: string,
   let template = readFileSync(resolve(__dirname, '../../../client/nginx.conf'), 'utf8');
   if (!template.includes('${PORT}') || !template.includes('/usr/share/nginx/html')) throw new Error('Unexpected proxy template');
   template = template.replace('${PORT}', `127.0.0.1:${port} ssl`)
-    .replace('/usr/share/nginx/html', quoted(webDist)).replaceAll('${BACKEND_URL}', upstream);
+    .replace('/usr/share/nginx/html', quoted(webDist)).split('${BACKEND_URL}').join(upstream);
   template = template.replace('server {', `server {
     ssl_certificate ${quoted(cert)};
     ssl_certificate_key ${quoted(key)};
