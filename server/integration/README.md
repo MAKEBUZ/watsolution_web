@@ -1,5 +1,13 @@
 # Integración aislada (T-014)
 
+## Ampliación: proxy Nginx HTTPS
+
+La suite de navegador admite `TEST_NGINX=1`. Repite los ocho casos con una instancia temporal de Nginx en loopback: cookies, recarga, renovación concurrente, logout, errores API frente al fallback SPA, rechazo de Origin no autorizado y dos recorridos de la interfaz Vue. El caso Origin usa el cliente HTTP de Playwright; no simula un ataque CORS desde otra página.
+
+`browser/nginx-fixture.ts` reutiliza `client/nginx.conf`, sustituyendo puerto, raíz estática y upstream. Añade TLS autofirmado y dos rutas exclusivas de la página de pruebas. Las rutas `/api/` conservan la configuración de la plantilla. El proceso tiene prefijo y configuración propios y se detiene al terminar; no recarga la configuración predeterminada del sistema.
+
+CI instala el binario Nginx de Ubuntu y ejecuta la suite una vez directamente contra Nest HTTPS y otra a través del proxy. No valida la imagen Docker de producción, su entrypoint, certificados públicos, Socket.IO ni staging. Sigue usando el backend parcial de pruebas y PostgreSQL descartable. Los resultados históricos que siguen describen la cobertura alcanzada en cada lote; no equivalen a un cierre integral de T-014.
+
 Esta suite usa PostgreSQL real y el servicio de sesiones de la aplicación. No carga `AppModule`, variables `.env` ni migraciones históricas. Los destinos permitidos son exclusivamente `127.0.0.1:55432`, base `ws_integration` y usuario `ws_test`, con consentimiento explícito mediante `WATSOLUTION_TEST_DATABASE=local-disposable`.
 
 Desde la raíz del repositorio, con Docker disponible:

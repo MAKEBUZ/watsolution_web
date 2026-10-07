@@ -48,6 +48,18 @@ jobs:
           TEST_TLS_KEY: tmp/browser-tls/key.pem
           TEST_TLS_CERT: tmp/browser-tls/cert.pem
         run: node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false
+      - name: Install Nginx for isolated proxy tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+          nginx -v
+      - name: Chromium sessions through Nginx HTTPS
+        env:
+          TEST_NGINX: '1'
+          TEST_WEB_DIST: tmp/browser-app
+          TEST_TLS_KEY: tmp/browser-tls/key.pem
+          TEST_TLS_CERT: tmp/browser-tls/cert.pem
+        run: node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20

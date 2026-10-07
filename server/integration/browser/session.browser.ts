@@ -36,6 +36,7 @@ import { Meter } from '../../src/domain/meter.entity';
 import { Person } from '../../src/domain/person.entity';
 import { ActivityLog } from '../../src/domain/activity-log.entity';
 import { SessionController } from '../../src/web/rest/session.controller';
+import { startNginx } from './nginx-fixture';
 
 // A minimal protected probe, not a replacement for testing the complete application UI.
 @Controller('api/browser-probe')
@@ -50,6 +51,7 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
   let browser: Browser;
   let context: BrowserContext;
   let origin: string;
+  let proxy: Awaited<ReturnType<typeof startNginx>> | undefined;
   const oldOrigins = process.env.WEB_ORIGINS;
   const password = randomBytes(24).toString('base64url');
   const responseStatus = (page: Page) => page.evaluate(`fetch('/api/browser-probe', {
@@ -115,13 +117,17 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     });
     await app.listen(0, '127.0.0.1');
     origin = await app.getUrl();
+    if (process.env.TEST_NGINX === '1') {
+      proxy = await startNginx(origin, webDist, process.env.TEST_TLS_KEY, process.env.TEST_TLS_CERT);
+      origin = proxy.origin;
+    }
     process.env.WEB_ORIGINS = origin;
     browser = await chromium.launch({ headless: true });
   });
   beforeEach(async () => { context = await browser.newContext({ ignoreHTTPSErrors: true }); });
   afterEach(async () => { await context?.close(); });
   afterAll(async () => {
-    try { await browser?.close(); await app?.close(); await fixture?.close(); }
+    try { await browser?.close(); await proxy?.close(); await app?.close(); await fixture?.close(); }
     finally { if (oldOrigins === undefined) delete process.env.WEB_ORIGINS; else process.env.WEB_ORIGINS = oldOrigins; }
   });
   const login = async () => {
@@ -165,6 +171,27 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     expect((await context.cookies()).some(c => c.name === '__Host-watsolution-refresh')).toBe(false);
     expect(await responseStatus(second)).toBe(401);
     await second.locator('#refresh').click(); await second.waitForFunction(`document.querySelector('#result').textContent === 'rejected'`);
+  });
+  it('keeps unknown API responses separate from the SPA fallback', async () => {
+    const api = await context.request.get(origin + '/api/does-not-exist');
+    expect(api.status()).toBe(404);
+    expect(api.headers()['content-type']).toContain('application/json');
+    expect((await api.json()).statusCode).toBe(404);
+    const route = await context.request.get(origin + '/admin/actividad');
+    expect(route.status()).toBe(200);
+    expect(route.headers()['content-type']).toContain('text/html');
+  });
+  it('rejects an untrusted Origin without revoking the valid session', async () => {
+    const page = await login();
+    const cookie = (await context.cookies()).find(c => c.name === '__Host-watsolution-refresh')!;
+    const response = await context.request.post(origin + '/api/session/logout', {
+      headers: { Origin: 'https://untrusted.example.invalid', 'X-Session-Transport': 'web' },
+    });
+    expect(response.status()).toBe(403);
+    expect((await context.cookies()).find(c => c.name === cookie.name)?.value).toBe(cookie.value);
+    const session = await fixture.db.getRepository(AuthSession).findOneBy({ id: cookie.value.split('.')[0] });
+    expect(session.revoked).toBe(false);
+    expect(await responseStatus(page)).toBe(200);
   });
   const loginUi = async () => {
     const page = await context.newPage();
