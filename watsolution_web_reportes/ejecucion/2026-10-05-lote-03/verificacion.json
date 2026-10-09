@@ -1,0 +1,29 @@
+{
+  "fecha": "2026-10-05",
+  "commit": "6a40e9b1c25624ac12e9efbf13410c898d6f21eb",
+  "backend": {
+    "suites": 13,
+    "tests": 84,
+    "exit_code": 0
+  },
+  "frontend": {
+    "tests": 198,
+    "exit_code": 0,
+    "archivos": 40
+  },
+  "typescript_exit_code": 0,
+  "build_exit_code": 0,
+  "postgres_local": {
+    "rechazo_sin_destino": true,
+    "exit_code": 1,
+    "ejecutado_con_base": false
+  },
+  "cierre_integral": false,
+  "ci": {
+    "commit": "6a40e9b1c25624ac12e9efbf13410c898d6f21eb",
+    "validate": "success",
+    "postgres_sessions": "success",
+    "run_id": 37278338167
+  },
+  "integracion_commit": "867fe3ef7b441a03d376a89e55f0ef4a800f7106"
+}

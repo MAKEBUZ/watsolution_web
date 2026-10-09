@@ -1,0 +1,26 @@
+[
+  {
+    "archivo": "browser-local.log",
+    "sha256": "37e17927edbe5cc670d61df7aaf4dab1a465a989e7c1784beec9b61aac68ff29"
+  },
+  {
+    "archivo": "ci.json",
+    "sha256": "876d2c9c81642d07a6040500f790fea62a0889ed7f3fa4ccb622f104bed74560"
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "f6429c4fceb2df90c214acd9f19263ad65cf3a5815f3dc80ff664caaff74de0d"
+  },
+  {
+    "archivo": "install.log",
+    "sha256": "6bafafb226864ee3934c91ec2cf2b3e63ae6ac54f94828c719912f70f7ad2fda"
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "00c8efd4f1bddd43484285fc84b0b298e9f35c6f7d248159e4c1fe170e2b223f"
+  },
+  {
+    "archivo": "../../26_ejecucion_navegador_https.md",
+    "sha256": "01c3f86e5eceddd114211ddc836b1d06ba6ea3b1c666bc578912dc1f21d377fd"
+  }
+]

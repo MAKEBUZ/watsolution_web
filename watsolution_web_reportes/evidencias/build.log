@@ -1,0 +1,271 @@
+vite v6.2.4 building for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+node_modules/bootstrap-vue/esm/index.js (23:19): A comment
+
+"/*#__PURE__*/"
+
+in "node_modules/bootstrap-vue/esm/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2659 modules transformed.
+rendering chunks...
+warnings when minifying css:
+▲ [WARNING] Cannot use type selector "__title" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1468:1:
+      1468 │ &__title[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__title[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__sub" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1474:1:
+      1474 │ &__sub[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__sub[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__empty" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1479:1:
+      1479 │ &__empty[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__empty[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__list" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1495:1:
+      1495 │ &__list[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__list[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__item" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1508:1:
+      1508 │ &__item {
+           │  ~~~~~~
+           ╵  :is(__item)
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--unread" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1528:1:
+      1528 │ &--unread[data-v-fae2b458] { background: #fff8f0;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--unread[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__icon" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1531:1:
+      1531 │ &__icon[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__icon[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__body" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1537:1:
+      1537 │ &__body[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__body[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__row" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1543:1:
+      1543 │ &__row[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__row[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__item-title" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1555:1:
+      1555 │ &__item-title[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__item-title[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__badge" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1560:1:
+      1560 │ &__badge {
+           │  ~~~~~~~
+           ╵  :is(__badge)
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--paid" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1569:1:
+      1569 │ &--paid[data-v-fae2b458] { background: #d1fae5; color: #065f46;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--paid[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--overdue" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1571:1:
+      1571 │ &--overdue[data-v-fae2b458] { background: #fee2e2; color: #991b1b;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--overdue[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--due_soon" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1573:1:
+      1573 │ &--due_soon[data-v-fae2b458] { background: #fef3c7; color: #92400e;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--due_soon[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--created" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1575:1:
+      1575 │ &--created[data-v-fae2b458] { background: #e8f4fd; color: #0077be;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--created[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__msg" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1578:1:
+      1578 │ &__msg[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__msg[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__date" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1587:1:
+      1587 │ &__date[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__date[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__dot" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1592:1:
+      1592 │ &__dot[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__dot[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+computing gzip size...
+[vite-plugin-static-copy] Copied 15 items.
+../../watsolution_web_reportes/evidencias/build/assets/manifest-DSrSUXYs.webapp                 0.79 kB
+../../watsolution_web_reportes/evidencias/build/assets/favicon-7N5vP5FO.ico                     1.57 kB
+../../watsolution_web_reportes/evidencias/build/index.html                                      5.37 kB │ gzip:   1.94 kB
+../../watsolution_web_reportes/evidencias/build/assets/jhipster_family_member_3-Cf8AxSuS.svg   19.10 kB │ gzip:   7.23 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-portal-_rXFQvl3.css                1.12 kB │ gzip:   0.42 kB
+../../watsolution_web_reportes/evidencias/build/assets/invoice-payment-result-DJYJ-VAy.css      4.05 kB │ gzip:   1.10 kB
+../../watsolution_web_reportes/evidencias/build/assets/centro-noticias-CqAjVD9S.css             4.35 kB │ gzip:   1.19 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-panel-ByyKtRCc.css                 6.23 kB │ gzip:   1.27 kB
+../../watsolution_web_reportes/evidencias/build/assets/pagos-TozssXmJ.css                       7.91 kB │ gzip:   1.54 kB
+../../watsolution_web_reportes/evidencias/build/assets/login-7RfFdK3h.css                       8.21 kB │ gzip:   1.94 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-actividad-CANhKJy4.css             9.20 kB │ gzip:   1.61 kB
+../../watsolution_web_reportes/evidencias/build/assets/home-BFE_9tDH.css                       11.54 kB │ gzip:   2.20 kB
+../../watsolution_web_reportes/evidencias/build/assets/politica-privacidad-C5eYAaq6.css        11.63 kB │ gzip:   2.36 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-facturacion-BwsCgQ6K.css          11.94 kB │ gzip:   2.13 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-noticias-D2eDvJx-.css             12.14 kB │ gzip:   2.24 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-resumen-ee2J8IDm.css              15.64 kB │ gzip:   2.65 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-usuarios-7JT2_HhP.css             24.28 kB │ gzip:   3.64 kB
+../../watsolution_web_reportes/evidencias/build/assets/portal-dashboard-B21MXjzC.css           29.37 kB │ gzip:   4.05 kB
+../../watsolution_web_reportes/evidencias/build/assets/app-Sb7Sbcn-.css                       303.49 kB │ gzip:  42.67 kB
+../../watsolution_web_reportes/evidencias/build/assets/constants-DfqkunPD.js                    0.12 kB │ gzip:   0.12 kB
+../../watsolution_web_reportes/evidencias/build/assets/docs-DDBwb68x.js                         0.36 kB │ gzip:   0.29 kB
+../../watsolution_web_reportes/evidencias/build/assets/user-management.service-BVnt_OiY.js      0.40 kB │ gzip:   0.22 kB
+../../watsolution_web_reportes/evidencias/build/assets/validation-CWMsIA23.js                   0.43 kB │ gzip:   0.21 kB
+../../watsolution_web_reportes/evidencias/build/assets/address.service-CSpeFVy-.js              0.66 kB │ gzip:   0.25 kB
+../../watsolution_web_reportes/evidencias/build/assets/meter.service-4oFSVAzE.js                0.68 kB │ gzip:   0.25 kB
+../../watsolution_web_reportes/evidencias/build/assets/person.service-wO-096sc.js               0.68 kB │ gzip:   0.25 kB
+../../watsolution_web_reportes/evidencias/build/assets/invoice.service-CZUV42Oe.js              0.68 kB │ gzip:   0.25 kB
+../../watsolution_web_reportes/evidencias/build/assets/date-format-BsRl4JxV.js                  0.69 kB │ gzip:   0.39 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-portal-Bj1taq9C.js                 0.70 kB │ gzip:   0.46 kB
+../../watsolution_web_reportes/evidencias/build/assets/entities-BjVW76Gi.js                     0.71 kB │ gzip:   0.42 kB
+../../watsolution_web_reportes/evidencias/build/assets/error-nADuLpVR.js                        1.14 kB │ gzip:   0.58 kB
+../../watsolution_web_reportes/evidencias/build/assets/alert.service-PlRiSMFz.js                1.43 kB │ gzip:   0.70 kB
+../../watsolution_web_reportes/evidencias/build/assets/activate-CGo89DOl.js                     1.53 kB │ gzip:   0.82 kB
+../../watsolution_web_reportes/evidencias/build/assets/address-details-CDfbBDFI.js              2.74 kB │ gzip:   1.08 kB
+../../watsolution_web_reportes/evidencias/build/assets/data-utils.service-NK840n4Y.js           2.96 kB │ gzip:   1.51 kB
+../../watsolution_web_reportes/evidencias/build/assets/reset-password-init-BZPHjkge.js          3.07 kB │ gzip:   1.17 kB
+../../watsolution_web_reportes/evidencias/build/assets/meter-details-xbtS1t9S.js                3.11 kB │ gzip:   1.22 kB
+../../watsolution_web_reportes/evidencias/build/assets/person-details-DpTe2SxO.js               3.21 kB │ gzip:   1.23 kB
+../../watsolution_web_reportes/evidencias/build/assets/user-management-view-BxeaMIGH.js         3.48 kB │ gzip:   1.26 kB
+../../watsolution_web_reportes/evidencias/build/assets/centro-noticias-C1RVzCYA.js              3.99 kB │ gzip:   1.87 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-actividad-DxDChBdN.js              4.87 kB │ gzip:   2.07 kB
+../../watsolution_web_reportes/evidencias/build/assets/reset-password-finish-yiNMu3Ej.js        5.18 kB │ gzip:   1.63 kB
+../../watsolution_web_reportes/evidencias/build/assets/login-CmxerW8f.js                        5.53 kB │ gzip:   2.26 kB
+../../watsolution_web_reportes/evidencias/build/assets/change-password-CzjS5LZd.js              5.54 kB │ gzip:   1.50 kB
+../../watsolution_web_reportes/evidencias/build/assets/invoice-details-Bb6-gsuh.js              5.55 kB │ gzip:   2.09 kB
+../../watsolution_web_reportes/evidencias/build/assets/invoice-payment-result-zCgCca-M.js       5.86 kB │ gzip:   2.00 kB
+../../watsolution_web_reportes/evidencias/build/assets/address-CbeWMMR0.js                      5.88 kB │ gzip:   2.01 kB
+../../watsolution_web_reportes/evidencias/build/assets/address-update-ClAsMvKS.js               6.49 kB │ gzip:   2.01 kB
+../../watsolution_web_reportes/evidencias/build/assets/settings-BqyBsE-e.js                     6.84 kB │ gzip:   1.87 kB
+../../watsolution_web_reportes/evidencias/build/assets/home-Dt00mjEV.js                         7.36 kB │ gzip:   2.71 kB
+../../watsolution_web_reportes/evidencias/build/assets/meter-update-CPHdw93E.js                 7.72 kB │ gzip:   2.51 kB
+../../watsolution_web_reportes/evidencias/build/assets/person-update-DiOeoUP4.js                7.73 kB │ gzip:   2.52 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-noticias-qmjos7TJ.js               8.05 kB │ gzip:   3.16 kB
+../../watsolution_web_reportes/evidencias/build/assets/meter-5itj8Rzm.js                        8.28 kB │ gzip:   2.75 kB
+../../watsolution_web_reportes/evidencias/build/assets/person-CFDdrpFi.js                       8.50 kB │ gzip:   2.78 kB
+../../watsolution_web_reportes/evidencias/build/assets/user-management-C8KUwVDx.js              8.91 kB │ gzip:   2.83 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-panel-DSQN24dw.js                  8.92 kB │ gzip:   2.71 kB
+../../watsolution_web_reportes/evidencias/build/assets/pagos-BFut6lN0.js                        8.92 kB │ gzip:   3.14 kB
+../../watsolution_web_reportes/evidencias/build/assets/invoice-DVvaOuU6.js                      9.09 kB │ gzip:   2.76 kB
+../../watsolution_web_reportes/evidencias/build/assets/register-Bc0A1hsI.js                     9.42 kB │ gzip:   2.28 kB
+../../watsolution_web_reportes/evidencias/build/assets/user-management-edit-BGMXdgg_.js         9.51 kB │ gzip:   2.87 kB
+../../watsolution_web_reportes/evidencias/build/assets/invoice-update-DFLlCboy.js              10.11 kB │ gzip:   2.93 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-facturacion-DiQUn55M.js           10.36 kB │ gzip:   3.83 kB
+../../watsolution_web_reportes/evidencias/build/assets/es-DZBVUWvu.js                          14.13 kB │ gzip:   4.82 kB
+../../watsolution_web_reportes/evidencias/build/assets/index-CqoEsAk4.js                       15.88 kB │ gzip:   5.60 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-usuarios-BGKKm7FM.js              21.59 kB │ gzip:   7.00 kB
+../../watsolution_web_reportes/evidencias/build/assets/politica-privacidad-HL0fY7HT.js         30.79 kB │ gzip:   7.70 kB
+../../watsolution_web_reportes/evidencias/build/assets/portal-dashboard-DHDgOF1o.js            30.89 kB │ gzip:   9.60 kB
+../../watsolution_web_reportes/evidencias/build/assets/admin-resumen-CyAvuMzV.js               50.71 kB │ gzip:  16.48 kB
+../../watsolution_web_reportes/evidencias/build/assets/app-MEe9dNIr.js                        924.88 kB │ gzip: 301.62 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 21.93s

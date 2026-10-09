@@ -1,0 +1,427 @@
+[
+  {
+    "path": "build/assets/activate-CGo89DOl.js",
+    "bytes": 1528,
+    "gzip": 819
+  },
+  {
+    "path": "build/assets/address-CbeWMMR0.js",
+    "bytes": 5882,
+    "gzip": 2006
+  },
+  {
+    "path": "build/assets/address-details-CDfbBDFI.js",
+    "bytes": 2740,
+    "gzip": 1083
+  },
+  {
+    "path": "build/assets/address-update-ClAsMvKS.js",
+    "bytes": 6485,
+    "gzip": 2009
+  },
+  {
+    "path": "build/assets/address.service-CSpeFVy-.js",
+    "bytes": 662,
+    "gzip": 254
+  },
+  {
+    "path": "build/assets/admin-actividad-CANhKJy4.css",
+    "bytes": 9196,
+    "gzip": 1610
+  },
+  {
+    "path": "build/assets/admin-actividad-DxDChBdN.js",
+    "bytes": 4871,
+    "gzip": 2069
+  },
+  {
+    "path": "build/assets/admin-facturacion-BwsCgQ6K.css",
+    "bytes": 11936,
+    "gzip": 2128
+  },
+  {
+    "path": "build/assets/admin-facturacion-DiQUn55M.js",
+    "bytes": 10360,
+    "gzip": 3825
+  },
+  {
+    "path": "build/assets/admin-noticias-D2eDvJx-.css",
+    "bytes": 12144,
+    "gzip": 2237
+  },
+  {
+    "path": "build/assets/admin-noticias-qmjos7TJ.js",
+    "bytes": 8046,
+    "gzip": 3159
+  },
+  {
+    "path": "build/assets/admin-panel-ByyKtRCc.css",
+    "bytes": 6228,
+    "gzip": 1268
+  },
+  {
+    "path": "build/assets/admin-panel-DSQN24dw.js",
+    "bytes": 8922,
+    "gzip": 2709
+  },
+  {
+    "path": "build/assets/admin-portal-Bj1taq9C.js",
+    "bytes": 700,
+    "gzip": 455
+  },
+  {
+    "path": "build/assets/admin-portal-_rXFQvl3.css",
+    "bytes": 1117,
+    "gzip": 417
+  },
+  {
+    "path": "build/assets/admin-resumen-CyAvuMzV.js",
+    "bytes": 50706,
+    "gzip": 16478
+  },
+  {
+    "path": "build/assets/admin-resumen-ee2J8IDm.css",
+    "bytes": 15636,
+    "gzip": 2646
+  },
+  {
+    "path": "build/assets/admin-usuarios-7JT2_HhP.css",
+    "bytes": 24277,
+    "gzip": 3644
+  },
+  {
+    "path": "build/assets/admin-usuarios-BGKKm7FM.js",
+    "bytes": 21589,
+    "gzip": 7002
+  },
+  {
+    "path": "build/assets/alert.service-PlRiSMFz.js",
+    "bytes": 1429,
+    "gzip": 695
+  },
+  {
+    "path": "build/assets/app-MEe9dNIr.js",
+    "bytes": 924882,
+    "gzip": 301616
+  },
+  {
+    "path": "build/assets/app-Sb7Sbcn-.css",
+    "bytes": 303485,
+    "gzip": 42673
+  },
+  {
+    "path": "build/assets/centro-noticias-C1RVzCYA.js",
+    "bytes": 3993,
+    "gzip": 1868
+  },
+  {
+    "path": "build/assets/centro-noticias-CqAjVD9S.css",
+    "bytes": 4349,
+    "gzip": 1188
+  },
+  {
+    "path": "build/assets/change-password-CzjS5LZd.js",
+    "bytes": 5544,
+    "gzip": 1497
+  },
+  {
+    "path": "build/assets/constants-DfqkunPD.js",
+    "bytes": 123,
+    "gzip": 122
+  },
+  {
+    "path": "build/assets/data-utils.service-NK840n4Y.js",
+    "bytes": 2955,
+    "gzip": 1509
+  },
+  {
+    "path": "build/assets/date-format-BsRl4JxV.js",
+    "bytes": 686,
+    "gzip": 387
+  },
+  {
+    "path": "build/assets/docs-DDBwb68x.js",
+    "bytes": 355,
+    "gzip": 286
+  },
+  {
+    "path": "build/assets/entities-BjVW76Gi.js",
+    "bytes": 707,
+    "gzip": 424
+  },
+  {
+    "path": "build/assets/error-nADuLpVR.js",
+    "bytes": 1141,
+    "gzip": 578
+  },
+  {
+    "path": "build/assets/es-DZBVUWvu.js",
+    "bytes": 14126,
+    "gzip": 4820
+  },
+  {
+    "path": "build/assets/favicon-7N5vP5FO.ico",
+    "bytes": 1574,
+    "gzip": 1597
+  },
+  {
+    "path": "build/assets/home-BFE_9tDH.css",
+    "bytes": 11541,
+    "gzip": 2197
+  },
+  {
+    "path": "build/assets/home-Dt00mjEV.js",
+    "bytes": 7361,
+    "gzip": 2714
+  },
+  {
+    "path": "build/assets/index-CqoEsAk4.js",
+    "bytes": 15875,
+    "gzip": 5598
+  },
+  {
+    "path": "build/assets/invoice-details-Bb6-gsuh.js",
+    "bytes": 5554,
+    "gzip": 2085
+  },
+  {
+    "path": "build/assets/invoice-DVvaOuU6.js",
+    "bytes": 9092,
+    "gzip": 2758
+  },
+  {
+    "path": "build/assets/invoice-payment-result-DJYJ-VAy.css",
+    "bytes": 4054,
+    "gzip": 1104
+  },
+  {
+    "path": "build/assets/invoice-payment-result-zCgCca-M.js",
+    "bytes": 5860,
+    "gzip": 1997
+  },
+  {
+    "path": "build/assets/invoice-update-DFLlCboy.js",
+    "bytes": 10113,
+    "gzip": 2934
+  },
+  {
+    "path": "build/assets/invoice.service-CZUV42Oe.js",
+    "bytes": 682,
+    "gzip": 248
+  },
+  {
+    "path": "build/assets/jhipster_family_member_3-Cf8AxSuS.svg",
+    "bytes": 19098,
+    "gzip": 7227
+  },
+  {
+    "path": "build/assets/login-7RfFdK3h.css",
+    "bytes": 8205,
+    "gzip": 1942
+  },
+  {
+    "path": "build/assets/login-CmxerW8f.js",
+    "bytes": 5530,
+    "gzip": 2261
+  },
+  {
+    "path": "build/assets/manifest-DSrSUXYs.webapp",
+    "bytes": 788,
+    "gzip": 283
+  },
+  {
+    "path": "build/assets/meter-5itj8Rzm.js",
+    "bytes": 8280,
+    "gzip": 2751
+  },
+  {
+    "path": "build/assets/meter-details-xbtS1t9S.js",
+    "bytes": 3105,
+    "gzip": 1219
+  },
+  {
+    "path": "build/assets/meter-update-CPHdw93E.js",
+    "bytes": 7719,
+    "gzip": 2514
+  },
+  {
+    "path": "build/assets/meter.service-4oFSVAzE.js",
+    "bytes": 680,
+    "gzip": 246
+  },
+  {
+    "path": "build/assets/pagos-BFut6lN0.js",
+    "bytes": 8924,
+    "gzip": 3137
+  },
+  {
+    "path": "build/assets/pagos-TozssXmJ.css",
+    "bytes": 7906,
+    "gzip": 1541
+  },
+  {
+    "path": "build/assets/person-CFDdrpFi.js",
+    "bytes": 8499,
+    "gzip": 2780
+  },
+  {
+    "path": "build/assets/person-details-DpTe2SxO.js",
+    "bytes": 3209,
+    "gzip": 1231
+  },
+  {
+    "path": "build/assets/person-update-DiOeoUP4.js",
+    "bytes": 7734,
+    "gzip": 2516
+  },
+  {
+    "path": "build/assets/person.service-wO-096sc.js",
+    "bytes": 680,
+    "gzip": 247
+  },
+  {
+    "path": "build/assets/politica-privacidad-C5eYAaq6.css",
+    "bytes": 11630,
+    "gzip": 2356
+  },
+  {
+    "path": "build/assets/politica-privacidad-HL0fY7HT.js",
+    "bytes": 30788,
+    "gzip": 7696
+  },
+  {
+    "path": "build/assets/portal-dashboard-B21MXjzC.css",
+    "bytes": 29372,
+    "gzip": 4052
+  },
+  {
+    "path": "build/assets/portal-dashboard-DHDgOF1o.js",
+    "bytes": 30890,
+    "gzip": 9600
+  },
+  {
+    "path": "build/assets/register-Bc0A1hsI.js",
+    "bytes": 9423,
+    "gzip": 2278
+  },
+  {
+    "path": "build/assets/reset-password-finish-yiNMu3Ej.js",
+    "bytes": 5176,
+    "gzip": 1633
+  },
+  {
+    "path": "build/assets/reset-password-init-BZPHjkge.js",
+    "bytes": 3068,
+    "gzip": 1172
+  },
+  {
+    "path": "build/assets/settings-BqyBsE-e.js",
+    "bytes": 6843,
+    "gzip": 1872
+  },
+  {
+    "path": "build/assets/user-management-C8KUwVDx.js",
+    "bytes": 8907,
+    "gzip": 2827
+  },
+  {
+    "path": "build/assets/user-management-edit-BGMXdgg_.js",
+    "bytes": 9513,
+    "gzip": 2871
+  },
+  {
+    "path": "build/assets/user-management-view-BxeaMIGH.js",
+    "bytes": 3479,
+    "gzip": 1261
+  },
+  {
+    "path": "build/assets/user-management.service-BVnt_OiY.js",
+    "bytes": 401,
+    "gzip": 222
+  },
+  {
+    "path": "build/assets/validation-CWMsIA23.js",
+    "bytes": 434,
+    "gzip": 213
+  },
+  {
+    "path": "build/index.html",
+    "bytes": 5373,
+    "gzip": 1942
+  },
+  {
+    "path": "build/swagger-ui/absolute-path.js",
+    "bytes": 530,
+    "gzip": 326
+  },
+  {
+    "path": "build/swagger-ui/axios.min.js",
+    "bytes": 68211,
+    "gzip": 23491
+  },
+  {
+    "path": "build/swagger-ui/favicon-16x16.png",
+    "bytes": 665,
+    "gzip": 688
+  },
+  {
+    "path": "build/swagger-ui/favicon-32x32.png",
+    "bytes": 628,
+    "gzip": 651
+  },
+  {
+    "path": "build/swagger-ui/index.css",
+    "bytes": 202,
+    "gzip": 152
+  },
+  {
+    "path": "build/swagger-ui/index.html",
+    "bytes": 3971,
+    "gzip": 1395
+  },
+  {
+    "path": "build/swagger-ui/index.js",
+    "bytes": 813,
+    "gzip": 434
+  },
+  {
+    "path": "build/swagger-ui/oauth2-redirect.html",
+    "bytes": 2715,
+    "gzip": 948
+  },
+  {
+    "path": "build/swagger-ui/swagger-initializer.js",
+    "bytes": 539,
+    "gzip": 327
+  },
+  {
+    "path": "build/swagger-ui/swagger-ui-bundle.js",
+    "bytes": 1466741,
+    "gzip": 409384
+  },
+  {
+    "path": "build/swagger-ui/swagger-ui-es-bundle-core.js",
+    "bytes": 471792,
+    "gzip": 119914
+  },
+  {
+    "path": "build/swagger-ui/swagger-ui-es-bundle.js",
+    "bytes": 1466495,
+    "gzip": 409308
+  },
+  {
+    "path": "build/swagger-ui/swagger-ui-standalone-preset.js",
+    "bytes": 229223,
+    "gzip": 70181
+  },
+  {
+    "path": "build/swagger-ui/swagger-ui.css",
+    "bytes": 154985,
+    "gzip": 24117
+  },
+  {
+    "path": "build/swagger-ui/swagger-ui.js",
+    "bytes": 348726,
+    "gzip": 89741
+  }
+]

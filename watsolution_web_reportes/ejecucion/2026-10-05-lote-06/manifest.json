@@ -1,0 +1,74 @@
+[
+  {
+    "archivo": "audit-despues.json",
+    "sha256": "26a885602d8b584d1b827585f95775f769e31366dce0251e290c0d44c227e6e0"
+  },
+  {
+    "archivo": "audit-final.json",
+    "sha256": "b2097304f86120d6a43660fec1cc9e413b5e43811842bc8acdd7da0f2e037bbb"
+  },
+  {
+    "archivo": "audit.json",
+    "sha256": "777e5201057a5398f8cd15fb3a6b07dd1f9bc6971b284c851c39a7c18fe4f61b"
+  },
+  {
+    "archivo": "backend.log",
+    "sha256": "3b3dca2d07875292c2a9050bfcc4018113d5f9ae303aa21d681059695a4a6700"
+  },
+  {
+    "archivo": "build-final.log",
+    "sha256": "8cbfec9198a8ec64f85f35b67c315233b0c5e6ee9ba33dca1b58e75ef75635db"
+  },
+  {
+    "archivo": "build.log",
+    "sha256": "316f3127e2f3eb40e20da4c339592630d29c5ac43ba846fd1bc6218a100e39b7"
+  },
+  {
+    "archivo": "ci-dependencias.json",
+    "sha256": "7be1d337d4793ec9844f4d6a32899f6af47f6e303acd22fbee48887b465d15be"
+  },
+  {
+    "archivo": "ci-inicial.json",
+    "sha256": "7c765526e01c37da359e158bfaa21597243ebaffc433e8def85160e8b75a24ca"
+  },
+  {
+    "archivo": "ci.json",
+    "sha256": "b7708cada2ba87e3c07de13fea92a2254c4b64253c8d6c98ba4e22a17abee098"
+  },
+  {
+    "archivo": "dependencies.log",
+    "sha256": "c91147c8936cee468267170fb3a4bc20ff519ce902e803b132643d18e9e0e338"
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "d6d892d74a5b322315b4308b101289797a7e236070a0a541f3fcb85f03cba321"
+  },
+  {
+    "archivo": "frontend-final.log",
+    "sha256": "b7c244b1530bb362b8045870d84744469e6ed795ce9ac05b555e0ebfb60e2517"
+  },
+  {
+    "archivo": "frontend.log",
+    "sha256": "767169cf6ee35b6414c259a84e355c4a13c1b4d8b6d32951a3f1218874374561"
+  },
+  {
+    "archivo": "transitive-dependencies.log",
+    "sha256": "148f41428c7852bf0735c67d6d2c8bd51817c07ba753a86f76e38290a3180b11"
+  },
+  {
+    "archivo": "typescript.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "f9c0f2c20114ea2eb0c0852cccdbeccf84dd60089219096eca1b7698d7507ccb"
+  },
+  {
+    "archivo": "vue-transitives.log",
+    "sha256": "687cd5f12e1ad4b416adebb23b1bbe460b4634c5e5e84b0312e548d989509da2"
+  },
+  {
+    "archivo": "../../23_ejecucion_datos_operativos.md",
+    "sha256": "6c57302151b225ba14d97be3ff91236059f9ee2de7641d62221d806a8d36cc61"
+  }
+]

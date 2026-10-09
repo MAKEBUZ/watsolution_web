@@ -1,0 +1,9 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Users\\macab\\Desktop\\WATSOLUTION\\watsolution_web\\watsolution_web_reportes\\evidencias\\run-vitest.mjs"
+  ],
+  "exitCode": 0,
+  "date": "2026-10-05",
+  "node": "v24.15.0"
+}

@@ -1,0 +1,37 @@
+{
+  "findings": 47,
+  "counts": {
+    "Crítica": 0,
+    "Alta": 10,
+    "Media": 30,
+    "Baja": 7,
+    "Informativa": 0
+  },
+  "overall": 44,
+  "coverage": {
+    "revisado": 354,
+    "parcial": 101,
+    "no revisado": 0
+  },
+  "files": [
+    "00_cobertura.md",
+    "01_resumen_ejecutivo.md",
+    "02_arquitectura.md",
+    "03_seguridad.md",
+    "04_backend_api.md",
+    "05_base_de_datos.md",
+    "06_frontend_ui_ux.md",
+    "07_accesibilidad.md",
+    "08_rendimiento.md",
+    "09_seo_y_metadatos.md",
+    "10_calidad_de_codigo.md",
+    "11_pruebas_testing.md",
+    "12_dependencias_licencias.md",
+    "13_devops_infra_cicd.md",
+    "14_privacidad_legal.md",
+    "15_observabilidad_errores.md",
+    "16_documentacion.md",
+    "17_plan_de_remediacion.md",
+    "18_hallazgos.csv"
+  ]
+}

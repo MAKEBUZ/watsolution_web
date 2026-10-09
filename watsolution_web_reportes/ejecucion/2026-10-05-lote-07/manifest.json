@@ -1,0 +1,22 @@
+[
+  {
+    "archivo": "ci.json",
+    "sha256": "397c678b18ca87db6301236dcfef5c0a4026f8dbb4c910ba6f0c166a53c77582"
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "2356846141a1b31e08082bf736ef069950ef4e66f4d4bb1524b2955610d107fd"
+  },
+  {
+    "archivo": "integration-local.log",
+    "sha256": "24fc1a6ff1d52d647932d57650dc93ba441cce0479eabf4768dfa21cf2996753"
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "c53f1bd7d96bc7b6014c6bdf6400e2087ccaa1547357354e08fee6947bda1576"
+  },
+  {
+    "archivo": "../../24_ejecucion_autenticacion_persistida.md",
+    "sha256": "ab0995503655562ad1bf46d5451c6fc599fa56a18d62a28d53699060f358df2f"
+  }
+]

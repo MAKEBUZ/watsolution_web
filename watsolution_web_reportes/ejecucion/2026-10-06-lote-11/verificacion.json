@@ -1,0 +1,24 @@
+{
+  "cierre_integral": false,
+  "imagen_docker_verificada": false,
+  "fecha": "2026-10-06",
+  "staging_verificado": false,
+  "ignoreHTTPSErrors": true,
+  "ci": {
+    "run_id": 37562456515,
+    "frontend_tests": 204,
+    "postgres_sessions": "success",
+    "nginx_version": "1.24.0 Ubuntu",
+    "backend_tests": 112,
+    "validate": "success",
+    "chromium_directo": 8,
+    "postgres_casos": 27,
+    "chromium_nginx": 8
+  },
+  "browser_local_ejecutado": false,
+  "commit_probado": "cb632deb8efc3d2400128ef68c6425c1081736d7",
+  "browser_local_sin_certificado_exit_code": 1,
+  "certificado_autofirmado": true,
+  "proxy_aislado_verificado": true,
+  "integracion_commit": "059e891a680ebfebda2e8e19bdbd23549d3eef73"
+}

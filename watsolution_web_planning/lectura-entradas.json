@@ -1,0 +1,2136 @@
+[
+  {
+    "path": "watsolution_web_reportes/00_cobertura.md",
+    "bytes": 110720,
+    "sha256": "3602bbb40b03ccdcea6f3c6c60023958f07e2eac0267c535c2314e0ab89a787c",
+    "format": ".md",
+    "lines": 594,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/01_resumen_ejecutivo.md",
+    "bytes": 6746,
+    "sha256": "2c9fde00cca5814982e2b4c2740ad8cea3735d1fb49b575d826326ffdb493c2d",
+    "format": ".md",
+    "lines": 86,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/02_arquitectura.md",
+    "bytes": 3998,
+    "sha256": "52eeb5fb3b9b0219a060edd4b30adf50541b7eecdc81a34863c6d1ffe5cc02f8",
+    "format": ".md",
+    "lines": 54,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/03_seguridad.md",
+    "bytes": 14158,
+    "sha256": "a9305bc389a4229d020c6713495c9abee505ecac63b50d5e7b8ed28bb551a090",
+    "format": ".md",
+    "lines": 213,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/04_backend_api.md",
+    "bytes": 24374,
+    "sha256": "39af96fcfa63ef8eabe46f26127d173db9ed6fb49b8ab4ad18706d9a871eed30",
+    "format": ".md",
+    "lines": 292,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/05_base_de_datos.md",
+    "bytes": 12645,
+    "sha256": "fe5eb523b1b512c4d72cfc6907bd5079ee04acfa09c6bca42f65b9faa8f67655",
+    "format": ".md",
+    "lines": 224,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/06_frontend_ui_ux.md",
+    "bytes": 7010,
+    "sha256": "22f607a5e164a0d1a5e581eaaeaa168adffa40a126dc928d9be01d89e301b2bb",
+    "format": ".md",
+    "lines": 100,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/07_accesibilidad.md",
+    "bytes": 5462,
+    "sha256": "5048bb12170db1cab690abfda91f484c44d46b7aabaa08333d7844f6b010ec0a",
+    "format": ".md",
+    "lines": 87,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/08_rendimiento.md",
+    "bytes": 5080,
+    "sha256": "23cecb90eb8899f23f9e06abbe1eb99c2791805e3c48e259fe9a531914810a3d",
+    "format": ".md",
+    "lines": 81,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/09_seo_y_metadatos.md",
+    "bytes": 3910,
+    "sha256": "f9cc5d6907e66f56a93df41f216879abc5f27b73ec74a0afd68c24941a5ae1bb",
+    "format": ".md",
+    "lines": 56,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/10_calidad_de_codigo.md",
+    "bytes": 2931,
+    "sha256": "b122b2e2b678917977cf9c48a9d1cbd27c1313e50d740e178b8ff1fedac4e412",
+    "format": ".md",
+    "lines": 37,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/11_pruebas_testing.md",
+    "bytes": 3844,
+    "sha256": "1f78a814a9c2e937feb675f33be31227c9196131505016f85edf4d2d2912a79e",
+    "format": ".md",
+    "lines": 49,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/12_dependencias_licencias.md",
+    "bytes": 10415,
+    "sha256": "06bc580390546a6330bb70619951a338456be71626a4cd039e23fae603c99bd8",
+    "format": ".md",
+    "lines": 184,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/13_devops_infra_cicd.md",
+    "bytes": 5122,
+    "sha256": "691e7970949e9a5a7e73c1e7a84cf8c0b702873fa1adb653aea83613e43b0bd4",
+    "format": ".md",
+    "lines": 79,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/14_privacidad_legal.md",
+    "bytes": 7197,
+    "sha256": "6f8b6431c7ee2bc285e4b9e6bdde3aef71734794dcf7ad40cc187af8b6475de9",
+    "format": ".md",
+    "lines": 83,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/15_observabilidad_errores.md",
+    "bytes": 5240,
+    "sha256": "92505f1330f848dfa24a4210a2eff8d6bf184e04db154643f906c10a9f23c9b3",
+    "format": ".md",
+    "lines": 72,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/16_documentacion.md",
+    "bytes": 3306,
+    "sha256": "90c14cb02ea85fadc33bec5259e41fc993aa8e3f234e03e2ad1fd6d74e53bc6f",
+    "format": ".md",
+    "lines": 37,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/17_plan_de_remediacion.md",
+    "bytes": 14248,
+    "sha256": "43c8060be68b279981958b34a042c21692cc0828b04c0432dfa4f72273393437",
+    "format": ".md",
+    "lines": 85,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/18_hallazgos.csv",
+    "bytes": 29070,
+    "sha256": "5ab89f1efefb94d447c372675049e10512ec8de3403317ae71dc840d8181f031",
+    "format": ".csv",
+    "lines": 49,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/analisis-por-archivo.json",
+    "bytes": 643282,
+    "sha256": "249b82cb8fd20ce855b1ae2d8ed6c71224f72b8113cc83455e64bf9d589f751a",
+    "format": ".json",
+    "lines": 21279,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 455
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/audit-meta.json",
+    "bytes": 241,
+    "sha256": "5b53321792a790dbad84dc62652d237661786a496fb39d677ae7a9f233f3c100",
+    "format": ".json",
+    "lines": 12,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/audit-tools.cjs",
+    "bytes": 3519,
+    "sha256": "8e91dbfb879e995bdb45afcac03e301ec72bc130079a189d992781844d06be89",
+    "format": ".cjs",
+    "lines": 12,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/audit.log",
+    "bytes": 503,
+    "sha256": "536f3f3ee3760fed97647bf40b6d71005fe36052d96df46677bbcaf15e30571c",
+    "format": ".log",
+    "lines": 11,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/auditprod-meta.json",
+    "bytes": 259,
+    "sha256": "c1bc6691fb97190f08ce0d135ea482f7ff48f049781a96d392d7b7ccf07744b3",
+    "format": ".json",
+    "lines": 13,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/auditprod.log",
+    "bytes": 503,
+    "sha256": "93b4d769506bb6ce3d369f34c251076773731477ebbbbeefb4f5d90d91f22c37",
+    "format": ".log",
+    "lines": 11,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/activate-CGo89DOl.js",
+    "bytes": 1528,
+    "sha256": "660a3e5f4c5ac9f45032cfbff6401cc6850e46db644bbcef0c041828567fbc58",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/address-CbeWMMR0.js",
+    "bytes": 5882,
+    "sha256": "1b74fb8b0d2b1a8e3696d46a93a94a447b7355212facda6bfecdaaca973c2ffa",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/address-details-CDfbBDFI.js",
+    "bytes": 2740,
+    "sha256": "70ef9d8f8aafa19d376cfef468a595bac89b6b29192089f4ba1405566a110632",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/address-update-ClAsMvKS.js",
+    "bytes": 6485,
+    "sha256": "73a65ad926e9e30a5aba4ed751e9ccffba478bfec58f94c6a4a2d01418d5fb57",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/address.service-CSpeFVy-.js",
+    "bytes": 662,
+    "sha256": "7a6233b554d35447dc3678f3ecca5e7cc51d9bc68f2ac22529d63b2e9e1794d7",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-actividad-CANhKJy4.css",
+    "bytes": 9196,
+    "sha256": "22960dcf88011226775a1511351d4b292f4483078005ceba18f3678010094950",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-actividad-DxDChBdN.js",
+    "bytes": 4871,
+    "sha256": "ec49050df7568df9b6763fff1c83a036b4164ffea973bf56ce15e338e2010f2b",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-facturacion-BwsCgQ6K.css",
+    "bytes": 11936,
+    "sha256": "0568ec232f75cc7ed810db77f5692df9e40f47e4b6dd87c762431f9dbbeca20f",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-facturacion-DiQUn55M.js",
+    "bytes": 10360,
+    "sha256": "f5056d182e4aa06304ab7c1592050d3d6c2d5b6f4760a5db97a956fa99ab8094",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-noticias-D2eDvJx-.css",
+    "bytes": 12144,
+    "sha256": "6f6eacccd0f80a912c9514ba99767e58f98901fd64802ded70b559339c7aa459",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-noticias-qmjos7TJ.js",
+    "bytes": 8046,
+    "sha256": "38f071f7600f3c2462b6da93424eae08a4eb619ffa4c43215f1676a94f27b850",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-panel-ByyKtRCc.css",
+    "bytes": 6228,
+    "sha256": "45b3ffde71b88bd6e1856f874b0b46f13ee771e0641ee3fb95ce29658aa46ba0",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-panel-DSQN24dw.js",
+    "bytes": 8922,
+    "sha256": "9cdc4806f4d5f157313a9ad6aead5b522e108b9d6e9090fca831d39e9dc6eac0",
+    "format": ".js",
+    "lines": 92,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-portal-Bj1taq9C.js",
+    "bytes": 700,
+    "sha256": "8fd4c5aa5ab468aa623400af96e3287a3b426cb2077a34e86d17523fda4c0d7e",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-portal-_rXFQvl3.css",
+    "bytes": 1117,
+    "sha256": "8828970a46b5ca8467a0ae76a110ecf87e0c8ae02f2acdfbfb0e9e3de8fce95c",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-resumen-CyAvuMzV.js",
+    "bytes": 50706,
+    "sha256": "324a6e3c5b0f266df748c51d6b71223cfc5efb894445b59b20365c45b2f9efb8",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-resumen-ee2J8IDm.css",
+    "bytes": 15636,
+    "sha256": "674f79d1edabc5f46b8124d523a6673f48f64cdac651c8319df1df3253e79df2",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-usuarios-7JT2_HhP.css",
+    "bytes": 24277,
+    "sha256": "d746330b00946b17bf237af4dfc1b8df7aeed31100d815ec4e1fa2a7ca88d875",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/admin-usuarios-BGKKm7FM.js",
+    "bytes": 21589,
+    "sha256": "fc70a5b3b1449c6a655abb4540797da9e05f4bf012a4c91808f708e5376b1f81",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/alert.service-PlRiSMFz.js",
+    "bytes": 1429,
+    "sha256": "7a0287b6ece0769ebc0fd9bd21417e942ddd43a7e6edf284fab39b1f85661802",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/app-MEe9dNIr.js",
+    "bytes": 924882,
+    "sha256": "8d26663b26e5e28b75106ab0e4f2e16557d3ad1a3b390fcb587a1f056239852b",
+    "format": ".js",
+    "lines": 654,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/app-Sb7Sbcn-.css",
+    "bytes": 303485,
+    "sha256": "15ac7a327515b01cba81f57f02cd556af58bc7c6fa9b1bc30a4a6b4713ad4377",
+    "format": ".css",
+    "lines": 7,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/centro-noticias-C1RVzCYA.js",
+    "bytes": 3993,
+    "sha256": "f967d9f326dad697a8489ff6810544bfd26140544cdc1137c4f2846357bbbd78",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/centro-noticias-CqAjVD9S.css",
+    "bytes": 4349,
+    "sha256": "deaab0900b67214ed2c87eb1527c15cff46d0330522bbf1274350ac8762656f0",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/change-password-CzjS5LZd.js",
+    "bytes": 5544,
+    "sha256": "ab9d998cc7eb8c9c036c138d73483fe401bfce5d59dc59137f957635bf87737d",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/constants-DfqkunPD.js",
+    "bytes": 123,
+    "sha256": "004fa629e1d99cecc5ba39e15f117e8580b2ce8878c730ca3ba985d9d5849714",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/data-utils.service-NK840n4Y.js",
+    "bytes": 2955,
+    "sha256": "ddcc555da0bb303c989e8e5307aa052fd8876ac3e0d2ec1b14698ef74ee3fb97",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/date-format-BsRl4JxV.js",
+    "bytes": 686,
+    "sha256": "a98872d98e4d6e8f12bef751f45e0d9eb452c50d93735a3469cb92b88ca71638",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/docs-DDBwb68x.js",
+    "bytes": 355,
+    "sha256": "cb929ee7486d21398b1a1c3f5b8eb59eeb688769cd689969c9c2bb6f4360955b",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/entities-BjVW76Gi.js",
+    "bytes": 707,
+    "sha256": "83a828eea6d7966fb8353fd1190c34b41a57d96be5194302f788949cbc792e6e",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/error-nADuLpVR.js",
+    "bytes": 1141,
+    "sha256": "4c29a4c7b35a250ef9e8fe3b58f76c0dce530bf1b55555f657e41c0f26e4b109",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/es-DZBVUWvu.js",
+    "bytes": 14126,
+    "sha256": "41f837f9dff2486a75fad48827bc066ca5c88b22a7cee01456ed5b83ab681950",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/favicon-7N5vP5FO.ico",
+    "bytes": 1574,
+    "sha256": "6caeba3b5c7a7b091fab2ec1c4de2a8d48553bafb896c4c3c1c7f1e4804ab4ca",
+    "format": ".ico",
+    "mode": "Leído completo como binario; sin inspección visual"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/home-BFE_9tDH.css",
+    "bytes": 11541,
+    "sha256": "091e116b11f0c1bce7d1453fd68cf76790d0d87e417fea91244d50b02484f215",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/home-Dt00mjEV.js",
+    "bytes": 7361,
+    "sha256": "c35abadd3ecd5f7d16736ef91fc0413b73d43dcb8b96f51ecf57d42757a54964",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/index-CqoEsAk4.js",
+    "bytes": 15875,
+    "sha256": "13850dac17ec71f79b7cf1823d80c60bcac192abd50c76da4edd7b4cee68621b",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/invoice-details-Bb6-gsuh.js",
+    "bytes": 5554,
+    "sha256": "fbbe4c742227ca420ea183fd5d24068b050685c55f3604242b1346755d0e3fb8",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/invoice-DVvaOuU6.js",
+    "bytes": 9092,
+    "sha256": "992b4ddeca996c21132bd8d28a87d87580155350cd666f9b1f5de21cf4977b8f",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/invoice-payment-result-DJYJ-VAy.css",
+    "bytes": 4054,
+    "sha256": "38466209f7623fa0a39d21ce295535a2e7d885b5c658cc3eb534c5f5a2601f36",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/invoice-payment-result-zCgCca-M.js",
+    "bytes": 5860,
+    "sha256": "091f3476bafe7defb7035943f082df214ee01c2a1def82c6bd6cdef6d90ab11f",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/invoice-update-DFLlCboy.js",
+    "bytes": 10113,
+    "sha256": "b71c13ecb06e1caab2dc76b9565c625f887122cbc3774caa9c7278481d936f4a",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/invoice.service-CZUV42Oe.js",
+    "bytes": 682,
+    "sha256": "1d78f9cd30037249ec41572052d5edc8185973eb3fb1e922f4fd884611bc79ee",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/jhipster_family_member_3-Cf8AxSuS.svg",
+    "bytes": 19098,
+    "sha256": "2b068c86012ace45ced6d85ab6a3ed74c699e7caabda5a3bbb522cc8d58ad68b",
+    "format": ".svg",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/login-7RfFdK3h.css",
+    "bytes": 8205,
+    "sha256": "d8f2b3f20864ca68d21ddbaaf8dc163f13ce92a89f8e892b96217e6363a93b0e",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/login-CmxerW8f.js",
+    "bytes": 5530,
+    "sha256": "1dafe94b4cbf43201cfc866c7d2bf62bb88b3ab37dc871d56a9c06c24610b445",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/manifest-DSrSUXYs.webapp",
+    "bytes": 788,
+    "sha256": "669a7cfe9f8dee318db41ebc7aa364126f07039fad3e6f0501a0e0e0c51537f2",
+    "format": ".webapp",
+    "lines": 32,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/meter-5itj8Rzm.js",
+    "bytes": 8280,
+    "sha256": "14e08c47d5fba9b02f2886b1afb7f499fb6dd5f9a5d5b9c75776be251d72c807",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/meter-details-xbtS1t9S.js",
+    "bytes": 3105,
+    "sha256": "a89c50ba18534a161dfb83cf585ce60cd97c39805aaa55a179db7093d5490290",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/meter-update-CPHdw93E.js",
+    "bytes": 7719,
+    "sha256": "5e084a1016cf66f61a853f74bd897392362d69c6814571423989c43a3c47a58e",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/meter.service-4oFSVAzE.js",
+    "bytes": 680,
+    "sha256": "4173511ff32bd30a6cd39814d62356204dc24af2bb9e053e9e9b21682630212a",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/pagos-BFut6lN0.js",
+    "bytes": 8924,
+    "sha256": "49359c81ea75e485ab340f7cdb510c4a77b777cd20033c3035ad66672e1d4a86",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/pagos-TozssXmJ.css",
+    "bytes": 7906,
+    "sha256": "15d611e6eba907ef453872cdacc1e2b82b65f5e62c75ec9a23f0e69298a50edc",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/person-CFDdrpFi.js",
+    "bytes": 8499,
+    "sha256": "fa806861ba51e45b212dd31fa0d4a2e69d2b09983d93f87eb204dde719548cd8",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/person-details-DpTe2SxO.js",
+    "bytes": 3209,
+    "sha256": "3670b2fcc50fda5c23cb7a492a2c795c79f52fd9b59d7ac7cd514c8687711da2",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/person-update-DiOeoUP4.js",
+    "bytes": 7734,
+    "sha256": "1067c5e080b96cc59acf6ed3d8211d7b4565b5e0ccb38331b475d90bf1a39abe",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/person.service-wO-096sc.js",
+    "bytes": 680,
+    "sha256": "9fc3c24ccbb9bab38fed6123c13d936b784d13d6df2b4118dd2f871fe42f50e4",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/politica-privacidad-C5eYAaq6.css",
+    "bytes": 11630,
+    "sha256": "612385df05be438c0379388df093d1998cc54472463cfa323f9a106d8dc38a69",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/politica-privacidad-HL0fY7HT.js",
+    "bytes": 30788,
+    "sha256": "498c96bd40fb273a18a03cfca1a209dab9d0ddaa515018b89e77b06aac0dbfe3",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/portal-dashboard-B21MXjzC.css",
+    "bytes": 29372,
+    "sha256": "936081db046c84bca7d98b12542be68ba7257f431f30cd197ef213ee197c6272",
+    "format": ".css",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/portal-dashboard-DHDgOF1o.js",
+    "bytes": 30890,
+    "sha256": "e499045ccd227a8425ef828982a67b0d5922b1849492757c96c68e07cba1d7f8",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/register-Bc0A1hsI.js",
+    "bytes": 9423,
+    "sha256": "ae24028f6e169b3f857e623f0806de89368780dc68cd28e93717d17f2c6f64a1",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/reset-password-finish-yiNMu3Ej.js",
+    "bytes": 5176,
+    "sha256": "dd400793b619288e960dc5e60b0010ee1e9184cfa6e995c4f7788b6c6c7f8585",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/reset-password-init-BZPHjkge.js",
+    "bytes": 3068,
+    "sha256": "e9cc3a68222d39ae73af182e6a56e929cd70b00408ea55e4ee7ec2741b74f369",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/settings-BqyBsE-e.js",
+    "bytes": 6843,
+    "sha256": "ec19e5e8bb99dcde0b0bd7a08d913f33da0b43191c22e7c0a33910fc0e65e5cc",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/user-management-C8KUwVDx.js",
+    "bytes": 8907,
+    "sha256": "a737fc98585d215289d8a56676cf45027a90a25e414633301183a8c616eddea7",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/user-management-edit-BGMXdgg_.js",
+    "bytes": 9513,
+    "sha256": "7b7ab656c0b9fc7b3f4e1312083c2fea724ec6a9fab17c2d4f095c2ed3428c49",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/user-management-view-BxeaMIGH.js",
+    "bytes": 3479,
+    "sha256": "52c64e765b64a63b12d3c07ff4ad9d92a81fafa98d2268d6a09185a7838b36c6",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/user-management.service-BVnt_OiY.js",
+    "bytes": 401,
+    "sha256": "4b6bce2a941463ad2a834389255a2e77cb928f2fc8a8b069bc2fa37c6fda00aa",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/assets/validation-CWMsIA23.js",
+    "bytes": 434,
+    "sha256": "7a369656ad2febda9db6b4c3c4f68dba865de511e0f250513caeafdfef3da89c",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/index.html",
+    "bytes": 5373,
+    "sha256": "bf9b55f2718fba92d6c8f0041bb6d1293dea945bf89b3a4c0ef7fa46609cfe90",
+    "format": ".html",
+    "lines": 125,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/absolute-path.js",
+    "bytes": 530,
+    "sha256": "79af12840d716032568e9893b4be14a3ab004bc54b15c750f3cb0f97dd0a4faa",
+    "format": ".js",
+    "lines": 15,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/axios.min.js",
+    "bytes": 68211,
+    "sha256": "7c433c881c3b0903317193a0dd5af714ce0f65cf77d5c7f067f18b96f0e8e2c7",
+    "format": ".js",
+    "lines": 6,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/favicon-16x16.png",
+    "bytes": 665,
+    "sha256": "af24ad604dd7b3bcda8f975ab973075f4a2f70a4087944a12f8ef8b63a3e07c2",
+    "format": ".png",
+    "mode": "Leído completo como binario; sin inspección visual"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/favicon-32x32.png",
+    "bytes": 628,
+    "sha256": "3ed612f41e050ca5e7000cad6f1cbe7e7da39f65fca99c02e99e6591056e5837",
+    "format": ".png",
+    "mode": "Leído completo como binario; sin inspección visual"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/index.css",
+    "bytes": 202,
+    "sha256": "9324807d424565a1639bb29f3754c8d4d45c1009c67674e996e33355f6929ce7",
+    "format": ".css",
+    "lines": 17,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/index.html",
+    "bytes": 3971,
+    "sha256": "b754442edcaa7490eafb40c89364bdc6fd60550747f4fe5426cc9d5bf1b11ff7",
+    "format": ".html",
+    "lines": 116,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/index.js",
+    "bytes": 813,
+    "sha256": "e27a64ec0db122a0b1009e54016d3b40a142fc9a8e0d80609837e9df9027c9df",
+    "format": ".js",
+    "lines": 18,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/oauth2-redirect.html",
+    "bytes": 2715,
+    "sha256": "397fd30a2499cd2c5f3411ade0ca7fbd786d5011639ca78a06824d580b83c122",
+    "format": ".html",
+    "lines": 80,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/swagger-initializer.js",
+    "bytes": 539,
+    "sha256": "a895034f24f12d7cd81ec47c98da4f15721d9d9a8d2405f22f21704821f81d02",
+    "format": ".js",
+    "lines": 21,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/swagger-ui-bundle.js",
+    "bytes": 1466741,
+    "sha256": "a9eca9ee05279bcb15f4dcb7852b9845a7ff54ca10acda23824198dd49846ebe",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/swagger-ui-es-bundle-core.js",
+    "bytes": 471792,
+    "sha256": "24dcfc30323f5c630c5f5c1a317a8b8214c6bd8c005ed9300e9a5bd3b859de6a",
+    "format": ".js",
+    "lines": 3,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/swagger-ui-es-bundle.js",
+    "bytes": 1466495,
+    "sha256": "223d2aa5765a3d76f61aa511af57007ae483de8e5423ead79f4a35ac62e2b74d",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/swagger-ui-standalone-preset.js",
+    "bytes": 229223,
+    "sha256": "8710b6d90ece7113dd467500fa14ed33b5848b68b8695ad075f8d5c6c9af3b01",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/swagger-ui.css",
+    "bytes": 154985,
+    "sha256": "c615cdf1f9d4688002187b8f20422bf7eaa6c98afa671d24db0bf8432ec18356",
+    "format": ".css",
+    "lines": 3,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build/swagger-ui/swagger-ui.js",
+    "bytes": 348726,
+    "sha256": "c7b11cb1736eae6dd505018dcc667c57ba8e1b941e8b495cdf37caf2069fd9d3",
+    "format": ".js",
+    "lines": 2,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build-inventario.json",
+    "bytes": 8315,
+    "sha256": "342c38affae4a252a008b7c06866ba7b8e27583c98b164f55d0772c6fa60a5f2",
+    "format": ".json",
+    "lines": 427,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 85
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build-meta.json",
+    "bytes": 346,
+    "sha256": "22fd9d22fa7b9f52a3e712785345a261451b2d391bb5ca16990c60782f8a81fa",
+    "format": ".json",
+    "lines": 14,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/build.log",
+    "bytes": 20411,
+    "sha256": "95a043b30fe085d7792e390caedd27ec1e28e0f6bbd3ff3c81a9cc36316d2922",
+    "format": ".log",
+    "lines": 272,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/cobertura-final.json",
+    "bytes": 187114,
+    "sha256": "e812d07e4fbf84fe4ce6d473c37abcec264ad1c2906630dcd8621d1d9d64a05e",
+    "format": ".json",
+    "lines": 4097,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 455
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/dependencias-lock.csv",
+    "bytes": 177823,
+    "sha256": "eb3c4a6dcbd6bba1122199840297a1c6a072fccc7ca9ed8862537baa0c49ca79",
+    "format": ".csv",
+    "lines": 1934,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/dependencias-lock.json",
+    "bytes": 392915,
+    "sha256": "6a5352624bc5e23a0dc263b4e43ce8a30f299f71be002b816345a949c0d75de7",
+    "format": ".json",
+    "lines": 17427,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 1933
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/fecha-calendario.json",
+    "bytes": 62,
+    "sha256": "8be4809a822927eb4fe902cec19033b22e51f1b4beb9859d52e8e472b2a20786",
+    "format": ".json",
+    "lines": 4,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 2
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/final-scan.cjs",
+    "bytes": 3370,
+    "sha256": "cab7c6476295e0e0227021f36269b68a672c0b60a5bd88be48453ebb8fac65ad",
+    "format": ".cjs",
+    "lines": 12,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/frontend-meta.json",
+    "bytes": 244,
+    "sha256": "5048a217d275739050caf4408e0b0d3c82c68f9bc9ecbbcced1e0410c8f236d3",
+    "format": ".json",
+    "lines": 9,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/frontend.log",
+    "bytes": 12958,
+    "sha256": "3879e5f4a9fad21474c9e195ff8a51ce987a3bcc03ac8e6e137d0bd52ed1ce1b",
+    "format": ".log",
+    "lines": 222,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/generate-reports.cjs",
+    "bytes": 42708,
+    "sha256": "efde9cab50249534484baa517c9b67d4e291e5bcb76084e7260154826e7630fd",
+    "format": ".cjs",
+    "lines": 60,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/git-status-final.txt",
+    "bytes": 3258,
+    "sha256": "17b55b49d976392aae19df5beba06b6a9b26ea83367263da06a5f475e1bbdd1a",
+    "format": ".txt",
+    "lines": 79,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/git-status-inicial.txt",
+    "bytes": 3258,
+    "sha256": "17b55b49d976392aae19df5beba06b6a9b26ea83367263da06a5f475e1bbdd1a",
+    "format": ".txt",
+    "lines": 79,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/hallazgos.json",
+    "bytes": 40646,
+    "sha256": "5139cdcbc659c0954727ffa33473d35546f797b711f15ccba57d9f0fca1162c8",
+    "format": ".json",
+    "lines": 660,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 47
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/inventario-inicial.json",
+    "bytes": 151788,
+    "sha256": "b88d57abe06abbb4fe413a5b4dfbd1e9c7b2294e279fcede1bc53302c22492c3",
+    "format": ".json",
+    "lines": 4204,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/haste-map-9bafbf52172cf4ff643b54fc8d6c05a6-7b9b63b937cd656366c631dee3a04f48-a1d8e460463bcc27a962f5178634d157",
+    "bytes": 32188,
+    "sha256": "e1393a383dd0fd0726936b2a37664e711a9aec2bf91b9beca05954395c183436",
+    "format": "",
+    "mode": "Leído completo como binario; sin inspección visual"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/05/rolesdecorator_05ae12147b417c11236288d22f498d73",
+    "bytes": 1156,
+    "sha256": "9e37478c897f469054a6315bf1fc877f8c66a65aebc7f8fb860a6d4c89359171",
+    "format": "",
+    "lines": 8,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/05/rolesdecorator_05ae12147b417c11236288d22f498d73.map",
+    "bytes": 615,
+    "sha256": "6cc5adea4b59fab8cf8654b9f6955684daa081f4d810141a469613831da72bf4",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/0a/addressentity_0aedd320c2f1fd48a29667d51aa89891",
+    "bytes": 5403,
+    "sha256": "6dc73e5ecdebcbdeb797597f1980fa0db33d9ea24d8f448ffa71850e851fdb0a",
+    "format": "",
+    "lines": 61,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/0a/addressentity_0aedd320c2f1fd48a29667d51aa89891.map",
+    "bytes": 2148,
+    "sha256": "f4e3f842f2a367839867234f5337792c7904eced2a4fd42b5419ce87ee5dbe05",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/16/mobileservicespec_167902d698630637808710ac819d6212",
+    "bytes": 10619,
+    "sha256": "60c1f2ec4654490ddd6cf3905ba08a354593f9d462dbf4751208aae584357cfd",
+    "format": "",
+    "lines": 45,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/16/mobileservicespec_167902d698630637808710ac819d6212.map",
+    "bytes": 5807,
+    "sha256": "4040a60d303b5330bfc932c9935e2587208e32c4d20d71d80983f6a1b2b329a9",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/17/invoicestatus_176ecca850f69b8f156baa38c582070f",
+    "bytes": 1168,
+    "sha256": "5438d4380757c8d605b63ccfddcb51353a0ade8db0c83c06583a6a5d3c5d603f",
+    "format": "",
+    "lines": 11,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/17/invoicestatus_176ecca850f69b8f156baa38c582070f.map",
+    "bytes": 543,
+    "sha256": "63aa410baddc1afdee3f2ce5bd65212a92f5aaa5b49e2800ff5a04bee16b95ec",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/1b/paginationentityspec_1b1056960e3f54436399fa53b5799a99",
+    "bytes": 4942,
+    "sha256": "36182e48b3af5b7dfa1d5aa6c97c183a81999661d5ab68502b5c2aba07a1fb65",
+    "format": "",
+    "lines": 27,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/1b/paginationentityspec_1b1056960e3f54436399fa53b5799a99.map",
+    "bytes": 2612,
+    "sha256": "e02db49161c74cfab71ff7c3026a3eaf89a7368a3fb5bb7471c61f37a89e45d5",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/1d/authservice_1d1d0abf4734199b0f38118d6291a501",
+    "bytes": 22741,
+    "sha256": "8cbf3a0cdb05fa3b8371209e347ae4112dd3b1b88c572c85ce19b95571930e9e",
+    "format": "",
+    "lines": 144,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/1d/authservice_1d1d0abf4734199b0f38118d6291a501.map",
+    "bytes": 11511,
+    "sha256": "469b3daca1e4bfa0d8768a940b2e223d21e3ca200928286b8452bfc31468a09a",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/1f/billingservicespec_1fd380b6a3cb1cb92513881b6aa5ee68",
+    "bytes": 3557,
+    "sha256": "1f39aa24612cbfee511f7fa4a3d5e18a979f9b6e9367d335c0f44382f7fa3de8",
+    "format": "",
+    "lines": 12,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/1f/billingservicespec_1fd380b6a3cb1cb92513881b6aa5ee68.map",
+    "bytes": 1901,
+    "sha256": "baa97c9e31cad1eac4f0994d3d759f56acc7fbbaf91f5c512f285b92249b2cd3",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/2f/passportjwtstrategyspec_2f9fd9ed349486bafb21e4ff7b0ed0e4",
+    "bytes": 3415,
+    "sha256": "3f2fe7de83fa76c6486c669dfa23e060a582443e53f55647d5f2846d67079327",
+    "format": "",
+    "lines": 16,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/2f/passportjwtstrategyspec_2f9fd9ed349486bafb21e4ff7b0ed0e4.map",
+    "bytes": 1827,
+    "sha256": "2d579d3ba337304adf885f91383b2835601cc03713a876016fb768aa28c0c73f",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/38/logginginterceptor_38be3b028610fe5eb7ddd634d697fcd2",
+    "bytes": 3146,
+    "sha256": "bf36ee7d594ea4359eae3dc31eede9b4e3a2a2b93f0c0f2de831a9ab23a3c81d",
+    "format": "",
+    "lines": 23,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/38/logginginterceptor_38be3b028610fe5eb7ddd634d697fcd2.map",
+    "bytes": 1357,
+    "sha256": "c30a7e367a5818307f780ccf1cadcace158273c322416ba2bf8cb4dac90de9d5",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/38/meterentity_380c668150055f23a5a65e1bf949b1cb",
+    "bytes": 5595,
+    "sha256": "e2b49ac5ce3513c321d166aa7ef67064652eb583a9e041dfd40dc5df9275937e",
+    "format": "",
+    "lines": 63,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/38/meterentity_380c668150055f23a5a65e1bf949b1cb.map",
+    "bytes": 2205,
+    "sha256": "23f65cb08bfa845d5f195f7b45f35b7e0a0330dccc5b06be2c4fca1deee2749c",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/39/activitylogentity_393ed78dfdea2989a73798bf4f58b3aa",
+    "bytes": 5753,
+    "sha256": "4e4badd3909aa3165d82fc77dd91cdecbbcc03dd76c6015cfa931dea1d7cbc30",
+    "format": "",
+    "lines": 62,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/39/activitylogentity_393ed78dfdea2989a73798bf4f58b3aa.map",
+    "bytes": 2280,
+    "sha256": "dac15ea3e111d8fea046dc82599790ccae38d9b65a0106b6a400572e6a9a2fa3",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/48/activityaction_48f74008cf8102443987ab280355fff8",
+    "bytes": 1505,
+    "sha256": "5d70b982a6935c20e9f732aa98302b260798c3ddf301f3ecb0cd91f7b1848379",
+    "format": "",
+    "lines": 13,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/48/activityaction_48f74008cf8102443987ab280355fff8.map",
+    "bytes": 682,
+    "sha256": "8ca7daaadbdc0778421c775750ab8e7683b1c94b4fd17a7706515b86b4269dbf",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/4c/authsessionentity_4cf6a138c01e6e414d08a5b8e75c7b5e",
+    "bytes": 4014,
+    "sha256": "8b7e6bfe6135f7cf2b3c78f54ece0c7e9d191fd1a5a0693910d8fcbf29f1641c",
+    "format": "",
+    "lines": 52,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/4c/authsessionentity_4cf6a138c01e6e414d08a5b8e75c7b5e.map",
+    "bytes": 1378,
+    "sha256": "7f2b0b120c29fd89f0cfd1620bef36db9b6ecde6ca5a6cf2f3de8a2a473015e7",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/4c/mobileservice_4c36fe7a53d74c9e206e93f5dffb3b39",
+    "bytes": 27965,
+    "sha256": "ff92eab63d62d8c000033c56e66ec65d03811150d54b739324cc3fa46b249d7e",
+    "format": "",
+    "lines": 106,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/4c/mobileservice_4c36fe7a53d74c9e206e93f5dffb3b39.map",
+    "bytes": 14675,
+    "sha256": "072ab345bf505755508c4c50a5c89294e4de35db254216d11c1d99c6de204257",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/4c/personstatus_4c73abf4a006d6811f0eb06be7d70c6b",
+    "bytes": 1060,
+    "sha256": "9b4419d54c14db9eef342825d0661fe883b5fc4c4ee55f948b332978c01d55d1",
+    "format": "",
+    "lines": 10,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/4c/personstatus_4c73abf4a006d6811f0eb06be7d70c6b.map",
+    "bytes": 496,
+    "sha256": "12a1e5d2688e4519ae354a78f1efd5056299e92c9be85f108375bef5f2ee6e79",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/61/loginratelimitservice_61b17afbad201165b0027dc500fabe84",
+    "bytes": 6069,
+    "sha256": "6aed4c8e28d272bc88011c772394794219a166fcf91b3cf8b62aafae0d684f40",
+    "format": "",
+    "lines": 50,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/61/loginratelimitservice_61b17afbad201165b0027dc500fabe84.map",
+    "bytes": 2503,
+    "sha256": "d4e4800d32168685a6f57f471fa88cf126554ae0be652ee0b0fae60368b645f9",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/65/config_657cf48de48b3521a6291c74f277405b",
+    "bytes": 20893,
+    "sha256": "e46b5d45dc171ce872d95531fac668446ade790923e942d3f829c19711e6e90e",
+    "format": "",
+    "lines": 165,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/65/config_657cf48de48b3521a6291c74f277405b.map",
+    "bytes": 10144,
+    "sha256": "80776ca90907676f3f00f1f6de367977f587c536eba0ce23d44df87d35a70e19",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/67/index_676f65e02cfba81e2d194008adf52008",
+    "bytes": 2003,
+    "sha256": "dd3abfaad1edb7082f0c847d8ddada908e230c869fdc73122b46e5b7f1135833",
+    "format": "",
+    "lines": 24,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/67/index_676f65e02cfba81e2d194008adf52008.map",
+    "bytes": 604,
+    "sha256": "d853e023133ef204a58240c0516f77bf5588b05724dbb6e62e79820e733f264e",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/69/authuserdecorator_69277c0ceb8142b0028176436e580a86",
+    "bytes": 1422,
+    "sha256": "4892362a8ba5df528f7dccb30c3527592c2ac3881c9302fa333f4e48d198f084",
+    "format": "",
+    "lines": 10,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/69/authuserdecorator_69277c0ceb8142b0028176436e580a86.map",
+    "bytes": 768,
+    "sha256": "083f333a8c294c46562ac52f9c5eea134cf13d119bd88620aac48a474d297acc",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/73/privacyspec_73d86f53198fbb8df43fe98358119a8f",
+    "bytes": 3941,
+    "sha256": "e62ec797b0d74e3c50531938c737067db75f2de1860ff4776c31e955d909c781",
+    "format": "",
+    "lines": 16,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/73/privacyspec_73d86f53198fbb8df43fe98358119a8f.map",
+    "bytes": 2092,
+    "sha256": "df4f9c69ce733f7b5b66ebb82ac47f3317482abfa8222d61afb256ee07f345fb",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/74/billingservice_740ec9212a82501cd96d9b9eb21ec3bf",
+    "bytes": 14975,
+    "sha256": "a272dc4aaa130838c34d2c67ab6dd31f47a6fc503bbfeadf42c64c3a63d26a76",
+    "format": "",
+    "lines": 69,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/74/billingservice_740ec9212a82501cd96d9b9eb21ec3bf.map",
+    "bytes": 7621,
+    "sha256": "9295e22fa24987a13aee658567528779bcc55ce69d110ffc87cf57fbec3249a6",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/7a/baseentity_7ab2b015ec394241eb1c4e3fab5db8e1",
+    "bytes": 3148,
+    "sha256": "f6c3d9de099c41ea03216ed6c867101fc68444802e45e1ef42941b30d7330937",
+    "format": "",
+    "lines": 38,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/7a/baseentity_7ab2b015ec394241eb1c4e3fab5db8e1.map",
+    "bytes": 1065,
+    "sha256": "c9ba0609af4203eae19940f5dc9184825bd49a65b4f601dfa5c2683ec60e1be9",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/7b/userentity_7bca422578863b355ea9c95e6e5a6eac",
+    "bytes": 6950,
+    "sha256": "5cdf773a22e6259dce5c91da6d112244d29b2191dd076c63c59ee9a5734b9c93",
+    "format": "",
+    "lines": 96,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/7b/userentity_7bca422578863b355ea9c95e6e5a6eac.map",
+    "bytes": 2595,
+    "sha256": "c1081e647149e616e85d4d5df5bcc6898bb1effb9335328c1a18d4f5273c12fd",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/7c/securitybaselinespec_7cdf1706c4c9b0dc190d92116aec2547",
+    "bytes": 10775,
+    "sha256": "d77672a1fe35e8368cc9195904028aa26c7290ea0cb0b5e72ad8f5f30eba120b",
+    "format": "",
+    "lines": 41,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/7c/securitybaselinespec_7cdf1706c4c9b0dc190d92116aec2547.map",
+    "bytes": 5746,
+    "sha256": "4a94a1d3c404f0fad358a55bac162f7269dd93f7e573276a67551b3972836121",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/83/roletype_83278498f88b9e132fc7f2af96edfca0",
+    "bytes": 1230,
+    "sha256": "b9fd1f1651b38d0a2b6a7239152ccf40b753046b9183770f88a4708af66e23cd",
+    "format": "",
+    "lines": 12,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/83/roletype_83278498f88b9e132fc7f2af96edfca0.map",
+    "bytes": 581,
+    "sha256": "22e638d4f5b1e9508211adbfeb28d870b6aa3b8c6acbf612d94e14dbb0712f4e",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/86/aiservice_8600b9c994b65138f3acba3b25a14afc",
+    "bytes": 21027,
+    "sha256": "48f9181d455b577c885ebc5e1c1069e164fe625c754b5918f8db31bcb9326d8b",
+    "format": "",
+    "lines": 133,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/86/aiservice_8600b9c994b65138f3acba3b25a14afc.map",
+    "bytes": 10472,
+    "sha256": "ba20df54d16fb638b04aa5fc4b7ad23389ae7f4a702e8c9e5f856eb0ac0a5904",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/98/userdto_9808f7e691ec95af0d3d5c3386c062df",
+    "bytes": 8109,
+    "sha256": "f054fcf37af3472dfc09d914852f189ef9563111fd935e1dff107dc229c19497",
+    "format": "",
+    "lines": 93,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/98/userdto_9808f7e691ec95af0d3d5c3386c062df.map",
+    "bytes": 3235,
+    "sha256": "ae803f22745a413c480f3be3dd74dec525ea8cbe7273f1e4dbdba5f9e5613bb5",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/99/userservice_999d182f75b57d4135e5acc82ee4a87e",
+    "bytes": 13207,
+    "sha256": "6d0bcb22a9411d701497ff15dd85ce991d38e296f6d6936e98b47be80c1fb4db",
+    "format": "",
+    "lines": 97,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/99/userservice_999d182f75b57d4135e5acc82ee4a87e.map",
+    "bytes": 6586,
+    "sha256": "f6cb1fa04ccdde50f6d97b598166cb82c671549cfa05b66a088e47a20c223d53",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/9d/passportjwtstrategy_9d7fe71ecee88187f2b0f9cfe530b74c",
+    "bytes": 4845,
+    "sha256": "0b7b55b0b0659f3d11cbaa7c274a3733ead9135042a47b05bb2aea66918eb42f",
+    "format": "",
+    "lines": 45,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/9d/passportjwtstrategy_9d7fe71ecee88187f2b0f9cfe530b74c.map",
+    "bytes": 1989,
+    "sha256": "6c42ebee9afa4fc7a1e4f604c5331496e48425632e6c22f61024a62f00c0baf9",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/ad/notificationentity_adc190d24324e1a83e06fa87fb030592",
+    "bytes": 5221,
+    "sha256": "857f6726b987962b54ed0f5dc0762b79fa6ac8e09dd7c325a9018f7903fbd7a7",
+    "format": "",
+    "lines": 61,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/ad/notificationentity_adc190d24324e1a83e06fa87fb030592.map",
+    "bytes": 2011,
+    "sha256": "547e0ed1b9fe3ee1bf2b96bc261d77bd1d820ce4ac5adbdea0d879b8ceeb1f2a",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/af/boldservice_af84ab2dc128dc7a824b26204bb0f9c8",
+    "bytes": 23432,
+    "sha256": "92a72f49c1bf243f82a0db68d680b925eec61179d8bd6b5e001691a42972ddc5",
+    "format": "",
+    "lines": 155,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/af/boldservice_af84ab2dc128dc7a824b26204bb0f9c8.map",
+    "bytes": 10892,
+    "sha256": "d4bb63f4e7161efabd396d043c0a12c600813cad7d967b8fb2a6053f6b188a69",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/af/sessionservice_af38f321d6562acf36e8dcb08541bed1",
+    "bytes": 12333,
+    "sha256": "b052c04d5adc0cf7d6994ee2521efc672694a598beb505548c71dd2e56bbabf9",
+    "format": "",
+    "lines": 79,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/af/sessionservice_af38f321d6562acf36e8dcb08541bed1.map",
+    "bytes": 6086,
+    "sha256": "6e2eae36d1968edef418018e6439e609a28878fb4839b6b9e21b915758ddd5c7",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/b6/jwtsettings_b670f70d877448c7453ad25d365c7bc9",
+    "bytes": 3064,
+    "sha256": "84ff7b7d574c5fc6ed50a28667ab8b4585159606b653dac2db7816545a61f54b",
+    "format": "",
+    "lines": 21,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/b6/jwtsettings_b670f70d877448c7453ad25d365c7bc9.map",
+    "bytes": 1594,
+    "sha256": "f7e036e364922f431740a3b4565ddf8bcd3d44e056885348d94fd59df039b438",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/b6/notificationservice_b6a046eec6ecb59ed27889374664d7f3",
+    "bytes": 18644,
+    "sha256": "f628ddad1c93101811075df118daa42873e06b0f99c7cc0a615fb4c3dc508cb2",
+    "format": "",
+    "lines": 126,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/b6/notificationservice_b6a046eec6ecb59ed27889374664d7f3.map",
+    "bytes": 9401,
+    "sha256": "588b1d650dd62e04b15e1cb5e83f220102345876258aff58c4e605092d9ac49d",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/b8/passwordutil_b86827b7a18d8a19a9f930251369e335",
+    "bytes": 2903,
+    "sha256": "1430041329033bcbe1c32894885aa128b65464c2dd7e14919bc345d4ac77a320",
+    "format": "",
+    "lines": 23,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/b8/passwordutil_b86827b7a18d8a19a9f930251369e335.map",
+    "bytes": 1496,
+    "sha256": "766a2fe8150da75acb7c6592b1ebb24a958afef7d13e45788e843169950bc48f",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/bc/paginationentity_bce7d280882c649ba069d9c2fe3b6b2e",
+    "bytes": 8178,
+    "sha256": "1481f050e40f259d936ff13e576ea35d008972aa96e6c8fe58bf47a40a4eef13",
+    "format": "",
+    "lines": 83,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/bc/paginationentity_bce7d280882c649ba069d9c2fe3b6b2e.map",
+    "bytes": 3963,
+    "sha256": "3957525d37a3a4d3d420e70aba67e3e44a2327afd0bf106e151ae4f7baa5cfae",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/c5/managementcontrollerspec_c52d3dbb3c250e64b43d2539ddf4f8f2",
+    "bytes": 2738,
+    "sha256": "e1c1e53f0f2e978d77433901d75d7e91798a9c590d976067533c47c1c7757284",
+    "format": "",
+    "lines": 19,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/c5/managementcontrollerspec_c52d3dbb3c250e64b43d2539ddf4f8f2.map",
+    "bytes": 1424,
+    "sha256": "dd7797a5ca269f65bb6646641d57ef0cd275e39e2ce82e7b3345483bf21b6b24",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/c7/boldservicespec_c700a2c83fd1245c9cb5aa7dfd67fc9e",
+    "bytes": 10829,
+    "sha256": "1530a15d1f0866af89650a7ab9f6d48438155f4fe8d4d0b6c94d88a10487d88d",
+    "format": "",
+    "lines": 51,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/c7/boldservicespec_c700a2c83fd1245c9cb5aa7dfd67fc9e.map",
+    "bytes": 5882,
+    "sha256": "1185cba3f727f477b303c82b3b83757deb8dd6741f4e655ff633a2a54da386af",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/d0/authguard_d0ac92c85ea6d9259546bcf61fb85669",
+    "bytes": 2449,
+    "sha256": "e9a7641116d81855005c40bd7f18213be84dedf156cc438e8dc18fb54ebbec99",
+    "format": "",
+    "lines": 23,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/d0/authguard_d0ac92c85ea6d9259546bcf61fb85669.map",
+    "bytes": 943,
+    "sha256": "add9024f51f651ef8d235b361dae70521b98a29f9fc912fee0a4316dd1044987",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/d2/managementcontroller_d2ce33c7ad66a2a06d35c601eaa16eb9",
+    "bytes": 4374,
+    "sha256": "a1092fb04df6b862977aba4e0795f92f947f854228b30196bb0a09951deb12b9",
+    "format": "",
+    "lines": 44,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/d2/managementcontroller_d2ce33c7ad66a2a06d35c601eaa16eb9.map",
+    "bytes": 1663,
+    "sha256": "c4e7dc8483f8511b33356573f6edde5ee16a8657a43cb2e1d219bcc4e7bee869",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/da/notificationcontroller_da52e4767dbd9342d5463846b0861fa8",
+    "bytes": 9213,
+    "sha256": "a95cbbec517aed49e05cad13bc538edfb6ead269a4739bf02cabae4187ca7d76",
+    "format": "",
+    "lines": 78,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/da/notificationcontroller_da52e4767dbd9342d5463846b0861fa8.map",
+    "bytes": 3821,
+    "sha256": "8aeeeed31e1fc8de85d3fafad0df875a55048d9014d34faa1fa2d621ce4d14ae",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/dd/passwordpolicy_dd3f5b086b4a9ec28d9b3a07a907c8d7",
+    "bytes": 2086,
+    "sha256": "d6e73eb9b3abbc5949f2c2d912b0c257dc98511bb92350d84fe2c4fdf9c4a97a",
+    "format": "",
+    "lines": 11,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/dd/passwordpolicy_dd3f5b086b4a9ec28d9b3a07a907c8d7.map",
+    "bytes": 1095,
+    "sha256": "f1896c121268e32be4c172a592e880de7187adb10f15fbf4252742f7399d3fe4",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/dd/usermapper_dd08e7495b9818d91f00092d02aa6b45",
+    "bytes": 3450,
+    "sha256": "78eb3b116c73d1e8066bfabde1c670890588076857f958363f94d27fd60d8047",
+    "format": "",
+    "lines": 35,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/dd/usermapper_dd08e7495b9818d91f00092d02aa6b45.map",
+    "bytes": 1821,
+    "sha256": "8315df1b0567c8e9a7afdcb3d9d9eeff5570a69b3801f029edf6b68db8c9a781",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/eb/authorityentity_eb072487cc30d11b3bd64c05981a3379",
+    "bytes": 2532,
+    "sha256": "6338a44dda8f5ee23ddde1d18ba767cc354f9a70d0493b4e7ac84fdbcc54551b",
+    "format": "",
+    "lines": 28,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/eb/authorityentity_eb072487cc30d11b3bd64c05981a3379.map",
+    "bytes": 826,
+    "sha256": "4fa972ab3ce40a08e97e87c3a57498bd54d8c6da6b5f9ed7a501bba75f416d51",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/eb/basedto_ebb51cc55730dbf3b7edaa4f7af73be1",
+    "bytes": 1121,
+    "sha256": "aadc7b2264aceaa30c332e1e5cbd81ff766cf91304c2154322f3f4f304fd82b2",
+    "format": "",
+    "lines": 15,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/eb/basedto_ebb51cc55730dbf3b7edaa4f7af73be1.map",
+    "bytes": 578,
+    "sha256": "7be86dc4305c95b93ec3a32b4030702cc397b7109927ffa0f392dfced1385aaa",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/eb/sessionservicespec_ebbcbd03be6d20bc076b054afd48b781",
+    "bytes": 9248,
+    "sha256": "fa001e1a534aa6173efccb668516ffb1b4b923054a4c425e5220af6cc9e3822a",
+    "format": "",
+    "lines": 45,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/eb/sessionservicespec_ebbcbd03be6d20bc076b054afd48b781.map",
+    "bytes": 5146,
+    "sha256": "4944a71f14d535039ea75d5d37f991482a0f6669c01d5bb7fd4076444d129e9b",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/ec/mobileoperationentity_ec0da7287a1125fcb4286cec80110e67",
+    "bytes": 3938,
+    "sha256": "64f63a64021331698e16dd96b0f9ad92b34752086e6a71ceef983edd0af48d74",
+    "format": "",
+    "lines": 51,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/ec/mobileoperationentity_ec0da7287a1125fcb4286cec80110e67.map",
+    "bytes": 1318,
+    "sha256": "9a4f1479b0e462a5e52380aac32f304ad81ed3d081817c1fc49d6072021a6679",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/ee/setuptest_ee9fc89fac98dc756dc0237ad5507864",
+    "bytes": 68,
+    "sha256": "d0203b535ebe150256d597197818714cb7dfc61e6817be7118675ee4ad5313ea",
+    "format": "",
+    "lines": 3,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/ef/personentity_ef752379eb57079aab1ca486097dabde",
+    "bytes": 9405,
+    "sha256": "d474e9eeef9182ec46daec63dc361f8988ee9bf9e91a503712274d619670cc94",
+    "format": "",
+    "lines": 103,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/ef/personentity_ef752379eb57079aab1ca486097dabde.map",
+    "bytes": 3882,
+    "sha256": "12d56831a6088fb71c6c5488247666437e806aefde20f9dc631215f27f8ac7a4",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/f3/invoiceentity_f36c96381981bb5c9824256ea9d057f7",
+    "bytes": 10787,
+    "sha256": "7812483d6cc910880048ebf63ea60dfba7cbead507be09834122fd8f60da9a38",
+    "format": "",
+    "lines": 109,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/f3/invoiceentity_f36c96381981bb5c9824256ea9d057f7.map",
+    "bytes": 4596,
+    "sha256": "ae9f6900b6b1df60ad1b2bf38a9d5a09c78c51f94f1e61a88f3171e04b453729",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/f8/recordaccessguard_f8b5396fcb2489a8e3b016328a178383",
+    "bytes": 8391,
+    "sha256": "d6952babc516f98904a088554344ff68e965c9e005100d210b3ae389ac95360e",
+    "format": "",
+    "lines": 56,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/f8/recordaccessguard_f8b5396fcb2489a8e3b016328a178383.map",
+    "bytes": 3991,
+    "sha256": "b278489e6f74e9856e9f087e8d780a5e5850e0d2e2260e8e363a11ca83af6c6e",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/f9/rolesguard_f9306916058a8a91912776c527498b53",
+    "bytes": 3996,
+    "sha256": "e1ad0f637953471b0aac6456de7c01fc172cddca0d002168afa75ece74841c84",
+    "format": "",
+    "lines": 36,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/jest-transform-cache-9bafbf52172cf4ff643b54fc8d6c05a6-79ef2876fae7ca75eedb2aa53dc48338/f9/rolesguard_f9306916058a8a91912776c527498b53.map",
+    "bytes": 1692,
+    "sha256": "622c8a264d9aebd2c23c6aec7631393729637dc875ca4ed3aafa13d1105acf09",
+    "format": ".map",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-cache/perf-cache-9bafbf52172cf4ff643b54fc8d6c05a6-da39a3ee5e6b4b0d3255bfef95601890",
+    "bytes": 1031,
+    "sha256": "65d19701898e1b45872c0078259952dac6bcf01363ccb5facd439eba66cb078c",
+    "format": "",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest-meta.json",
+    "bytes": 405,
+    "sha256": "e104a2722d648cc8c8044fcecb7233433bc64ef6d17dd1f9d180bea089fcfd7b",
+    "format": ".json",
+    "lines": 16,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/jest.log",
+    "bytes": 1866,
+    "sha256": "3bd1d324c7e81c4d1234049c30bbcb499064dcb3a44bdda3835cb93495e880be",
+    "format": ".log",
+    "lines": 25,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/limitacion-audit-online.md",
+    "bytes": 691,
+    "sha256": "9c8d795b9a6c064b51b5712aea89e678df767b87067be78c53f0ff4d8c62a370",
+    "format": ".md",
+    "lines": 6,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/lint-resumen.json",
+    "bytes": 886,
+    "sha256": "3a874baaa0f40fabf433b777dfbe225c46e05ec529415d7d21975eaced9c73ca",
+    "format": ".json",
+    "lines": 34,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 2
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/lintclient-meta.json",
+    "bytes": 283,
+    "sha256": "85e8f994654b985bea50d7236fd954da8c694250eacc3fcbdc0ba19f96aaaa24",
+    "format": ".json",
+    "lines": 13,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/lintclient.log",
+    "bytes": 6273294,
+    "sha256": "7710467fc6eea93d6a6c4201fdf406b5f2241c31cdb509bfa72f1198666bf706",
+    "format": ".log",
+    "lines": 257394,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/lintserver-meta.json",
+    "bytes": 283,
+    "sha256": "85e8f994654b985bea50d7236fd954da8c694250eacc3fcbdc0ba19f96aaaa24",
+    "format": ".json",
+    "lines": 13,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/lintserver.log",
+    "bytes": 1263966,
+    "sha256": "91272f89fe12a3ce08465fd70a6dc79b107e713acbc2ba326d13c73bce01881c",
+    "format": ".log",
+    "lines": 51470,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/npm-cache/_logs/2026-10-05T05_38_00_358Z-debug-0.log",
+    "bytes": 73499,
+    "sha256": "9951214c5fcb001ea8dcca190df39b183e58ea572fe54deb33d4c7930b37d7fa",
+    "format": ".log",
+    "lines": 1417,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/npm-cache/_logs/2026-10-05T05_38_00_835Z-debug-0.log",
+    "bytes": 29217,
+    "sha256": "fad0ce57a4d4c5b0a7c953b30d4a53885015353b13e3a2959177850bb4f8dd18",
+    "format": ".log",
+    "lines": 576,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/probes-resultados.json",
+    "bytes": 1594,
+    "sha256": "d8627e7f38910b19e310faaa5f0c7ce02759d885f258604844155bb93e35eb23",
+    "format": ".json",
+    "lines": 52,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 7
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/probes.cjs",
+    "bytes": 5391,
+    "sha256": "f407360168c92e2d83c2652b9e671a7e0a35215ddf0233e5b4b6682f18d92ff3",
+    "format": ".cjs",
+    "lines": 31,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/report-data.cjs",
+    "bytes": 32110,
+    "sha256": "e61b9fdd411f5a972533a227fcd166291fff5a96b28fd791b13a72947b3f73bc",
+    "format": ".cjs",
+    "lines": 51,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/resumen-numerico.json",
+    "bytes": 785,
+    "sha256": "bb7811db50e6de53ae8c492bc4565236ab0996110f9373bdcccf8dec04f43c67",
+    "format": ".json",
+    "lines": 37,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 5
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/run-checks.cjs",
+    "bytes": 1855,
+    "sha256": "7b58c5e4d537801a7e9c133c76224ce23dfebb1062596a973e0182bd7e85dbf8",
+    "format": ".cjs",
+    "lines": 20,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/run-vitest.mjs",
+    "bytes": 227,
+    "sha256": "ac975737dedf289067fddbf7c2bb9a8e75accab08bdaa64002123ca110f2c6e0",
+    "format": ".mjs",
+    "lines": 5,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/rutas-api.json",
+    "bytes": 24933,
+    "sha256": "ba1f462c0572fad74fe0ce3423dd604f9349cdf080c9b097ae9ebbff0636e6a5",
+    "format": ".json",
+    "lines": 802,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 80
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/rutas-api.md",
+    "bytes": 11346,
+    "sha256": "0b0b694d436af76ed9584d4738460dbcdf9970fe5cc436e3e692bb0c13b2917e",
+    "format": ".md",
+    "lines": 86,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/scan.cjs",
+    "bytes": 5106,
+    "sha256": "e5ba0a0840a19f4c0b5f8bad660192ff8dedf3de3fe7eaa4be4a1ceddf006968",
+    "format": ".cjs",
+    "lines": 19,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/scripts-vue.json",
+    "bytes": 79599,
+    "sha256": "8d1e8cc5de3c9d0ada941d06cc7247c2241beb1cd56ebb8155876014f0d4d335",
+    "format": ".json",
+    "lines": 218,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 54
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/secretos-confirmados.json",
+    "bytes": 1238,
+    "sha256": "b66c15a54c652d615520d717686ebbfbd68b6755c3eec527235ce69eba83020e",
+    "format": ".json",
+    "lines": 53,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 7
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/secretos-historial.json",
+    "bytes": 25544,
+    "sha256": "5c78b9d93f7e6d59f3ebd606edb7a5150160a6302f05cc369348d8c560f0a5bd",
+    "format": ".json",
+    "lines": 607,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/secretos-historicos-validacion.json",
+    "bytes": 444,
+    "sha256": "208a33c65bd99b8b4f19cb89df6363e2c6037d998d58a40b4c2668cfaec56fbd",
+    "format": ".json",
+    "lines": 23,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 3
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/types-meta.json",
+    "bytes": 226,
+    "sha256": "afca3c0c288cae5831b7c4e1ba412f660f903b6ffafbb44ebfc1e13beaac1133",
+    "format": ".json",
+    "lines": 12,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 4
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/types.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "format": ".log",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/verificacion-final.json",
+    "bytes": 1063,
+    "sha256": "95f476c77007983372bfdf809dabb4fd2216dfef1aa123bd0c2fbc53dcfe817a",
+    "format": ".json",
+    "lines": 26,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 20
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/verify-final.cjs",
+    "bytes": 4263,
+    "sha256": "b1965dafbe8833fad066c95935c9f2dc0eadabf7170ed3d1253a33b28456320f",
+    "format": ".cjs",
+    "lines": 33,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/vite-audit.mjs",
+    "bytes": 321,
+    "sha256": "ec9b78e7435357fae27ee5cd22b547c44964eeb76fbf38a773edb72770cb4898",
+    "format": ".mjs",
+    "lines": 6,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/vitest-audit.mjs",
+    "bytes": 736,
+    "sha256": "edf034d77068f17c8ea8aad20fec894548b7ac258509f2e7188023aebcdf0763",
+    "format": ".mjs",
+    "lines": 7,
+    "mode": "Leído completo; texto/estructura analizados"
+  },
+  {
+    "path": "watsolution_web_reportes/evidencias/vitest-cache/results.json",
+    "bytes": 3654,
+    "sha256": "4cc857b6e2fc16a554633733016422bfaabd8783a7d0ef51bb3d4f3f18e10af8",
+    "format": ".json",
+    "lines": 1,
+    "mode": "Leído completo; texto/estructura analizados",
+    "jsonValid": true,
+    "items": 2
+  },
+  {
+    "path": "watsolution_web_reportes/INDICE.md",
+    "bytes": 2008,
+    "sha256": "f43b2dc61ea571ee080070382e74b113feeb7bd3995e8cb1fdc2ea352772519e",
+    "format": ".md",
+    "lines": 41,
+    "mode": "Leído completo; texto/estructura analizados"
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "fecha": "2026-10-05",
+  "commit_probado": "18c3bede4d514ff884e734af3c25c5353fe2c7c8",
+  "integracion_commit": "f66b6900bdfd2f38606b9a98e69728616bc31d15",
+  "arbol_integracion_identico": true,
+  "backend_local": {
+    "suites": 16,
+    "tests": 112,
+    "exit_code": 0,
+    "antes_actualizacion_dependencias": true
+  },
+  "frontend_final_local": {
+    "files": 41,
+    "tests": 203,
+    "exit_code": 0
+  },
+  "typescript_local_exit_code": 0,
+  "build_final_local_exit_code": 0,
+  "audit_produccion": {
+    "exit_code": 0,
+    "low": 3,
+    "moderate": 2,
+    "high": 0,
+    "critical": 0
+  },
+  "ci": {
+    "run_id": 37407868375,
+    "validate": "success",
+    "postgres_sessions": "success",
+    "backend_tests": 112,
+    "frontend_tests": 203,
+    "postgres_casos": 13
+  },
+  "ci_previos": [
+    {
+      "run_id": 37406942953,
+      "failure": "npm audit"
+    },
+    {
+      "run_id": 37407529270,
+      "failure": "vite build"
+    }
+  ],
+  "cierre_integral": false
+}

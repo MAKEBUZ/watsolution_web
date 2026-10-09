@@ -1,0 +1,16 @@
+[Nest] 7604  - 06/10/2026, 9:31:14 p.m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 7604  - 06/10/2026, 9:31:14 p.m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 7604  - 06/10/2026, 9:31:14 p.m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+FAIL server/integration/browser/session.browser.ts
+  ● Test suite failed to run
+
+    server/integration/browser/nginx-fixture.ts:21:56 - error TS2550: Property 'replaceAll' does not exist on type 'string'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2021' or later.
+
+    21     .replace('/usr/share/nginx/html', quoted(webDist)).replaceAll('${BACKEND_URL}', upstream);
+                                                              ~~~~~~~~~~
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        45.93 s
+Ran all test suites.

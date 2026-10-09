@@ -1,0 +1,12 @@
+
+changed 2 packages, and audited 1856 packages in 13s
+
+116 vulnerabilities (7 low, 19 moderate, 81 high, 9 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.

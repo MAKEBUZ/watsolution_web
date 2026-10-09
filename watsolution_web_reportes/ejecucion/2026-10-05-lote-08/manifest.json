@@ -1,0 +1,22 @@
+[
+  {
+    "archivo": "ci.json",
+    "sha256": "6af162c3e8ed2c38b9ceceda315a2c54466d1a0fa89d259bac6b28be6e38600a"
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "9df0347f9fad468ef3eb6397efb7cf2903d3f335fe56992d6168e70f09c6bc46"
+  },
+  {
+    "archivo": "integration-local.log",
+    "sha256": "9e3390df7918720dd8ae78cbadae09076e2473c606d670fa4c93599631ed4e03"
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "7fac5763d2806c4658978d5b6d66985ad6f6a66d95401305e489b0534ef40ba7"
+  },
+  {
+    "archivo": "../../25_ejecucion_sesiones_web.md",
+    "sha256": "088d44d50710ca70c3f5e0f90484f32395566e8e5c8b4fe26ce565ba6d41eca1"
+  }
+]

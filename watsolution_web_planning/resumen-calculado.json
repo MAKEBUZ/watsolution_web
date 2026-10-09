@@ -1,0 +1,187 @@
+{
+  "findings": 47,
+  "tasks": 77,
+  "totalHours": [
+    856,
+    1416
+  ],
+  "contingency20Percent": [
+    1028,
+    1700
+  ],
+  "aggregateCapacity": 120,
+  "aggregateEquivalentWeeks": [
+    7.13,
+    11.8
+  ],
+  "calendarRawWeeks": [
+    18.27,
+    30
+  ],
+  "calendarWithReserveWeeks": [
+    22,
+    36
+  ],
+  "byPhase": [
+    {
+      "phase": 0,
+      "name": "Preparación",
+      "count": 4,
+      "hours": [
+        36,
+        64
+      ],
+      "range": [
+        2.4,
+        4.27
+      ]
+    },
+    {
+      "phase": 1,
+      "name": "Contención inmediata",
+      "count": 10,
+      "hours": [
+        84,
+        140
+      ],
+      "range": [
+        2,
+        3.2
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Estabilización",
+      "count": 23,
+      "hours": [
+        296,
+        476
+      ],
+      "range": [
+        4.67,
+        7.33
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Consolidación",
+      "count": 33,
+      "hours": [
+        372,
+        616
+      ],
+      "range": [
+        6.8,
+        11.07
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Mejora continua",
+      "count": 7,
+      "hours": [
+        68,
+        120
+      ],
+      "range": [
+        2.4,
+        4.13
+      ]
+    }
+  ],
+  "byPriority": {
+    "P0": 12,
+    "P1": 16,
+    "P2": 47,
+    "P3": 2
+  },
+  "byOwner": [
+    {
+      "id": "BE",
+      "name": "Backend / líder técnico",
+      "hours": [
+        440,
+        712
+      ],
+      "weeklyCapacity": 60
+    },
+    {
+      "id": "FE",
+      "name": "Frontend Vue",
+      "hours": [
+        228,
+        380
+      ],
+      "weeklyCapacity": 30
+    },
+    {
+      "id": "QA",
+      "name": "QA / automatización",
+      "hours": [
+        72,
+        116
+      ],
+      "weeklyCapacity": 15
+    },
+    {
+      "id": "OPS",
+      "name": "DevOps / seguridad",
+      "hours": [
+        116,
+        208
+      ],
+      "weeklyCapacity": 15
+    }
+  ],
+  "criticalMin": {
+    "hours": 248,
+    "path": [
+      "T-001",
+      "T-002",
+      "T-004",
+      "T-014",
+      "T-015",
+      "T-018",
+      "T-019",
+      "T-020",
+      "T-038",
+      "T-039",
+      "T-040",
+      "T-041",
+      "T-042",
+      "T-059",
+      "T-061",
+      "T-068",
+      "T-070",
+      "T-074",
+      "T-076",
+      "T-077"
+    ]
+  },
+  "criticalMax": {
+    "hours": 404,
+    "path": [
+      "T-001",
+      "T-002",
+      "T-004",
+      "T-014",
+      "T-015",
+      "T-018",
+      "T-019",
+      "T-020",
+      "T-038",
+      "T-039",
+      "T-040",
+      "T-041",
+      "T-042",
+      "T-059",
+      "T-061",
+      "T-068",
+      "T-070",
+      "T-074",
+      "T-076",
+      "T-077"
+    ]
+  },
+  "highTaskCards": 21
+}

@@ -1,0 +1,131 @@
+[Nest] 2372  - 06/10/2026, 9:31:59 p.m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 2372  - 06/10/2026, 9:31:59 p.m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 2372  - 06/10/2026, 9:31:59 p.m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+FAIL server/integration/browser/session.browser.ts (8.385 s)
+  Chromium HTTPS sessions with PostgreSQL
+    × stores a host-only HttpOnly secure cookie without exposing refresh to page JavaScript (1 ms)
+    × renews after a reload using the browser-managed cookie and real session module
+    × serializes two tabs with navigator.locks and keeps the rotated family active
+    × clears the browser cookie and invalidates access in a second tab after server logout (1 ms)
+    × keeps unknown API responses separate from the SPA fallback
+    × rejects an untrusted Origin without revoking the valid session
+    × logs in through the actual Vue UI and restores identity after a protected-page reload
+    × removes protected content from both real UI tabs after logout and prevents reload recovery (1 ms)
+
+  ● Chromium HTTPS sessions with PostgreSQL › stores a host-only HttpOnly secure cookie without exposing refresh to page JavaScript
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › renews after a reload using the browser-managed cookie and real session module
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › serializes two tabs with navigator.locks and keeps the rotated family active
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › clears the browser cookie and invalidates access in a second tab after server logout
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › keeps unknown API responses separate from the SPA fallback
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › rejects an untrusted Origin without revoking the valid session
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › logs in through the actual Vue UI and restores identity after a protected-page reload
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › removes protected content from both real UI tabs after logout and prevents reload recovery
+
+    Explicit disposable TLS certificate required
+
+      60 |
+      61 |   beforeAll(async () => {
+    > 62 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      63 |     if (!process.env.TEST_WEB_DIST) throw new Error('Explicit application build directory required');
+      64 |     const webDist = resolve(process.env.TEST_WEB_DIST);
+      65 |     readFileSync(resolve(webDist, 'index.html'));
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:62:72)
+
+Test Suites: 1 failed, 1 total
+Tests:       8 failed, 8 total
+Snapshots:   0 total
+Time:        8.617 s
+Ran all test suites.

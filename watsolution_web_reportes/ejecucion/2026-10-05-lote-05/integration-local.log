@@ -1,0 +1,219 @@
+FAIL server/integration/session.integration.ts (13.802 s)
+  ● Session lifecycle on disposable PostgreSQL › revokes and cannot renew the revoked refresh
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at Object.<anonymous> (integration/session.integration.ts:13:37)
+
+  ● Session lifecycle on disposable PostgreSQL › does not revoke another family by guessing its id
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at Object.<anonymous> (integration/session.integration.ts:13:37)
+
+  ● Session lifecycle on disposable PostgreSQL › serializes concurrent rotation and logout, leaving no live family
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at Object.<anonymous> (integration/session.integration.ts:13:37)
+
+FAIL server/integration/billing.integration.ts (15.281 s)
+  ● Checkout, webhook, PDF and portal on PostgreSQL › gives twenty blocked simultaneous requests the same committed reference and amount
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/billing.integration.ts:25:41)
+
+  ● Checkout, webhook, PDF and portal on PostgreSQL › rejects an already paid invoice without assigning an order
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/billing.integration.ts:25:41)
+
+  ● Checkout, webhook, PDF and portal on PostgreSQL › preserves payment committed during download PDF upload
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/billing.integration.ts:25:41)
+
+  ● Checkout, webhook, PDF and portal on PostgreSQL › preserves payment committed during admin PDF upload
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/billing.integration.ts:25:41)
+
+  ● Checkout, webhook, PDF and portal on PostgreSQL › isolates a portal account whose login matches another owner id or email
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/billing.integration.ts:25:41)
+
+[Nest] 43024  - 05/10/2026, 3:37:26 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 43024  - 05/10/2026, 3:37:26 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 43024  - 05/10/2026, 3:37:26 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+[Nest] 43024  - 05/10/2026, 3:37:28 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 43024  - 05/10/2026, 3:37:28 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 43024  - 05/10/2026, 3:37:28 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+FAIL server/integration/financial-http.integration.ts
+  ● Financial routes with real guards and PostgreSQL › denies every generic write with ADMIN for PENDING and leaves rows unchanged
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/financial-http.integration.ts:38:41)
+
+  ● Financial routes with real guards and PostgreSQL › denies every generic write with ADMIN for ACTIVE_ORDER and leaves rows unchanged
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/financial-http.integration.ts:38:41)
+
+  ● Financial routes with real guards and PostgreSQL › denies every generic write with ADMIN for PAID and leaves rows unchanged
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/financial-http.integration.ts:38:41)
+
+  ● Financial routes with real guards and PostgreSQL › preserves JWT and role checks for generic and canonical writes
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/financial-http.integration.ts:38:41)
+
+  ● Financial routes with real guards and PostgreSQL › keeps confirmed mobile capture and canonical billing available and idempotent
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at createBillingFixture (integration/billing-fixture.ts:12:35)
+      at Object.<anonymous> (integration/financial-http.integration.ts:38:41)
+
+Test Suites: 3 failed, 3 total
+Tests:       13 failed, 13 total
+Snapshots:   0 total
+Time:        33.623 s
+Ran all test suites.

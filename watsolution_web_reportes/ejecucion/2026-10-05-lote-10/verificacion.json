@@ -1,0 +1,38 @@
+{
+  "fecha": "2026-10-05",
+  "commit_probado": "05df11fd2a2866c251bce3d675709c5b567695cf",
+  "integracion_commit": "9cf0b2cfd3c6c90035d0dedb0db8a3f1bf3a1411",
+  "rama_pruebas_commit": "26967507a12189bb9be0eb17ee87c256a1cdd219",
+  "browser_local_sin_certificado_exit_code": 1,
+  "browser_local_ejecutado": false,
+  "regresion_local_antes": {
+    "passed": 2,
+    "failed": 1
+  },
+  "frontend_local": {
+    "tests": 204,
+    "files": 41,
+    "exit_code": 0
+  },
+  "ci_inicial": {
+    "run_id": 37414407542,
+    "validate": "success",
+    "postgres_sessions": "failure",
+    "browser_passed": 5,
+    "browser_failed": 1
+  },
+  "ci": {
+    "run_id": 37414612969,
+    "validate": "success",
+    "postgres_sessions": "success",
+    "backend_tests": 112,
+    "frontend_tests": 204,
+    "postgres_casos": 27,
+    "chromium_https_casos": 6,
+    "recorridos_ui_real": 2
+  },
+  "certificado_autofirmado": true,
+  "ignoreHTTPSErrors": true,
+  "proxy_staging_verificados": false,
+  "cierre_integral": false
+}

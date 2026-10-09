@@ -1,0 +1,42 @@
+[
+  {
+    "archivo": "backend.log",
+    "sha256": "32f7c106088f0960f5476018ecdb5f4c5ae91a5dbd13090445583ade1a6a1735"
+  },
+  {
+    "archivo": "build.log",
+    "sha256": "91c758803f4574e612aa519096d54521208879a0c51fd4f9186f91563fc0449e"
+  },
+  {
+    "archivo": "ci.json",
+    "sha256": "24e0d3212a49ab0db8432b1e292800542fa7c8ad3acd9e73c46bb02976ec8e97"
+  },
+  {
+    "archivo": "crud-antes.log",
+    "sha256": "3bf9c4b4e27a69cb378bd38b8cf09317cc05880f1091dd2d3f261bd638588100"
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "e0c7ba4cf026556e029703ee2a69b35cdea94aaef15eca3988ef9b0144f90628"
+  },
+  {
+    "archivo": "frontend.log",
+    "sha256": "e01a84a490d3ee89d8be3d16614aa3ddc6451e32d45e6a5f5eea61cb7b09c4bd"
+  },
+  {
+    "archivo": "integration-local.log",
+    "sha256": "a370a4326f36769efe0d8ea6cc5cf6a03b1b1fe7a6734ca94045a9e889948e50"
+  },
+  {
+    "archivo": "typescript.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "31b0842c4424d6c0f9cd89f884b0c8997be44e7d2229e4c539e8538c2e4cda67"
+  },
+  {
+    "archivo": "../../22_ejecucion_contencion_financiera.md",
+    "sha256": "6993d1414b43ee11fd288e4fcca8a25b683a118f37901ce4fecd69def9b2ab6f"
+  }
+]

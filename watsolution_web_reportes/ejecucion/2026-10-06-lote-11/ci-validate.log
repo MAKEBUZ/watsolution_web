@@ -1,0 +1,834 @@
+﻿2026-10-07T02:32:20.8004305Z Current runner version: '2.337.0'
+2026-10-07T02:32:20.8031050Z ##[group]Runner Image Provisioner
+2026-10-07T02:32:20.8032153Z Hosted Compute Agent
+2026-10-07T02:32:20.8032784Z Version: 20260901.588
+2026-10-07T02:32:20.8033441Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-07T02:32:20.8034333Z Build Date: 2026-09-01T19:56:44Z
+2026-10-07T02:32:20.8035052Z Worker ID: {198fe397-8f72-4912-b401-b50abe5f8061}
+2026-10-07T02:32:20.8036108Z Azure Region: northcentralus
+2026-10-07T02:32:20.8036842Z ##[endgroup]
+2026-10-07T02:32:20.8038538Z ##[group]Operating System
+2026-10-07T02:32:20.8039346Z Ubuntu
+2026-10-07T02:32:20.8039925Z 24.04.5
+2026-10-07T02:32:20.8040527Z LTS
+2026-10-07T02:32:20.8041114Z ##[endgroup]
+2026-10-07T02:32:20.8041701Z ##[group]Runner Image
+2026-10-07T02:32:20.8042428Z Image: ubuntu-24.04
+2026-10-07T02:32:20.8043039Z Version: 20260927.320.1
+2026-10-07T02:32:20.8044435Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-07T02:32:20.8046308Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+2026-10-07T02:32:20.8047423Z ##[endgroup]
+2026-10-07T02:32:20.8048620Z ##[group]GITHUB_TOKEN Permissions
+2026-10-07T02:32:20.8050884Z Contents: read
+2026-10-07T02:32:20.8051566Z Metadata: read
+2026-10-07T02:32:20.8052578Z ##[endgroup]
+2026-10-07T02:32:20.8054701Z Secret source: Actions
+2026-10-07T02:32:20.8055882Z Cache mode: write
+2026-10-07T02:32:20.8056982Z Prepare workflow directory
+2026-10-07T02:32:20.8499607Z Prepare all required actions
+2026-10-07T02:32:20.8566503Z Getting action download info
+2026-10-07T02:32:21.1381976Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-07T02:32:21.2182155Z Download action repository 'actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-10-07T02:32:21.4578314Z Complete job name: validate
+2026-10-07T02:32:21.5350189Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-07T02:32:21.5351212Z with:
+2026-10-07T02:32:21.5351674Z   persist-credentials: false
+2026-10-07T02:32:21.5352221Z   repository: MAKEBUZ/watsolution_web
+2026-10-07T02:32:21.5356652Z   token: ***
+2026-10-07T02:32:21.5357117Z   ssh-strict: true
+2026-10-07T02:32:21.5357575Z   ssh-user: git
+2026-10-07T02:32:21.5358002Z   clean: true
+2026-10-07T02:32:21.5358453Z   sparse-checkout-cone-mode: true
+2026-10-07T02:32:21.5358984Z   fetch-depth: 1
+2026-10-07T02:32:21.5359415Z   fetch-tags: false
+2026-10-07T02:32:21.5359870Z   show-progress: true
+2026-10-07T02:32:21.5360323Z   lfs: false
+2026-10-07T02:32:21.5360738Z   submodules: false
+2026-10-07T02:32:21.5361194Z   set-safe-directory: true
+2026-10-07T02:32:21.5361701Z   allow-unsafe-pr-checkout: false
+2026-10-07T02:32:21.5362425Z ##[endgroup]
+2026-10-07T02:32:21.6379368Z Syncing repository: MAKEBUZ/watsolution_web
+2026-10-07T02:32:21.6382142Z ##[group]Getting Git version info
+2026-10-07T02:32:21.6383428Z Working directory is '/home/runner/work/watsolution_web/watsolution_web'
+2026-10-07T02:32:21.6385184Z [command]/usr/bin/git version
+2026-10-07T02:32:21.6453902Z git version 2.55.0
+2026-10-07T02:32:21.6475263Z ##[endgroup]
+2026-10-07T02:32:21.6488379Z Temporarily overriding HOME='/home/runner/work/_temp/18b95730-3b11-4d4d-b976-ba849bc3a923' before making global git config changes
+2026-10-07T02:32:21.6490626Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-07T02:32:21.6494392Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/watsolution_web/watsolution_web
+2026-10-07T02:32:21.6541516Z Deleting the contents of '/home/runner/work/watsolution_web/watsolution_web'
+2026-10-07T02:32:21.6544975Z ##[group]Determining repository object format
+2026-10-07T02:32:21.6546968Z ##[endgroup]
+2026-10-07T02:32:21.6548067Z ##[group]Initializing the repository
+2026-10-07T02:32:21.6551194Z [command]/usr/bin/git init /home/runner/work/watsolution_web/watsolution_web
+2026-10-07T02:32:21.6638169Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-07T02:32:21.6639779Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-07T02:32:21.6641905Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-07T02:32:21.6643112Z hint: call:
+2026-10-07T02:32:21.6643726Z hint:
+2026-10-07T02:32:21.6644500Z hint: 	git config --global init.defaultBranch <name>
+2026-10-07T02:32:21.6645461Z hint:
+2026-10-07T02:32:21.6646560Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-07T02:32:21.6648072Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-07T02:32:21.6649242Z hint:
+2026-10-07T02:32:21.6650017Z hint: 	git branch -m <name>
+2026-10-07T02:32:21.6650762Z hint:
+2026-10-07T02:32:21.6651736Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-07T02:32:21.6653269Z Initialized empty Git repository in /home/runner/work/watsolution_web/watsolution_web/.git/
+2026-10-07T02:32:21.6655068Z [command]/usr/bin/git remote add origin https://github.com/MAKEBUZ/watsolution_web
+2026-10-07T02:32:21.6699425Z ##[endgroup]
+2026-10-07T02:32:21.6700670Z ##[group]Disabling automatic garbage collection
+2026-10-07T02:32:21.6702247Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-07T02:32:21.6736996Z ##[endgroup]
+2026-10-07T02:32:21.6738080Z ##[group]Setting up auth
+2026-10-07T02:32:21.6739046Z Removing SSH command configuration
+2026-10-07T02:32:21.6742787Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-07T02:32:21.6780337Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-07T02:32:21.7128978Z Removing HTTP extra header
+2026-10-07T02:32:21.7135383Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-07T02:32:21.7175203Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-07T02:32:21.7429854Z Removing includeIf entries pointing to credentials config files
+2026-10-07T02:32:21.7435883Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-07T02:32:21.7473433Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-07T02:32:21.7738726Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-07T02:32:21.7781715Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path /home/runner/work/_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:21.7818934Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:21.7858874Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:21.7896900Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:21.7930893Z ##[endgroup]
+2026-10-07T02:32:21.7931646Z ##[group]Fetching the repository
+2026-10-07T02:32:21.7937819Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +cb632deb8efc3d2400128ef68c6425c1081736d7:refs/remotes/origin/test/nginx-https-sessions
+2026-10-07T02:32:22.2574728Z From https://github.com/MAKEBUZ/watsolution_web
+2026-10-07T02:32:22.2577420Z  * [new ref]         cb632deb8efc3d2400128ef68c6425c1081736d7 -> origin/test/nginx-https-sessions
+2026-10-07T02:32:22.2586866Z [command]/usr/bin/git branch --list --remote origin/test/nginx-https-sessions
+2026-10-07T02:32:22.2702599Z   origin/test/nginx-https-sessions
+2026-10-07T02:32:22.2705359Z [command]/usr/bin/git rev-parse refs/remotes/origin/test/nginx-https-sessions
+2026-10-07T02:32:22.2707053Z cb632deb8efc3d2400128ef68c6425c1081736d7
+2026-10-07T02:32:22.2710634Z ##[endgroup]
+2026-10-07T02:32:22.2711889Z ##[group]Determining the checkout info
+2026-10-07T02:32:22.2713244Z ##[endgroup]
+2026-10-07T02:32:22.2714076Z [command]/usr/bin/git sparse-checkout disable
+2026-10-07T02:32:22.2729682Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-07T02:32:22.2769386Z ##[group]Checking out the ref
+2026-10-07T02:32:22.2774015Z [command]/usr/bin/git checkout --progress --force -B test/nginx-https-sessions refs/remotes/origin/test/nginx-https-sessions
+2026-10-07T02:32:22.3123004Z Switched to a new branch 'test/nginx-https-sessions'
+2026-10-07T02:32:22.3130206Z branch 'test/nginx-https-sessions' set up to track 'origin/test/nginx-https-sessions'.
+2026-10-07T02:32:22.3182610Z ##[endgroup]
+2026-10-07T02:32:22.3186189Z [command]/usr/bin/git log -1 --format=%H
+2026-10-07T02:32:22.3217689Z cb632deb8efc3d2400128ef68c6425c1081736d7
+2026-10-07T02:32:22.3226871Z ##[group]Removing auth
+2026-10-07T02:32:22.3227595Z Removing SSH command configuration
+2026-10-07T02:32:22.3230725Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-07T02:32:22.3269613Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-07T02:32:22.3521563Z Removing HTTP extra header
+2026-10-07T02:32:22.3524947Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-07T02:32:22.3562696Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-07T02:32:22.3801874Z Removing includeIf entries pointing to credentials config files
+2026-10-07T02:32:22.3805081Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-07T02:32:22.3838204Z includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path
+2026-10-07T02:32:22.3840877Z includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path
+2026-10-07T02:32:22.3842861Z includeif.gitdir:/github/workspace/.git.path
+2026-10-07T02:32:22.3844204Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-07T02:32:22.3848816Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path
+2026-10-07T02:32:22.3878897Z /home/runner/work/_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:22.3892073Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-6a26c5fe\-9e46\-483f\-9dec\-0369a21e48eb\.config
+2026-10-07T02:32:22.3933261Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path
+2026-10-07T02:32:22.3995325Z /home/runner/work/_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:22.4005572Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-6a26c5fe\-9e46\-483f\-9dec\-0369a21e48eb\.config
+2026-10-07T02:32:22.4046209Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-07T02:32:22.4098267Z /github/runner_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:22.4119742Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-6a26c5fe\-9e46\-483f\-9dec\-0369a21e48eb\.config
+2026-10-07T02:32:22.4166878Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-07T02:32:22.4195295Z /github/runner_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config
+2026-10-07T02:32:22.4203407Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-6a26c5fe\-9e46\-483f\-9dec\-0369a21e48eb\.config
+2026-10-07T02:32:22.4242519Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-07T02:32:22.4481865Z Removing credentials config '/home/runner/work/_temp/git-credentials-6a26c5fe-9e46-483f-9dec-0369a21e48eb.config'
+2026-10-07T02:32:22.4489957Z ##[endgroup]
+2026-10-07T02:32:22.4822176Z ##[group]Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+2026-10-07T02:32:22.4823415Z with:
+2026-10-07T02:32:22.4823916Z   node-version: 24
+2026-10-07T02:32:22.4824476Z   cache: npm
+2026-10-07T02:32:22.4825000Z   check-latest: false
+2026-10-07T02:32:22.4834355Z   token: ***
+2026-10-07T02:32:22.4834953Z   package-manager-cache: true
+2026-10-07T02:32:22.4835761Z ##[endgroup]
+2026-10-07T02:32:22.6329141Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-07T02:32:22.6331500Z ##[group]Environment details
+2026-10-07T02:32:22.9757789Z node: v24.21.0
+2026-10-07T02:32:22.9758167Z npm: 11.19.0
+2026-10-07T02:32:22.9758450Z yarn: 1.22.22
+2026-10-07T02:32:22.9759255Z ##[endgroup]
+2026-10-07T02:32:22.9776955Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+2026-10-07T02:32:23.0842547Z /home/runner/.npm
+2026-10-07T02:32:23.2097876Z npm cache is not found
+2026-10-07T02:32:23.2243137Z ##[group]Run npm ci --ignore-scripts --no-fund
+2026-10-07T02:32:23.2243645Z [36;1mnpm ci --ignore-scripts --no-fund[0m
+2026-10-07T02:32:23.2481637Z shell: /usr/bin/bash -e {0}
+2026-10-07T02:32:23.2481989Z ##[endgroup]
+2026-10-07T02:32:27.7901033Z npm warn deprecated supertest@7.1.0: Please upgrade to supertest v7.1.3+, see release notes at https://github.com/forwardemail/supertest/releases/tag/v7.1.3 - maintenance is supported by Forward Email @ https://forwardemail.net
+2026-10-07T02:32:28.4768815Z npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+2026-10-07T02:32:29.0213180Z npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:29.3376054Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2026-10-07T02:32:29.6460362Z npm warn deprecated superagent@9.0.2: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
+2026-10-07T02:32:33.8838188Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:33.9582882Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:34.2229635Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:35.0239702Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:35.7552358Z npm warn deprecated glob@11.0.1: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:36.7645526Z npm warn deprecated popper.js@1.16.1: You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1
+2026-10-07T02:32:37.3297903Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.4540646Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.4827057Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.5029006Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.5743833Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.6253984Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.6845120Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.7327137Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.8825199Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.9259936Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.9420605Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.9624133Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.9687571Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:37.9911666Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-07T02:32:39.3428303Z npm warn deprecated bootstrap@4.6.2: This version of Bootstrap is no longer supported. Please upgrade to the latest version.
+2026-10-07T02:32:41.2061767Z npm warn deprecated vue@2.7.16: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
+2026-10-07T02:34:12.2849221Z 
+2026-10-07T02:34:12.2850061Z added 1846 packages, and audited 1849 packages in 2m
+2026-10-07T02:34:12.5888346Z 
+2026-10-07T02:34:12.5889187Z 115 vulnerabilities (8 low, 19 moderate, 79 high, 9 critical)
+2026-10-07T02:34:12.5889568Z 
+2026-10-07T02:34:12.5889792Z To address issues that do not require attention, run:
+2026-10-07T02:34:12.5890790Z   npm audit fix
+2026-10-07T02:34:12.5890928Z 
+2026-10-07T02:34:12.5891154Z To address all issues (including breaking changes), run:
+2026-10-07T02:34:12.5891503Z   npm audit fix --force
+2026-10-07T02:34:12.5891665Z 
+2026-10-07T02:34:12.5891821Z Run `npm audit` for details.
+2026-10-07T02:34:12.7117687Z ##[group]Run npm audit --omit=dev --audit-level=high
+2026-10-07T02:34:12.7118103Z [36;1mnpm audit --omit=dev --audit-level=high[0m
+2026-10-07T02:34:12.7196443Z shell: /usr/bin/bash -e {0}
+2026-10-07T02:34:12.7196721Z ##[endgroup]
+2026-10-07T02:34:13.7806426Z # npm audit report
+2026-10-07T02:34:13.7806715Z 
+2026-10-07T02:34:13.7806911Z js-yaml  5.0.0 - 5.4.0
+2026-10-07T02:34:13.7807328Z Severity: moderate
+2026-10-07T02:34:13.7808472Z js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources - https://github.com/advisories/GHSA-r3ph-w7gj-g6xm
+2026-10-07T02:34:13.7809546Z fix available via `npm audit fix --force`
+2026-10-07T02:34:13.7810269Z Will install @nestjs/swagger@12.0.2, which is a breaking change
+2026-10-07T02:34:13.7811274Z node_modules/@nestjs/swagger/node_modules/js-yaml
+2026-10-07T02:34:13.7811844Z   @nestjs/swagger  11.4.6 - 12.0.0
+2026-10-07T02:34:13.7812330Z   Depends on vulnerable versions of js-yaml
+2026-10-07T02:34:13.7812922Z   node_modules/@nestjs/swagger
+2026-10-07T02:34:13.7813183Z 
+2026-10-07T02:34:13.7813368Z vue  2.0.0-alpha.1 - 2.7.16
+2026-10-07T02:34:13.7814834Z ReDoS vulnerability in vue package that is exploitable through inefficient regex evaluation in the parseHTML function - https://github.com/advisories/GHSA-5j4c-8p2g-v4jx
+2026-10-07T02:34:13.7816386Z fix available via `npm audit fix --force`
+2026-10-07T02:34:13.7817089Z Will install bootstrap-vue@1.5.1, which is a breaking change
+2026-10-07T02:34:13.7817776Z node_modules/bootstrap-vue/node_modules/vue
+2026-10-07T02:34:13.7818308Z   portal-vue  2.0.0-beta.0 - 2.1.7
+2026-10-07T02:34:13.7818795Z   Depends on vulnerable versions of vue
+2026-10-07T02:34:13.7819324Z   node_modules/bootstrap-vue/node_modules/portal-vue
+2026-10-07T02:34:13.7820162Z     bootstrap-vue  >=2.0.0-rc.0
+2026-10-07T02:34:13.7820613Z     Depends on vulnerable versions of portal-vue
+2026-10-07T02:34:13.7821131Z     node_modules/bootstrap-vue
+2026-10-07T02:34:13.7821391Z 
+2026-10-07T02:34:13.7821622Z 5 vulnerabilities (3 low, 2 moderate)
+2026-10-07T02:34:13.7821871Z 
+2026-10-07T02:34:13.7822329Z To address all issues (including breaking changes), run:
+2026-10-07T02:34:13.7822793Z   npm audit fix --force
+2026-10-07T02:34:13.7968931Z ##[group]Run node node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit
+2026-10-07T02:34:13.7969577Z [36;1mnode node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit[0m
+2026-10-07T02:34:13.8038125Z shell: /usr/bin/bash -e {0}
+2026-10-07T02:34:13.8038395Z ##[endgroup]
+2026-10-07T02:34:16.3739665Z ##[group]Run node node_modules/jest/bin/jest.js --config server/package.json --runInBand
+2026-10-07T02:34:16.3740286Z [36;1mnode node_modules/jest/bin/jest.js --config server/package.json --runInBand[0m
+2026-10-07T02:34:16.3811739Z shell: /usr/bin/bash -e {0}
+2026-10-07T02:34:16.3812016Z ##[endgroup]
+2026-10-07T02:34:19.1858163Z ts-jest[ts-jest-transformer] (WARN) Got a `.js` file to compile while `allowJs` option is not set to `true` (file: /home/runner/work/watsolution_web/watsolution_web/server/e2e/setup.test.js). To fix this:
+2026-10-07T02:34:19.1860227Z   - if you want TypeScript to process JS files, set `allowJs` to `true` in your TypeScript config (usually tsconfig.json)
+2026-10-07T02:34:19.1862005Z   - if you do not want TypeScript to process your `.js` files, in your Jest config change the `transform` key which value is `ts-jest` so that it does not match `.js` files anymore
+2026-10-07T02:34:20.8899173Z PASS server/src/service/invoice-pdf-isolation.spec.ts
+2026-10-07T02:34:20.8901148Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:20 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-07T02:34:20.8903064Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:20 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-07T02:34:20.8905394Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:20 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-07T02:34:21.0737402Z PASS server/src/service/bold-order.spec.ts
+2026-10-07T02:34:21.5596652Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-07T02:34:21.5598428Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-07T02:34:21.5600071Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-07T02:34:21.5838830Z PASS server/src/web/rest/session.controller.spec.ts
+2026-10-07T02:34:21.7998646Z PASS server/src/service/portal.service.spec.ts
+2026-10-07T02:34:21.9038287Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-07T02:34:21.9039434Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-07T02:34:21.9040835Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-07T02:34:21.9042746Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[PortalService] [39m[32mPortal data loaded: invoices=0, consumption=0, status=ACTIVO[39m
+2026-10-07T02:34:21.9044736Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[PortalService] [39m[32mPortal data loaded: invoices=0, consumption=0, status=ACTIVO[39m
+2026-10-07T02:34:21.9046969Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:21 AM [32m    LOG[39m [38;5;3m[PortalService] [39m[32mPortal data loaded: invoices=0, consumption=0, status=ACTIVO[39m
+2026-10-07T02:34:21.9048020Z PASS server/src/service/session.service.spec.ts
+2026-10-07T02:34:22.1272162Z PASS server/src/security/security-baseline.spec.ts
+2026-10-07T02:34:22.2657300Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:22 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-07T02:34:22.2659586Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:22 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-07T02:34:22.2661491Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:22 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-07T02:34:22.2662495Z PASS server/src/service/bold.service.spec.ts
+2026-10-07T02:34:22.3760128Z PASS server/src/service/mobile.service.spec.ts
+2026-10-07T02:34:22.9617577Z PASS server/src/security/postgres-target.spec.ts
+2026-10-07T02:34:23.1726808Z PASS server/src/service/financial-crud.spec.ts
+2026-10-07T02:34:23.2031962Z PASS server/src/domain/base/pagination.entity.spec.ts
+2026-10-07T02:34:23.3995469Z PASS server/src/service/privacy.spec.ts
+2026-10-07T02:34:23.5190522Z PASS server/src/service/billing.service.spec.ts
+2026-10-07T02:34:23.6836670Z PASS server/src/security/passport.jwt.strategy.spec.ts
+2026-10-07T02:34:23.7568066Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:23 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-07T02:34:23.7569198Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:23 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-07T02:34:23.7570585Z [32m[Nest] 2514  - [39m10/07/2026, 2:34:23 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-07T02:34:23.7571466Z PASS server/src/web/rest/tank-level.gateway.spec.ts
+2026-10-07T02:34:23.8397948Z PASS server/test/admin/management.controller.spec.ts
+2026-10-07T02:34:23.8409333Z 
+2026-10-07T02:34:23.8417820Z Test Suites: 16 passed, 16 total
+2026-10-07T02:34:23.8418383Z Tests:       112 passed, 112 total
+2026-10-07T02:34:23.8418847Z Snapshots:   0 total
+2026-10-07T02:34:23.8419215Z Time:        7.157 s
+2026-10-07T02:34:23.8419572Z Ran all test suites.
+2026-10-07T02:34:24.0360837Z ##[group]Run node ../node_modules/vitest/vitest.mjs run
+2026-10-07T02:34:24.0361256Z [36;1mnode ../node_modules/vitest/vitest.mjs run[0m
+2026-10-07T02:34:24.0428818Z shell: /usr/bin/bash -e {0}
+2026-10-07T02:34:24.0429082Z ##[endgroup]
+2026-10-07T02:34:24.6072722Z 
+2026-10-07T02:34:24.6074261Z [1m[7m[36m RUN [39m[27m[22m [36mv3.0.9 [39m[90m/home/runner/work/watsolution_web/watsolution_web/client/src[39m
+2026-10-07T02:34:24.6074862Z 
+2026-10-07T02:34:25.5845569Z  [32m✓[39m app/entities/meter/meter.service.spec.ts [2m([22m[2m12 tests[22m[2m)[22m[90m 18[2mms[22m[39m
+2026-10-07T02:34:25.5867525Z  [32m✓[39m app/entities/invoice/invoice.service.spec.ts [2m([22m[2m12 tests[22m[2m)[22m[90m 20[2mms[22m[39m
+2026-10-07T02:34:25.7154632Z  [32m✓[39m app/entities/invoice/invoice.component.spec.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 126[2mms[22m[39m
+2026-10-07T02:34:26.3818025Z [2m2:34:26 AM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [33mwarning: <span> cannot be child of <table>, according to HTML specifications. This can cause hydration errors or potentially disrupt future functionality.
+2026-10-07T02:34:26.3819508Z 85 |            </tr>
+2026-10-07T02:34:26.3850483Z 86 |          </tbody>
+2026-10-07T02:34:26.3851048Z 87 |          <span ref="infiniteScrollEl"></span>
+2026-10-07T02:34:26.3852108Z    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-07T02:34:26.3852572Z 88 |        </table>
+2026-10-07T02:34:26.3853092Z 89 |      </div>[39m
+2026-10-07T02:34:26.3853515Z   Plugin: [35mvite:vue[39m
+2026-10-07T02:34:26.3854548Z   File: [36m/home/runner/work/watsolution_web/watsolution_web/client/src/app/entities/meter/meter.vue[39m
+2026-10-07T02:34:26.3856282Z  [32m✓[39m app/entities/person/person.service.spec.ts [2m([22m[2m12 tests[22m[2m)[22m[90m 17[2mms[22m[39m
+2026-10-07T02:34:26.4407100Z  [32m✓[39m app/shared/alert/alert.service.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 15[2mms[22m[39m
+2026-10-07T02:34:26.5805203Z  [32m✓[39m app/entities/meter/meter.component.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 124[2mms[22m[39m
+2026-10-07T02:34:27.4349911Z  [32m✓[39m app/entities/meter/meter-update.component.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 163[2mms[22m[39m
+2026-10-07T02:34:27.4482189Z  [32m✓[39m app/entities/person/person-update.component.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 119[2mms[22m[39m
+2026-10-07T02:34:27.4490505Z  [32m✓[39m app/entities/invoice/invoice-update.component.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 168[2mms[22m[39m
+2026-10-07T02:34:28.2444024Z  [32m✓[39m app/account/register/register.component.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 99[2mms[22m[39m
+2026-10-07T02:34:28.2446166Z  [32m✓[39m app/entities/address/address.service.spec.ts [2m([22m[2m12 tests[22m[2m)[22m[90m 16[2mms[22m[39m
+2026-10-07T02:34:28.4150819Z  [32m✓[39m app/admin/user-management/user-management-edit.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 110[2mms[22m[39m
+2026-10-07T02:34:29.0094772Z [2m2:34:29 AM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [33mwarning: <span> cannot be child of <table>, according to HTML specifications. This can cause hydration errors or potentially disrupt future functionality.
+2026-10-07T02:34:29.0095996Z 108|            </tr>
+2026-10-07T02:34:29.0096254Z 109|          </tbody>
+2026-10-07T02:34:29.0096576Z 110|          <span ref="infiniteScrollEl"></span>
+2026-10-07T02:34:29.0096920Z    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-07T02:34:29.0097211Z 111|        </table>
+2026-10-07T02:34:29.0097517Z 112|      </div>[39m
+2026-10-07T02:34:29.0097798Z   Plugin: [35mvite:vue[39m
+2026-10-07T02:34:29.0098435Z   File: [36m/home/runner/work/watsolution_web/watsolution_web/client/src/app/entities/person/person.vue[39m
+2026-10-07T02:34:29.0497971Z Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+2026-10-07T02:34:29.0500634Z   npx update-browserslist-db@latest
+2026-10-07T02:34:29.0501477Z   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-10-07T02:34:29.2057882Z  [32m✓[39m app/entities/person/person.component.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 105[2mms[22m[39m
+2026-10-07T02:34:29.2336629Z  [32m✓[39m app/core/chatbot/chatbot.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 142[2mms[22m[39m
+2026-10-07T02:34:29.3128704Z  [32m✓[39m app/entities/address/address-update.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 111[2mms[22m[39m
+2026-10-07T02:34:29.9826201Z  [32m✓[39m app/shared/data/data-utils.service.spec.ts [2m([22m[2m14 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+2026-10-07T02:34:30.0146437Z  [32m✓[39m app/account/account.service.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 28[2mms[22m[39m
+2026-10-07T02:34:30.1232002Z  [32m✓[39m app/account/login-form/login-form.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 48[2mms[22m[39m
+2026-10-07T02:34:30.8466460Z  [32m✓[39m app/shared/config/store/logout.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 23[2mms[22m[39m
+2026-10-07T02:34:30.8618170Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould not have user data set
+2026-10-07T02:34:30.8637000Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8657520Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8658933Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8659586Z   at <VTUROOT>
+2026-10-07T02:34:30.8659927Z 
+2026-10-07T02:34:30.8699887Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould not have user data set
+2026-10-07T02:34:30.8704824Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8706835Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8708104Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8708752Z   at <VTUROOT>
+2026-10-07T02:34:30.8709109Z 
+2026-10-07T02:34:30.8867047Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould have user data set after authentication
+2026-10-07T02:34:30.8870733Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8872384Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8873609Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8874260Z   at <VTUROOT>
+2026-10-07T02:34:30.8874695Z 
+2026-10-07T02:34:30.8876308Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould have user data set after authentication
+2026-10-07T02:34:30.8878016Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8879548Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8880757Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8881406Z   at <VTUROOT>
+2026-10-07T02:34:30.8881796Z 
+2026-10-07T02:34:30.8883203Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould have user data set after authentication
+2026-10-07T02:34:30.8884840Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8886557Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8892686Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8893366Z   at <VTUROOT>
+2026-10-07T02:34:30.8894159Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8896288Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8897559Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8898191Z   at <VTUROOT>
+2026-10-07T02:34:30.8898580Z 
+2026-10-07T02:34:30.8900040Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould have profile info set after info retrieved
+2026-10-07T02:34:30.8901714Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8903218Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8904404Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8905030Z   at <VTUROOT>
+2026-10-07T02:34:30.8905417Z 
+2026-10-07T02:34:30.8911043Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould have profile info set after info retrieved
+2026-10-07T02:34:30.8912809Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.8914381Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.8915882Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.8916892Z   at <VTUROOT>
+2026-10-07T02:34:30.8917339Z 
+2026-10-07T02:34:30.8967723Z  [32m✓[39m app/admin/user-management/user-management.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 84[2mms[22m[39m
+2026-10-07T02:34:30.8996687Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould use login service
+2026-10-07T02:34:30.9026876Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9032893Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9034266Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9045250Z   at <VTUROOT>
+2026-10-07T02:34:30.9045847Z 
+2026-10-07T02:34:30.9047402Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould use login service
+2026-10-07T02:34:30.9048892Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9050375Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9051733Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9052353Z   at <VTUROOT>
+2026-10-07T02:34:30.9053016Z 
+2026-10-07T02:34:30.9166814Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould use account service
+2026-10-07T02:34:30.9179839Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9192180Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9193295Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9193957Z   at <VTUROOT>
+2026-10-07T02:34:30.9194386Z 
+2026-10-07T02:34:30.9195825Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould use account service
+2026-10-07T02:34:30.9197276Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9198580Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9199574Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9200033Z   at <VTUROOT>
+2026-10-07T02:34:30.9200222Z 
+2026-10-07T02:34:30.9201319Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould use account service
+2026-10-07T02:34:30.9202666Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9204281Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9205296Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9205970Z   at <VTUROOT>
+2026-10-07T02:34:30.9206171Z 
+2026-10-07T02:34:30.9207291Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mlogout should clear credentials
+2026-10-07T02:34:30.9208649Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9209916Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9210930Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9211354Z   at <VTUROOT>
+2026-10-07T02:34:30.9211527Z 
+2026-10-07T02:34:30.9212642Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mlogout should clear credentials
+2026-10-07T02:34:30.9214063Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9215471Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9218330Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9219107Z   at <VTUROOT>
+2026-10-07T02:34:30.9219309Z 
+2026-10-07T02:34:30.9458026Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mlogout should clear credentials
+2026-10-07T02:34:30.9477233Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9479150Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9480552Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9481228Z   at <VTUROOT>
+2026-10-07T02:34:30.9482054Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9483533Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9484719Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9485362Z   at <VTUROOT>
+2026-10-07T02:34:30.9486652Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9497877Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9499279Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9502271Z   at <VTUROOT>
+2026-10-07T02:34:30.9503152Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9504627Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9506004Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9506663Z   at <VTUROOT>
+2026-10-07T02:34:30.9507434Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9508813Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9510004Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9510623Z   at <VTUROOT>
+2026-10-07T02:34:30.9511346Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9512754Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9513948Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9514602Z   at <VTUROOT>
+2026-10-07T02:34:30.9515079Z 
+2026-10-07T02:34:30.9541939Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould determine active route
+2026-10-07T02:34:30.9547050Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9549127Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9550453Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9551121Z   at <VTUROOT>
+2026-10-07T02:34:30.9551576Z 
+2026-10-07T02:34:30.9552877Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould determine active route
+2026-10-07T02:34:30.9554556Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9556362Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9557651Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9558326Z   at <VTUROOT>
+2026-10-07T02:34:30.9558761Z 
+2026-10-07T02:34:30.9560094Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould determine active route
+2026-10-07T02:34:30.9565321Z [22m[39m[Vue Router warn]: No match found for location with path "/toto"
+2026-10-07T02:34:30.9567666Z 
+2026-10-07T02:34:30.9601060Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould call translationService when changing language
+2026-10-07T02:34:30.9607877Z [22m[39m[Vue Router warn]: No match found for location with path "/toto"
+2026-10-07T02:34:30.9611173Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9612537Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9613494Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9613906Z   at <VTUROOT>
+2026-10-07T02:34:30.9614103Z 
+2026-10-07T02:34:30.9615383Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould call translationService when changing language
+2026-10-07T02:34:30.9616891Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9618188Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9619190Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9619618Z   at <VTUROOT>
+2026-10-07T02:34:30.9619809Z 
+2026-10-07T02:34:30.9650346Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould check for correct language
+2026-10-07T02:34:30.9652154Z [22m[39m[Vue Router warn]: No match found for location with path "/toto"
+2026-10-07T02:34:30.9653587Z [Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9655205Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9656672Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9658893Z   at <VTUROOT>
+2026-10-07T02:34:30.9659353Z 
+2026-10-07T02:34:30.9660783Z [90mstderr[2m | app/core/jhi-navbar/jhi-navbar.component.spec.ts[2m > [22m[2mJhiNavbar[2m > [22m[2mshould check for correct language
+2026-10-07T02:34:30.9662494Z [22m[39m[Vue warn]: Failed to resolve component: b-dropdown-divider
+2026-10-07T02:34:30.9664080Z If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+2026-10-07T02:34:30.9665352Z   at <JhiNavbar ref="VTU_COMPONENT" > 
+2026-10-07T02:34:30.9666288Z   at <VTUROOT>
+2026-10-07T02:34:30.9666683Z 
+2026-10-07T02:34:30.9689345Z  [32m✓[39m app/core/jhi-navbar/jhi-navbar.component.spec.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 141[2mms[22m[39m
+2026-10-07T02:34:31.8719922Z  [32m✓[39m app/entities/address/address.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 49[2mms[22m[39m
+2026-10-07T02:34:31.9720895Z  [32m✓[39m app/app-session.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 47[2mms[22m[39m
+2026-10-07T02:34:32.1020754Z  [32m✓[39m app/views/admin/operational-data.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 115[2mms[22m[39m
+2026-10-07T02:34:32.7062225Z  [32m✓[39m app/core/error/error.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 40[2mms[22m[39m
+2026-10-07T02:34:32.7311901Z  [32m✓[39m app/account/settings/settings.component.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 55[2mms[22m[39m
+2026-10-07T02:34:32.9998370Z  [32m✓[39m app/account/change-password/change-password.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 65[2mms[22m[39m
+2026-10-07T02:34:33.5017159Z  [32m✓[39m app/entities/invoice/invoice-details.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 50[2mms[22m[39m
+2026-10-07T02:34:33.5585534Z  [32m✓[39m app/entities/address/address-details.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 41[2mms[22m[39m
+2026-10-07T02:34:33.8015161Z  [32m✓[39m app/entities/person/person-details.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 36[2mms[22m[39m
+2026-10-07T02:34:34.3209518Z  [32m✓[39m app/entities/meter/meter-details.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 44[2mms[22m[39m
+2026-10-07T02:34:34.3920698Z  [32m✓[39m app/admin/user-management/user-management-view.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[90m 30[2mms[22m[39m
+2026-10-07T02:34:34.5466684Z  [32m✓[39m app/shared/config/axios-interceptor.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 22[2mms[22m[39m
+2026-10-07T02:34:35.1108745Z  [32m✓[39m app/account/activate/activate.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 38[2mms[22m[39m
+2026-10-07T02:34:35.1984759Z [90mstderr[2m | app/account/account-html.spec.ts[2m > [22m[2mAccount names are text (T-012 / WS-011)[2m > [22m[2mdoes not create HTML elements in settings title
+2026-10-07T02:34:35.1987133Z [22m[39m[Vue warn]: Component "i18n-t" has already been registered in target app.
+2026-10-07T02:34:35.1988362Z [Vue warn]: Component "I18nT" has already been registered in target app.
+2026-10-07T02:34:35.1989563Z [Vue warn]: Component "i18n-n" has already been registered in target app.
+2026-10-07T02:34:35.1990669Z [Vue warn]: Component "I18nN" has already been registered in target app.
+2026-10-07T02:34:35.1991804Z [Vue warn]: Component "i18n-d" has already been registered in target app.
+2026-10-07T02:34:35.1992947Z [Vue warn]: Component "I18nD" has already been registered in target app.
+2026-10-07T02:34:35.1994041Z [Vue warn]: Directive "t" has already been registered in target app.
+2026-10-07T02:34:35.1994630Z 
+2026-10-07T02:34:35.2076622Z [90mstderr[2m | app/account/account-html.spec.ts[2m > [22m[2mAccount names are text (T-012 / WS-011)[2m > [22m[2mdoes not create HTML elements in password title
+2026-10-07T02:34:35.2107175Z [22m[39m[Vue warn]: Component "i18n-t" has already been registered in target app.
+2026-10-07T02:34:35.2174369Z [Vue warn]: Component "I18nT" has already been registered in target app.
+2026-10-07T02:34:35.2175837Z [Vue warn]: Component "i18n-n" has already been registered in target app.
+2026-10-07T02:34:35.2177000Z [Vue warn]: Component "I18nN" has already been registered in target app.
+2026-10-07T02:34:35.2178155Z [Vue warn]: Component "i18n-d" has already been registered in target app.
+2026-10-07T02:34:35.2179147Z [Vue warn]: Component "I18nD" has already been registered in target app.
+2026-10-07T02:34:35.2180123Z [Vue warn]: Directive "t" has already been registered in target app.
+2026-10-07T02:34:35.2180762Z 
+2026-10-07T02:34:35.2220203Z  [32m✓[39m app/account/account-html.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 64[2mms[22m[39m
+2026-10-07T02:34:35.3280742Z  [32m✓[39m app/account/reset-password/finish/reset-password-finish.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 31[2mms[22m[39m
+2026-10-07T02:34:35.8472486Z  [32m✓[39m app/shared/config/web-session.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+2026-10-07T02:34:36.0126895Z  [32m✓[39m app/core/ribbon/ribbon.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 36[2mms[22m[39m
+2026-10-07T02:34:36.1133577Z  [32m✓[39m app/account/reset-password/init/reset-password-init.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 46[2mms[22m[39m
+2026-10-07T02:34:36.5324739Z  [32m✓[39m app/core/home/home.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[90m 39[2mms[22m[39m
+2026-10-07T02:34:36.6107078Z  [32m✓[39m app/shared/sort/sorts.spec.ts [2m([22m[2m1 test[22m[2m)[22m[90m 5[2mms[22m[39m
+2026-10-07T02:34:36.6351052Z 
+2026-10-07T02:34:36.6352491Z [2m Test Files [22m [1m[32m41 passed[39m[22m[90m (41)[39m
+2026-10-07T02:34:36.6353564Z [2m      Tests [22m [1m[32m204 passed[39m[22m[90m (204)[39m
+2026-10-07T02:34:36.6354345Z [2m   Start at [22m 02:34:24
+2026-10-07T02:34:36.6355922Z [2m   Duration [22m 12.03s[2m (transform 2.13s, setup 6.36s, collect 4.01s, tests 2.55s, environment 12.13s, prepare 3.36s)[22m
+2026-10-07T02:34:36.6356795Z 
+2026-10-07T02:34:36.6388226Z SonarQube report written to /home/runner/work/watsolution_web/watsolution_web/tmp/test-results/TESTS-results-vitest.xml
+2026-10-07T02:34:36.6868416Z ##[group]Run npm run vite-build -w client
+2026-10-07T02:34:36.6869200Z [36;1mnpm run vite-build -w client[0m
+2026-10-07T02:34:36.6937174Z shell: /usr/bin/bash -e {0}
+2026-10-07T02:34:36.6937446Z ##[endgroup]
+2026-10-07T02:34:36.8129581Z 
+2026-10-07T02:34:36.8129956Z > watsolution-client@0.0.0 vite-build
+2026-10-07T02:34:36.8130761Z > vite build
+2026-10-07T02:34:36.8130892Z 
+2026-10-07T02:34:37.2500266Z [36mvite v6.2.4 [32mbuilding for production...[36m[39m
+2026-10-07T02:34:37.4676206Z transforming...
+2026-10-07T02:34:37.5493167Z Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+2026-10-07T02:34:37.5493957Z   npx update-browserslist-db@latest
+2026-10-07T02:34:37.5494729Z   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-10-07T02:34:38.2894899Z [33m../node_modules/bootstrap-vue/esm/index.js (23:19): A comment
+2026-10-07T02:34:38.2895423Z 
+2026-10-07T02:34:38.2895565Z "/*#__PURE__*/"
+2026-10-07T02:34:38.2895985Z 
+2026-10-07T02:34:38.2897635Z in "../node_modules/bootstrap-vue/esm/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+2026-10-07T02:34:44.7284410Z [32m✓[39m 2626 modules transformed.
+2026-10-07T02:34:45.0594026Z rendering chunks...
+2026-10-07T02:34:45.0961185Z [33mwarnings when minifying css:
+2026-10-07T02:34:45.0963048Z ▲ [WARNING] Cannot use type selector "__title" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.0963729Z 
+2026-10-07T02:34:45.0963882Z     <stdin>:1468:1:
+2026-10-07T02:34:45.0964271Z       1468 │ &__title[data-v-272ea572] {
+2026-10-07T02:34:45.0964622Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.0964983Z            ╵  :is(__title[data-v-272ea572])
+2026-10-07T02:34:45.0965188Z 
+2026-10-07T02:34:45.0967266Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.0969189Z 
+2026-10-07T02:34:45.0969198Z 
+2026-10-07T02:34:45.0970017Z ▲ [WARNING] Cannot use type selector "__sub" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.0970667Z 
+2026-10-07T02:34:45.0970811Z     <stdin>:1474:1:
+2026-10-07T02:34:45.0971285Z       1474 │ &__sub[data-v-272ea572] {
+2026-10-07T02:34:45.0971803Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.0972392Z            ╵  :is(__sub[data-v-272ea572])
+2026-10-07T02:34:45.0972789Z 
+2026-10-07T02:34:45.0974865Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.0976946Z 
+2026-10-07T02:34:45.0976955Z 
+2026-10-07T02:34:45.0977813Z ▲ [WARNING] Cannot use type selector "__empty" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.0978473Z 
+2026-10-07T02:34:45.0978613Z     <stdin>:1479:1:
+2026-10-07T02:34:45.0979133Z       1479 │ &__empty[data-v-272ea572] {
+2026-10-07T02:34:45.0979671Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.0980242Z            ╵  :is(__empty[data-v-272ea572])
+2026-10-07T02:34:45.0980564Z 
+2026-10-07T02:34:45.0982689Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.0984582Z 
+2026-10-07T02:34:45.0984591Z 
+2026-10-07T02:34:45.0986124Z ▲ [WARNING] Cannot use type selector "__list" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.0986849Z 
+2026-10-07T02:34:45.0987002Z     <stdin>:1495:1:
+2026-10-07T02:34:45.0987505Z       1495 │ &__list[data-v-272ea572] {
+2026-10-07T02:34:45.0988102Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.0988945Z            ╵  :is(__list[data-v-272ea572])
+2026-10-07T02:34:45.0989243Z 
+2026-10-07T02:34:45.0991348Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.0993236Z 
+2026-10-07T02:34:45.0993247Z 
+2026-10-07T02:34:45.0994090Z ▲ [WARNING] Cannot use type selector "__item" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.0994723Z 
+2026-10-07T02:34:45.0994866Z     <stdin>:1508:1:
+2026-10-07T02:34:45.0995260Z       1508 │ &__item {
+2026-10-07T02:34:45.0995836Z            │  ~~~~~~
+2026-10-07T02:34:45.0996234Z            ╵  :is(__item)
+2026-10-07T02:34:45.0996463Z 
+2026-10-07T02:34:45.0998466Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1000351Z 
+2026-10-07T02:34:45.1000359Z 
+2026-10-07T02:34:45.1001206Z ▲ [WARNING] Cannot use type selector "--unread" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1001856Z 
+2026-10-07T02:34:45.1001992Z     <stdin>:1528:1:
+2026-10-07T02:34:45.1002638Z       1528 │ &--unread[data-v-272ea572] { background: #fff8f0;
+2026-10-07T02:34:45.1003274Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1003845Z            ╵  :is(--unread[data-v-272ea572])
+2026-10-07T02:34:45.1004158Z 
+2026-10-07T02:34:45.1006410Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1008338Z 
+2026-10-07T02:34:45.1008347Z 
+2026-10-07T02:34:45.1009165Z ▲ [WARNING] Cannot use type selector "__icon" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1009816Z 
+2026-10-07T02:34:45.1009959Z     <stdin>:1531:1:
+2026-10-07T02:34:45.1010429Z       1531 │ &__icon[data-v-272ea572] {
+2026-10-07T02:34:45.1010955Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1011490Z            ╵  :is(__icon[data-v-272ea572])
+2026-10-07T02:34:45.1011791Z 
+2026-10-07T02:34:45.1013937Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1016011Z 
+2026-10-07T02:34:45.1016019Z 
+2026-10-07T02:34:45.1016842Z ▲ [WARNING] Cannot use type selector "__body" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1017431Z 
+2026-10-07T02:34:45.1017563Z     <stdin>:1537:1:
+2026-10-07T02:34:45.1017996Z       1537 │ &__body[data-v-272ea572] {
+2026-10-07T02:34:45.1018489Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1019007Z            ╵  :is(__body[data-v-272ea572])
+2026-10-07T02:34:45.1019299Z 
+2026-10-07T02:34:45.1021430Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1023193Z 
+2026-10-07T02:34:45.1023201Z 
+2026-10-07T02:34:45.1023968Z ▲ [WARNING] Cannot use type selector "__row" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1024802Z 
+2026-10-07T02:34:45.1024939Z     <stdin>:1543:1:
+2026-10-07T02:34:45.1025387Z       1543 │ &__row[data-v-272ea572] {
+2026-10-07T02:34:45.1026042Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1026562Z            ╵  :is(__row[data-v-272ea572])
+2026-10-07T02:34:45.1026838Z 
+2026-10-07T02:34:45.1028834Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1030673Z 
+2026-10-07T02:34:45.1030682Z 
+2026-10-07T02:34:45.1031536Z ▲ [WARNING] Cannot use type selector "__item-title" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1032186Z 
+2026-10-07T02:34:45.1032321Z     <stdin>:1555:1:
+2026-10-07T02:34:45.1032812Z       1555 │ &__item-title[data-v-272ea572] {
+2026-10-07T02:34:45.1033387Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1033951Z            ╵  :is(__item-title[data-v-272ea572])
+2026-10-07T02:34:45.1034272Z 
+2026-10-07T02:34:45.1036423Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1038267Z 
+2026-10-07T02:34:45.1038275Z 
+2026-10-07T02:34:45.1039082Z ▲ [WARNING] Cannot use type selector "__badge" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1039710Z 
+2026-10-07T02:34:45.1039844Z     <stdin>:1560:1:
+2026-10-07T02:34:45.1040229Z       1560 │ &__badge {
+2026-10-07T02:34:45.1040613Z            │  ~~~~~~~
+2026-10-07T02:34:45.1041052Z            ╵  :is(__badge)
+2026-10-07T02:34:45.1041294Z 
+2026-10-07T02:34:45.1043281Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1045120Z 
+2026-10-07T02:34:45.1045128Z 
+2026-10-07T02:34:45.1046105Z ▲ [WARNING] Cannot use type selector "--paid" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1046718Z 
+2026-10-07T02:34:45.1046859Z     <stdin>:1569:1:
+2026-10-07T02:34:45.1047588Z       1569 │ &--paid[data-v-272ea572] { background: #d1fae5; color: #065f46;
+2026-10-07T02:34:45.1048292Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1048839Z            ╵  :is(--paid[data-v-272ea572])
+2026-10-07T02:34:45.1049142Z 
+2026-10-07T02:34:45.1051172Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1053128Z 
+2026-10-07T02:34:45.1053143Z 
+2026-10-07T02:34:45.1053896Z ▲ [WARNING] Cannot use type selector "--overdue" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1054286Z 
+2026-10-07T02:34:45.1054382Z     <stdin>:1571:1:
+2026-10-07T02:34:45.1054836Z       1571 │ &--overdue[data-v-272ea572] { background: #fee2e2; color: #991b1b;
+2026-10-07T02:34:45.1055281Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1056092Z            ╵  :is(--overdue[data-v-272ea572])
+2026-10-07T02:34:45.1056304Z 
+2026-10-07T02:34:45.1057431Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1058594Z 
+2026-10-07T02:34:45.1058600Z 
+2026-10-07T02:34:45.1059150Z ▲ [WARNING] Cannot use type selector "--due_soon" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1059761Z 
+2026-10-07T02:34:45.1059903Z     <stdin>:1573:1:
+2026-10-07T02:34:45.1060604Z       1573 │ &--due_soon[data-v-272ea572] { background: #fef3c7; color: #92400e;
+2026-10-07T02:34:45.1061309Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1061889Z            ╵  :is(--due_soon[data-v-272ea572])
+2026-10-07T02:34:45.1062200Z 
+2026-10-07T02:34:45.1064268Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1067268Z 
+2026-10-07T02:34:45.1067278Z 
+2026-10-07T02:34:45.1068138Z ▲ [WARNING] Cannot use type selector "--created" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1068786Z 
+2026-10-07T02:34:45.1068925Z     <stdin>:1575:1:
+2026-10-07T02:34:45.1069616Z       1575 │ &--created[data-v-272ea572] { background: #e8f4fd; color: #0077be;
+2026-10-07T02:34:45.1070311Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1070855Z            ╵  :is(--created[data-v-272ea572])
+2026-10-07T02:34:45.1071171Z 
+2026-10-07T02:34:45.1073242Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1075114Z 
+2026-10-07T02:34:45.1075134Z 
+2026-10-07T02:34:45.1076153Z ▲ [WARNING] Cannot use type selector "__msg" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1076788Z 
+2026-10-07T02:34:45.1076925Z     <stdin>:1578:1:
+2026-10-07T02:34:45.1077391Z       1578 │ &__msg[data-v-272ea572] {
+2026-10-07T02:34:45.1077913Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1078451Z            ╵  :is(__msg[data-v-272ea572])
+2026-10-07T02:34:45.1078744Z 
+2026-10-07T02:34:45.1080871Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1082773Z 
+2026-10-07T02:34:45.1082781Z 
+2026-10-07T02:34:45.1083603Z ▲ [WARNING] Cannot use type selector "__date" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1084238Z 
+2026-10-07T02:34:45.1084378Z     <stdin>:1587:1:
+2026-10-07T02:34:45.1084838Z       1587 │ &__date[data-v-272ea572] {
+2026-10-07T02:34:45.1085346Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1086084Z            ╵  :is(__date[data-v-272ea572])
+2026-10-07T02:34:45.1086378Z 
+2026-10-07T02:34:45.1088338Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1090116Z 
+2026-10-07T02:34:45.1090378Z 
+2026-10-07T02:34:45.1091144Z ▲ [WARNING] Cannot use type selector "__dot" directly after nesting selector "&" [css-syntax-error]
+2026-10-07T02:34:45.1091745Z 
+2026-10-07T02:34:45.1091872Z     <stdin>:1592:1:
+2026-10-07T02:34:45.1092321Z       1592 │ &__dot[data-v-272ea572] {
+2026-10-07T02:34:45.1092973Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-07T02:34:45.1093493Z            ╵  :is(__dot[data-v-272ea572])
+2026-10-07T02:34:45.1093786Z 
+2026-10-07T02:34:45.1095942Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-07T02:34:45.1097744Z 
+2026-10-07T02:34:45.1097904Z [39m
+2026-10-07T02:34:45.4316673Z computing gzip size...
+2026-10-07T02:34:45.4590939Z [36m[vite-plugin-static-copy][39m [32mCopied 15 items.[39m
+2026-10-07T02:34:45.4769385Z [2m../../server/dist/static/[22m[2massets/[22m[32mmanifest-7n3jF0d_.webapp               [39m[1m[2m  0.76 kB[22m[1m[22m
+2026-10-07T02:34:45.4771177Z [2m../../server/dist/static/[22m[2massets/[22m[32mfavicon-7N5vP5FO.ico                   [39m[1m[2m  1.57 kB[22m[1m[22m
+2026-10-07T02:34:45.4772999Z [2m../../server/dist/static/[22m[32mindex.html                                    [39m[1m[2m  5.25 kB[22m[1m[22m[2m │ gzip:   1.94 kB[22m
+2026-10-07T02:34:45.4774913Z [2m../../server/dist/static/[22m[2massets/[22m[32mjhipster_family_member_3-Cf8AxSuS.svg  [39m[1m[2m 19.10 kB[22m[1m[22m[2m │ gzip:   7.23 kB[22m
+2026-10-07T02:34:45.4777157Z [2m../../server/dist/static/[22m[2massets/[22m[35madmin-portal-D1vpuyJI.css              [39m[1m[2m  1.12 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+2026-10-07T02:34:45.4779143Z [2m../../server/dist/static/[22m[2massets/[22m[35minvoice-payment-result-DRc0a0Jy.css    [39m[1m[2m  4.05 kB[22m[1m[22m[2m │ gzip:   1.10 kB[22m
+2026-10-07T02:34:45.4781093Z [2m../../server/dist/static/[22m[2massets/[22m[35mcentro-noticias-DmS2zb5d.css           [39m[1m[2m  4.35 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+2026-10-07T02:34:45.4782132Z [33m
+2026-10-07T02:34:45.4782733Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-07T02:34:45.4783547Z - Using dynamic import() to code-split the application
+2026-10-07T02:34:45.4784832Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-10-07T02:34:45.4786548Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-10-07T02:34:45.4788059Z [2m../../server/dist/static/[22m[2massets/[22m[35madmin-panel-B4kf0FsZ.css               [39m[1m[2m  6.23 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+2026-10-07T02:34:45.4789758Z [2m../../server/dist/static/[22m[2massets/[22m[35mpagos-BBb1LtcT.css                     [39m[1m[2m  7.91 kB[22m[1m[22m[2m │ gzip:   1.54 kB[22m
+2026-10-07T02:34:45.4791392Z [2m../../server/dist/static/[22m[2massets/[22m[35mlogin-7RfFdK3h.css                     [39m[1m[2m  8.21 kB[22m[1m[22m[2m │ gzip:   1.94 kB[22m
+2026-10-07T02:34:45.4793060Z [2m../../server/dist/static/[22m[2massets/[22m[35madmin-actividad-CkFyyufi.css           [39m[1m[2m  9.20 kB[22m[1m[22m[2m │ gzip:   1.61 kB[22m
+2026-10-07T02:34:45.4794772Z [2m../../server/dist/static/[22m[2massets/[22m[35mhome-CcrO8YDo.css                      [39m[1m[2m 11.54 kB[22m[1m[22m[2m │ gzip:   2.20 kB[22m
+2026-10-07T02:34:45.4817941Z [2m../../server/dist/static/[22m[2massets/[22m[35mpolitica-privacidad-BQov-A3C.css       [39m[1m[2m 11.63 kB[22m[1m[22m[2m │ gzip:   2.36 kB[22m
+2026-10-07T02:34:45.4819266Z [2m../../server/dist/static/[22m[2massets/[22m[35madmin-facturacion-BwsCgQ6K.css         [39m[1m[2m 11.94 kB[22m[1m[22m[2m │ gzip:   2.13 kB[22m
+2026-10-07T02:34:45.4820678Z [2m../../server/dist/static/[22m[2massets/[22m[35madmin-noticias-CN6zKAm2.css            [39m[1m[2m 12.14 kB[22m[1m[22m[2m │ gzip:   2.24 kB[22m
+2026-10-07T02:34:45.4821827Z [2m../../server/dist/static/[22m[2massets/[22m[35madmin-resumen-CaVK-rdb.css             [39m[1m[2m 15.64 kB[22m[1m[22m[2m │ gzip:   2.65 kB[22m
+2026-10-07T02:34:45.4823176Z [2m../../server/dist/static/[22m[2massets/[22m[35madmin-usuarios-C8IZViC4.css            [39m[1m[2m 24.28 kB[22m[1m[22m[2m │ gzip:   3.64 kB[22m
+2026-10-07T02:34:45.4824320Z [2m../../server/dist/static/[22m[2massets/[22m[35mportal-dashboard-CiwCRFpi.css          [39m[1m[2m 29.37 kB[22m[1m[22m[2m │ gzip:   4.05 kB[22m
+2026-10-07T02:34:45.4825398Z [2m../../server/dist/static/[22m[2massets/[22m[35mapp-OqjeRz0V.css                       [39m[1m[2m303.56 kB[22m[1m[22m[2m │ gzip:  42.69 kB[22m
+2026-10-07T02:34:45.4826673Z [2m../../server/dist/static/[22m[2massets/[22m[36mconstants-DfqkunPD.js                  [39m[1m[2m  0.12 kB[22m[1m[22m[2m │ gzip:   0.12 kB[22m
+2026-10-07T02:34:45.4827716Z [2m../../server/dist/static/[22m[2massets/[22m[36mdocs-B5zxasxM.js                       [39m[1m[2m  0.36 kB[22m[1m[22m[2m │ gzip:   0.29 kB[22m
+2026-10-07T02:34:45.4828784Z [2m../../server/dist/static/[22m[2massets/[22m[36muser-management.service-DsOxIgbk.js    [39m[1m[2m  0.40 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+2026-10-07T02:34:45.4829879Z [2m../../server/dist/static/[22m[2massets/[22m[36mvalidation-p_43J297.js                 [39m[1m[2m  0.43 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+2026-10-07T02:34:45.4830944Z [2m../../server/dist/static/[22m[2massets/[22m[36maddress.service-UcXTCW5w.js            [39m[1m[2m  0.66 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-07T02:34:45.4832086Z [2m../../server/dist/static/[22m[2massets/[22m[36mmeter.service-lQV7sScs.js              [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-07T02:34:45.4833186Z [2m../../server/dist/static/[22m[2massets/[22m[36mperson.service-A12bBo2T.js             [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-07T02:34:45.4834273Z [2m../../server/dist/static/[22m[2massets/[22m[36minvoice.service-XH3SdraB.js            [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-07T02:34:45.4835346Z [2m../../server/dist/static/[22m[2massets/[22m[36mdate-format-BKI71hXf.js                [39m[1m[2m  0.69 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2026-10-07T02:34:45.4836573Z [2m../../server/dist/static/[22m[2massets/[22m[36madmin-portal-DhMSDrpv.js               [39m[1m[2m  0.70 kB[22m[1m[22m[2m │ gzip:   0.46 kB[22m
+2026-10-07T02:34:45.4837637Z [2m../../server/dist/static/[22m[2massets/[22m[36mentities-CIucK_Yp.js                   [39m[1m[2m  0.71 kB[22m[1m[22m[2m │ gzip:   0.43 kB[22m
+2026-10-07T02:34:45.4838677Z [2m../../server/dist/static/[22m[2massets/[22m[36merror-LWv434L8.js                      [39m[1m[2m  1.14 kB[22m[1m[22m[2m │ gzip:   0.58 kB[22m
+2026-10-07T02:34:45.4839713Z [2m../../server/dist/static/[22m[2massets/[22m[36malert.service-Dx4uGVLq.js              [39m[1m[2m  1.43 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+2026-10-07T02:34:45.4840763Z [2m../../server/dist/static/[22m[2massets/[22m[36mactivate-C-sA733G.js                   [39m[1m[2m  1.53 kB[22m[1m[22m[2m │ gzip:   0.82 kB[22m
+2026-10-07T02:34:45.4841818Z [2m../../server/dist/static/[22m[2massets/[22m[36maddress-details-kaxfaskX.js            [39m[1m[2m  2.75 kB[22m[1m[22m[2m │ gzip:   1.09 kB[22m
+2026-10-07T02:34:45.4842891Z [2m../../server/dist/static/[22m[2massets/[22m[36mmeter-details-Dv8Md4vQ.js              [39m[1m[2m  2.76 kB[22m[1m[22m[2m │ gzip:   1.11 kB[22m
+2026-10-07T02:34:45.4843957Z [2m../../server/dist/static/[22m[2massets/[22m[36mdata-utils.service-CniNamEA.js         [39m[1m[2m  2.96 kB[22m[1m[22m[2m │ gzip:   1.51 kB[22m
+2026-10-07T02:34:45.4845227Z [2m../../server/dist/static/[22m[2massets/[22m[36mreset-password-init-CY3f7QXl.js        [39m[1m[2m  3.07 kB[22m[1m[22m[2m │ gzip:   1.17 kB[22m
+2026-10-07T02:34:45.4846609Z [2m../../server/dist/static/[22m[2massets/[22m[36mperson-details-W1tu2g4n.js             [39m[1m[2m  3.22 kB[22m[1m[22m[2m │ gzip:   1.24 kB[22m
+2026-10-07T02:34:45.4847871Z [2m../../server/dist/static/[22m[2massets/[22m[36muser-management-view-Cz2k3z0f.js       [39m[1m[2m  3.49 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+2026-10-07T02:34:45.4848964Z [2m../../server/dist/static/[22m[2massets/[22m[36mcentro-noticias-2e9ZGKUq.js            [39m[1m[2m  4.00 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-10-07T02:34:45.4850053Z [2m../../server/dist/static/[22m[2massets/[22m[36mreset-password-finish-C8q4iCyc.js      [39m[1m[2m  5.18 kB[22m[1m[22m[2m │ gzip:   1.63 kB[22m
+2026-10-07T02:34:45.4851143Z [2m../../server/dist/static/[22m[2massets/[22m[36minvoice-details-qGIAoRam.js            [39m[1m[2m  5.19 kB[22m[1m[22m[2m │ gzip:   1.97 kB[22m
+2026-10-07T02:34:45.4852220Z [2m../../server/dist/static/[22m[2massets/[22m[36mchange-password-B6lQix7H.js            [39m[1m[2m  5.52 kB[22m[1m[22m[2m │ gzip:   1.50 kB[22m
+2026-10-07T02:34:45.4853267Z [2m../../server/dist/static/[22m[2massets/[22m[36mlogin-DE1WVFFJ.js                      [39m[1m[2m  5.55 kB[22m[1m[22m[2m │ gzip:   2.27 kB[22m
+2026-10-07T02:34:45.4854311Z [2m../../server/dist/static/[22m[2massets/[22m[36madmin-actividad-CO9fDGjp.js            [39m[1m[2m  5.59 kB[22m[1m[22m[2m │ gzip:   2.46 kB[22m
+2026-10-07T02:34:45.4855399Z [2m../../server/dist/static/[22m[2massets/[22m[36minvoice-payment-result-CoXBiPEE.js     [39m[1m[2m  5.88 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+2026-10-07T02:34:45.4856693Z [2m../../server/dist/static/[22m[2massets/[22m[36maddress-Dkceh5pp.js                    [39m[1m[2m  5.88 kB[22m[1m[22m[2m │ gzip:   2.01 kB[22m
+2026-10-07T02:34:45.4857771Z [2m../../server/dist/static/[22m[2massets/[22m[36maddress-update-BWUwRgqB.js             [39m[1m[2m  6.49 kB[22m[1m[22m[2m │ gzip:   2.01 kB[22m
+2026-10-07T02:34:45.4858831Z [2m../../server/dist/static/[22m[2massets/[22m[36msettings-D1lOUuYD.js                   [39m[1m[2m  6.82 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-10-07T02:34:45.4859886Z [2m../../server/dist/static/[22m[2massets/[22m[36madmin-resumen-C1k9MlyD.js              [39m[1m[2m  6.92 kB[22m[1m[22m[2m │ gzip:   2.85 kB[22m
+2026-10-07T02:34:45.4860932Z [2m../../server/dist/static/[22m[2massets/[22m[36mmeter-Dbq6jseM.js                      [39m[1m[2m  7.21 kB[22m[1m[22m[2m │ gzip:   2.62 kB[22m
+2026-10-07T02:34:45.4861942Z [2m../../server/dist/static/[22m[2massets/[22m[36mhome-BAS5bBkF.js                       [39m[1m[2m  7.34 kB[22m[1m[22m[2m │ gzip:   2.79 kB[22m
+2026-10-07T02:34:45.4862973Z [2m../../server/dist/static/[22m[2massets/[22m[36mperson-update-CPDdRPZN.js              [39m[1m[2m  7.74 kB[22m[1m[22m[2m │ gzip:   2.52 kB[22m
+2026-10-07T02:34:45.4864033Z [2m../../server/dist/static/[22m[2massets/[22m[36madmin-noticias-Do0oPLM9.js             [39m[1m[2m  8.06 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+2026-10-07T02:34:45.4865087Z [2m../../server/dist/static/[22m[2massets/[22m[36minvoice-DxvlK6Cd.js                    [39m[1m[2m  8.13 kB[22m[1m[22m[2m │ gzip:   2.68 kB[22m
+2026-10-07T02:34:45.4866273Z [2m../../server/dist/static/[22m[2massets/[22m[36mperson-BRctpR3f.js                     [39m[1m[2m  8.49 kB[22m[1m[22m[2m │ gzip:   2.78 kB[22m
+2026-10-07T02:34:45.4867336Z [2m../../server/dist/static/[22m[2massets/[22m[36muser-management-CTanOwf9.js            [39m[1m[2m  8.90 kB[22m[1m[22m[2m │ gzip:   2.83 kB[22m
+2026-10-07T02:34:45.4868544Z [2m../../server/dist/static/[22m[2massets/[22m[36madmin-panel--gAFjlBG.js                [39m[1m[2m  8.93 kB[22m[1m[22m[2m │ gzip:   2.71 kB[22m
+2026-10-07T02:34:45.4869592Z [2m../../server/dist/static/[22m[2massets/[22m[36mpagos-xcCGtv8w.js                      [39m[1m[2m  8.94 kB[22m[1m[22m[2m │ gzip:   3.14 kB[22m
+2026-10-07T02:34:45.4870619Z [2m../../server/dist/static/[22m[2massets/[22m[36mregister-BDWlHxvs.js                   [39m[1m[2m  9.42 kB[22m[1m[22m[2m │ gzip:   2.28 kB[22m
+2026-10-07T02:34:45.4871815Z [2m../../server/dist/static/[22m[2massets/[22m[36muser-management-edit-CU4rXoqf.js       [39m[1m[2m  9.52 kB[22m[1m[22m[2m │ gzip:   2.87 kB[22m
+2026-10-07T02:34:45.4872907Z [2m../../server/dist/static/[22m[2massets/[22m[36madmin-facturacion-Cx6HLHze.js          [39m[1m[2m 10.38 kB[22m[1m[22m[2m │ gzip:   3.83 kB[22m
+2026-10-07T02:34:45.4873954Z [2m../../server/dist/static/[22m[2massets/[22m[36mes-B7hO-gfJ.js                         [39m[1m[2m 14.09 kB[22m[1m[22m[2m │ gzip:   4.82 kB[22m
+2026-10-07T02:34:45.4874965Z [2m../../server/dist/static/[22m[2massets/[22m[36mindex-CqbM30BN.js                      [39m[1m[2m 15.88 kB[22m[1m[22m[2m │ gzip:   5.60 kB[22m
+2026-10-07T02:34:45.4876189Z [2m../../server/dist/static/[22m[2massets/[22m[36madmin-usuarios-_p-Ywhl5.js             [39m[1m[2m 21.66 kB[22m[1m[22m[2m │ gzip:   7.01 kB[22m
+2026-10-07T02:34:45.4877290Z [2m../../server/dist/static/[22m[2massets/[22m[36mpolitica-privacidad-IsRtXL62.js        [39m[1m[2m 30.80 kB[22m[1m[22m[2m │ gzip:   7.71 kB[22m
+2026-10-07T02:34:45.4878391Z [2m../../server/dist/static/[22m[2massets/[22m[36mportal-dashboard-uKYoy4wG.js           [39m[1m[2m 30.97 kB[22m[1m[22m[2m │ gzip:   9.61 kB[22m
+2026-10-07T02:34:45.4879447Z [2m../../server/dist/static/[22m[2massets/[22m[36mapp-BZm5RRxZ.js                        [39m[1m[33m937.49 kB[39m[22m[2m │ gzip: 306.16 kB[22m
+2026-10-07T02:34:45.4880051Z [32m✓ built in 8.21s[39m
+2026-10-07T02:34:45.6260148Z Post job cleanup.
+2026-10-07T02:34:45.7622274Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/watsolution_web/watsolution_web --files-from manifest.txt --use-compress-program zstdmt
+2026-10-07T02:34:46.3682838Z Failed to save: Unable to reserve cache with key node-cache-Linux-x64-npm-3e75a79ab77ecd93ca36a0c2956cee50dc69399c2b4e1d0d799f516fc4a5c1f1, another job may be creating this cache.
+2026-10-07T02:34:46.3954925Z Post job cleanup.
+2026-10-07T02:34:46.4805993Z [command]/usr/bin/git version
+2026-10-07T02:34:46.4853209Z git version 2.55.0
+2026-10-07T02:34:46.4902780Z Temporarily overriding HOME='/home/runner/work/_temp/c378b3b8-fba7-4f14-9d19-71e597f8d944' before making global git config changes
+2026-10-07T02:34:46.4903961Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-07T02:34:46.4908443Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/watsolution_web/watsolution_web
+2026-10-07T02:34:46.4944773Z Removing SSH command configuration
+2026-10-07T02:34:46.4951957Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-07T02:34:46.4988198Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-07T02:34:46.5257804Z Removing HTTP extra header
+2026-10-07T02:34:46.5264548Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-07T02:34:46.5301687Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-07T02:34:46.5566502Z Removing includeIf entries pointing to credentials config files
+2026-10-07T02:34:46.5573147Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-07T02:34:46.5614893Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-07T02:34:46.6034276Z Cleaning up orphan processes

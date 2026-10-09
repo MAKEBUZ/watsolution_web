@@ -1,0 +1,3665 @@
+[
+  {
+    "id": "T-001",
+    "title": "Fijar alcance, responsables y entorno de trabajo",
+    "ids": [
+      "WS-043"
+    ],
+    "phase": 0,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "QA",
+    "deps": [],
+    "steps": [
+      "Registrar commit y cambios locales sin descartarlos; acordar congelación de cambios ajenos",
+      "Designar responsables de datos, pagos, despliegue y revisión",
+      "Preparar rama y especificación de staging con datos sintéticos, destino y accesos aislados; acordar topología",
+      "Si la aplicación está operando, acordar contención operativa temporal del portal/checkout expuesto mientras se preparan parches; no esperar semanas sin limitar el riesgo"
+    ],
+    "accept": [
+      "Inventario firmado y cada acceso de staging separado de producción",
+      "Responsable y sustituto asignados por área; exclusiones y topología documentadas"
+    ],
+    "verify": "Q-DOC: cotejar hashes y destinos; revisión de accesos con dueño del servicio. No copiar PII a staging.",
+    "rollback": "Cancelar preparación conservando instantánea; no resetear cambios locales existentes.",
+    "risk": "Bajo",
+    "prob": 2,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Pruebas",
+    "files": [
+      "server/e2e/account.e2e-spec.ts",
+      ".github/workflows/security-checks.yml (lectura)",
+      "Registro de responsables y staging (nuevo)"
+    ],
+    "source": [
+      "WS-043: server/e2e/account.e2e-spec.ts:49"
+    ],
+    "downstream": 3,
+    "effortBonus": 2.4,
+    "score": 58.8,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-002",
+    "title": "Probar backup y restauración antes de cambiar datos",
+    "ids": [
+      "WS-014"
+    ],
+    "phase": 0,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-001"
+    ],
+    "steps": [
+      "Inventariar PostgreSQL, bucket y configuración sin volcar valores secretos a documentos",
+      "Crear respaldo cifrado y verificar integridad y retención",
+      "Restaurar en destino aislado; contar registros y cuadrar importes; medir RPO/RTO con negocio"
+    ],
+    "accept": [
+      "Restauración independiente demostrada y accesos comprobados",
+      "Inventario de datos, última copia, RPO/RTO objetivo y tiempos medidos aprobados"
+    ],
+    "verify": "Q-RESTORE: acta de restauración con destino, hashes, conteos e importes conciliados; no usar scripts down -v del repo.",
+    "rollback": "No alterar producción durante el ensayo; retirar acceso temporal al clon según política. Si falla, bloquear cambios de esquema.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Base de datos",
+    "files": [
+      "server/src/migrations/1570200270081-CreateTables.ts",
+      "Runbook de backup/restore (nuevo)",
+      "Configuración del proveedor y bucket (fuera del repositorio)"
+    ],
+    "source": [
+      "WS-014: server/src/migrations/1570200270081-CreateTables.ts:4"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.5,
+    "score": 73,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-003",
+    "title": "Rotar las credenciales históricas y revocar sesiones",
+    "ids": [
+      "WS-003"
+    ],
+    "phase": 0,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-001"
+    ],
+    "steps": [
+      "Identificar entornos que usaron los valores históricos sin probarlos contra destinos no autorizados",
+      "Crear credenciales PostgreSQL y claves JWT nuevas por gestor de secretos; ensayar despliegue coordinado",
+      "Revocar claves anteriores y familias de sesiones; revisar accesos y registrar solo identificadores de versión"
+    ],
+    "accept": [
+      "Cada credencial histórica tiene evidencia de revocación o de que nunca se desplegó",
+      "Token firmado con clave anterior y refresh revocado son rechazados; aplicación usa credencial nueva"
+    ],
+    "verify": "Q-SECRET: comprobar versiones del proveedor y sesión de prueba; no imprimir claves ni contraseñas.",
+    "rollback": "Emitir otra credencial nueva si falla; jamás reactivar el secreto expuesto. Mantener acceso administrativo de emergencia verificado.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Seguridad",
+    "files": [
+      "Gestor de secretos del proveedor (fuera del repositorio)",
+      "server/src/security/jwt-settings.ts",
+      "server/src/service/session.service.ts"
+    ],
+    "source": [
+      "WS-003: watsolution_web_reportes/evidencias/secretos-historicos-validacion.json:1"
+    ],
+    "downstream": 5,
+    "effortBonus": 2,
+    "score": 78,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-004",
+    "title": "Capturar la línea base reproducible y presupuestos",
+    "ids": [
+      "WS-043",
+      "WS-042"
+    ],
+    "phase": 0,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "QA",
+    "deps": [
+      "T-001",
+      "T-002"
+    ],
+    "steps": [
+      "Reproducir 42 pruebas backend y 182 frontend con versiones fijadas en staging",
+      "Capturar build, lint, cobertura real y métricas iniciales de rutas representativas",
+      "Guardar resultados por commit y fijar cuentas sintéticas, carga y criterios de comparación"
+    ],
+    "accept": [
+      "224 pruebas previas reproducidas o diferencias explicadas",
+      "Cobertura, latencia, errores y bundle tienen medición o bloqueo identificado; ningún dato desconocido se registra como cero"
+    ],
+    "verify": "Q-UNIT, Q-TYPE, Q-BUILD, Q-LINT y Q-PERF; no ejecutar E2E heredado que migra BD.",
+    "rollback": "Descartar resultados de un entorno mal configurado y repetir captura; no cambiar la línea base original.",
+    "risk": "Bajo",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Pruebas; Observabilidad",
+    "files": [
+      "server/e2e/account.e2e-spec.ts",
+      "docker/prometheus/prometheus.yml",
+      "client/vitest.config.mts",
+      "server/package.json",
+      "client/package.json"
+    ],
+    "source": [
+      "WS-043: server/e2e/account.e2e-spec.ts:49",
+      "WS-042: docker/prometheus/prometheus.yml:27"
+    ],
+    "downstream": 11,
+    "effortBonus": 2,
+    "score": 62,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-005",
+    "title": "Aislar el portal mediante el ID autenticado",
+    "ids": [
+      "WS-001"
+    ],
+    "phase": 1,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Cambiar controlador para pasar req.user.id",
+      "Consultar Person por String(id) sin alternativa por login o correo; denegar vínculos ausentes/ambiguos",
+      "Crear prueba de dos cuentas con login numérico coincidente y comprobar perfil, facturas y resúmenes"
+    ],
+    "accept": [
+      "Cuenta 99 con login 42 nunca recibe datos del propietario 42",
+      "Cuenta válida sigue accediendo; vínculo ambiguo produce respuesta controlada sin PII"
+    ],
+    "verify": "Q-UNIT y Q-API: prueba real con guardas; fijar caso del probe WS-001 en suite de integración.",
+    "rollback": "Si afecta vínculos antiguos, deshabilitar temporalmente portal afectado y corregir mapeo; no restaurar fallback por login.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Seguridad",
+    "files": [
+      "server/src/service/portal.service.ts",
+      "server/src/web/rest/portal.controller.ts",
+      "server/src/domain/person.entity.ts"
+    ],
+    "source": [
+      "WS-001: server/src/service/portal.service.ts:25"
+    ],
+    "downstream": 3,
+    "effortBonus": 2,
+    "score": 78,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-006",
+    "title": "Persistir únicamente la clave PDF de la factura",
+    "ids": [
+      "WS-002"
+    ],
+    "phase": 1,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Añadir actualización parcial de pdfUrl por ID",
+      "Sustituir ambos guardados de instantánea en descarga y generate-pdf",
+      "Inyectar barrera S3 durante confirmación de pago y probar errores de generación"
+    ],
+    "accept": [
+      "PAID y boldTransactionId sobreviven a PDF concurrente en ambos endpoints",
+      "Error S3 no cambia estado financiero y se distingue de factura inexistente"
+    ],
+    "verify": "Q-UNIT y Q-API: carrera reproducible con barreras; PostgreSQL requerido para cierre final.",
+    "rollback": "Desactivar regeneración PDF y servir documentos existentes; conservar estado financiero y no volver al guardado completo.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / pagos",
+    "files": [
+      "server/src/web/rest/invoice.controller.ts",
+      "server/src/service/invoice.service.ts"
+    ],
+    "source": [
+      "WS-002: server/src/web/rest/invoice.controller.ts:101"
+    ],
+    "downstream": 1,
+    "effortBonus": 2.4,
+    "score": 74.8,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-007",
+    "title": "Limpiar el chat cuando cambia la sesión",
+    "ids": [
+      "WS-006"
+    ],
+    "phase": 1,
+    "hours": [
+      4,
+      8
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Desmontar o reiniciar el chat por identidad de sesión",
+      "Borrar mensajes, entrada y estados; abortar petición o descartar respuesta de sesión anterior",
+      "Probar salida y cambio admin a usuario con respuesta en vuelo"
+    ],
+    "accept": [
+      "Tras logout/login no hay mensajes ni PII de la sesión anterior",
+      "Respuesta tardía de otra sesión no se representa"
+    ],
+    "verify": "Q-UI: componente montado desde router y navegador con dos cuentas sintéticas.",
+    "rollback": "Ocultar/deshabilitar chatbot mediante flag nuevo si falla; nunca conservar conversaciones entre cuentas.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Seguridad / privacidad",
+    "files": [
+      "client/src/app/core/chatbot/chatbot.vue",
+      "client/src/app/app.vue"
+    ],
+    "source": [
+      "WS-006: client/src/app/core/chatbot/chatbot.vue:26"
+    ],
+    "downstream": 1,
+    "effortBonus": 3,
+    "score": 76,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-008",
+    "title": "Revocar refresh y cerrar cookie con acceso vencido",
+    "ids": [
+      "WS-007"
+    ],
+    "phase": 1,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Definir logout web autenticado por refresh y Origin, con revocación idempotente y limpieza de cookie",
+      "Mantener contrato de clientes móviles y rechazo de orígenes ajenos",
+      "UI espera resultado, trata fallo de red y sincroniza pestañas sin fingir revocación confirmada"
+    ],
+    "accept": [
+      "JWT vencido más refresh válido permite salir y el refresh queda inutilizable",
+      "Recarga y otra pestaña no restauran sesión revocada; origen ajeno no revoca ni renueva"
+    ],
+    "verify": "Q-API y Q-UI: cookie Secure/HttpOnly real sobre HTTPS, vencimiento de JWT, múltiples pestañas y red caída.",
+    "rollback": "Forzar revocación de familias y desactivar renovación web temporalmente si falla; rollback de UI compatible sin restaurar tokens.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Seguridad / sesiones",
+    "files": [
+      "client/src/app/shared/config/store/account-store.ts",
+      "server/src/web/rest/session.controller.ts",
+      "server/src/service/session.service.ts",
+      "server/src/security/web-session.ts"
+    ],
+    "source": [
+      "WS-007: client/src/app/shared/config/store/account-store.ts:37"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.5,
+    "score": 77,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-009",
+    "title": "Asignar referencia Bold de forma atómica",
+    "ids": [
+      "WS-005"
+    ],
+    "phase": 1,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Bloquear fila dentro de transacción al crear/reutilizar boldOrderId",
+      "Leer estado e importe bajo el mismo bloqueo; generar hash tras fijar referencia",
+      "Probar doble clic, solicitudes simultáneas y factura ya pagada"
+    ],
+    "accept": [
+      "20 solicitudes concurrentes obtienen una única referencia estable e importe consistente",
+      "Factura no pagable no genera orden"
+    ],
+    "verify": "Q-API: barrera de concurrencia con PostgreSQL y aserción de unicidad; mantener firma existente.",
+    "rollback": "Desactivar nuevas aperturas de checkout y seguir recibiendo webhooks; no eliminar referencias ya entregadas a Bold.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / pagos",
+    "files": [
+      "server/src/service/bold.service.ts",
+      "server/src/service/bold.service.spec.ts"
+    ],
+    "source": [
+      "WS-005: server/src/service/bold.service.ts:36"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 75,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-010",
+    "title": "Retirar cuentas de ejemplo y asegurar primer administrador",
+    "ids": [
+      "WS-009"
+    ],
+    "phase": 1,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-002",
+      "T-003",
+      "T-014"
+    ],
+    "steps": [
+      "Buscar por criterios auditables cuentas sembradas en cada entorno autorizado",
+      "Diferenciar cuentas reales de ejemplos, desactivar ejemplos y revocar sus sesiones",
+      "Impedir reutilización de semilla en entornos reales y documentar alta segura sin contraseña fija"
+    ],
+    "accept": [
+      "No existen cuentas de ejemplo activas o se aporta evidencia de ausencia",
+      "Bootstrap real no crea contraseñas fijas y conserva un administrador verificado"
+    ],
+    "verify": "Q-API y Q-SECRET: matriz de cuentas por entorno sin contraseñas; ensayo de bootstrap en base vacía.",
+    "rollback": "Recuperar acceso mediante nuevo administrador de emergencia validado; no reactivar cuentas ni contraseñas sembradas.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Seguridad",
+    "files": [
+      "server/src/migrations/1570200490072-SeedUsersRoles.ts",
+      "server/src/orm.config.ts",
+      "Procedimiento de primer administrador (nuevo)"
+    ],
+    "source": [
+      "WS-009: server/src/migrations/1570200490072-SeedUsersRoles.ts:37"
+    ],
+    "downstream": 3,
+    "effortBonus": 2.4,
+    "score": 74.8,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-011",
+    "title": "Contener mutaciones financieras fuera del dominio",
+    "ids": [
+      "WS-008"
+    ],
+    "phase": 1,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Bloquear temporalmente edición de importes, relaciones y estado tras iniciar pago",
+      "Restringir rutas CRUD alternativas de creación y borrado que evaden BillingService",
+      "Mantener emisión canónica y comunicar a administración las operaciones suspendidas"
+    ],
+    "accept": [
+      "ADMIN no puede alterar una factura pagada ni cambiar una referencia activa por CRUD",
+      "Emisión canónica permanece disponible; denegaciones tienen mensaje claro"
+    ],
+    "verify": "Q-API: matriz POST/PUT/DELETE en pendientes, con orden y pagadas; comprobar frontend administrativo.",
+    "rollback": "Mantener restricciones y tramitar excepciones con revisión humana; no reabrir el CRUD vulnerable para resolver un incidente.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / integridad",
+    "files": [
+      "server/src/service/invoice.service.ts"
+    ],
+    "source": [
+      "WS-008: server/src/service/invoice.service.ts:84"
+    ],
+    "downstream": 1,
+    "effortBonus": 2.4,
+    "score": 74.8,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-012",
+    "title": "Escapar nombres de usuario en las vistas",
+    "ids": [
+      "WS-011"
+    ],
+    "phase": 1,
+    "hours": [
+      4,
+      8
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Reemplazar v-html de nombre por texto/componentes i18n en ajustes y contraseña",
+      "Acordar formato de nuevos logins sin invalidar cuentas existentes",
+      "Probar traducciones y etiquetas maliciosas como texto"
+    ],
+    "accept": [
+      "Cadena HTML se muestra literalmente y no crea elementos activos",
+      "Ajustes y cambio de contraseña siguen funcionando en español"
+    ],
+    "verify": "Q-UI: payload sintético inerte y aserción de DOM; comprobar ambos componentes.",
+    "rollback": "Volver a título fijo sin interpolación si falla la traducción; no restaurar v-html con entrada libre.",
+    "risk": "Bajo",
+    "prob": 2,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Seguridad",
+    "files": [
+      "client/src/app/account/settings/settings.vue"
+    ],
+    "source": [
+      "WS-011: client/src/app/account/settings/settings.vue:4"
+    ],
+    "downstream": 1,
+    "effortBonus": 3,
+    "score": 52,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-013",
+    "title": "Identificar demos y retirar telemetría ficticia de producción",
+    "ids": [
+      "WS-025"
+    ],
+    "phase": 1,
+    "hours": [
+      4,
+      8
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-004",
+      "T-014"
+    ],
+    "steps": [
+      "Etiquetar datos demo y bloquear generación aleatoria en entorno real",
+      "Mostrar Sin datos verificados con fecha/calidad cuando falta fuente",
+      "Registrar decisión de negocio sobre futura integración de sensores"
+    ],
+    "accept": [
+      "Ningún dato aleatorio o fijo se presenta como actividad o telemetría real",
+      "Ausencia de sensor produce estado explícito, no porcentaje inventado"
+    ],
+    "verify": "Q-UI: inspección de pantalla y mensajes Socket.IO en perfiles demo y producción.",
+    "rollback": "Ocultar tarjeta y enlaces de demo; no volver a mostrar En vivo sin fuente verificada.",
+    "risk": "Bajo",
+    "prob": 5,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Frontend / datos operativos",
+    "files": [
+      "client/src/app/views/admin/admin-actividad.vue"
+    ],
+    "source": [
+      "WS-025: client/src/app/views/admin/admin-actividad.vue:44"
+    ],
+    "downstream": 2,
+    "effortBonus": 3,
+    "score": 70,
+    "priority": "P1",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-014",
+    "title": "Preparar integración aislada con PostgreSQL",
+    "ids": [
+      "WS-043"
+    ],
+    "phase": 1,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "QA",
+    "deps": [
+      "T-004"
+    ],
+    "steps": [
+      "Crear configuración de prueba PostgreSQL descartable con destinos permitidos",
+      "Inicializar esquema de fixtures explícito sin ejecutar synchronize histórico",
+      "Mantener guardas reales y dobles solo para correo, S3 y pasarela externos",
+      "Preparar runner mínimo de navegador HTTPS para cookies/chat y fixtures de cuentas; T-036 ampliará los viajes completos"
+    ],
+    "accept": [
+      "Suite no puede apuntar a producción; guardas no se sustituyen",
+      "Limpieza afecta solo base descartable y fallo de destino cancela ejecución"
+    ],
+    "verify": "Q-API: implementar config server/e2e/jest.postgres.config.cjs y guard de destino; ejecutar smoke de login/propiedad.",
+    "rollback": "Desactivar job nuevo si falla aislamiento y conservar unitarias; nunca degradar a SQLite como prueba equivalente.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Media",
+    "category": "Pruebas",
+    "files": [
+      "server/e2e/account.e2e-spec.ts",
+      "server/e2e/jest.postgres.config.cjs (nuevo)",
+      "docker/compose.audit-test.yml (nuevo)"
+    ],
+    "source": [
+      "WS-043: server/e2e/account.e2e-spec.ts:49"
+    ],
+    "downstream": 13,
+    "effortBonus": 1.2,
+    "score": 64.4,
+    "priority": "P0",
+    "rule": "Regla de preparación/contención",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-015",
+    "title": "Definir baseline de esquema y runner explícito",
+    "ids": [
+      "WS-014"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-002",
+      "T-014"
+    ],
+    "steps": [
+      "Comparar esquema real autorizado, entidades e historial de migraciones",
+      "Diseñar baseline para instalaciones nuevas y actualización aditiva para existentes; preservar migraciones ya aplicadas",
+      "Sustituir uso operativo de synchronize por runner revisable con preflight y ensayo up/rollback"
+    ],
+    "accept": [
+      "Nueva base y clon existente llegan al mismo esquema esperado sin synchronize",
+      "No se reescribe a ciegas historial aplicado; rollback compatible ensayado y documentado"
+    ],
+    "verify": "Q-DB: diff de esquema antes/después y repetición idempotente; restore T-002 disponible.",
+    "rollback": "Detener migración ante precondición incumplida; mantener esquema aditivo y revertir aplicación compatible. Restaurar copia solo bajo plan de reconciliación.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Base de datos",
+    "files": [
+      "server/src/migrations/1570200270081-CreateTables.ts",
+      "server/src/migrations/ (nueva baseline y migraciones aditivas)",
+      "server/scripts/ (runner explícito propuesto)"
+    ],
+    "source": [
+      "WS-014: server/src/migrations/1570200270081-CreateTables.ts:4"
+    ],
+    "downstream": 7,
+    "effortBonus": 1.2,
+    "score": 72.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-016",
+    "title": "Conciliar vínculos de usuarios y suscriptores",
+    "ids": [
+      "WS-001",
+      "WS-015"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-005",
+      "T-015"
+    ],
+    "steps": [
+      "Inventariar duplicados, huérfanos y texto no numérico en userId y asignaciones",
+      "Preparar correspondencia aprobada por dueño de datos; separar casos ambiguos",
+      "Aplicar corrección controlada e idempotente con bitácora anterior/nueva"
+    ],
+    "accept": [
+      "Cada vínculo ambiguo tiene resolución aprobada o cuenta restringida sin fuga",
+      "Cero asignaciones cruzadas en muestra y prueba exhaustiva de restricciones"
+    ],
+    "verify": "Q-DB y Q-API: conciliación por conteos y revisión humana; no inferir dueño solo por correo/login.",
+    "rollback": "Revertir mapeo usando bitácora validada, manteniendo acceso bloqueado para casos dudosos.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Seguridad; Base de datos",
+    "files": [
+      "server/src/service/portal.service.ts",
+      "server/src/domain/person.entity.ts",
+      "Bitácora de conciliación de identidad (nueva, acceso restringido)"
+    ],
+    "source": [
+      "WS-001: server/src/service/portal.service.ts:25",
+      "WS-015: server/src/domain/person.entity.ts:40"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.2,
+    "score": 70.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-017",
+    "title": "Añadir relaciones y FK de identidad",
+    "ids": [
+      "WS-015"
+    ],
+    "phase": 2,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-016"
+    ],
+    "steps": [
+      "Agregar columnas/relaciones tipadas mediante expandir, rellenar y validar",
+      "Incorporar FK de persona, operador, sesiones y operaciones con reglas de borrado aprobadas",
+      "Mantener lectura compatible hasta retirar columnas antiguas en cambio posterior"
+    ],
+    "accept": [
+      "Insertar referencia inexistente falla sin dejar huérfanos",
+      "No se eliminan facturas ni datos sujetos a retención al borrar cuenta"
+    ],
+    "verify": "Q-DB: catálogo FK, datos previos, borrado y rollback con versión anterior compatible.",
+    "rollback": "Detener cambio de lectura y conservar columnas antiguas; quitar restricción nueva solo si no reabre acceso cruzado.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Base de datos",
+    "files": [
+      "server/src/domain/person.entity.ts",
+      "server/src/domain/auth-session.entity.ts",
+      "server/src/domain/mobile-operation.entity.ts",
+      "server/src/migrations/ (nueva FK)"
+    ],
+    "source": [
+      "WS-015: server/src/domain/person.entity.ts:40"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.5,
+    "score": 61,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-018",
+    "title": "Proteger unicidad financiera e índices medidos",
+    "ids": [
+      "WS-016"
+    ],
+    "phase": 2,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-009",
+      "T-015"
+    ],
+    "steps": [
+      "Acordar una factura por lectura y unicidad de referencias según negocio; detectar duplicados",
+      "Conciliar duplicados sin borrado automático y crear restricciones parciales para valores nulos",
+      "Añadir índices de historial y sesión con medición EXPLAIN y ventana de locks"
+    ],
+    "accept": [
+      "Duplicado de lectura/referencia se rechaza con conflicto controlado",
+      "Historial y sesiones usan índices previstos; no hay bloqueo superior al presupuesto acordado"
+    ],
+    "verify": "Q-DB: duplicados preflight, catálogo, EXPLAIN y carga concurrente de escrituras.",
+    "rollback": "Cancelar índice concurrente fallido y conservar datos; retirar índice de rendimiento si regresa latencia, sin eliminar protección financiera sin contención.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Media",
+    "category": "Base de datos",
+    "files": [
+      "server/src/domain/invoice.entity.ts",
+      "server/src/domain/meter.entity.ts",
+      "server/src/migrations/ (nuevos índices)"
+    ],
+    "source": [
+      "WS-016: server/src/domain/invoice.entity.ts:50"
+    ],
+    "downstream": 4,
+    "effortBonus": 1.5,
+    "score": 65,
+    "priority": "P1",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-019",
+    "title": "Centralizar emisión y actualización de facturas",
+    "ids": [
+      "WS-008",
+      "WS-010"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-011",
+      "T-018"
+    ],
+    "steps": [
+      "Dirigir todas las altas al cálculo canónico desde lectura confirmada",
+      "Usar lista explícita de campos y bloquear cambios financieros con orden/pago",
+      "Definir comandos y estados permitidos con pruebas de cada transición"
+    ],
+    "accept": [
+      "Ninguna ruta acepta importe calculado por cliente como autoridad",
+      "Dos canales generan el mismo saldo; pagadas y con orden no admiten edición incompatible"
+    ],
+    "verify": "Q-API y Q-UNIT: matriz de todos los endpoints de factura y propiedades del cálculo en centavos.",
+    "rollback": "Volver a contención T-011 y conservar eventos/estados; no revertir a escritura genérica.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / integridad; Backend / validación",
+    "files": [
+      "server/src/service/invoice.service.ts",
+      "server/src/service/dto/invoice.dto.ts",
+      "server/src/service/billing.service.ts",
+      "server/src/web/rest/invoice.controller.ts"
+    ],
+    "source": [
+      "WS-008: server/src/service/invoice.service.ts:84",
+      "WS-010: server/src/service/dto/invoice.dto.ts:24"
+    ],
+    "downstream": 5,
+    "effortBonus": 1.2,
+    "score": 76.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-020",
+    "title": "Proteger la secuencia de lecturas y sus correcciones",
+    "ids": [
+      "WS-008"
+    ],
+    "phase": 2,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-019"
+    ],
+    "steps": [
+      "Validar orden temporal y lectura acumulada bajo bloqueo del suscriptor",
+      "Rechazar cambios de lectura ya facturada sin flujo de corrección",
+      "Alinear API administrativa y móvil; registrar autor/motivo"
+    ],
+    "accept": [
+      "Lectura menor o fuera de secuencia no corrompe consumo",
+      "ADMIN y móvil aplican la misma regla y una lectura facturada no se borra"
+    ],
+    "verify": "Q-API: dos capturas concurrentes, edición retroactiva y corrección autorizada.",
+    "rollback": "Deshabilitar edición retroactiva y mantener captura válida; conservar registro anterior y corrección.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / integridad",
+    "files": [
+      "server/src/service/invoice.service.ts",
+      "server/src/service/meter.service.ts",
+      "server/src/service/mobile.service.ts"
+    ],
+    "source": [
+      "WS-008: server/src/service/invoice.service.ts:84"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.5,
+    "score": 73,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-021",
+    "title": "Registrar pagos manuales y ajustes auditables",
+    "ids": [
+      "WS-008"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-019"
+    ],
+    "steps": [
+      "Acordar permisos, motivo, soporte e idempotencia de pagos manuales",
+      "Crear comando transaccional que guarde evento, fecha y actor sin sobrescribir evidencia Bold",
+      "Ajustar UI para solicitar soporte y usar reversos compensatorios"
+    ],
+    "accept": [
+      "Repetir una operación no duplica abono",
+      "Toda modificación de saldo tiene evento, actor y motivo; no permite ocultar una referencia de pasarela"
+    ],
+    "verify": "Q-API y Q-UI: pago manual duplicado, rol no permitido y ajuste/reverso conciliados.",
+    "rollback": "Cerrar temporalmente operación manual; nunca borrar eventos contabilizados, compensar mediante operación aprobada.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / integridad",
+    "files": [
+      "server/src/service/invoice.service.ts",
+      "Comando y ledger de pago manual (nuevos)",
+      "client/src/app/views/admin/admin-facturacion.vue"
+    ],
+    "source": [
+      "WS-008: server/src/service/invoice.service.ts:84"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.2,
+    "score": 72.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-022",
+    "title": "Crear tokens de invitación y activación de un solo uso",
+    "ids": [
+      "WS-004"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-010",
+      "T-015"
+    ],
+    "steps": [
+      "Persistir hash, propósito, vencimiento y consumo de token con migración aditiva",
+      "Implementar activación pública con prueba del token y validación de contraseña",
+      "Consumir token y activar cuenta en una transacción; limitar reintentos"
+    ],
+    "accept": [
+      "Token vencido/reutilizado/otro propósito no activa cuenta",
+      "Dos consumos simultáneos solo permiten una activación; secreto nunca se guarda en claro"
+    ],
+    "verify": "Q-API: token válido, inválido, replay y carrera; Q-DB para migración de tabla nueva.",
+    "rollback": "Desactivar emisión/consumo por flag nuevo y revocar tokens pendientes; conservar cuentas ya activadas legítimamente.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / cuentas",
+    "files": [
+      "server/src/web/rest/person.controller.ts",
+      "server/src/web/rest/account.controller.ts",
+      "Entidad de token y migración (nuevas)"
+    ],
+    "source": [
+      "WS-004: server/src/web/rest/person.controller.ts:96"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.2,
+    "score": 70.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-023",
+    "title": "Entregar invitaciones verificables por correo",
+    "ids": [
+      "WS-004"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-022"
+    ],
+    "steps": [
+      "Acordar proveedor, dominio remitente y prueba de entrega con negocio",
+      "Encapsular envío, reintento acotado e idempotencia sin tokens en logs",
+      "Vincular alta administrativa a emisión tras commit y ofrecer reenvío seguro"
+    ],
+    "accept": [
+      "Cuenta nueva recibe enlace funcional en buzón de pruebas",
+      "Fallo de proveedor muestra estado pendiente recuperable sin duplicar usuario ni enviar claves"
+    ],
+    "verify": "Q-API: adaptador de correo y buzón sandbox; comprobar rebote, retry y enlace de host permitido.",
+    "rollback": "Pausar envíos y conservar cola/estado; anular enlaces no entregados si hay sospecha de fuga.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Alta",
+    "category": "Backend / cuentas",
+    "files": [
+      "server/src/web/rest/person.controller.ts",
+      "Adaptador de correo e integración de invitaciones (nuevos)"
+    ],
+    "source": [
+      "WS-004: server/src/web/rest/person.controller.ts:96"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.2,
+    "score": 66.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-024",
+    "title": "Habilitar recuperación pública segura de contraseña",
+    "ids": [
+      "WS-004"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-008",
+      "T-022",
+      "T-029"
+    ],
+    "steps": [
+      "Implementar inicio con respuesta neutra y token de propósito reset",
+      "Validar vencimiento/uso único y contraseña; revocar sesiones al completar",
+      "Enviar notificación de cambio y proteger contra enumeración y ráfagas"
+    ],
+    "accept": [
+      "Usuario sin sesión recupera acceso y sus sesiones previas quedan revocadas",
+      "Respuesta no revela existencia de cuenta; token de activación no sirve para reset"
+    ],
+    "verify": "Q-API: correo existente/no existente, límites, replay, reset concurrente y revocación.",
+    "rollback": "Suspender inicio/finish por flag y ofrecer soporte verificado; no restaurar contraseñas previas ni sesiones revocadas.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / cuentas",
+    "files": [
+      "server/src/web/rest/person.controller.ts",
+      "server/src/web/rest/account.controller.ts",
+      "server/src/service/session.service.ts"
+    ],
+    "source": [
+      "WS-004: server/src/web/rest/person.controller.ts:96"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.2,
+    "score": 68.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-025",
+    "title": "Completar UI de activación y recuperación",
+    "ids": [
+      "WS-004"
+    ],
+    "phase": 2,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-023",
+      "T-024"
+    ],
+    "steps": [
+      "Conectar vistas/rutas activas con contratos nuevos",
+      "Retirar mensaje teléfono como contraseña y alinear regla 12 caracteres/72 bytes con backend",
+      "Añadir estados expirado/usado/reenvío/error sin revelar cuenta"
+    ],
+    "accept": [
+      "Nuevo suscriptor establece clave, entra, sale y recupera sin asistencia técnica",
+      "Textos y errores reflejan límites reales; no hay pantallas de éxito ficticias"
+    ],
+    "verify": "Q-UI: viaje de alta a reset en navegador y pruebas de componentes usados por router.",
+    "rollback": "Deshabilitar acciones nuevas conservando página explicativa y canal verificado; API y tokens válidos siguen compatibles.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Alta",
+    "category": "Backend / cuentas",
+    "files": [
+      "server/src/web/rest/person.controller.ts",
+      "client/src/app/account/activate/activate.vue",
+      "client/src/app/account/reset-password/init/reset-password-init.vue",
+      "client/src/app/account/reset-password/finish/reset-password-finish.vue",
+      "client/src/app/views/admin/admin-usuarios.vue"
+    ],
+    "source": [
+      "WS-004: server/src/web/rest/person.controller.ts:96"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.5,
+    "score": 69,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-026",
+    "title": "Hacer transaccional el alta de persona, cuenta y dirección",
+    "ids": [
+      "WS-017"
+    ],
+    "phase": 2,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-014",
+      "T-017"
+    ],
+    "steps": [
+      "Extraer alta compuesta a servicio con un EntityManager transaccional",
+      "Aplicar unicidad y convertir errores públicos a conflicto estable",
+      "Emitir invitación solo tras commit"
+    ],
+    "accept": [
+      "Fallo tras cualquiera de las tres escrituras deja cero objetos parciales",
+      "Reintento legítimo no encuentra cuenta huérfana; correo no sale antes de commit"
+    ],
+    "verify": "Q-API: fault injection en cada escritura y documento/correo duplicados.",
+    "rollback": "Suspender altas y conservar registros confirmados; no usar compensación parcial que borre datos válidos.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Backend / transacciones",
+    "files": [
+      "server/src/web/rest/person.controller.ts",
+      "server/src/service/person.service.ts",
+      "server/src/service/auth.service.ts"
+    ],
+    "source": [
+      "WS-017: server/src/web/rest/person.controller.ts:131"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 59,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-027",
+    "title": "Persistir intentos y eventos de pago conciliables",
+    "ids": [
+      "WS-005"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-018",
+      "T-019"
+    ],
+    "steps": [
+      "Crear ledger aditivo de intentos/eventos con referencia e idempotencia",
+      "Migrar referencias conocidas sin inventar fechas históricas",
+      "Registrar inicio y confirmación con correlación de factura y transacción"
+    ],
+    "accept": [
+      "Cada referencia emitida tiene registro durable y no se pierde al reintentar",
+      "ID de transacción duplicado no abona otra factura"
+    ],
+    "verify": "Q-DB y Q-API: upgrade del esquema, duplicados y trazabilidad hasta factura.",
+    "rollback": "Conservar ledger y dejarlo en lectura; detener nuevos checkouts si versión anterior no conserva referencias.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / pagos",
+    "files": [
+      "server/src/service/bold.service.ts",
+      "Entidad y migración de intento/evento de pago (nuevas)"
+    ],
+    "source": [
+      "WS-005: server/src/service/bold.service.ts:36"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.2,
+    "score": 72.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-028",
+    "title": "Conciliar webhooks desconocidos y cobros históricos",
+    "ids": [
+      "WS-005"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-027"
+    ],
+    "steps": [
+      "Persistir evento firmado desconocido en bandeja durable con alerta",
+      "Definir acuse tras persistencia, reintento y revisión manual con fuente Bold autorizada",
+      "Conciliar periodo expuesto con exportación del comercio sin reprocesar cargos"
+    ],
+    "accept": [
+      "Evento desconocido no se pierde silenciosamente y genera revisión",
+      "Importe/moneda/firma inválidos no modifican saldo; conciliación histórica tiene responsable y diferencias resueltas"
+    ],
+    "verify": "Q-API: repetición/desorden/evento desconocido; Q-DOC: conciliación de importes con evidencia del comercio.",
+    "rollback": "Mantener recepción durable y suspender aplicación automática de casos dudosos; no volver a cobrar ni borrar eventos.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Backend / pagos",
+    "files": [
+      "server/src/service/bold.service.ts",
+      "server/src/web/rest/bold.controller.ts",
+      "Runbook de conciliación (nuevo)"
+    ],
+    "source": [
+      "WS-005: server/src/service/bold.service.ts:36"
+    ],
+    "downstream": 6,
+    "effortBonus": 1.2,
+    "score": 76.4,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-029",
+    "title": "Limitar abuso de login y registro sin bloquear el hilo",
+    "ids": [
+      "WS-013"
+    ],
+    "phase": 2,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-014"
+    ],
+    "steps": [
+      "Combinar cuota por cuenta, origen confiable y capacidad; incluir registro/reset",
+      "Cambiar compareSync por comparación asíncrona",
+      "Validar proxy confiable y falsificación de IP; medir latencia y rechazos"
+    ],
+    "accept": [
+      "Rotar nombres no elude cuota de origen/capacidad",
+      "429 controlado, contraseñas siguen validando y tráfico permitido cumple presupuesto acordado"
+    ],
+    "verify": "Q-API y Q-PERF: ráfagas sintéticas acotadas en staging, múltiples cuentas/IP simuladas.",
+    "rollback": "Ajustar umbrales con métricas manteniendo cuota global; no volver a bcrypt síncrono ni abrir registro sin límites.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Seguridad / disponibilidad",
+    "files": [
+      "server/src/security/login-rate-limit.service.ts",
+      "server/src/security/password-util.ts",
+      "server/src/web/rest/account.controller.ts"
+    ],
+    "source": [
+      "WS-013: server/src/security/login-rate-limit.service.ts:15"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 63,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-030",
+    "title": "Alinear permisos por operación entre UI y API",
+    "ids": [
+      "WS-027"
+    ],
+    "phase": 2,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-005",
+      "T-014"
+    ],
+    "steps": [
+      "Acordar matriz explícita USER/ADMIN/OPERATOR por ruta y registro",
+      "Aplicar a menús/router y decoradores sin herencia implícita",
+      "Añadir pruebas con cada rol aislado y cuentas ajenas"
+    ],
+    "accept": [
+      "Permisos aprobados coinciden en UI/API para todas las rutas afectadas",
+      "Ocultar menú nunca es la única autorización y no se amplía ADMIN por accidente"
+    ],
+    "verify": "Q-API y Q-UI: tabla de positivos y negativos por rol; 401/403/404 definidos.",
+    "rollback": "Cerrar rutas nuevas si hay duda; restaurar matriz restrictiva anterior sin habilitar accesos cruzados.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Frontend / autorización",
+    "files": [
+      "client/src/app/router/entities.ts",
+      "server/src/security/guards/roles.guard.ts",
+      "client/src/app/router/"
+    ],
+    "source": [
+      "WS-027: client/src/app/router/entities.ts:28"
+    ],
+    "downstream": 2,
+    "effortBonus": 2,
+    "score": 60,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-031",
+    "title": "Reproducir contenedores desde el lock y runtime único",
+    "ids": [
+      "WS-036"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-004"
+    ],
+    "steps": [
+      "Elegir topología y versión soportada de Node tras comprobar compatibilidad en ejecución",
+      "Incluir lock raíz y npm ci con workspaces; fijar imágenes por digest y validar scripts nativos",
+      "Ejecutar con usuario no privilegiado y probar imagen final"
+    ],
+    "accept": [
+      "Dos builds del mismo lock resuelven las mismas versiones; imagen ejecuta el runtime acordado",
+      "Proceso sin root y smoke de API/cliente supera regresión"
+    ],
+    "verify": "Q-IMAGE: build de topología elegida y test en contenedor final; cotejar lock y UID.",
+    "rollback": "Desplegar digest previo compatible con secretos nuevos y schema expandido; no reconstruir imagen vieja con dependencias distintas.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "DevOps",
+    "files": [
+      "Dockerfile",
+      ".dockerignore",
+      "server/Dockerfile",
+      "client/Dockerfile",
+      ".github/workflows/security-checks.yml"
+    ],
+    "source": [
+      "WS-036: Dockerfile:11"
+    ],
+    "downstream": 4,
+    "effortBonus": 1.2,
+    "score": 60.4,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-032",
+    "title": "Declarar variables y persistencia por entorno",
+    "ids": [
+      "WS-038"
+    ],
+    "phase": 2,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-003",
+      "T-031"
+    ],
+    "steps": [
+      "Declarar variables obligatorias y pasarlas explícitamente mediante secretos",
+      "Separar compose de desarrollo, staging y despliegue; eliminar trust fuera de fixtures aislados",
+      "Verificar volumen persistente y fallo de arranque por configuración incompleta sin imprimir valores"
+    ],
+    "accept": [
+      "Falta de variable cancela arranque con nombre y sin secreto",
+      "Reinicio conserva datos en entorno persistente y credenciales no quedan en imagen"
+    ],
+    "verify": "Q-CONFIG y Q-IMAGE: smoke positivo/negativo y prueba de reinicio en staging.",
+    "rollback": "Restaurar versión de configuración no secreta; mantener credenciales rotadas y volumen existente.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "DevOps / configuración",
+    "files": [
+      "docker/app.yml",
+      "docker/postgresql.yml",
+      "server/src/main.ts"
+    ],
+    "source": [
+      "WS-038: docker/app.yml:3"
+    ],
+    "downstream": 4,
+    "effortBonus": 2,
+    "score": 62,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-033",
+    "title": "Unificar cabeceras HTTP con política compatible con Bold",
+    "ids": [
+      "WS-012"
+    ],
+    "phase": 2,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-031",
+      "T-032"
+    ],
+    "steps": [
+      "Capturar cabeceras actuales en ambas topologías admitidas",
+      "Introducir CSP en reporte y ensayar scripts/conexiones Bold; después aplicar",
+      "Activar HSTS solo con HTTPS completo y revisar permisos, framing y caché de datos privados"
+    ],
+    "accept": [
+      "HTML/API devuelven políticas acordadas y pago funciona sin violaciones inesperadas",
+      "Ningún recurso privado queda cacheado públicamente; prueba HTTPS completa precede HSTS"
+    ],
+    "verify": "Q-HEADERS y Q-UI: checkout sandbox, login/refresh, PDF y reporte CSP.",
+    "rollback": "Volver CSP a report-only si rompe carga; HSTS no se revierte inmediatamente en clientes, por eso aplicar max-age gradual.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Seguridad",
+    "files": [
+      "server/src/main.ts",
+      "client/nginx.conf"
+    ],
+    "source": [
+      "WS-012: server/src/main.ts:31"
+    ],
+    "downstream": 1,
+    "effortBonus": 2,
+    "score": 58,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-034",
+    "title": "Reenviar Socket.IO y verificar reconexión",
+    "ids": [
+      "WS-037"
+    ],
+    "phase": 2,
+    "hours": [
+      4,
+      8
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-013",
+      "T-031"
+    ],
+    "steps": [
+      "Configurar ruta /socket.io y Upgrade/Connection en proxy",
+      "Definir timeouts, origen y reconexión para topología elegida",
+      "Probar polling y upgrade sin presentar simulaciones como reales"
+    ],
+    "accept": [
+      "Handshake recibe respuesta Engine.IO y upgrade funciona",
+      "Reiniciar backend reconecta con estado de desconexión visible"
+    ],
+    "verify": "Q-SOCKET y Q-UI sobre Nginx de staging; no basta prueba directa contra Nest.",
+    "rollback": "Desactivar tarjeta/stream y mantener API HTTP; restaurar proxy previo solo con telemetría explícitamente fuera de servicio.",
+    "risk": "Bajo",
+    "prob": 3,
+    "impact": 3,
+    "severity": "Media",
+    "category": "DevOps / proxy",
+    "files": [
+      "client/nginx.conf",
+      "server/src/web/rest/tank-level.gateway.ts"
+    ],
+    "source": [
+      "WS-037: client/nginx.conf:6"
+    ],
+    "downstream": 1,
+    "effortBonus": 3,
+    "score": 56,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-035",
+    "title": "Añadir health de aplicación y dependencias",
+    "ids": [
+      "WS-042"
+    ],
+    "phase": 2,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-032"
+    ],
+    "steps": [
+      "Separar liveness de readiness con timeout de PostgreSQL",
+      "Proteger detalles y reflejar versión real de release",
+      "Conectar readiness al despliegue y comprobar pérdida controlada de DB"
+    ],
+    "accept": [
+      "DB caída retira readiness sin reinicios en bucle por liveness",
+      "Endpoints públicos no revelan secretos y versión coincide con imagen"
+    ],
+    "verify": "Q-HEALTH: fallo de conexión simulado y healthcheck real del contenedor.",
+    "rollback": "Volver regla de encaminamiento anterior manteniendo alarma manual; no usar TCP como evidencia de salud de DB.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Observabilidad",
+    "files": [
+      "docker/prometheus/prometheus.yml",
+      "server/src/web/rest/management.controller.ts",
+      "Dockerfile"
+    ],
+    "source": [
+      "WS-042: docker/prometheus/prometheus.yml:27"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.5,
+    "score": 61,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-036",
+    "title": "Cerrar regresión HTTP y navegador de los riesgos altos",
+    "ids": [
+      "WS-043"
+    ],
+    "phase": 2,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "QA",
+    "deps": [
+      "T-005",
+      "T-006",
+      "T-007",
+      "T-008",
+      "T-009",
+      "T-020",
+      "T-021",
+      "T-025",
+      "T-026",
+      "T-028",
+      "T-030",
+      "T-035"
+    ],
+    "steps": [
+      "Integrar pruebas específicas ya creadas por cada corrección en viajes reales",
+      "Ejecutar identidad, alta, reset, sesiones, pago/PDF y matriz de roles sobre staging",
+      "Capturar evidencia por hallazgo y revisar con dueño de negocio"
+    ],
+    "accept": [
+      "Todos los casos de alto riesgo pasan con guardas reales y PostgreSQL",
+      "No hay diferencias financieras no conciliadas; fallo de caso bloquea hito"
+    ],
+    "verify": "Q-API y Q-UI completos; repetir casos concurrentes con barreras para evitar éxitos accidentales.",
+    "rollback": "No promover release fallida; conservar restricciones F1 y abrir defecto con reproducción.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 5,
+    "severity": "Media",
+    "category": "Pruebas",
+    "files": [
+      "server/e2e/account.e2e-spec.ts",
+      "server/e2e/",
+      "client/e2e/ (nuevo)"
+    ],
+    "source": [
+      "WS-043: server/e2e/account.e2e-spec.ts:49"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.2,
+    "score": 66.4,
+    "priority": "P1",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-037",
+    "title": "Sanear historial tras revocar secretos y añadir prevención",
+    "ids": [
+      "WS-003"
+    ],
+    "phase": 2,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-003",
+      "T-010"
+    ],
+    "steps": [
+      "Inventariar clones, forks, tags y responsables de integraciones",
+      "Acordar ventana y copia restringida; ejecutar saneamiento solo con autorización de reescritura",
+      "Reincorporar colaboradores y añadir escaneo preventivo sin registrar valores"
+    ],
+    "accept": [
+      "Ramas/tags distribuidos acordados no contienen secretos detectados",
+      "Revocación fue previa; forks/clones fuera de control quedan identificados con seguimiento"
+    ],
+    "verify": "Q-SECRET: escaneo local de referencias y revisión de protección CI; no ejecutar comandos que impriman blobs.",
+    "rollback": "Conservar copia forense con acceso restringido; restaurar solo referencias saneadas y coordinar rebase, nunca publicar otra vez secretos.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 5,
+    "severity": "Alta",
+    "category": "Seguridad",
+    "files": [
+      ".github/workflows/security-checks.yml",
+      "Referencias Git y clones (operación externa coordinada)"
+    ],
+    "source": [
+      "WS-003: watsolution_web_reportes/evidencias/secretos-historicos-validacion.json:1"
+    ],
+    "downstream": 1,
+    "effortBonus": 2,
+    "score": 70,
+    "priority": "P1",
+    "rule": "Piso Alta = P1",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-038",
+    "title": "Validar contratos financieros e ID de ruta",
+    "ids": [
+      "WS-010",
+      "WS-021"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-019",
+      "T-020"
+    ],
+    "steps": [
+      "Separar DTO de alta/edición para facturas y lecturas con tipos, rangos, fechas y campos permitidos",
+      "Hacer ID de ruta autoritativo y rechazar discrepancias o ausencia de registro",
+      "Adaptar clientes antes de activar whitelist/rechazo de extras en estas rutas"
+    ],
+    "accept": [
+      "Negativos, fechas/estados inválidos y campos extra reciben 400 sin escritura",
+      "PUT /1 con id 2 no altera ninguno; inexistente devuelve 404"
+    ],
+    "verify": "Q-API: matriz de entradas inválidas y contratos actuales válidos para web/móvil.",
+    "rollback": "Mantener allowlist de campos financieros; desactivar únicamente incompatibilidad de cliente identificada mediante parche específico.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Backend / validación; Backend / contratos",
+    "files": [
+      "server/src/service/dto/invoice.dto.ts",
+      "server/src/web/rest/invoice.controller.ts",
+      "server/src/service/dto/",
+      "server/src/service/mapper/",
+      "server/src/web/rest/meter.controller.ts"
+    ],
+    "source": [
+      "WS-010: server/src/service/dto/invoice.dto.ts:24",
+      "WS-021: server/src/web/rest/invoice.controller.ts:218"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 57,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-039",
+    "title": "Validar DTO e IDs del resto del CRUD",
+    "ids": [
+      "WS-010",
+      "WS-021"
+    ],
+    "phase": 3,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-038",
+      "T-030"
+    ],
+    "steps": [
+      "Aplicar DTO anidados y mapeos explícitos a personas, direcciones, noticias y reportes",
+      "Validar formato de login nuevo y mantener compatibilidad de usuarios previos",
+      "Activar política global solo tras inventariar interfaces inline y adaptar cada ruta"
+    ],
+    "accept": [
+      "Todos los PUT con ID respetan URL y no insertan accidentalmente",
+      "Contratos IA/móvil/refresh siguen funcionando y se rechazan extras peligrosos"
+    ],
+    "verify": "Q-API: contrato parametrizado por cada controlador del inventario, sin depender solo de Swagger.",
+    "rollback": "Revertir por ruta al DTO anterior seguro; evitar retirar globalmente validación para resolver una incompatibilidad puntual.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Backend / validación; Backend / contratos",
+    "files": [
+      "server/src/service/dto/invoice.dto.ts",
+      "server/src/web/rest/invoice.controller.ts",
+      "server/src/main.ts",
+      "server/src/web/rest/person.controller.ts",
+      "server/src/web/rest/address.controller.ts",
+      "server/src/web/rest/noticia.controller.ts",
+      "server/src/web/rest/reporte.controller.ts"
+    ],
+    "source": [
+      "WS-010: server/src/service/dto/invoice.dto.ts:24",
+      "WS-021: server/src/web/rest/invoice.controller.ts:218"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.2,
+    "score": 58.4,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-040",
+    "title": "Acotar listados y corregir enlaces de paginación",
+    "ids": [
+      "WS-022",
+      "WS-023"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-039"
+    ],
+    "steps": [
+      "Validar page/size y sort con límites y lista de campos",
+      "Calcular páginas con ceil y limitar next/last",
+      "Publicar límites y total/cursor de contrato"
+    ],
+    "accept": [
+      "size negativo/excesivo y sort desconocido se rechazan o normalizan según contrato",
+      "Para 21 registros y size 20, last=1; cero registros y última página no generan next inválido"
+    ],
+    "verify": "Q-UNIT y Q-API: tabla 0/1/20/21 registros, límites, desbordamiento y entradas no numéricas.",
+    "rollback": "Conservar límite máximo y corregir enlaces sin reabrir listados ilimitados.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Rendimiento / API; Backend / contratos",
+    "files": [
+      "server/src/domain/base/pagination.entity.ts",
+      "server/src/client/header-util.ts"
+    ],
+    "source": [
+      "WS-022: server/src/domain/base/pagination.entity.ts:38",
+      "WS-023: server/src/client/header-util.ts:41"
+    ],
+    "downstream": 2,
+    "effortBonus": 2,
+    "score": 60,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-041",
+    "title": "Eliminar N+1 y añadir búsqueda paginada",
+    "ids": [
+      "WS-022"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-017",
+      "T-018",
+      "T-040"
+    ],
+    "steps": [
+      "Reescribir getUsersWithStatus y bootstrap móvil con consultas por lote",
+      "Añadir búsqueda de suscriptores y paginación de noticias públicas",
+      "Medir consultas y latencia con datos sintéticos representativos"
+    ],
+    "accept": [
+      "Número de consultas no crece linealmente con 20/100 filas",
+      "Suscriptor fuera de primera página aparece por búsqueda; resultados no filtran datos de otro rol"
+    ],
+    "verify": "Q-PERF y Q-API: conteo de SQL y EXPLAIN con filtro; presupuesto propuesto <=5 consultas por página, validar en T-004.",
+    "rollback": "Restaurar consulta anterior acotada y conservar paginación; investigar plan SQL sin quitar filtros de autorización.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Rendimiento / API",
+    "files": [
+      "server/src/domain/base/pagination.entity.ts",
+      "server/src/service/user.service.ts",
+      "server/src/service/mobile.service.ts",
+      "server/src/web/rest/public-noticias.controller.ts"
+    ],
+    "source": [
+      "WS-022: server/src/domain/base/pagination.entity.ts:38"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 59,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-042",
+    "title": "Paginar búsquedas y listas administrativas completas",
+    "ids": [
+      "WS-024"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-041"
+    ],
+    "steps": [
+      "Consumir búsqueda servidor y total/cursor en facturación",
+      "Incorporar navegación en usuarios/noticias e historial afectado",
+      "Cancelar requests viejos y separar vacío, carga y error"
+    ],
+    "accept": [
+      "Cuenta 201 y suscriptor 21 son accesibles mediante UI",
+      "Respuesta vieja no sobrescribe filtro nuevo y errores no parecen lista vacía"
+    ],
+    "verify": "Q-UI: fixture >200 usuarios y >20 suscriptores/noticias, respuestas fuera de orden.",
+    "rollback": "Conservar filtro/contrato API y ofrecer navegación simple si falla búsqueda avanzada.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Frontend / UX",
+    "files": [
+      "client/src/app/views/admin/admin-facturacion.vue",
+      "client/src/app/views/admin/admin-usuarios.vue",
+      "client/src/app/views/admin/admin-noticias.vue"
+    ],
+    "source": [
+      "WS-024: client/src/app/views/admin/admin-facturacion.vue:52"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 59,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-043",
+    "title": "Acordar definiciones de consumo, recaudo y vencimiento",
+    "ids": [
+      "WS-018",
+      "WS-047"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-021",
+      "T-028"
+    ],
+    "steps": [
+      "Definir consumo por diferencia, reinicio de medidor y datos faltantes con negocio",
+      "Definir fecha de cobro real y tratamiento de pagos históricos sin timestamp verificable",
+      "Acordar día/hora/zona de vencimiento y casos de medianoche"
+    ],
+    "accept": [
+      "Ejemplos aprobados: 100 a 110 equivale a 10 y pago en mes distinto se asigna al cobro",
+      "Regla de vencimiento y tratamiento desconocido documentados sin inventar fechas"
+    ],
+    "verify": "Q-DOC: tabla de ejemplos firmada por responsable de facturación.",
+    "rollback": "Mantener indicadores como no verificados si negocio no decide; no publicar cálculos arbitrarios.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Backend / métricas; Frontend / fechas",
+    "files": [
+      "server/src/service/admin-stats.service.ts",
+      "client/src/app/views/portal/mis-facturas.vue",
+      "Contrato de métricas/calendario aprobado (nuevo)"
+    ],
+    "source": [
+      "WS-018: server/src/service/admin-stats.service.ts:39",
+      "WS-047: client/src/app/views/portal/mis-facturas.vue:17"
+    ],
+    "downstream": 3,
+    "effortBonus": 2.4,
+    "score": 66.8,
+    "priority": "P1",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-044",
+    "title": "Tratar fechas de calendario y mora de forma uniforme",
+    "ids": [
+      "WS-047"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-043"
+    ],
+    "steps": [
+      "Evitar parseo UTC de YYYY-MM-DD para visualización de calendario",
+      "Compartir criterio de vencimiento aprobado en API/cron/UI",
+      "Probar fecha límite en Bogotá y navegador con otra zona"
+    ],
+    "accept": [
+      "2026-10-05 se muestra como 5 de octubre en Bogotá",
+      "Mora cambia en instante de negocio acordado, de igual forma en UI/API"
+    ],
+    "verify": "Q-UNIT y Q-UI: medianoche, fin de mes, año bisiesto y zonas distintas.",
+    "rollback": "Mostrar fecha literal y suspender etiqueta de mora calculada localmente hasta corregir discrepancia.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Frontend / fechas",
+    "files": [
+      "client/src/app/views/portal/mis-facturas.vue",
+      "server/src/service/notification.service.ts"
+    ],
+    "source": [
+      "WS-047: client/src/app/views/portal/mis-facturas.vue:17"
+    ],
+    "downstream": 2,
+    "effortBonus": 2,
+    "score": 64,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-045",
+    "title": "Corregir agregación de consumo en los tableros",
+    "ids": [
+      "WS-018"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-043",
+      "T-020"
+    ],
+    "steps": [
+      "Usar consumos confirmados/diferencias según definición aprobada",
+      "Aplicar misma consulta al resumen admin y portal",
+      "Tratar primer registro, reinicio y huecos como datos incompletos explícitos"
+    ],
+    "accept": [
+      "Series de lecturas conocidas cuadran con facturas y suma del periodo",
+      "No se suman acumulados ni se inventa consumo faltante"
+    ],
+    "verify": "Q-UNIT y Q-API: fixtures multi-mes y cambio de medidor; comparar resultado tabular y gráfico.",
+    "rollback": "Ocultar indicador incorrecto conservando datos brutos; no reescribir lecturas para hacer coincidir tablero.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Backend / métricas",
+    "files": [
+      "server/src/service/admin-stats.service.ts",
+      "server/src/service/portal.service.ts"
+    ],
+    "source": [
+      "WS-018: server/src/service/admin-stats.service.ts:39"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 63,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-046",
+    "title": "Atribuir recaudo a eventos de pago verificables",
+    "ids": [
+      "WS-018"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-043",
+      "T-028",
+      "T-021"
+    ],
+    "steps": [
+      "Guardar timestamp confiable de pago y fuente en eventos",
+      "Agrupar recaudo por fecha de cobro y excluir pendientes",
+      "Clasificar históricos sin evidencia como fecha desconocida y conciliar totales"
+    ],
+    "accept": [
+      "Factura emitida en un mes y pagada al siguiente cuenta en el segundo",
+      "Total de caja concilia con eventos; histórico sin fecha no se atribuye a emisión por defecto"
+    ],
+    "verify": "Q-DB y Q-API: duplicados, reversos, cobro parcial si negocio lo admite y periodos.",
+    "rollback": "Mantener eventos y restaurar vista sin desglose temporal si hay inconsistencia; no alterar contabilización.",
+    "risk": "Alto",
+    "prob": 4,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Backend / métricas",
+    "files": [
+      "server/src/service/admin-stats.service.ts",
+      "Ledger de pagos propuesto",
+      "server/src/service/portal.service.ts"
+    ],
+    "source": [
+      "WS-018: server/src/service/admin-stats.service.ts:39"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 61,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-047",
+    "title": "Añadir outbox transaccional de eventos de facturación",
+    "ids": [
+      "WS-019",
+      "WS-020"
+    ],
+    "phase": 3,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-015",
+      "T-019",
+      "T-028"
+    ],
+    "steps": [
+      "Crear tabla aditiva de eventos y claves de idempotencia",
+      "Escribir factura/actividad/evento con mismo manager en transacción",
+      "Separar confirmación financiera de entrega de notificación"
+    ],
+    "accept": [
+      "Commit financiero siempre deja evento durable correspondiente",
+      "Rollback de factura no deja aviso y entrega caída no pierde evento"
+    ],
+    "verify": "Q-DB y Q-API: caída antes/después de commit y posterior recuperación.",
+    "rollback": "Pausar consumidor y conservar outbox; no borrar eventos pendientes ni duplicar entrega legacy.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Observabilidad / notificaciones; Observabilidad / tareas",
+    "files": [
+      "server/src/service/billing.service.ts",
+      "server/src/service/notification.service.ts",
+      "Entidad outbox y migración (nuevas)"
+    ],
+    "source": [
+      "WS-019: server/src/service/billing.service.ts:38",
+      "WS-020: server/src/service/notification.service.ts:69"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.2,
+    "score": 56.4,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-048",
+    "title": "Entregar avisos y actividad de forma idempotente",
+    "ids": [
+      "WS-019"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-047"
+    ],
+    "steps": [
+      "Consumir eventos con locking, reintento acotado y clave única de entrega",
+      "Registrar creación desde flujo canónico y actor",
+      "Añadir estado fallido revisable sin exponer PII en logs"
+    ],
+    "accept": [
+      "Cada factura canónica genera aviso y actividad una sola vez",
+      "Caída de entrega se recupera sin deshacer pago ni perder aviso"
+    ],
+    "verify": "Q-API: dos consumidores, reintento y red caída; verificar actividad/aviso persistidos.",
+    "rollback": "Detener consumidores manteniendo cola y usar reenvío controlado por clave; no habilitar dos mecanismos sin deduplicar.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Observabilidad / notificaciones",
+    "files": [
+      "server/src/service/billing.service.ts",
+      "Consumidor outbox (nuevo)",
+      "server/src/service/notification.service.ts"
+    ],
+    "source": [
+      "WS-019: server/src/service/billing.service.ts:38"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 59,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-049",
+    "title": "Recuperar cron omitido sin duplicar avisos",
+    "ids": [
+      "WS-020"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-048",
+      "T-044"
+    ],
+    "steps": [
+      "Persistir ventanas procesadas y recuperar días pendientes",
+      "Fijar zona aprobada y deduplicar por factura/tipo/fecha",
+      "Ensayar dos réplicas y caída de 48 horas"
+    ],
+    "accept": [
+      "Dos réplicas generan una sola entrega lógica",
+      "Reinicio procesa atrasos sin repetir avisos ni omitir vencimientos"
+    ],
+    "verify": "Q-API con reloj controlado, dos workers y marca de progreso durable.",
+    "rollback": "Pausar cron automático y mantener backlog; recuperar por lotes idempotentes revisados.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Observabilidad / tareas",
+    "files": [
+      "server/src/service/notification.service.ts",
+      "Marca durable de cron (nueva)"
+    ],
+    "source": [
+      "WS-020: server/src/service/notification.service.ts:69"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 61,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-050",
+    "title": "Conectar actividad real y calidad de datos del tablero",
+    "ids": [
+      "WS-025"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-048"
+    ],
+    "steps": [
+      "Sustituir lista fija por API paginada con permisos",
+      "Mostrar actor, instante y estado vacío/error de forma clara",
+      "Mantener telemetría sin fuente deshabilitada y documentar contrato futuro autenticado"
+    ],
+    "accept": [
+      "Pago/lectura de prueba aparecen desde API sin nombres fijos",
+      "Telemetría no integrada se muestra Sin fuente; no se entrega integración física inexistente"
+    ],
+    "verify": "Q-UI y Q-API: evento real sintético, desconexión y cuenta sin permiso.",
+    "rollback": "Ocultar actividad ante fallo; conservar estado sin datos y no volver a mocks de producción.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Frontend / datos operativos",
+    "files": [
+      "client/src/app/views/admin/admin-actividad.vue",
+      "client/src/app/views/admin/admin-resumen.vue"
+    ],
+    "source": [
+      "WS-025: client/src/app/views/admin/admin-actividad.vue:44"
+    ],
+    "downstream": 1,
+    "effortBonus": 2,
+    "score": 58,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-051",
+    "title": "Asociar etiquetas y mensajes de formularios",
+    "ids": [
+      "WS-028"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-025"
+    ],
+    "steps": [
+      "Inventariar controles activos y asignar id/for únicos",
+      "Vincular ayudas/errores con aria-describedby y nombres de botones",
+      "Verificar formularios de alta, edición y cuentas con lector"
+    ],
+    "accept": [
+      "Cada control tiene nombre accesible inequívoco",
+      "Error es anunciado y referencia a su campo sin IDs duplicados"
+    ],
+    "verify": "Q-A11Y: análisis automático más NVDA/teclado en flujos activos.",
+    "rollback": "Revertir marcado defectuoso de forma local manteniendo asociación accesible alternativa.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Accesibilidad",
+    "files": [
+      "client/src/app/views/admin/admin-usuarios.vue",
+      "client/src/app/views/admin/"
+    ],
+    "source": [
+      "WS-028: client/src/app/views/admin/admin-usuarios.vue:495"
+    ],
+    "downstream": 1,
+    "effortBonus": 2.4,
+    "score": 58.8,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-052",
+    "title": "Garantizar foco y teclado en modales",
+    "ids": [
+      "WS-029"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-051"
+    ],
+    "steps": [
+      "Crear componente/modal común con rol, nombre y aria-modal",
+      "Gestionar foco inicial, contención, Escape y retorno",
+      "Migrar modales activos y validar superposición/scroll"
+    ],
+    "accept": [
+      "Usuario completa y cierra cada modal solo con teclado",
+      "Al cerrar vuelve al activador y lector anuncia título sin acceder al fondo"
+    ],
+    "verify": "Q-A11Y y Q-UI: tab/shift-tab/Escape, apertura anidada y móvil.",
+    "rollback": "Deshabilitar modal problemático ofreciendo formulario en página accesible; no quitar control de foco globalmente.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Accesibilidad",
+    "files": [
+      "client/src/app/views/admin/admin-usuarios.vue",
+      "Componente modal compartido (nuevo)"
+    ],
+    "source": [
+      "WS-029: client/src/app/views/admin/admin-usuarios.vue:480"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.5,
+    "score": 59,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-053",
+    "title": "Dar equivalentes textuales a los gráficos",
+    "ids": [
+      "WS-030"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-045"
+    ],
+    "steps": [
+      "Añadir título y resumen accesible a cada gráfico",
+      "Renderizar tabla de la misma serie y estados independientes del color",
+      "Validar lectura y valores frente a API"
+    ],
+    "accept": [
+      "Todos los puntos de la serie se consultan sin canvas",
+      "Tabla, resumen y gráfico coinciden y funcionan al ocultar colores"
+    ],
+    "verify": "Q-A11Y: lector y tabla con fixtures; Q-UI de vacío y error.",
+    "rollback": "Presentar solo tabla si gráfico falla; no retirar acceso a los datos.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Accesibilidad",
+    "files": [
+      "client/src/app/views/portal/portal-dashboard.vue",
+      "client/src/app/views/portal/mi-consumo.vue"
+    ],
+    "source": [
+      "WS-030: client/src/app/views/portal/portal-dashboard.vue:320"
+    ],
+    "downstream": 1,
+    "effortBonus": 2.4,
+    "score": 58.8,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-054",
+    "title": "Liberar listeners y gráficos al desmontar",
+    "ids": [
+      "WS-026"
+    ],
+    "phase": 3,
+    "hours": [
+      4,
+      8
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-004"
+    ],
+    "steps": [
+      "Registrar resize en montaje y retirarlo con misma función",
+      "Destruir instancias Chart y cancelar peticiones",
+      "Probar navegación repetida en las cinco vistas afectadas"
+    ],
+    "accept": [
+      "Tras 20 entradas/salidas listeners y gráficos vuelven al conteo inicial",
+      "No se actualiza una vista desmontada"
+    ],
+    "verify": "Q-UI: espías add/removeEventListener y destroy; perfil de memoria sin crecimiento sostenido.",
+    "rollback": "Volver vista individual a render sin gráfico si falla lifecycle; no reintroducir listeners globales sin limpieza.",
+    "risk": "Bajo",
+    "prob": 3,
+    "impact": 2,
+    "severity": "Baja",
+    "category": "Rendimiento",
+    "files": [
+      "client/src/app/views/admin/admin-facturacion.vue",
+      "client/src/app/views/admin/admin-usuarios.vue",
+      "client/src/app/views/admin/admin-noticias.vue",
+      "client/src/app/views/admin/admin-actividad.vue"
+    ],
+    "source": [
+      "WS-026: client/src/app/views/admin/admin-facturacion.vue:40"
+    ],
+    "downstream": 2,
+    "effortBonus": 3,
+    "score": 46,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-055",
+    "title": "Reducir carga inicial y configurar caché de assets",
+    "ids": [
+      "WS-033"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-054"
+    ],
+    "steps": [
+      "Medir móvil con configuración estable y mapa de imports",
+      "Diferir Chart y funciones administrativas; retirar CSS duplicado",
+      "Configurar caché de assets con hash y compresión en borde manteniendo HTML/datos privados sin caché"
+    ],
+    "accept": [
+      "Bundle inicial gzip disminuye al menos 20% respecto a 301616 bytes o se justifica nuevo presupuesto medido",
+      "Navegación crítica funciona y no se cachean respuestas con datos personales"
+    ],
+    "verify": "Q-BUILD y Q-PERF con mismo escenario; Q-HEADERS para compresión/caché.",
+    "rollback": "Desplegar assets anteriores junto a HTML compatible; conservar archivos de ambas versiones durante transición.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Rendimiento",
+    "files": [
+      "client/src/app/main.ts",
+      "client/src/content/scss/",
+      "client/nginx.conf"
+    ],
+    "source": [
+      "WS-033: client/src/app/main.ts:24"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 53,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-056",
+    "title": "Obtener escaneo vigente y mapa de actualización",
+    "ids": [
+      "WS-034"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-003",
+      "T-031"
+    ],
+    "steps": [
+      "Obtener autorización explícita para enviar metadata a npm o informe equivalente aprobado",
+      "Separar runtime/dev, alcanzabilidad y deprecaciones",
+      "Seleccionar versiones soportadas con documentación actual y lista de cambios; priorizar vulnerabilidades explotables si aparecen"
+    ],
+    "accept": [
+      "Inventario completo tiene fecha de escaneo y decisión por alerta",
+      "Resultado bloqueado no se interpreta como cero; críticas/altas nuevas escalan a F1 sin esperar F3"
+    ],
+    "verify": "Q-AUDIT; cotejar lock y SBOM con artefacto final. No usar audit fix automático.",
+    "rollback": "No cambia runtime por sí sola; conservar informe y suspender actualizaciones no probadas.",
+    "risk": "Bajo",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Dependencias",
+    "files": [
+      "package-lock.json",
+      "package.json",
+      "client/package.json",
+      "server/package.json"
+    ],
+    "source": [
+      "WS-034: package-lock.json:1"
+    ],
+    "downstream": 3,
+    "effortBonus": 2,
+    "score": 62,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-057",
+    "title": "Preparar sustitución de BootstrapVue y compat",
+    "ids": [
+      "WS-034"
+    ],
+    "phase": 3,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-056"
+    ],
+    "steps": [
+      "Inventariar componentes/directivas globales, dependencias transitorias y usos CSS",
+      "Elegir alternativa mantenida y crear adaptadores mínimos en rama",
+      "Portar un componente representativo y fijar contratos de interacción"
+    ],
+    "accept": [
+      "Matriz de reemplazo cubre los 11 archivos con b-* detectados y usos indirectos",
+      "Prototipo conserva teclado, estilo y pruebas sin agregar otra capa permanente"
+    ],
+    "verify": "Q-UI y Q-A11Y del prototipo; revisión del lock y licencia candidata.",
+    "rollback": "Retirar prototipo aislado sin actualizar dependencias de producción; conservar pruebas de contrato.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Dependencias",
+    "files": [
+      "package-lock.json",
+      "client/src/app/shared/config/",
+      "client/vite.config.mts"
+    ],
+    "source": [
+      "WS-034: package-lock.json:1"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.2,
+    "score": 52.4,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-058",
+    "title": "Migrar navegación y componentes compartidos",
+    "ids": [
+      "WS-034"
+    ],
+    "phase": 3,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-057",
+      "T-052"
+    ],
+    "steps": [
+      "Migrar navbar, entities-menu y adaptadores comunes",
+      "Reemplazar directivas/global plugins equivalentes",
+      "Probar navegación con roles y modales accesibles"
+    ],
+    "accept": [
+      "Componentes comunes no requieren BootstrapVue",
+      "Menús, foco y rutas conservan matriz de permisos"
+    ],
+    "verify": "Q-UI y Q-A11Y: navbar, menú entidades y adaptadores.",
+    "rollback": "Revertir lote común con lock compatible si no reabre vulnerabilidad; mantener contenciones previas.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Dependencias",
+    "files": [
+      "package-lock.json",
+      "client/src/app/core/jhi-navbar/jhi-navbar.vue",
+      "client/src/app/entities/entities-menu.vue"
+    ],
+    "source": [
+      "WS-034: package-lock.json:1"
+    ],
+    "downstream": 2,
+    "effortBonus": 1.2,
+    "score": 54.4,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-059",
+    "title": "Migrar componentes administrativos y de entidades",
+    "ids": [
+      "WS-034"
+    ],
+    "phase": 3,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-058",
+      "T-042"
+    ],
+    "steps": [
+      "Migrar user-management, address, invoice, meter y person con b-*",
+      "Conservar contratos validados y mensajes de error",
+      "Verificar tablas, edición y formularios sobre componentes del router"
+    ],
+    "accept": [
+      "Los nueve archivos administrativos/entidades inventariados dejan de requerir b-*",
+      "Crear/editar/listar conserva reglas financieras, paginación y accesibilidad"
+    ],
+    "verify": "Q-UI: viaje por entidad con rol autorizado y negativos; snapshot visual de tabla y modal.",
+    "rollback": "Revertir lote de componentes y lock probado sin revertir reglas backend; feature flag de pantalla si es necesario.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Dependencias",
+    "files": [
+      "package-lock.json",
+      "client/src/app/admin/user-management/",
+      "client/src/app/entities/"
+    ],
+    "source": [
+      "WS-034: package-lock.json:1"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.2,
+    "score": 56.4,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-060",
+    "title": "Migrar login y estilos públicos dependientes",
+    "ids": [
+      "WS-034"
+    ],
+    "phase": 3,
+    "hours": [
+      16,
+      24
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-058",
+      "T-025"
+    ],
+    "steps": [
+      "Migrar login-form y estilos derivados de Bootstrap/Bootswatch",
+      "Revisar registro, activación, recuperación y páginas públicas para dependencias indirectas",
+      "Validar tamaños móviles y compatibilidad de navegadores acordados"
+    ],
+    "accept": [
+      "Login y páginas públicas no dependen del runtime Vue 2",
+      "Flujos de acceso corregidos y estilos esenciales pasan regresión"
+    ],
+    "verify": "Q-UI y Q-A11Y: login/alta/reset en móvil y escritorio.",
+    "rollback": "Restaurar lote UI probado conservando API segura; no restaurar textos de contraseña telefónica.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Dependencias",
+    "files": [
+      "package-lock.json",
+      "client/src/app/account/login-form/login-form.vue",
+      "client/src/content/scss/"
+    ],
+    "source": [
+      "WS-034: package-lock.json:1"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.2,
+    "score": 56.4,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-061",
+    "title": "Retirar compat y dependencias obsoletas del runtime",
+    "ids": [
+      "WS-034",
+      "WS-033"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-059",
+      "T-060",
+      "T-055"
+    ],
+    "steps": [
+      "Eliminar @vue/compat, BootstrapVue, Bootstrap/Bootswatch 4 si matriz confirma sustitución",
+      "Regenerar lock de forma controlada y explicar dependencias transitivas restantes",
+      "Ejecutar build/regresión y escaneo final del árbol distribuido"
+    ],
+    "accept": [
+      "Runtime distribuido no incluye Vue 2/Bootstrap 4/BootstrapVue retirados",
+      "Dependencia deprecated restante tiene eliminación o sustitución aprobada y prueba; escaneo vigente sin altas alcanzables sin resolver"
+    ],
+    "verify": "Q-BUILD, Q-UI, Q-AUDIT y árbol de dependencias antes/después.",
+    "rollback": "Volver al último lote compatible solo si no reintroduce vulnerabilidad bloqueante; en ese caso desactivar función afectada y corregir hacia adelante.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Dependencias; Rendimiento",
+    "files": [
+      "package-lock.json",
+      "client/src/app/main.ts",
+      "client/vite.config.mts",
+      "client/package.json"
+    ],
+    "source": [
+      "WS-034: package-lock.json:1",
+      "WS-033: client/src/app/main.ts:24"
+    ],
+    "downstream": 5,
+    "effortBonus": 1.5,
+    "score": 61,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-062",
+    "title": "Validar inventario de datos, finalidades y proveedores",
+    "ids": [
+      "WS-039",
+      "WS-040",
+      "WS-041"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-003",
+      "T-023",
+      "T-028"
+    ],
+    "steps": [
+      "Contrastar proveedor real, región, canal y contrato con responsable de datos",
+      "Definir base aplicable por finalidad y evidencia de autorizaciones físicas existentes",
+      "Acordar retención, atención de derechos y plazos con asesor competente"
+    ],
+    "accept": [
+      "Matriz de tratamientos/proveedores tiene responsable y evidencia",
+      "Decisiones legales pendientes quedan identificadas, no se sustituye validación por una casilla"
+    ],
+    "verify": "Q-DOC: revisión de contratos y operaciones por responsable; fuentes oficiales actualizadas al ejecutar.",
+    "rollback": "No publicar afirmaciones no verificadas; conservar inventario versionado y escalar falta de evidencia.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Privacidad / documentación; Privacidad; Privacidad / retención",
+    "files": [
+      "client/src/app/views/politica/politica-privacidad.vue",
+      "client/src/app/views/login/login.vue",
+      "server/src/service/session.service.ts",
+      "Inventario de tratamientos y contratos (nuevo, acceso restringido)"
+    ],
+    "source": [
+      "WS-039: client/src/app/views/politica/politica-privacidad.vue:350",
+      "WS-040: client/src/app/views/login/login.vue:168",
+      "WS-041: server/src/service/session.service.ts:18"
+    ],
+    "downstream": 3,
+    "effortBonus": 2,
+    "score": 62,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-063",
+    "title": "Publicar política coherente con la operación comprobada",
+    "ids": [
+      "WS-039"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      12
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-062",
+      "T-029",
+      "T-032",
+      "T-035"
+    ],
+    "steps": [
+      "Corregir pagos Bold, sesiones, bcrypt y límites reales",
+      "Describir proveedores/residencia/backups solo con evidencia",
+      "Versionar política y coordinar aviso de cambios con responsable"
+    ],
+    "accept": [
+      "Cada afirmación de control/proveedor corresponde a evidencia operativa",
+      "Texto aprobado, versión/fecha visible y canales de derechos probados"
+    ],
+    "verify": "Q-DOC y Q-UI: comparación de texto y matriz de tratamientos.",
+    "rollback": "Publicar corrección aprobada y conservar versiones anteriores como evidencia; no volver a afirmaciones falsas.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Privacidad / documentación",
+    "files": [
+      "client/src/app/views/politica/politica-privacidad.vue"
+    ],
+    "source": [
+      "WS-039: client/src/app/views/politica/politica-privacidad.vue:350"
+    ],
+    "downstream": 2,
+    "effortBonus": 2.4,
+    "score": 60.8,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-064",
+    "title": "Guardar evidencia de autorización cuando corresponda",
+    "ids": [
+      "WS-040"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-062",
+      "T-015"
+    ],
+    "steps": [
+      "Modelar titular, finalidad, versión, instante, canal y referencia a evidencia",
+      "Crear API con identidad verificada y reglas de integridad",
+      "Separar tratamientos opcionales de acceso necesario; registrar revocación"
+    ],
+    "accept": [
+      "Autorización aplicable puede consultarse y vincularse a texto/version exactos",
+      "Otra cuenta no lee ni modifica evidencia; revocación conserva trazabilidad mínima aprobada"
+    ],
+    "verify": "Q-API y Q-DB: permisos, repetición, versión nueva y revocación.",
+    "rollback": "Pausar nuevas finalidades opcionales; conservar evidencia ya registrada y usar canal manual validado.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Privacidad",
+    "files": [
+      "client/src/app/views/login/login.vue",
+      "Entidad/API de autorización y migración (nuevas)"
+    ],
+    "source": [
+      "WS-040: client/src/app/views/login/login.vue:168"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 57,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-065",
+    "title": "Completar consentimiento y atención de derechos en UI",
+    "ids": [
+      "WS-040"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-064",
+      "T-063"
+    ],
+    "steps": [
+      "Conectar acciones de aceptación/revocación a API y quitar casilla sin efecto probatorio",
+      "Ofrecer acceso al texto aplicable y confirmación clara",
+      "Ensayar solicitud de acceso/corrección/supresión por canal aprobado sin prometer eliminación automática indebida"
+    ],
+    "accept": [
+      "Decisión persiste y vuelve a mostrarse al recargar",
+      "Usuario puede ejercer derechos por flujo documentado con número de seguimiento"
+    ],
+    "verify": "Q-UI y Q-DOC: auditoría de evidencia de una solicitud sintética de principio a fin.",
+    "rollback": "Mantener tratamiento opcional deshabilitado y canal manual; no asumir consentimiento por uso continuado.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Privacidad",
+    "files": [
+      "client/src/app/views/login/login.vue",
+      "client/src/app/account/register/register.vue"
+    ],
+    "source": [
+      "WS-040: client/src/app/views/login/login.vue:168"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 57,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-066",
+    "title": "Aplicar purga por retención sin romper sesiones ni idempotencia",
+    "ids": [
+      "WS-041"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-062",
+      "T-015",
+      "T-008"
+    ],
+    "steps": [
+      "Definir elegibilidad de sesiones revocadas/expiradas y datos operativos con ventanas aprobadas",
+      "Implementar dry-run, lotes acotados y métricas sin PII",
+      "Preservar hashes anti-replay mientras sesión sea válida y claves de operación durante horizonte offline/reintento"
+    ],
+    "accept": [
+      "Dry-run concilia conteos y purga solo registros elegibles",
+      "Refresh replay y sincronización offline siguen protegidos; política pública refleja retención real"
+    ],
+    "verify": "Q-API y Q-DB: límites temporales, sesión activa, legal hold y corrida repetida.",
+    "rollback": "Detener job; datos borrados no se recuperan por rollback de código. Restauración selectiva solo autorizada y sin reactivar sesiones expiradas.",
+    "risk": "Alto",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Privacidad / retención",
+    "files": [
+      "server/src/service/session.service.ts",
+      "Job de retención (nuevo)",
+      "server/src/domain/mobile-operation.entity.ts"
+    ],
+    "source": [
+      "WS-041: server/src/service/session.service.ts:18"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 57,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-067",
+    "title": "Normalizar formato en cambio separado",
+    "ids": [
+      "WS-044"
+    ],
+    "phase": 3,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-036"
+    ],
+    "steps": [
+      "Acordar finales de línea y exclusiones de artefactos",
+      "Aplicar formato por lotes con diff sin cambios funcionales",
+      "Rebasar ramas activas de manera coordinada antes de continuar"
+    ],
+    "accept": [
+      "Errores prettier/CRLF desaparecen en áreas de entrega",
+      "Revisión del diff confirma ausencia de cambios de lógica"
+    ],
+    "verify": "Q-LINT y Q-UNIT; cotejo de cambios semánticos separado de formato.",
+    "rollback": "Revertir solo commit de formato en rama de implementación; no descartar correcciones mezcladas.",
+    "risk": "Bajo",
+    "prob": 5,
+    "impact": 2,
+    "severity": "Media",
+    "category": "Calidad",
+    "files": [
+      ".gitattributes",
+      ".prettierrc",
+      "server/eslint.config.mjs",
+      "client/eslint.config.mjs"
+    ],
+    "source": [
+      "WS-044: watsolution_web_reportes/evidencias/lint-resumen.json:1"
+    ],
+    "downstream": 1,
+    "effortBonus": 2,
+    "score": 58,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-068",
+    "title": "Resolver reglas semánticas y añadir tipos Vue a CI",
+    "ids": [
+      "WS-044"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-067",
+      "T-061"
+    ],
+    "steps": [
+      "Corregir unused/require-await/no-empty y reglas Vue con motivo",
+      "Incorporar vue-tsc compatible como dependencia de desarrollo autorizada",
+      "Hacer lint sin autofix y tipos obligatorios en CI, excluyendo reportes y generados"
+    ],
+    "accept": [
+      "Lint cliente/servidor tiene cero errores y advertencias justificadas con propietario",
+      "CI falla ante error de tipos Vue sembrado en rama de prueba"
+    ],
+    "verify": "Q-LINT, Q-TYPE y Q-CI; no usar npm test raíz como evidencia.",
+    "rollback": "Retirar solo regla nueva mal calibrada con incidencia y fecha de cierre; conservar comprobaciones de seguridad existentes.",
+    "risk": "Medio",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Media",
+    "category": "Calidad",
+    "files": [
+      "client/tsconfig.json",
+      "client/package.json",
+      ".github/workflows/security-checks.yml"
+    ],
+    "source": [
+      "WS-044: watsolution_web_reportes/evidencias/lint-resumen.json:1"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 57,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-069",
+    "title": "Conectar métricas, alertas y correlación operativa",
+    "ids": [
+      "WS-042"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-035",
+      "T-028",
+      "T-049"
+    ],
+    "steps": [
+      "Exponer métricas por red interna/autenticación y corregir target de Prometheus",
+      "Propagar ID de correlación y duración sin secretos ni PII innecesaria",
+      "Crear alertas de pago no conciliado, backlog/cron y DB con procedimiento de respuesta"
+    ],
+    "accept": [
+      "Scrape válido y métricas de requests/job/pagos se actualizan",
+      "Alerta sintética llega a canal acordado y operador ejecuta runbook"
+    ],
+    "verify": "Q-METRICS: scrape, simulación controlada de alerta y revisión de logs.",
+    "rollback": "Desactivar regla ruidosa manteniendo chequeo manual; no exponer endpoint ni retirar diagnóstico esencial.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Observabilidad",
+    "files": [
+      "docker/prometheus/prometheus.yml",
+      "server/src/client/interceptors/logging.interceptor.ts",
+      "server/src/web/rest/management.controller.ts"
+    ],
+    "source": [
+      "WS-042: docker/prometheus/prometheus.yml:27"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 57,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-070",
+    "title": "Hacer obligatoria la regresión completa y cerrar F3",
+    "ids": [
+      "WS-043"
+    ],
+    "phase": 3,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "QA",
+    "deps": [
+      "T-036",
+      "T-068",
+      "T-069",
+      "T-061",
+      "T-065",
+      "T-066",
+      "T-053",
+      "T-052",
+      "T-039",
+      "T-040",
+      "T-041",
+      "T-042",
+      "T-044",
+      "T-045",
+      "T-046",
+      "T-050"
+    ],
+    "steps": [
+      "Integrar suites HTTP/navegador, accesibilidad y presupuestos en CI",
+      "Medir cobertura de ramas de módulos críticos y eliminar expectativas de 500 para flujo implementado",
+      "Reauditar F3 y archivar evidencia por tarea/commit"
+    ],
+    "accept": [
+      "CI bloquea regresiones críticas con servicios descartables y cero secretos reales",
+      "Criterios de F3 y métricas acordadas pasan o hay no-go documentado"
+    ],
+    "verify": "Q-CI, Q-API, Q-UI, Q-A11Y, Q-PERF y Q-AUDIT vigentes.",
+    "rollback": "Bloquear promoción sin deshabilitar pruebas para obtener verde; corregir caso o implementación con revisión.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Pruebas",
+    "files": [
+      "server/e2e/account.e2e-spec.ts",
+      ".github/workflows/security-checks.yml",
+      "server/e2e/",
+      "client/e2e/ (nuevo)"
+    ],
+    "source": [
+      "WS-043: server/e2e/account.e2e-spec.ts:49"
+    ],
+    "downstream": 3,
+    "effortBonus": 1.5,
+    "score": 61,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-071",
+    "title": "Incluir recursos públicos en el artefacto",
+    "ids": [
+      "WS-031"
+    ],
+    "phase": 4,
+    "hours": [
+      4,
+      8
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-061"
+    ],
+    "steps": [
+      "Definir publicDir/copia explícita para robots, manifest e iconos",
+      "Verificar ambas modalidades de build admitidas",
+      "Añadir smoke de URLs y tipos MIME desde imagen final"
+    ],
+    "accept": [
+      "robots.txt y manifest.webapp existen en build y responden sin fallback HTML",
+      "Referencias a iconos resuelven y robots no sustituye permisos"
+    ],
+    "verify": "Q-BUILD y Q-SEO: petición HTTP y comparación con artefacto.",
+    "rollback": "Revertir regla de copia aislada manteniendo referencias coherentes de HTML.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 2,
+    "severity": "Baja",
+    "category": "SEO / distribución",
+    "files": [
+      "client/vite.config.mts",
+      "client/src/robots.txt",
+      "client/src/manifest.webapp"
+    ],
+    "source": [
+      "WS-031: client/vite.config.mts:30"
+    ],
+    "downstream": 2,
+    "effortBonus": 3,
+    "score": 50,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-072",
+    "title": "Completar metadatos públicos y comportamiento 404",
+    "ids": [
+      "WS-032"
+    ],
+    "phase": 4,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-071"
+    ],
+    "steps": [
+      "Acordar dominio canónico y páginas indexables con negocio",
+      "Implementar títulos/descripciones/OG/canonical y sitemap, datos estructurados solo si aplican",
+      "Probar contenido visible a crawler y 404; limitar prerender a páginas públicas si es necesario"
+    ],
+    "accept": [
+      "Inicio/noticias/política muestran metadatos aprobados y sitemap coherente",
+      "Rutas inexistentes no simulan páginas válidas; contenido privado permanece protegido"
+    ],
+    "verify": "Q-SEO: HTML recibido por crawler, enlaces y códigos de respuesta en staging.",
+    "rollback": "Volver metadatos estáticos correctos y retirar sitemap defectuoso; no indexar contenido privado.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 2,
+    "severity": "Baja",
+    "category": "SEO / metadatos",
+    "files": [
+      "client/src/index.html",
+      "client/src/app/router/",
+      "client/nginx.conf"
+    ],
+    "source": [
+      "WS-032: client/src/index.html:6"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 41,
+    "priority": "P3",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-073",
+    "title": "Resolver licencia del producto y atribuciones",
+    "ids": [
+      "WS-035"
+    ],
+    "phase": 4,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-061",
+      "T-056"
+    ],
+    "steps": [
+      "Obtener decisión del titular sobre licencia propia sin inferirla del servidor",
+      "Conciliar licencias del artefacto distribuido, assets y herramientas",
+      "Publicar LICENSE/avisos y obligaciones aprobadas según distribución"
+    ],
+    "accept": [
+      "Manifestos del producto son coherentes y avisos corresponden a dependencias entregadas",
+      "Entradas LGPL/CC-BY y sin metadata tienen revisión documentada, no declaración genérica de incompatibilidad"
+    ],
+    "verify": "Q-DOC y revisión de SBOM/avisos por responsable legal.",
+    "rollback": "Retirar distribución de componente cuestionado hasta resolver derechos; conservar historial de avisos.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 3,
+    "severity": "Baja",
+    "category": "Licencias",
+    "files": [
+      "server/package.json",
+      "LICENSE (nuevo)",
+      "THIRD_PARTY_NOTICES (nuevo)",
+      "package.json",
+      "client/package.json"
+    ],
+    "source": [
+      "WS-035: server/package.json:2"
+    ],
+    "downstream": 1,
+    "effortBonus": 2,
+    "score": 46,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-074",
+    "title": "Documentar operación, API y onboarding comprobados",
+    "ids": [
+      "WS-045"
+    ],
+    "phase": 4,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "BE",
+    "deps": [
+      "T-070",
+      "T-032",
+      "T-063"
+    ],
+    "steps": [
+      "Reescribir README en español con comandos reales y variables sin valores",
+      "Mantener OpenAPI de invitación, facturación y administración conforme al contrato",
+      "Ensayar instalación limpia, rotación, conciliación y rollback con persona distinta"
+    ],
+    "accept": [
+      "Operador nuevo completa checklist desde documentación sin instrucciones verbales",
+      "No hay secretos por defecto, comandos inexistentes ni promesas de migración automática"
+    ],
+    "verify": "Q-DOC: acta de onboarding independiente y validación OpenAPI contra rutas.",
+    "rollback": "Corregir documentación conservando versiones; publicar aviso si una instrucción anterior era insegura.",
+    "risk": "Bajo",
+    "prob": 4,
+    "impact": 3,
+    "severity": "Baja",
+    "category": "Documentación",
+    "files": [
+      "README.md",
+      "server/README.md",
+      "server/src/service/dto/"
+    ],
+    "source": [
+      "WS-045: README.md:35"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 49,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-075",
+    "title": "Retirar implementaciones no montadas y duplicación acotada",
+    "ids": [
+      "WS-046"
+    ],
+    "phase": 4,
+    "hours": [
+      8,
+      16
+    ],
+    "owner": "FE",
+    "deps": [
+      "T-061",
+      "T-070"
+    ],
+    "steps": [
+      "Confirmar referencias estáticas/dinámicas de .component.ts alternativos",
+      "Retirar archivos sin consumidores en commit propio",
+      "Extraer solo un composable/layout repetido y dirigir pruebas a componentes reales"
+    ],
+    "accept": [
+      "Ningún import o ruta queda roto y tests ejercitan componentes montados",
+      "Se elimina simulación obsoleta sin alterar pagos reales"
+    ],
+    "verify": "Q-BUILD, Q-TYPE, Q-UI y grafo de imports antes/después.",
+    "rollback": "Restaurar archivo necesario desde commit sin reintroducir ruta de simulación activa; mantener prueba que reveló dependencia.",
+    "risk": "Bajo",
+    "prob": 3,
+    "impact": 2,
+    "severity": "Baja",
+    "category": "Arquitectura",
+    "files": [
+      "client/src/app/views/pagos/pagos.component.ts",
+      "client/src/app/views/",
+      "client/src/app/router/"
+    ],
+    "source": [
+      "WS-046: client/src/app/views/pagos/pagos.component.ts:33"
+    ],
+    "downstream": 1,
+    "effortBonus": 2,
+    "score": 42,
+    "priority": "P3",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-076",
+    "title": "Reauditar el cierre completo de hallazgos",
+    "ids": [
+      "WS-043"
+    ],
+    "phase": 4,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "QA",
+    "deps": [
+      "T-070",
+      "T-071",
+      "T-072",
+      "T-073",
+      "T-074",
+      "T-075",
+      "T-037",
+      "T-017",
+      "T-018",
+      "T-026",
+      "T-016",
+      "T-015",
+      "T-010",
+      "T-012",
+      "T-013",
+      "T-033",
+      "T-034",
+      "T-054",
+      "T-056"
+    ],
+    "steps": [
+      "Revisar cada uno de los 47 IDs contra criterio y evidencia de cierre",
+      "Repetir escaneo vigente, regresión, restore y controles desplegados según paquetes ya creados",
+      "Emitir resultado final con riesgos residuales, excepciones firmadas si surgieran y responsables"
+    ],
+    "accept": [
+      "47/47 IDs tienen corrección verificada o decisión formal posterior con caducidad",
+      "Ninguna tarea se cierra solo por merge ni quedan críticas/altas técnicas sin resolver"
+    ],
+    "verify": "Q-CIERRE: matriz firmada y evidencia por release; muestreo adversarial de identidad, pagos y sesiones.",
+    "rollback": "Reabrir hallazgo fallido y bloquear aprobación de operación; no borrar evidencia previa.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Pruebas",
+    "files": [
+      "server/e2e/account.e2e-spec.ts",
+      "Matriz de cierre y evidencias de implementación (nuevas)"
+    ],
+    "source": [
+      "WS-043: server/e2e/account.e2e-spec.ts:49"
+    ],
+    "downstream": 1,
+    "effortBonus": 1.5,
+    "score": 57,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  },
+  {
+    "id": "T-077",
+    "title": "Ensayar recuperación y respuesta a incidentes trimestral",
+    "ids": [
+      "WS-042"
+    ],
+    "phase": 4,
+    "hours": [
+      12,
+      20
+    ],
+    "owner": "OPS",
+    "deps": [
+      "T-076"
+    ],
+    "steps": [
+      "Simular caída de DB o proveedor y restauración en entorno aislado",
+      "Medir detección, respuesta, recuperación y conciliación de pagos",
+      "Actualizar runbook y programar revisión trimestral con dueño y sustituto"
+    ],
+    "accept": [
+      "Primer simulacro completa objetivos RPO/RTO acordados o genera acción correctiva",
+      "Calendario y responsable quedan definidos; recurrencias no están contratadas ni automatizadas en este encargo"
+    ],
+    "verify": "Q-RESTORE y Q-METRICS: acta con tiempos y conciliación; no ejecutar fallos en producción.",
+    "rollback": "Interrumpir ensayo si afecta servicio real; conservar evidencia y corregir aislamiento antes de repetir.",
+    "risk": "Medio",
+    "prob": 3,
+    "impact": 4,
+    "severity": "Media",
+    "category": "Observabilidad",
+    "files": [
+      "docker/prometheus/prometheus.yml",
+      "Runbook y acta de simulacro (nuevos)"
+    ],
+    "source": [
+      "WS-042: docker/prometheus/prometheus.yml:27"
+    ],
+    "downstream": 0,
+    "effortBonus": 1.5,
+    "score": 55,
+    "priority": "P2",
+    "rule": "Umbral de puntuación",
+    "state": "Pendiente"
+  }
+]

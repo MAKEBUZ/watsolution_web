@@ -1,0 +1,31 @@
+
+ RUN  v3.0.9 C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src
+
+ ✓ app/account/change-password/change-password.component.spec.ts (3 tests) 42ms
+ ✓ app/account/settings/settings.component.spec.ts (5 tests) 47ms
+stderr | app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in settings title
+[Vue warn]: Component "i18n-t" has already been registered in target app.
+[Vue warn]: Component "I18nT" has already been registered in target app.
+[Vue warn]: Component "i18n-n" has already been registered in target app.
+[Vue warn]: Component "I18nN" has already been registered in target app.
+[Vue warn]: Component "i18n-d" has already been registered in target app.
+[Vue warn]: Component "I18nD" has already been registered in target app.
+[Vue warn]: Directive "t" has already been registered in target app.
+
+stderr | app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in password title
+[Vue warn]: Component "i18n-t" has already been registered in target app.
+[Vue warn]: Component "I18nT" has already been registered in target app.
+[Vue warn]: Component "i18n-n" has already been registered in target app.
+[Vue warn]: Component "I18nN" has already been registered in target app.
+[Vue warn]: Component "i18n-d" has already been registered in target app.
+[Vue warn]: Component "I18nD" has already been registered in target app.
+[Vue warn]: Directive "t" has already been registered in target app.
+
+ ✓ app/account/account-html.spec.ts (2 tests) 46ms
+
+ Test Files  3 passed (3)
+      Tests  10 passed (10)
+   Start at  02:15:53
+   Duration  1.42s (transform 204ms, setup 645ms, collect 539ms, tests 135ms, environment 1.26s, prepare 787ms)
+
+SonarQube report written to C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\tmp\test-results\TESTS-results-vitest.xml

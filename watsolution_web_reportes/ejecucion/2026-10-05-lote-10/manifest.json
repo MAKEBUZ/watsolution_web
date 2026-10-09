@@ -1,0 +1,42 @@
+[
+  {
+    "archivo": "browser-local.log",
+    "sha256": "d44b3d835b8031792857f4f14e18fe2fd0e98b58c506dfbb1b9c75654852499d"
+  },
+  {
+    "archivo": "ci-inicial.json",
+    "sha256": "679d929cde0196a95dd9847327717d3c967e396cbc47aad7ab7f91ec3a63c281"
+  },
+  {
+    "archivo": "ci-inicial.log",
+    "sha256": "94472c500fde9f171c8fc9e2ca37e0c96208e3606562501c90488c499519b760"
+  },
+  {
+    "archivo": "ci.json",
+    "sha256": "a30fc8f7dfbc2485ff0af45814abc48805d95429d619b484634950f99988a246"
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "931703992b33c1f120782dad325c20500bc201934daa7e8ed6bd210f6a3ba08a"
+  },
+  {
+    "archivo": "frontend.log",
+    "sha256": "93583eea37ae1a4983682428ecf82aa874f4062a71e50a97be2f95dc703e1ca5"
+  },
+  {
+    "archivo": "logout-antes.log",
+    "sha256": "97e9985f4dd73e6bd878709aaffef1471a9f25921c2a92354be5817eb8bfcab0"
+  },
+  {
+    "archivo": "logout-regresion.log",
+    "sha256": "ce011f616b663297e21c1c00fdc53f13222b5754a570b4a0c8e0fb2b82b2b4d5"
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "d9fa93db0e0e51fb23612f033dd11085209c045fe2c14793937cfbfa864cf1af"
+  },
+  {
+    "archivo": "../../27_ejecucion_interfaz_sesiones.md",
+    "sha256": "9d0c0cd494c8e93265658217c723b645cb59e0bf9c16b09565f5af1f008fc3b5"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/browser-local.log",
+    "sha256": "0ee15588eadb523456caa92e1cb344edd1fd4dca9d3143abb8739b173b6d8500"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/ci-inicial.json",
+    "sha256": "1c0eb34dba5b3910bc53136e7e8e82bcb313a3c08b2ab7b73703a23127e7d0a5"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/ci-proxy.log",
+    "sha256": "f2449c47865371928e02d98eff1ecdf851ab8290a8ec59fd6a4695ec7cb25685"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/ci-validate.log",
+    "sha256": "6036ca853bf4bc2af027fda74a2fcdd9f7947d4d23c5575a94d5ff51d544e9f5"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/ci.json",
+    "sha256": "9e0e0bb58493a9d17d868e198fad5bc288d92f668d8d47f6f654967225ab2227"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/compilacion-inicial.log",
+    "sha256": "d36232bd6e3eb33773944ba178274e90988564473352e1b5894d15d4e58d0a4d"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/estado-tareas.json",
+    "sha256": "c2037e9c457fdf133572224e032ac56fef661ea7d805e563f4c5b1b9631a9dea"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/referencias-remotas.txt",
+    "sha256": "9f7136b60c0edd72ac62a6db9b3e1459e73d11707294ffe162b9f5190007d049"
+  },
+  {
+    "archivo": "watsolution_web_reportes/ejecucion/2026-10-06-lote-11/verificacion.json",
+    "sha256": "87a91a0e16c94eee6d9a977b64c222fd595e0fe8b0bc22545c6ab30ac92ad0ba"
+  },
+  {
+    "archivo": "watsolution_web_reportes/28_ejecucion_proxy_nginx.md",
+    "sha256": "8b11a1b6e5c99417cb3a7372f9dd567d0d4127956df92a8d167b35259b61eebf"
+  }
+]

@@ -1,0 +1,1309 @@
+{
+  "assumptions": "Planificación por perfil principal. Fases secuenciales. BE 2 x 6 h/día, FE 6 h/día, QA y OPS 3 h/día cada uno. Sin festivos, esperas externas ni vacaciones. Estimación conservadora, no optimización matemática.",
+  "min": {
+    "weeks": 18.27,
+    "phases": [
+      {
+        "phase": 0,
+        "startDay": 0,
+        "endDay": 12,
+        "weeks": 2.4
+      },
+      {
+        "phase": 1,
+        "startDay": 12,
+        "endDay": 22,
+        "weeks": 2
+      },
+      {
+        "phase": 2,
+        "startDay": 22,
+        "endDay": 45.33,
+        "weeks": 4.67
+      },
+      {
+        "phase": 3,
+        "startDay": 45.33,
+        "endDay": 79.33,
+        "weeks": 6.8
+      },
+      {
+        "phase": 4,
+        "startDay": 79.33,
+        "endDay": 91.33,
+        "weeks": 2.4
+      }
+    ],
+    "tasks": [
+      {
+        "id": "T-001",
+        "phase": 0,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 0,
+        "endDay": 2.67
+      },
+      {
+        "id": "T-003",
+        "phase": 0,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 2.67,
+        "endDay": 5.33
+      },
+      {
+        "id": "T-002",
+        "phase": 0,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 5.33,
+        "endDay": 9.33
+      },
+      {
+        "id": "T-004",
+        "phase": 0,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 9.33,
+        "endDay": 12
+      },
+      {
+        "id": "T-014",
+        "phase": 1,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 12,
+        "endDay": 17.33
+      },
+      {
+        "id": "T-005",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 17.33,
+        "endDay": 18.67
+      },
+      {
+        "id": "T-008",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 17.33,
+        "endDay": 19.33
+      },
+      {
+        "id": "T-007",
+        "phase": 1,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 17.33,
+        "endDay": 18
+      },
+      {
+        "id": "T-013",
+        "phase": 1,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 18,
+        "endDay": 18.67
+      },
+      {
+        "id": "T-009",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 18.67,
+        "endDay": 20.67
+      },
+      {
+        "id": "T-012",
+        "phase": 1,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 18.67,
+        "endDay": 19.33
+      },
+      {
+        "id": "T-006",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 19.33,
+        "endDay": 20.67
+      },
+      {
+        "id": "T-010",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 20.67,
+        "endDay": 22
+      },
+      {
+        "id": "T-011",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 20.67,
+        "endDay": 22
+      },
+      {
+        "id": "T-015",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 22,
+        "endDay": 24.67
+      },
+      {
+        "id": "T-037",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 22,
+        "endDay": 24.67
+      },
+      {
+        "id": "T-029",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 22,
+        "endDay": 24
+      },
+      {
+        "id": "T-030",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 24,
+        "endDay": 25.33
+      },
+      {
+        "id": "T-016",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 24.67,
+        "endDay": 27.33
+      },
+      {
+        "id": "T-031",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 24.67,
+        "endDay": 30
+      },
+      {
+        "id": "T-022",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 25.33,
+        "endDay": 28
+      },
+      {
+        "id": "T-018",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 27.33,
+        "endDay": 29.33
+      },
+      {
+        "id": "T-024",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 28,
+        "endDay": 30.67
+      },
+      {
+        "id": "T-019",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 29.33,
+        "endDay": 32
+      },
+      {
+        "id": "T-032",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 30,
+        "endDay": 32.67
+      },
+      {
+        "id": "T-023",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 30.67,
+        "endDay": 33.33
+      },
+      {
+        "id": "T-020",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 32,
+        "endDay": 34
+      },
+      {
+        "id": "T-035",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 32.67,
+        "endDay": 36.67
+      },
+      {
+        "id": "T-021",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 33.33,
+        "endDay": 36
+      },
+      {
+        "id": "T-025",
+        "phase": 2,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 33.33,
+        "endDay": 35.33
+      },
+      {
+        "id": "T-027",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 34,
+        "endDay": 36.67
+      },
+      {
+        "id": "T-017",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 36,
+        "endDay": 38
+      },
+      {
+        "id": "T-028",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 36.67,
+        "endDay": 39.33
+      },
+      {
+        "id": "T-033",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 36.67,
+        "endDay": 39.33
+      },
+      {
+        "id": "T-026",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 38,
+        "endDay": 40
+      },
+      {
+        "id": "T-034",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 39.33,
+        "endDay": 40.67
+      },
+      {
+        "id": "T-036",
+        "phase": 2,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 40,
+        "endDay": 45.33
+      },
+      {
+        "id": "T-043",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 45.33,
+        "endDay": 46.67
+      },
+      {
+        "id": "T-056",
+        "phase": 3,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 45.33,
+        "endDay": 48
+      },
+      {
+        "id": "T-062",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 45.33,
+        "endDay": 46.67
+      },
+      {
+        "id": "T-051",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 45.33,
+        "endDay": 46.67
+      },
+      {
+        "id": "T-044",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 46.67,
+        "endDay": 48
+      },
+      {
+        "id": "T-045",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 46.67,
+        "endDay": 48.67
+      },
+      {
+        "id": "T-046",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 46.67,
+        "endDay": 48.67
+      },
+      {
+        "id": "T-063",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 48,
+        "endDay": 49.33
+      },
+      {
+        "id": "T-067",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 48.67,
+        "endDay": 50
+      },
+      {
+        "id": "T-038",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 48.67,
+        "endDay": 50.67
+      },
+      {
+        "id": "T-052",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 49.33,
+        "endDay": 51.33
+      },
+      {
+        "id": "T-064",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 50,
+        "endDay": 52
+      },
+      {
+        "id": "T-039",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 50.67,
+        "endDay": 53.33
+      },
+      {
+        "id": "T-053",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 51.33,
+        "endDay": 52.67
+      },
+      {
+        "id": "T-066",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 52,
+        "endDay": 54
+      },
+      {
+        "id": "T-065",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 52.67,
+        "endDay": 54.67
+      },
+      {
+        "id": "T-040",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 53.33,
+        "endDay": 54.67
+      },
+      {
+        "id": "T-047",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 54,
+        "endDay": 56.67
+      },
+      {
+        "id": "T-041",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 54.67,
+        "endDay": 56.67
+      },
+      {
+        "id": "T-057",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 54.67,
+        "endDay": 57.33
+      },
+      {
+        "id": "T-048",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 56.67,
+        "endDay": 58.67
+      },
+      {
+        "id": "T-042",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 57.33,
+        "endDay": 59.33
+      },
+      {
+        "id": "T-049",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 58.67,
+        "endDay": 60.67
+      },
+      {
+        "id": "T-050",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 59.33,
+        "endDay": 60.67
+      },
+      {
+        "id": "T-069",
+        "phase": 3,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 60.67,
+        "endDay": 64.67
+      },
+      {
+        "id": "T-058",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 60.67,
+        "endDay": 63.33
+      },
+      {
+        "id": "T-059",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 63.33,
+        "endDay": 66
+      },
+      {
+        "id": "T-060",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 66,
+        "endDay": 68.67
+      },
+      {
+        "id": "T-054",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 68.67,
+        "endDay": 69.33
+      },
+      {
+        "id": "T-055",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 69.33,
+        "endDay": 71.33
+      },
+      {
+        "id": "T-061",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 71.33,
+        "endDay": 73.33
+      },
+      {
+        "id": "T-068",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 73.33,
+        "endDay": 75.33
+      },
+      {
+        "id": "T-070",
+        "phase": 3,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 75.33,
+        "endDay": 79.33
+      },
+      {
+        "id": "T-071",
+        "phase": 4,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 79.33,
+        "endDay": 80
+      },
+      {
+        "id": "T-074",
+        "phase": 4,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 79.33,
+        "endDay": 81.33
+      },
+      {
+        "id": "T-073",
+        "phase": 4,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 79.33,
+        "endDay": 82
+      },
+      {
+        "id": "T-075",
+        "phase": 4,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 80,
+        "endDay": 81.33
+      },
+      {
+        "id": "T-072",
+        "phase": 4,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 81.33,
+        "endDay": 83.33
+      },
+      {
+        "id": "T-076",
+        "phase": 4,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 83.33,
+        "endDay": 87.33
+      },
+      {
+        "id": "T-077",
+        "phase": 4,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 87.33,
+        "endDay": 91.33
+      }
+    ]
+  },
+  "max": {
+    "weeks": 30,
+    "phases": [
+      {
+        "phase": 0,
+        "startDay": 0,
+        "endDay": 21.33,
+        "weeks": 4.27
+      },
+      {
+        "phase": 1,
+        "startDay": 21.33,
+        "endDay": 37.33,
+        "weeks": 3.2
+      },
+      {
+        "phase": 2,
+        "startDay": 37.33,
+        "endDay": 74,
+        "weeks": 7.33
+      },
+      {
+        "phase": 3,
+        "startDay": 74,
+        "endDay": 129.33,
+        "weeks": 11.07
+      },
+      {
+        "phase": 4,
+        "startDay": 129.33,
+        "endDay": 150,
+        "weeks": 4.13
+      }
+    ],
+    "tasks": [
+      {
+        "id": "T-001",
+        "phase": 0,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 0,
+        "endDay": 4
+      },
+      {
+        "id": "T-003",
+        "phase": 0,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 4,
+        "endDay": 9.33
+      },
+      {
+        "id": "T-002",
+        "phase": 0,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 9.33,
+        "endDay": 16
+      },
+      {
+        "id": "T-004",
+        "phase": 0,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 16,
+        "endDay": 21.33
+      },
+      {
+        "id": "T-014",
+        "phase": 1,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 21.33,
+        "endDay": 29.33
+      },
+      {
+        "id": "T-005",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 29.33,
+        "endDay": 32
+      },
+      {
+        "id": "T-008",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 29.33,
+        "endDay": 32.67
+      },
+      {
+        "id": "T-007",
+        "phase": 1,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 29.33,
+        "endDay": 30.67
+      },
+      {
+        "id": "T-013",
+        "phase": 1,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 30.67,
+        "endDay": 32
+      },
+      {
+        "id": "T-012",
+        "phase": 1,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 32,
+        "endDay": 33.33
+      },
+      {
+        "id": "T-009",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 32,
+        "endDay": 35.33
+      },
+      {
+        "id": "T-006",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 32.67,
+        "endDay": 34.67
+      },
+      {
+        "id": "T-010",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 34.67,
+        "endDay": 36.67
+      },
+      {
+        "id": "T-011",
+        "phase": 1,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 35.33,
+        "endDay": 37.33
+      },
+      {
+        "id": "T-015",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 37.33,
+        "endDay": 41.33
+      },
+      {
+        "id": "T-037",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 37.33,
+        "endDay": 42.67
+      },
+      {
+        "id": "T-029",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 37.33,
+        "endDay": 40.67
+      },
+      {
+        "id": "T-030",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 40.67,
+        "endDay": 43.33
+      },
+      {
+        "id": "T-016",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 41.33,
+        "endDay": 45.33
+      },
+      {
+        "id": "T-031",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 42.67,
+        "endDay": 50.67
+      },
+      {
+        "id": "T-022",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 43.33,
+        "endDay": 47.33
+      },
+      {
+        "id": "T-018",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 45.33,
+        "endDay": 48.67
+      },
+      {
+        "id": "T-024",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 47.33,
+        "endDay": 51.33
+      },
+      {
+        "id": "T-019",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 48.67,
+        "endDay": 52.67
+      },
+      {
+        "id": "T-032",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 50.67,
+        "endDay": 56
+      },
+      {
+        "id": "T-023",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 51.33,
+        "endDay": 55.33
+      },
+      {
+        "id": "T-020",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 52.67,
+        "endDay": 56
+      },
+      {
+        "id": "T-021",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 55.33,
+        "endDay": 59.33
+      },
+      {
+        "id": "T-025",
+        "phase": 2,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 55.33,
+        "endDay": 58.67
+      },
+      {
+        "id": "T-027",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 56,
+        "endDay": 60
+      },
+      {
+        "id": "T-035",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 56,
+        "endDay": 62.67
+      },
+      {
+        "id": "T-017",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 59.33,
+        "endDay": 62.67
+      },
+      {
+        "id": "T-028",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 60,
+        "endDay": 64
+      },
+      {
+        "id": "T-026",
+        "phase": 2,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 62.67,
+        "endDay": 66
+      },
+      {
+        "id": "T-033",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 62.67,
+        "endDay": 68
+      },
+      {
+        "id": "T-036",
+        "phase": 2,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 66,
+        "endDay": 74
+      },
+      {
+        "id": "T-034",
+        "phase": 2,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 68,
+        "endDay": 70.67
+      },
+      {
+        "id": "T-043",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 74,
+        "endDay": 76
+      },
+      {
+        "id": "T-056",
+        "phase": 3,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 74,
+        "endDay": 79.33
+      },
+      {
+        "id": "T-062",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 74,
+        "endDay": 76.67
+      },
+      {
+        "id": "T-051",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 74,
+        "endDay": 76
+      },
+      {
+        "id": "T-044",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 76,
+        "endDay": 78.67
+      },
+      {
+        "id": "T-045",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 76,
+        "endDay": 79.33
+      },
+      {
+        "id": "T-046",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 76.67,
+        "endDay": 80
+      },
+      {
+        "id": "T-063",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 78.67,
+        "endDay": 80.67
+      },
+      {
+        "id": "T-067",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 79.33,
+        "endDay": 82
+      },
+      {
+        "id": "T-038",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 80,
+        "endDay": 83.33
+      },
+      {
+        "id": "T-052",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 80.67,
+        "endDay": 84
+      },
+      {
+        "id": "T-064",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 82,
+        "endDay": 85.33
+      },
+      {
+        "id": "T-039",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 83.33,
+        "endDay": 87.33
+      },
+      {
+        "id": "T-053",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 84,
+        "endDay": 86
+      },
+      {
+        "id": "T-066",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 85.33,
+        "endDay": 88.67
+      },
+      {
+        "id": "T-065",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 86,
+        "endDay": 89.33
+      },
+      {
+        "id": "T-040",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 87.33,
+        "endDay": 90
+      },
+      {
+        "id": "T-047",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 88.67,
+        "endDay": 92.67
+      },
+      {
+        "id": "T-057",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 89.33,
+        "endDay": 93.33
+      },
+      {
+        "id": "T-041",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 90,
+        "endDay": 93.33
+      },
+      {
+        "id": "T-048",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 92.67,
+        "endDay": 96
+      },
+      {
+        "id": "T-042",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 93.33,
+        "endDay": 96.67
+      },
+      {
+        "id": "T-049",
+        "phase": 3,
+        "owner": "BE",
+        "slot": 0,
+        "startDay": 96,
+        "endDay": 99.33
+      },
+      {
+        "id": "T-050",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 96.67,
+        "endDay": 99.33
+      },
+      {
+        "id": "T-069",
+        "phase": 3,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 99.33,
+        "endDay": 106
+      },
+      {
+        "id": "T-058",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 99.33,
+        "endDay": 103.33
+      },
+      {
+        "id": "T-059",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 103.33,
+        "endDay": 107.33
+      },
+      {
+        "id": "T-060",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 107.33,
+        "endDay": 111.33
+      },
+      {
+        "id": "T-054",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 111.33,
+        "endDay": 112.67
+      },
+      {
+        "id": "T-055",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 112.67,
+        "endDay": 116
+      },
+      {
+        "id": "T-061",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 116,
+        "endDay": 119.33
+      },
+      {
+        "id": "T-068",
+        "phase": 3,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 119.33,
+        "endDay": 122.67
+      },
+      {
+        "id": "T-070",
+        "phase": 3,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 122.67,
+        "endDay": 129.33
+      },
+      {
+        "id": "T-071",
+        "phase": 4,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 129.33,
+        "endDay": 130.67
+      },
+      {
+        "id": "T-074",
+        "phase": 4,
+        "owner": "BE",
+        "slot": 1,
+        "startDay": 129.33,
+        "endDay": 132.67
+      },
+      {
+        "id": "T-073",
+        "phase": 4,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 129.33,
+        "endDay": 134.67
+      },
+      {
+        "id": "T-075",
+        "phase": 4,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 130.67,
+        "endDay": 133.33
+      },
+      {
+        "id": "T-072",
+        "phase": 4,
+        "owner": "FE",
+        "slot": 0,
+        "startDay": 133.33,
+        "endDay": 136.67
+      },
+      {
+        "id": "T-076",
+        "phase": 4,
+        "owner": "QA",
+        "slot": 0,
+        "startDay": 136.67,
+        "endDay": 143.33
+      },
+      {
+        "id": "T-077",
+        "phase": 4,
+        "owner": "OPS",
+        "slot": 0,
+        "startDay": 143.33,
+        "endDay": 150
+      }
+    ]
+  }
+}

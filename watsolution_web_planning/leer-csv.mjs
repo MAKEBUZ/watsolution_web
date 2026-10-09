@@ -1,0 +1,10 @@
+import fs from 'node:fs/promises';
+import { Workbook } from '@oai/artifact-tool';
+const input = new URL('../watsolution_web_reportes/18_hallazgos.csv', import.meta.url);
+const wb = await Workbook.fromCSV((await fs.readFile(input,'utf8')).replace(/^\uFEFF/,''), {sheetName:'Hallazgos'});
+const values = wb.worksheets.getItem('Hallazgos').getUsedRange().values;
+const [headers,...rows] = values;
+const findings = rows.filter(r=>r[0]).map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]])));
+await fs.writeFile(new URL('./entrada-csv.json',import.meta.url), JSON.stringify(findings,null,2));
+console.log(JSON.stringify({headers,rows:findings.length,high:findings.filter(r=>r.severidad==='Alta').map(r=>r.ID)}));
+console.log(wb.help('CSV export',{include:'index,examples,notes',maxChars:2500}).ndjson);

@@ -1,0 +1,71 @@
+[Nest] 33636  - 05/10/2026, 10:50:40 p.m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 33636  - 05/10/2026, 10:50:40 p.m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 33636  - 05/10/2026, 10:50:40 p.m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+FAIL server/integration/browser/session.browser.ts (36.084 s)
+  Chromium HTTPS sessions with PostgreSQL
+    × stores a host-only HttpOnly secure cookie without exposing refresh to page JavaScript (1 ms)
+    × renews after a reload using the browser-managed cookie and real session module
+    × serializes two tabs with navigator.locks and keeps the rotated family active (1 ms)
+    × clears the browser cookie and invalidates access in a second tab after server logout
+
+  ● Chromium HTTPS sessions with PostgreSQL › stores a host-only HttpOnly secure cookie without exposing refresh to page JavaScript
+
+    Explicit disposable TLS certificate required
+
+      43 |
+      44 |   beforeAll(async () => {
+    > 45 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      46 |     fixture = await createBillingFixture();
+      47 |     const db = fixture.db;
+      48 |     const sessions = new SessionService(db);
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:45:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › renews after a reload using the browser-managed cookie and real session module
+
+    Explicit disposable TLS certificate required
+
+      43 |
+      44 |   beforeAll(async () => {
+    > 45 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      46 |     fixture = await createBillingFixture();
+      47 |     const db = fixture.db;
+      48 |     const sessions = new SessionService(db);
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:45:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › serializes two tabs with navigator.locks and keeps the rotated family active
+
+    Explicit disposable TLS certificate required
+
+      43 |
+      44 |   beforeAll(async () => {
+    > 45 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      46 |     fixture = await createBillingFixture();
+      47 |     const db = fixture.db;
+      48 |     const sessions = new SessionService(db);
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:45:72)
+
+  ● Chromium HTTPS sessions with PostgreSQL › clears the browser cookie and invalidates access in a second tab after server logout
+
+    Explicit disposable TLS certificate required
+
+      43 |
+      44 |   beforeAll(async () => {
+    > 45 |     if (!process.env.TEST_TLS_KEY || !process.env.TEST_TLS_CERT) throw new Error('Explicit disposable TLS certificate required');
+         |                                                                        ^
+      46 |     fixture = await createBillingFixture();
+      47 |     const db = fixture.db;
+      48 |     const sessions = new SessionService(db);
+
+      at Object.<anonymous> (integration/browser/session.browser.ts:45:72)
+
+Test Suites: 1 failed, 1 total
+Tests:       4 failed, 4 total
+Snapshots:   0 total
+Time:        38.066 s
+Ran all test suites.

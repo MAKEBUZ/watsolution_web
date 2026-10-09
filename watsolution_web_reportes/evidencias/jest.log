@@ -1,0 +1,24 @@
+ts-jest[ts-jest-transformer] (WARN) Got a `.js` file to compile while `allowJs` option is not set to `true` (file: C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\server\e2e\setup.test.js). To fix this:
+  - if you want TypeScript to process JS files, set `allowJs` to `true` in your TypeScript config (usually tsconfig.json)
+  - if you do not want TypeScript to process your `.js` files, in your Jest config change the `transform` key which value is `ts-jest` so that it does not match `.js` files anymore
+PASS server/src/security/security-baseline.spec.ts (26.367 s)
+[Nest] 35892  - 05/10/2026, 12:38:35 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 35892  - 05/10/2026, 12:38:35 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 35892  - 05/10/2026, 12:38:35 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+PASS server/src/service/bold.service.spec.ts
+PASS server/src/service/mobile.service.spec.ts
+PASS server/src/service/session.service.spec.ts
+PASS server/src/domain/base/pagination.entity.spec.ts
+PASS server/src/service/privacy.spec.ts
+PASS server/src/service/billing.service.spec.ts
+[Nest] 35892  - 05/10/2026, 12:38:42 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 35892  - 05/10/2026, 12:38:42 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 35892  - 05/10/2026, 12:38:42 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+PASS server/src/security/passport.jwt.strategy.spec.ts
+PASS server/test/admin/management.controller.spec.ts
+
+Test Suites: 9 passed, 9 total
+Tests:       42 passed, 42 total
+Snapshots:   0 total
+Time:        35.012 s
+Ran all test suites.

@@ -1,0 +1,34 @@
+
+ RUN  v3.0.9 C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src
+
+ ✓ app/shared/config/web-session.spec.ts (2 tests) 9ms
+ ✓ app/shared/config/store/logout.spec.ts (4 tests) 14ms
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ app/core/chatbot/chatbot.spec.ts (7 tests) 108ms
+stderr | ..\Fetch.onError (file:\C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\node_modules\happy-dom\src\fetch\Fetch.ts:668:37)
+Error: socket hang up
+    at TLSSocket.socketCloseListener (node:_http_client:566:27)
+    at TLSSocket.emit (node:events:521:24)
+    at node:net:350:12
+    at TCP.done (node:internal/tls/wrap:674:7) {
+  code: 'ECONNRESET'
+}
+
+stderr | ..\Fetch.onError (file:\C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\node_modules\happy-dom\src\fetch\Fetch.ts:668:37)
+Error: socket hang up
+    at TLSSocket.socketCloseListener (node:_http_client:566:27)
+    at TLSSocket.emit (node:events:521:24)
+    at node:net:350:12
+    at TCP.done (node:internal/tls/wrap:674:7) {
+  code: 'ECONNRESET'
+}
+
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  02:25:44
+   Duration  1.62s (transform 260ms, setup 731ms, collect 347ms, tests 131ms, environment 1.49s, prepare 817ms)
+
+SonarQube report written to C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\tmp\test-results\TESTS-results-vitest.xml

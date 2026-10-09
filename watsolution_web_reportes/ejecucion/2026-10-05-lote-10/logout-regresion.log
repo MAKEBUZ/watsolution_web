@@ -1,0 +1,40 @@
+
+ RUN  v3.0.9 C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src
+
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ❯ app/app-session.spec.ts (3 tests | 1 failed) 48ms
+   ✓ Logout feedback and cross-tab events > shows pending and failed confirmation with a retry action
+   ✓ Logout feedback and cross-tab events > clears identity after another tab closes the session and unregisters on unmount
+   × Logout feedback and cross-tab events > unmounts protected content and navigates to login on a remote logout 10ms
+     → expected true to be false // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  app/app-session.spec.ts > Logout feedback and cross-tab events > unmounts protected content and navigates to login on a remote logout
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ app/app-session.spec.ts:41:55
+
+     39|     window.dispatchEvent(new StorageEvent('storage', { key: logoutStor…
+     40|     await nextTick();
+     41|     expect(wrapper.find('router-view-stub').exists()).toBe(false);
+       |                                                       ^
+     42|     expect(replace).toHaveBeenCalledWith('/login'); wrapper.unmount();
+     43|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  23:36:44
+   Duration  2.36s (transform 584ms, setup 301ms, collect 653ms, tests 48ms, environment 626ms, prepare 394ms)
+
+SonarQube report written to C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\tmp\test-results\TESTS-results-vitest.xml

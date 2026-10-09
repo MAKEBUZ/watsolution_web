@@ -1,0 +1,541 @@
+[
+  {
+    "id": "T-001",
+    "titulo": "Fijar alcance, responsables y entorno de trabajo",
+    "hallazgos": "WS-043",
+    "estado": "Preparacion parcial",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-002",
+    "titulo": "Probar backup y restauración antes de cambiar datos",
+    "hallazgos": "WS-014",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-003",
+    "titulo": "Rotar las credenciales históricas y revocar sesiones",
+    "hallazgos": "WS-003",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-004",
+    "titulo": "Capturar la línea base reproducible y presupuestos",
+    "hallazgos": "WS-043; WS-042",
+    "estado": "Preparacion parcial",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-005",
+    "titulo": "Aislar el portal mediante el ID autenticado",
+    "hallazgos": "WS-001",
+    "estado": "Implementada; regresion PostgreSQL aprobada en CI; pendiente HTTP y staging",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-006",
+    "titulo": "Persistir únicamente la clave PDF de la factura",
+    "hallazgos": "WS-002",
+    "estado": "Implementada; regresion PostgreSQL aprobada en CI; pendiente HTTP y staging",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-007",
+    "titulo": "Limpiar el chat cuando cambia la sesión",
+    "hallazgos": "WS-006",
+    "estado": "Implementada localmente; pendiente validacion integral",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-008",
+    "titulo": "Revocar refresh y cerrar cookie con acceso vencido",
+    "hallazgos": "WS-007",
+    "estado": "Implementada; HTTP local y sesiones PostgreSQL en CI aprobados; pendiente navegador HTTPS y staging",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-009",
+    "titulo": "Asignar referencia Bold de forma atómica",
+    "hallazgos": "WS-005",
+    "estado": "Implementada; concurrencia PostgreSQL y CI aprobados; pendiente validacion operativa",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-010",
+    "titulo": "Retirar cuentas de ejemplo y asegurar primer administrador",
+    "hallazgos": "WS-009",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-011",
+    "titulo": "Contener mutaciones financieras fuera del dominio",
+    "hallazgos": "WS-008",
+    "estado": "Implementada y verificada por HTTP con PostgreSQL real en CI; pendiente revisión y validación operativa",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-012",
+    "titulo": "Escapar nombres de usuario en las vistas",
+    "hallazgos": "WS-011",
+    "estado": "Implementada localmente; pendiente validacion integral",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-013",
+    "titulo": "Identificar demos y retirar telemetría ficticia de producción",
+    "hallazgos": "WS-025",
+    "estado": "Contención implementada y CI aprobado: actividad desde API y telemetría sin fuente explícita; pendiente inspección autenticada y validación del despliegue",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-014",
+    "titulo": "Preparar integración aislada con PostgreSQL",
+    "hallazgos": "WS-043",
+    "estado": "Parcial: 27 PostgreSQL y 6 Chromium HTTPS, incluidos login/recarga/logout en build real; defecto de contenido residual corregido; pendiente proxy, otros navegadores, cobertura adicional y staging",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-015",
+    "titulo": "Definir baseline de esquema y runner explícito",
+    "hallazgos": "WS-014",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-016",
+    "titulo": "Conciliar vínculos de usuarios y suscriptores",
+    "hallazgos": "WS-001; WS-015",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-017",
+    "titulo": "Añadir relaciones y FK de identidad",
+    "hallazgos": "WS-015",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-018",
+    "titulo": "Proteger unicidad financiera e índices medidos",
+    "hallazgos": "WS-016",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-019",
+    "titulo": "Centralizar emisión y actualización de facturas",
+    "hallazgos": "WS-008; WS-010",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-020",
+    "titulo": "Proteger la secuencia de lecturas y sus correcciones",
+    "hallazgos": "WS-008",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-021",
+    "titulo": "Registrar pagos manuales y ajustes auditables",
+    "hallazgos": "WS-008",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-022",
+    "titulo": "Crear tokens de invitación y activación de un solo uso",
+    "hallazgos": "WS-004",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-023",
+    "titulo": "Entregar invitaciones verificables por correo",
+    "hallazgos": "WS-004",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-024",
+    "titulo": "Habilitar recuperación pública segura de contraseña",
+    "hallazgos": "WS-004",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-025",
+    "titulo": "Completar UI de activación y recuperación",
+    "hallazgos": "WS-004",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-026",
+    "titulo": "Hacer transaccional el alta de persona, cuenta y dirección",
+    "hallazgos": "WS-017",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-027",
+    "titulo": "Persistir intentos y eventos de pago conciliables",
+    "hallazgos": "WS-005",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-028",
+    "titulo": "Conciliar webhooks desconocidos y cobros históricos",
+    "hallazgos": "WS-005",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-029",
+    "titulo": "Limitar abuso de login y registro sin bloquear el hilo",
+    "hallazgos": "WS-013",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-030",
+    "titulo": "Alinear permisos por operación entre UI y API",
+    "hallazgos": "WS-027",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-031",
+    "titulo": "Reproducir contenedores desde el lock y runtime único",
+    "hallazgos": "WS-036",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-032",
+    "titulo": "Declarar variables y persistencia por entorno",
+    "hallazgos": "WS-038",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-033",
+    "titulo": "Unificar cabeceras HTTP con política compatible con Bold",
+    "hallazgos": "WS-012",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-034",
+    "titulo": "Reenviar Socket.IO y verificar reconexión",
+    "hallazgos": "WS-037",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-035",
+    "titulo": "Añadir health de aplicación y dependencias",
+    "hallazgos": "WS-042",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-036",
+    "titulo": "Cerrar regresión HTTP y navegador de los riesgos altos",
+    "hallazgos": "WS-043",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-037",
+    "titulo": "Sanear historial tras revocar secretos y añadir prevención",
+    "hallazgos": "WS-003",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-038",
+    "titulo": "Validar contratos financieros e ID de ruta",
+    "hallazgos": "WS-010; WS-021",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-039",
+    "titulo": "Validar DTO e IDs del resto del CRUD",
+    "hallazgos": "WS-010; WS-021",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-040",
+    "titulo": "Acotar listados y corregir enlaces de paginación",
+    "hallazgos": "WS-022; WS-023",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-041",
+    "titulo": "Eliminar N+1 y añadir búsqueda paginada",
+    "hallazgos": "WS-022",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-042",
+    "titulo": "Paginar búsquedas y listas administrativas completas",
+    "hallazgos": "WS-024",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-043",
+    "titulo": "Acordar definiciones de consumo, recaudo y vencimiento",
+    "hallazgos": "WS-018; WS-047",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-044",
+    "titulo": "Tratar fechas de calendario y mora de forma uniforme",
+    "hallazgos": "WS-047",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-045",
+    "titulo": "Corregir agregación de consumo en los tableros",
+    "hallazgos": "WS-018",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-046",
+    "titulo": "Atribuir recaudo a eventos de pago verificables",
+    "hallazgos": "WS-018",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-047",
+    "titulo": "Añadir outbox transaccional de eventos de facturación",
+    "hallazgos": "WS-019; WS-020",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-048",
+    "titulo": "Entregar avisos y actividad de forma idempotente",
+    "hallazgos": "WS-019",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-049",
+    "titulo": "Recuperar cron omitido sin duplicar avisos",
+    "hallazgos": "WS-020",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-050",
+    "titulo": "Conectar actividad real y calidad de datos del tablero",
+    "hallazgos": "WS-025",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-051",
+    "titulo": "Asociar etiquetas y mensajes de formularios",
+    "hallazgos": "WS-028",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-052",
+    "titulo": "Garantizar foco y teclado en modales",
+    "hallazgos": "WS-029",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-053",
+    "titulo": "Dar equivalentes textuales a los gráficos",
+    "hallazgos": "WS-030",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-054",
+    "titulo": "Liberar listeners y gráficos al desmontar",
+    "hallazgos": "WS-026",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-055",
+    "titulo": "Reducir carga inicial y configurar caché de assets",
+    "hallazgos": "WS-033",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-056",
+    "titulo": "Obtener escaneo vigente y mapa de actualización",
+    "hallazgos": "WS-034",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-057",
+    "titulo": "Preparar sustitución de BootstrapVue y compat",
+    "hallazgos": "WS-034",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-058",
+    "titulo": "Migrar navegación y componentes compartidos",
+    "hallazgos": "WS-034",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-059",
+    "titulo": "Migrar componentes administrativos y de entidades",
+    "hallazgos": "WS-034",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-060",
+    "titulo": "Migrar login y estilos públicos dependientes",
+    "hallazgos": "WS-034",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-061",
+    "titulo": "Retirar compat y dependencias obsoletas del runtime",
+    "hallazgos": "WS-034; WS-033",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-062",
+    "titulo": "Validar inventario de datos, finalidades y proveedores",
+    "hallazgos": "WS-039; WS-040; WS-041",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-063",
+    "titulo": "Publicar política coherente con la operación comprobada",
+    "hallazgos": "WS-039",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-064",
+    "titulo": "Guardar evidencia de autorización cuando corresponda",
+    "hallazgos": "WS-040",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-065",
+    "titulo": "Completar consentimiento y atención de derechos en UI",
+    "hallazgos": "WS-040",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-066",
+    "titulo": "Aplicar purga por retención sin romper sesiones ni idempotencia",
+    "hallazgos": "WS-041",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-067",
+    "titulo": "Normalizar formato en cambio separado",
+    "hallazgos": "WS-044",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-068",
+    "titulo": "Resolver reglas semánticas y añadir tipos Vue a CI",
+    "hallazgos": "WS-044",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-069",
+    "titulo": "Conectar métricas, alertas y correlación operativa",
+    "hallazgos": "WS-042",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-070",
+    "titulo": "Hacer obligatoria la regresión completa y cerrar F3",
+    "hallazgos": "WS-043",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-071",
+    "titulo": "Incluir recursos públicos en el artefacto",
+    "hallazgos": "WS-031",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-072",
+    "titulo": "Completar metadatos públicos y comportamiento 404",
+    "hallazgos": "WS-032",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-073",
+    "titulo": "Resolver licencia del producto y atribuciones",
+    "hallazgos": "WS-035",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-074",
+    "titulo": "Documentar operación, API y onboarding comprobados",
+    "hallazgos": "WS-045",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-075",
+    "titulo": "Retirar implementaciones no montadas y duplicación acotada",
+    "hallazgos": "WS-046",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-076",
+    "titulo": "Reauditar el cierre completo de hallazgos",
+    "hallazgos": "WS-043",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  },
+  {
+    "id": "T-077",
+    "titulo": "Ensayar recuperación y respuesta a incidentes trimestral",
+    "hallazgos": "WS-042",
+    "estado": "Pendiente",
+    "cierre_integral": false
+  }
+]
