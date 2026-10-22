@@ -4,8 +4,8 @@
     <main :class="['main-content', { 'no-header': isAdminRoute }]">
       <router-view></router-view>
     </main>
-    <Footer v-if="!isAdminRoute" />
-    <ChatBot />
+    <Footer v-if="!isAdminRoute && !isWorkspaceRoute" />
+    <ChatBot v-if="!isAdminRoute && !isWorkspaceRoute" />
   </div>
 </template>
 
@@ -30,6 +30,7 @@ export default defineComponent({
     });
     return {
       route,
+      isWorkspaceRoute: computed(() => ['/portal', '/pagos'].includes(route.path)),
       isAdminRoute,
     };
   },
@@ -52,3 +53,5 @@ export default defineComponent({
   padding-top: 0;
 }
 </style>
+
+<style src="../content/scss/workspace.scss" lang="scss"></style>

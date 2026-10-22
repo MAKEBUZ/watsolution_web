@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import OpenAI from 'openai';
@@ -8,15 +8,20 @@ import { Person } from '../domain/person.entity';
 @Injectable()
 export class AiService {
   private readonly logger = new Logger('AiService');
-  private readonly openai: OpenAI;
+  private client?: OpenAI;
+
+  private get openai(): OpenAI {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new ServiceUnavailableException('El asistente no está disponible. Puedes seguir usando el portal y los pagos.');
+    }
+    return (this.client ??= new OpenAI({ apiKey: process.env.OPENAI_API_KEY }));
+  }
 
   constructor(
     @InjectRepository(Invoice) private readonly invoiceRepository: Repository<Invoice>,
     @InjectRepository(Person) private readonly personRepository: Repository<Person>,
     private readonly dataSource: DataSource,
-  ) {
-    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY ?? '' });
-  }
+  ) {}
 
   async chat(userLogin: string, message: string): Promise<{ reply: string }> {
     const invoices = await this.invoiceRepository
@@ -82,8 +87,7 @@ Responde únicamente sobre facturas, pagos y el servicio de agua. Si preguntan s
         const totalDebt = pending.reduce((acc, i) => acc + Number(i.amountDue ?? 0), 0);
 
         const address = person.address
-          ? [person.address.street, person.address.houseNumber, person.address.neighborhood, person.address.city]
-              .filter(Boolean).join(', ')
+          ? [person.address.street, person.address.houseNumber, person.address.neighborhood, person.address.city].filter(Boolean).join(', ')
           : 'Sin dirección registrada';
 
         subscriberContext = `
@@ -110,8 +114,7 @@ ${this.buildInvoiceContext(invoices)}`;
     }
 
     const needsCedula =
-      !docMatch &&
-      /factura|deuda|mora|pago|cobro|saldo|cuánto|cuanto|debe|pendiente|historial|suscriptor|usuario/i.test(message);
+      !docMatch && /factura|deuda|mora|pago|cobro|saldo|cuánto|cuanto|debe|pendiente|historial|suscriptor|usuario/i.test(message);
 
     const systemPrompt = `Eres el asistente administrativo de WatSolution para el equipo de administración. Tienes acceso completo a datos de suscriptores y facturación.
 
@@ -139,10 +142,11 @@ INSTRUCCIONES:
 
   async indexDocument(content: string, metadata: Record<string, any> = {}): Promise<void> {
     const embedding = await this.embed(content);
-    await this.dataSource.query(
-      `INSERT INTO document_embeddings (content, embedding, metadata) VALUES ($1, $2::vector, $3)`,
-      [content, `[${embedding.join(',')}]`, JSON.stringify(metadata)],
-    );
+    await this.dataSource.query(`INSERT INTO document_embeddings (content, embedding, metadata) VALUES ($1, $2::vector, $3)`, [
+      content,
+      `[${embedding.join(',')}]`,
+      JSON.stringify(metadata),
+    ]);
   }
 
   async seedFaqs(): Promise<number> {
@@ -182,10 +186,10 @@ INSTRUCCIONES:
   private async searchRelevantDocs(query: string, limit: number): Promise<Array<{ content: string }>> {
     try {
       const embedding = await this.embed(query);
-      return await this.dataSource.query(
-        `SELECT content FROM document_embeddings ORDER BY embedding <=> $1::vector LIMIT $2`,
-        [`[${embedding.join(',')}]`, limit],
-      );
+      return await this.dataSource.query(`SELECT content FROM document_embeddings ORDER BY embedding <=> $1::vector LIMIT $2`, [
+        `[${embedding.join(',')}]`,
+        limit,
+      ]);
     } catch (err) {
       this.logger.warn(`RAG search failed: ${err?.message}`);
       return [];
