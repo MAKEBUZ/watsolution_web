@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-import { Chart, registerables } from 'chart.js'
-import { useRouter, useRoute } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
-import axios from 'axios'
-import { io, Socket } from 'socket.io-client'
+import { onMounted, onUnmounted, ref } from 'vue';
+import { Chart, registerables } from 'chart.js';
+import { useRouter, useRoute } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import axios from 'axios';
+import { io, type Socket } from 'socket.io-client';
 
-Chart.register(...registerables)
+Chart.register(...registerables);
 
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
+const router = useRouter();
+const route = useRoute();
+const accountStore = useAccountStore();
 
-const isSidebarOpen = ref(window.innerWidth > 1024)
-const isMobile = ref(window.innerWidth <= 1024)
+const isSidebarOpen = ref(window.innerWidth > 1024);
+const isMobile = ref(window.innerWidth <= 1024);
 
 const menuItems = [
   { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
@@ -21,86 +21,138 @@ const menuItems = [
   { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
   { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
   { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-]
+];
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/login')
-}
+  accountStore.logout();
+  router.push('/login');
+};
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
-  isSidebarOpen.value = !isMobile.value
-}
+  isMobile.value = window.innerWidth <= 1024;
+  isSidebarOpen.value = !isMobile.value;
+};
 
 // ── Stats ────────────────────────────────────────────────────────────────────
 interface Stat {
-  label: string
-  value: string
-  icon: string
-  color: string
-  trend: string
-  isPositive: boolean
-  description: string
-  raw: number
+  label: string;
+  value: string;
+  icon: string;
+  color: string;
+  trend: string;
+  isPositive: boolean;
+  description: string;
+  raw: number;
 }
 
+const statsError = ref('');
+const chartsError = ref('');
+const refreshing = ref(false);
+async function refreshDashboard() {
+  refreshing.value = true;
+  try {
+    await Promise.all([loadStats(), loadCharts()]);
+  } finally {
+    refreshing.value = false;
+  }
+}
+function downloadReport() {
+  const csv = '\uFEFFIndicador;Valor\n' + stats.value.map(stat => `${stat.label};${stat.raw}`).join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'resumen-watsolution.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
 const stats = ref<Stat[]>([
-  { label: 'Usuarios Activos', value: '–', icon: 'users', color: '#3b82f6', trend: '', isPositive: true, description: 'Suscriptores con servicio activo', raw: 0 },
-  { label: 'Recaudo Mensual', value: '–', icon: 'dollar-sign', color: '#10b981', trend: '', isPositive: true, description: 'Total recaudado este mes', raw: 0 },
-  { label: 'Consumo Total', value: '–', icon: 'tint', color: '#0ea5e9', trend: '', isPositive: true, description: 'Consumo del mes en curso', raw: 0 },
-])
+  {
+    label: 'Usuarios Activos',
+    value: '–',
+    icon: 'users',
+    color: '#3b82f6',
+    trend: '',
+    isPositive: true,
+    description: 'Suscriptores con servicio activo',
+    raw: 0,
+  },
+  {
+    label: 'Recaudo Mensual',
+    value: '–',
+    icon: 'dollar-sign',
+    color: '#10b981',
+    trend: '',
+    isPositive: true,
+    description: 'Total recaudado este mes',
+    raw: 0,
+  },
+  {
+    label: 'Consumo Total',
+    value: '–',
+    icon: 'tint',
+    color: '#0ea5e9',
+    trend: '',
+    isPositive: true,
+    description: 'Consumo del mes en curso',
+    raw: 0,
+  },
+]);
 
 async function loadStats() {
+  statsError.value = '';
   try {
-    const { data } = await axios.get('api/admin/stats')
-    stats.value[0].value = data.activeUsers.toLocaleString('es-CO')
-    stats.value[0].raw = data.activeUsers
+    const { data } = await axios.get('api/admin/stats');
+    stats.value[0].value = data.activeUsers.toLocaleString('es-CO');
+    stats.value[0].raw = data.activeUsers;
 
-    const revM = (data.monthlyRevenue / 1_000_000).toFixed(1)
-    stats.value[1].value = `$${revM}M`
-    stats.value[1].raw = data.monthlyRevenue
+    stats.value[1].value = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(
+      data.monthlyRevenue,
+    );
+    stats.value[1].raw = data.monthlyRevenue;
 
-    stats.value[2].value = `${parseFloat(data.totalConsumption).toLocaleString('es-CO')} m³`
-    stats.value[2].raw = data.totalConsumption
+    stats.value[2].value = `${parseFloat(data.totalConsumption).toLocaleString('es-CO')} m³`;
+    stats.value[2].raw = data.totalConsumption;
   } catch {
-    // keep placeholder values
+    statsError.value = 'No se pudieron actualizar los indicadores. Intenta nuevamente.';
   }
 }
 
 // ── Charts ───────────────────────────────────────────────────────────────────
-const consumptionChartRef = ref<HTMLCanvasElement | null>(null)
-const revenueChartRef = ref<HTMLCanvasElement | null>(null)
-let consumptionChart: Chart | null = null
-let revenueChart: Chart | null = null
+const consumptionChartRef = ref<HTMLCanvasElement | null>(null);
+const revenueChartRef = ref<HTMLCanvasElement | null>(null);
+let consumptionChart: Chart | null = null;
+let revenueChart: Chart | null = null;
 
 async function loadCharts() {
+  chartsError.value = '';
   try {
-    const { data } = await axios.get('api/admin/dashboard')
-    const labels = data.consumptionTrend.map((p: any) => p.month)
-    const consumptionValues = data.consumptionTrend.map((p: any) => p.value)
-    const revenueValues = data.monthlyRevenue.map((p: any) => p.value / 1_000_000)
+    const { data } = await axios.get('api/admin/dashboard');
+    const labels = data.consumptionTrend.map((p: any) => p.month);
+    const consumptionValues = data.consumptionTrend.map((p: any) => p.value);
+    const revenueValues = data.monthlyRevenue.map((p: any) => p.value / 1_000_000);
 
     if (consumptionChartRef.value) {
-      consumptionChart?.destroy()
+      consumptionChart?.destroy();
       consumptionChart = new Chart(consumptionChartRef.value, {
         type: 'line',
         data: {
           labels,
-          datasets: [{
-            label: 'Consumo (m³)',
-            data: consumptionValues,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            pointBackgroundColor: '#3b82f6',
-          }],
+          datasets: [
+            {
+              label: 'Consumo (m³)',
+              data: consumptionValues,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4,
+              pointBackgroundColor: '#3b82f6',
+            },
+          ],
         },
         options: {
           responsive: true,
@@ -111,21 +163,23 @@ async function loadCharts() {
             x: { grid: { display: false } },
           },
         },
-      })
+      });
     }
 
     if (revenueChartRef.value) {
-      revenueChart?.destroy()
+      revenueChart?.destroy();
       revenueChart = new Chart(revenueChartRef.value, {
         type: 'bar',
         data: {
           labels,
-          datasets: [{
-            label: 'Recaudo ($)',
-            data: revenueValues,
-            backgroundColor: '#10b981',
-            borderRadius: 6,
-          }],
+          datasets: [
+            {
+              label: 'Recaudo ($)',
+              data: revenueValues,
+              backgroundColor: '#10b981',
+              borderRadius: 6,
+            },
+          ],
         },
         options: {
           responsive: true,
@@ -135,79 +189,79 @@ async function loadCharts() {
             y: {
               beginAtZero: true,
               grid: { color: '#f1f5f9' },
-              ticks: { callback: (val) => `$${val}M` },
+              ticks: { callback: val => `$${val}M` },
             },
             x: { grid: { display: false } },
           },
         },
-      })
+      });
     }
   } catch {
-    // charts remain empty on error
+    chartsError.value = 'No se pudo cargar el historial de consumo y recaudo.';
   }
 }
 
 // ── Tank level WebSocket ──────────────────────────────────────────────────────
 interface TankLevelEvent {
-  level: number
-  alert: boolean
-  timestamp: string
+  level: number;
+  alert: boolean;
+  timestamp: string;
 }
 
-const tankLevel = ref(75)
-const tankAlert = ref(false)
-const tankTimestamp = ref('')
-const tankConnected = ref(false)
-let socket: Socket | null = null
+const tankLevel = ref(0);
+const tankAlert = ref(false);
+const tankTimestamp = ref('');
+const tankConnected = ref(false);
+let socket: Socket | null = null;
 
 function connectTankSocket() {
-  const wsUrl = import.meta.env.DEV ? 'http://localhost:8080' : window.location.origin
-  socket = io(`${wsUrl}/tank`, { transports: ['websocket', 'polling'] })
+  const wsUrl = window.location.origin;
+  socket = io(`${wsUrl}/tank`, { transports: ['websocket', 'polling'] });
 
-  socket.on('connect', () => { tankConnected.value = true })
-  socket.on('disconnect', () => { tankConnected.value = false })
+  socket.on('connect', () => {
+    tankConnected.value = true;
+  });
+  socket.on('disconnect', () => {
+    tankConnected.value = false;
+  });
   socket.on('tank-level', (event: TankLevelEvent) => {
-    tankLevel.value = event.level
-    tankAlert.value = event.alert
-    tankTimestamp.value = new Date(event.timestamp).toLocaleTimeString('es-CO')
-  })
+    tankLevel.value = event.level;
+    tankAlert.value = event.alert;
+    tankTimestamp.value = new Date(event.timestamp).toLocaleTimeString('es-CO');
+  });
 }
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  handleResize()
-  loadStats()
-  loadCharts()
-  connectTankSocket()
-})
+  window.addEventListener('resize', handleResize);
+  handleResize();
+  loadStats();
+  loadCharts();
+  connectTankSocket();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-  socket?.disconnect()
-  consumptionChart?.destroy()
-  revenueChart?.destroy()
-})
+  window.removeEventListener('resize', handleResize);
+  socket?.disconnect();
+  consumptionChart?.destroy();
+  revenueChart?.destroy();
+});
 
 // Gauge fill color based on level
 function tankColor(level: number): string {
-  if (level < 65) return '#ef4444'
-  if (level < 80) return '#f59e0b'
-  return '#10b981'
+  if (level < 65) return '#ef4444';
+  if (level < 80) return '#f59e0b';
+  return '#10b981';
 }
 </script>
 
 <template>
   <div class="admin-layout">
-    <div
-      v-if="isMobile && isSidebarOpen"
-      class="sidebar-overlay"
-      @click="toggleSidebar"
-    ></div>
+    <div v-if="isMobile && isSidebarOpen" class="sidebar-overlay" @click="toggleSidebar"></div>
 
     <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
       <div class="sidebar-header">
         <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
-        <button class="toggle-btn" @click="toggleSidebar">
+        <button class="toggle-btn" aria-label="Alternar navegación" @click="toggleSidebar">
           <font-awesome-icon v-if="!isSidebarOpen" icon="bars" :size="20" />
           <font-awesome-icon v-else icon="times" :size="20" />
         </button>
@@ -219,7 +273,7 @@ function tankColor(level: number): string {
           :key="item.routeName"
           :to="{ name: item.routeName }"
           class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
+          :class="{ active: route.name === item.routeName }"
         >
           <div class="nav-icon-container">
             <font-awesome-icon :icon="item.icon" :size="22" />
@@ -231,7 +285,9 @@ function tankColor(level: number): string {
 
       <div class="sidebar-footer">
         <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="avatar">
+            {{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}
+          </div>
           <div class="info" v-if="isSidebarOpen || isMobile">
             <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
             <span class="role">Administrador Principal</span>
@@ -253,15 +309,27 @@ function tankColor(level: number): string {
         <div class="summary-dashboard">
           <header class="summary-header">
             <div class="header-info">
-              <h1>Resumen Ejecutivo</h1>
-              <p><font-awesome-icon icon="calendar" :size="16" /> Periodo actual: <strong>{{ new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }) }}</strong></p>
+              <p class="workspace-eyebrow">OPERACIÓN / VISTA GENERAL</p>
+              <h1>Resumen del acueducto</h1>
+              <p>
+                <font-awesome-icon icon="calendar" :size="16" /> Periodo actual:
+                <strong>{{ new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }) }}</strong>
+              </p>
             </div>
             <div class="header-actions">
-              <button class="btn btn--outline"><font-awesome-icon icon="filter" :size="18" /> Filtros</button>
-              <button class="btn btn--primary"><font-awesome-icon icon="download" :size="18" /> Descargar Reporte</button>
+              <button v-if="isMobile" class="btn btn--outline" aria-label="Abrir navegación" @click="toggleSidebar">Menú</button
+              ><button class="btn btn--outline" :disabled="refreshing" @click="refreshDashboard">
+                {{ refreshing ? 'Actualizando…' : 'Actualizar' }}
+              </button>
+              <button class="btn btn--primary" :disabled="!!statsError || stats[0].value === '–'" @click="downloadReport">
+                <font-awesome-icon icon="download" /> Exportar resumen
+              </button>
             </div>
           </header>
 
+          <div v-if="statsError || chartsError" role="alert" class="workspace-notice">
+            {{ statsError || chartsError }}<button @click="refreshDashboard">Reintentar</button>
+          </div>
           <!-- KPI cards -->
           <div class="metrics-grid">
             <div v-for="stat in stats" :key="stat.label" class="stat-card">
@@ -305,22 +373,12 @@ function tankColor(level: number): string {
             <!-- Right column: system status + tank -->
             <div class="side-column">
               <div class="info-card">
-                <h3>Estado del Sistema</h3>
-                <div class="status-list">
-                  <div class="status-item">
-                    <div class="status-row">
-                      <span class="status-label">Presión de Red</span>
-                      <span class="status-value">85%</span>
-                    </div>
-                    <div class="status-bar"><div class="fill" style="width: 85%"></div></div>
-                  </div>
-                  <div class="status-item">
-                    <div class="status-row">
-                      <span class="status-label">Calidad Agua</span>
-                      <span class="status-value">99%</span>
-                    </div>
-                    <div class="status-bar"><div class="fill success" style="width: 99%"></div></div>
-                  </div>
+                <p class="workspace-eyebrow">GESTIÓN DIARIA</p>
+                <h3>Accesos operativos</h3>
+                <div class="workspace-shortcuts">
+                  <router-link to="/admin/facturacion">Gestionar facturación <span>→</span></router-link>
+                  <router-link to="/admin/usuarios">Consultar suscriptores <span>→</span></router-link>
+                  <router-link to="/admin/actividad">Revisar actividad <span>→</span></router-link>
                 </div>
               </div>
 
@@ -330,7 +388,7 @@ function tankColor(level: number): string {
                   <h3>Nivel del Tanque</h3>
                   <span class="tank-connection" :class="tankConnected ? 'connected' : 'disconnected'">
                     <span class="dot"></span>
-                    {{ tankConnected ? 'En vivo' : 'Conectando…' }}
+                    {{ tankConnected ? 'Conectado' : 'Sin conexión' }}
                   </span>
                 </div>
 
@@ -350,7 +408,7 @@ function tankColor(level: number): string {
                         backgroundColor: tankColor(tankLevel),
                       }"
                     ></div>
-                    <div class="tank-level-label">{{ tankLevel.toFixed(1) }}%</div>
+                    <div class="tank-level-label">{{ tankTimestamp ? tankLevel.toFixed(1) + '%' : 'Sin lectura' }}</div>
                     <div class="tank-threshold-line" title="Umbral 65%"></div>
                   </div>
                   <div class="tank-scale">
@@ -415,9 +473,23 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
-    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+    .logo-text,
+    .nav-item span,
+    .chevron,
+    .logout-btn span,
+    .home-btn span {
+      display: none;
+    }
+    .nav-item,
+    .logout-btn,
+    .home-btn {
+      justify-content: center;
+      padding: 1rem;
+    }
+    .sidebar-header {
+      justify-content: center;
+      padding: $spacing-md 0;
+    }
   }
 
   &.is-mobile {
@@ -452,7 +524,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    strong { color: $color-secondary; }
+    strong {
+      color: $color-secondary;
+    }
   }
 
   .toggle-btn {
@@ -506,7 +580,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: white;
     background: rgba(255, 255, 255, 0.05);
   }
@@ -517,7 +592,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     background: rgba($color-primary, 0.1);
   }
 
-  .chevron { margin-left: auto; opacity: 0.5; }
+  .chevron {
+    margin-left: auto;
+    opacity: 0.5;
+  }
 }
 
 .sidebar-footer {
@@ -538,7 +616,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   white-space: nowrap;
   margin-bottom: 4px;
-  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+  }
 }
 
 .logout-btn {
@@ -553,7 +634,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .admin-main {
@@ -593,8 +676,17 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -621,14 +713,21 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   flex-wrap: wrap;
   gap: $spacing-md;
 
-  h1 { font-size: 1.8rem; font-weight: 800; color: $color-text; margin-bottom: 4px; }
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: $color-text;
+    margin-bottom: 4px;
+  }
   p {
     display: flex;
     align-items: center;
     gap: 8px;
     color: $color-text-muted;
     font-size: 0.95rem;
-    strong { color: $color-primary; }
+    strong {
+      color: $color-primary;
+    }
   }
 
   .header-actions {
@@ -653,7 +752,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   gap: $spacing-md;
   transition: transform 0.2s;
 
-  &:hover { transform: translateY(-4px); }
+  &:hover {
+    transform: translateY(-4px);
+  }
 
   .stat-icon {
     width: 48px;
@@ -665,15 +766,26 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .stat-content {
-    .stat-label { font-size: 0.9rem; color: $color-text-muted; font-weight: 500; }
+    .stat-label {
+      font-size: 0.9rem;
+      color: $color-text-muted;
+      font-weight: 500;
+    }
     .stat-value-group {
       display: flex;
       align-items: baseline;
       gap: 12px;
       margin: 4px 0;
-      .stat-value { font-size: 1.75rem; font-weight: 800; color: $color-text; }
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: $color-text;
+      }
     }
-    .stat-desc { font-size: 0.8rem; color: $color-text-muted; }
+    .stat-desc {
+      font-size: 0.8rem;
+      color: $color-text-muted;
+    }
   }
 }
 
@@ -711,7 +823,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     justify-content: space-between;
     align-items: center;
     margin-bottom: $spacing-xl;
-    h3 { font-size: 1.2rem; font-weight: 700; }
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
     .badge {
       padding: 4px 12px;
       background: #f1f5f9;
@@ -719,7 +834,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
       font-size: 0.75rem;
       font-weight: 600;
       color: $color-text-muted;
-      &.success { background: #dcfce7; color: #166534; }
+      &.success {
+        background: #dcfce7;
+        color: #166534;
+      }
     }
   }
 
@@ -736,7 +854,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 24px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
-  h3 { font-size: 1.1rem; margin-bottom: $spacing-lg; }
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: $spacing-lg;
+  }
 
   .status-list {
     display: flex;
@@ -757,8 +878,15 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
       gap: 12px;
     }
 
-    .status-label { font-weight: 600; color: rgba(255, 255, 255, 0.9); }
-    .status-value { font-weight: 700; color: rgba(255, 255, 255, 0.9); font-variant-numeric: tabular-nums; }
+    .status-label {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .status-value {
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      font-variant-numeric: tabular-nums;
+    }
 
     .status-bar {
       height: 6px;
@@ -768,7 +896,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
       .fill {
         height: 100%;
         background: $color-primary;
-        &.success { background: #10b981; }
+        &.success {
+          background: #10b981;
+        }
       }
     }
   }
@@ -794,7 +924,12 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     align-items: center;
     margin-bottom: $spacing-md;
 
-    h3 { font-size: 1rem; font-weight: 700; color: $color-text; margin: 0; }
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: $color-text;
+      margin: 0;
+    }
   }
 }
 
@@ -811,8 +946,19 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     border-radius: 50%;
   }
 
-  &.connected { color: #10b981; .dot { background: #10b981; animation: blink 1.5s infinite; } }
-  &.disconnected { color: #94a3b8; .dot { background: #94a3b8; } }
+  &.connected {
+    color: #10b981;
+    .dot {
+      background: #10b981;
+      animation: blink 1.5s infinite;
+    }
+  }
+  &.disconnected {
+    color: #94a3b8;
+    .dot {
+      background: #94a3b8;
+    }
+  }
 }
 
 .tank-alert-banner {
@@ -850,7 +996,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   bottom: 0;
   left: 0;
   right: 0;
-  transition: height 0.8s ease, background-color 0.5s ease;
+  transition:
+    height 0.8s ease,
+    background-color 0.5s ease;
   border-radius: 0 0 10px 10px;
 }
 
@@ -863,7 +1011,7 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-size: 1.4rem;
   font-weight: 800;
   color: $color-text;
-  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
   z-index: 1;
 }
 
@@ -890,7 +1038,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 600;
   white-space: nowrap;
 
-  .threshold-mark { color: #ef4444; font-weight: 700; }
+  .threshold-mark {
+    color: #ef4444;
+    font-weight: 700;
+  }
 }
 
 .tank-timestamp {
@@ -915,24 +1066,39 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   &--primary {
     background: $color-primary;
     color: white;
-    &:hover { background: darken($color-primary, 10%); }
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
   }
 
   &--outline {
     background: transparent;
     border: 2px solid $color-primary;
     color: $color-primary;
-    &:hover { background: $color-primary; color: white; }
+    &:hover {
+      background: $color-primary;
+      color: white;
+    }
   }
 }
 
 @keyframes pulse-border {
-  0%, 100% { border-color: #ef4444; }
-  50% { border-color: #fca5a5; }
+  0%,
+  100% {
+    border-color: #ef4444;
+  }
+  50% {
+    border-color: #fca5a5;
+  }
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 </style>

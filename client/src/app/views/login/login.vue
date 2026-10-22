@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAccountStore } from '@/shared/config/store/account-store';
 
 const router = useRouter();
+const route = useRoute();
 const store = useAccountStore();
 
 const username = ref('');
@@ -12,9 +13,12 @@ const password = ref('');
 const rememberMe = ref(false);
 const showPassword = ref(false);
 const authenticationError = ref(false);
+const submitting = ref(false);
 const privacyAccepted = ref(false);
 
 const handleLogin = async () => {
+  if (submitting.value) return;
+  submitting.value = true;
   authenticationError.value = false;
   try {
     const result = await axios.post('api/authenticate', {
@@ -43,13 +47,18 @@ const handleLogin = async () => {
 
     await store.loadAccountAction();
     const authorities: string[] = store.account?.authorities ?? [];
-    if (authorities.includes('ROLE_ADMIN')) {
+    const redirect = route.query.redirect;
+    if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//') && !redirect.startsWith('/login')) {
+      await router.replace(redirect);
+    } else if (authorities.includes('ROLE_ADMIN')) {
       await router.replace('/admin');
     } else {
       await router.replace('/portal');
     }
   } catch {
     authenticationError.value = true;
+  } finally {
+    submitting.value = false;
   }
 };
 
@@ -104,32 +113,24 @@ const togglePasswordVisibility = () => {
 
     <div class="auth-content">
       <div class="auth-card">
-        <h1 class="auth-title">LOGIN</h1>
+        <p class="workspace-eyebrow">WATSOLUTION / OFICINA VIRTUAL</p>
+        <h1 class="auth-title">Ingresa a tu cuenta</h1>
 
-        <div v-if="authenticationError" class="auth-error">
-          Usuario o contraseña incorrectos.
-        </div>
+        <div v-if="authenticationError" class="auth-error">Usuario o contraseña incorrectos.</div>
 
         <form class="auth-form" @submit.prevent="handleLogin">
           <div class="auth-field">
-            <label class="auth-label" for="username">Email</label>
+            <label class="auth-label" for="username">Usuario o correo</label>
 
             <div class="auth-input">
-              <input
-                id="username"
-                v-model="username"
-                class="auth-input__control"
-                type="text"
-                autocomplete="username"
-                required
-              >
+              <input id="username" v-model="username" class="auth-input__control" type="text" autocomplete="username" required />
 
               <font-awesome-icon class="auth-input__icon" icon="envelope" :size="18" />
             </div>
           </div>
 
           <div class="auth-field">
-            <label class="auth-label" for="password">Password</label>
+            <label class="auth-label" for="password">Contraseña</label>
 
             <div class="auth-input">
               <input
@@ -139,7 +140,7 @@ const togglePasswordVisibility = () => {
                 :type="showPassword ? 'text' : 'password'"
                 autocomplete="current-password"
                 required
-              >
+              />
 
               <button
                 type="button"
@@ -154,28 +155,24 @@ const togglePasswordVisibility = () => {
 
             <div class="auth-row">
               <label class="auth-remember">
-                <input v-model="rememberMe" type="checkbox">
-                <span>Remember Me</span>
+                <input v-model="rememberMe" type="checkbox" />
+                <span>Recordarme</span>
               </label>
 
-              <router-link to="/account/reset/request" class="auth-forgot">
-                Forgot Password?
-              </router-link>
+              <router-link to="/account/reset/request" class="auth-forgot"> ¿Olvidaste tu contraseña? </router-link>
             </div>
           </div>
 
           <label class="auth-privacy">
-            <input v-model="privacyAccepted" type="checkbox" class="auth-privacy__check">
+            <input v-model="privacyAccepted" type="checkbox" class="auth-privacy__check" />
             <span>
               He leído y acepto la
-              <router-link to="/politica-privacidad" target="_blank" class="auth-privacy__link">
-                Política de Privacidad
-              </router-link>
+              <router-link to="/politica-privacidad" target="_blank" class="auth-privacy__link"> Política de Privacidad </router-link>
             </span>
           </label>
 
-          <button class="auth-submit" type="submit" :disabled="!privacyAccepted">
-            Login
+          <button class="auth-submit" type="submit" :disabled="!privacyAccepted || submitting">
+            {{ submitting ? 'Ingresando…' : 'Ingresar' }}
           </button>
         </form>
       </div>

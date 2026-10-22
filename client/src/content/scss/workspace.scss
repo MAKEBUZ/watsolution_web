@@ -1,0 +1,293 @@
+/* Shared visual language for the customer and operations workspaces. */
+#app {
+  color: #203240;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  :focus-visible {
+    outline: 3px solid #26877b;
+    outline-offset: 3px;
+  }
+  .header {
+    background: #fff;
+    border-bottom: 1px solid #e2e7eb;
+    box-shadow: none;
+  }
+  .header__logo-text,
+  .header__nav-link {
+    color: #203240;
+  }
+  .header__logo-text span,
+  .header__logo-icon.primary {
+    color: #176b61;
+  }
+  .header__logo-icon.secondary {
+    display: none;
+  }
+  .header .btn--primary {
+    background: #176b61;
+    box-shadow: none;
+    border-radius: 6px;
+  }
+  .admin-layout,
+  .portal-layout {
+    background: #f5f7f8;
+  }
+  .admin-sidebar,
+  .portal-sidebar {
+    background: #172f39;
+  }
+  .admin-sidebar .logo-text strong,
+  .sidebar-brand__text span {
+    color: #87c6b8;
+  }
+  .admin-sidebar .nav-item.active,
+  .sidebar-nav__item.active {
+    background: #294850;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: none;
+  }
+  .admin-main,
+  .portal-main {
+    min-width: 0;
+  }
+  .admin-content-view {
+    padding: 34px;
+  }
+  .summary-dashboard {
+    max-width: 1400px;
+    margin: auto;
+  }
+  .summary-header h1,
+  .portal-topbar__greeting {
+    font-size: 27px;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+    color: #203240;
+  }
+  .summary-header p,
+  .portal-topbar__sub {
+    color: #71808d;
+    font-size: 13px;
+  }
+  .portal-topbar {
+    background: #fff;
+    border-bottom: 1px solid #e2e7eb;
+    padding: 26px 32px;
+  }
+  .portal-content {
+    padding: 28px 32px;
+  }
+  .stat-card,
+  .chart-card,
+  .info-card,
+  .tank-card,
+  .portal-card,
+  .notif-history {
+    border: 1px solid #dfe6ea;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: none;
+  }
+  .stat-card:hover,
+  .quick-item:hover {
+    transform: none;
+  }
+  .stat-card {
+    padding: 23px;
+  }
+  .stat-value,
+  .stat-card__value {
+    font-size: 29px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.8px;
+  }
+  .stat-label,
+  .stat-card__label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #677885;
+  }
+  .stat-icon,
+  .stat-card__icon {
+    border-radius: 7px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  .chart-card h3,
+  .info-card h3,
+  .tank-card h3,
+  .portal-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .chart-card .card-header {
+    background: #fff;
+    border-bottom: 1px solid #edf0f2;
+  }
+  .btn--primary,
+  .workspace-primary {
+    background: #176b61;
+    color: #fff;
+    border: 1px solid #176b61;
+    border-radius: 6px;
+    box-shadow: none;
+  }
+  .workspace-primary {
+    display: inline-flex;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 10px;
+    align-items: center;
+  }
+  .btn {
+    border-radius: 6px;
+  }
+  .invoice-item {
+    border-bottom: 1px solid #edf0f2;
+  }
+  .workspace-notice {
+    padding: 13px 16px;
+    border: 1px solid #e6d5aa;
+    background: #fffaf0;
+    border-radius: 6px;
+    color: #796132;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .workspace-notice button {
+    margin-left: 12px;
+    border: 0;
+    background: transparent;
+    text-decoration: underline;
+    color: inherit;
+  }
+  .workspace-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.7px;
+    color: #6a7f86;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .workspace-shortcuts {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .workspace-shortcuts a {
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e9ec;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #176b61;
+  }
+  .auth-scene {
+    background: #f2f5f5;
+  }
+  .auth-art {
+    display: none;
+  }
+  .auth-card {
+    border: 1px solid #dfe6ea;
+    border-radius: 10px;
+    box-shadow: 0 12px 40px #17333b08;
+  }
+  @media (max-width: 768px) {
+    .admin-content-view,
+    .portal-content {
+      padding: 20px 16px;
+    }
+    .portal-topbar {
+      padding: 20px 16px;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .summary-header {
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+    .header-actions {
+      flex-wrap: wrap;
+    }
+    .stat-value,
+    .stat-card__value {
+      font-size: 25px;
+    }
+    .portal-topbar__right {
+      flex-wrap: wrap;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+#app .auth-title {
+  font-size: 26px;
+  letter-spacing: -0.7px;
+  font-weight: 600;
+  color: #203240;
+}
+#app .auth-submit {
+  background: #176b61;
+  border-radius: 6px;
+  box-shadow: none;
+}
+#app .auth-input {
+  background: #fff;
+  border: 1px solid #d8e1e6;
+  border-radius: 6px;
+}
+#app .auth-forgot,
+#app .auth-privacy__link {
+  color: #176b61;
+}
+#app .auth-scene::before,
+#app .auth-scene::after {
+  display: none;
+}
+#app .auth-scene {
+  min-height: calc(100vh - 70px);
+  padding-top: 40px;
+}
+#app .auth-card {
+  background: #fff;
+  backdrop-filter: none;
+}
+#app .portal-mobile-nav {
+  display: none;
+}
+@media (max-width: 768px) {
+  #app .portal-mobile-nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 16px;
+    margin: 0;
+    border-bottom: 1px solid #dfe6ea;
+    font-size: 12px;
+    color: #637581;
+  }
+  #app .portal-mobile-nav select {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #d5dfe4;
+    border-radius: 5px;
+    padding: 9px;
+    color: #203240;
+    background: white;
+  }
+}

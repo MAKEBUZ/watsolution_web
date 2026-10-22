@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
   loadCloudConfig();
   registerAsEurekaService();
 
-  const appOptions = { cors: { origin: true, exposedHeaders: ['Authorization'] } };
+  const appOptions = { rawBody: true, cors: { origin: true, exposedHeaders: ['Authorization'] } };
   const app = await NestFactory.create(AppModule, appOptions);
   app.useWebSocketAdapter(new IoAdapter(app));
   app.useGlobalPipes(
