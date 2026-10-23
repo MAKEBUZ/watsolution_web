@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAccountStore } from '@/shared/config/store/account-store'
 import axios from 'axios'
+import { openDocumentUrl } from '@/shared/security/safe-navigation'
 
 const router = useRouter()
 const route = useRoute()
@@ -136,7 +137,7 @@ const handleSave = async () => {
 const downloadInvoice = async (invoiceId: number) => {
   try {
     const res = await axios.get(`api/invoices/download/${invoiceId}`)
-    window.open(res.data.url, '_blank')
+    openDocumentUrl(res.data.url)
   } catch {
     alert('No se pudo obtener el enlace de descarga.')
   }

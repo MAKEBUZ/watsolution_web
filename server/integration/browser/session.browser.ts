@@ -181,6 +181,17 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     expect(route.status()).toBe(200);
     expect(route.headers()['content-type']).toContain('text/html');
   });
+  (process.env.TEST_NGINX === '1' ? it : it.skip)('serves the frontend with browser security headers and hides dotfiles behind Nginx', async () => {
+    const response = await context.request.get(origin + '/login');
+    expect(response.headers()['x-content-type-options']).toBe('nosniff');
+    expect(response.headers()['referrer-policy']).toBe('no-referrer');
+    expect(response.headers()['x-frame-options']).toBe('SAMEORIGIN');
+    expect(response.headers()['content-security-policy']).toContain("frame-ancestors 'self'");
+    expect(response.headers()['content-security-policy']).toContain("object-src 'none'");
+    expect(response.headers()['cache-control']).toBe('no-store');
+    expect((await context.request.get(origin + '/.env')).status()).toBe(404);
+    expect((await context.request.get(origin + '/.git/config')).status()).toBe(404);
+  });
   it('rejects an untrusted Origin without revoking the valid session', async () => {
     const page = await login();
     const cookie = (await context.cookies()).find(c => c.name === '__Host-watsolution-refresh')!;

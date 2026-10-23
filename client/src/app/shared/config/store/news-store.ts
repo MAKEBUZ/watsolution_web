@@ -17,7 +17,7 @@ export const useNewsStore = defineStore('news', {
           this.news = response.data;
         }
       } catch (error) {
-        console.error('Error fetching news:', error);
+        console.error('Error fetching news');
       }
     },
   },

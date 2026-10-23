@@ -76,6 +76,8 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts --no-fund
       - run: npm audit --omit=dev --audit-level=high
+      - name: Audit frontend runtime and development tooling
+        run: npm audit --workspace client --include=dev --audit-level=high
       - run: node node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit
       - run: node node_modules/jest/bin/jest.js --config server/package.json --runInBand
       - run: node ../node_modules/vitest/vitest.mjs run

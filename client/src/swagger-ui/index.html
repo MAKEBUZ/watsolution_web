@@ -25,19 +25,10 @@
         };
       };
 
-      const getBearerToken = () => {
-        var authToken = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
-        if (authToken) {
-          return `Bearer ${authToken}`;
-        }
-        return null;
-      };
-
       function createAxiosConfig(serverBaseUri) {
         return {
           timeout: 5000,
           baseURL: serverBaseUri,
-          headers: { Authorization: getBearerToken() },
         };
       }
 
@@ -51,10 +42,9 @@
               urls = response.data.map(({ group, description }) => ({ name: description, url: `${serverBaseUri}${baseUrl}/${group}` }));
             }
           } catch (error) {
-            console.error('Failed to fetch default API docs', error);
+            console.error('Failed to fetch default API docs');
           }
         }
-        console.log(`Swagger urls`, urls);
 
         return urls?.length ? urls : [{ name: 'default', url: `${serverBaseUri}${baseUrl}` }];
       }
@@ -84,12 +74,18 @@
           deepLinking: true,
           filter: true,
           layout: 'StandaloneLayout',
-          withCredentials: true,
+          withCredentials: false,
+          persistAuthorization: false,
+          queryConfigEnabled: false,
+          validatorUrl: null,
           presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
           plugins: [SwaggerUIBundle.plugins.DownloadUrl, AlwaysEnableTryItOutPlugin],
           tryItOutEnabled: true,
           requestInterceptor: function (req) {
-            req.headers['Authorization'] = getBearerToken();
+            const target = new URL(req.url, window.location.origin);
+            if (target.origin !== window.location.origin || target.username || target.password) {
+              throw new Error('API documentation requests must stay on this origin');
+            }
             // Remove the sample Swagger UI request body if present
             if (req.method === 'GET' && req.body === '{"additionalProp1":"string","additionalProp2":"string","additionalProp3":"string"}') {
               req.body = undefined;

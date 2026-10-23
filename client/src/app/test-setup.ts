@@ -7,6 +7,7 @@ import { createI18n } from 'vue-i18n';
 axios.defaults.adapter = async () => { throw new Error('HTTP requests must be mocked in tests'); };
 
 beforeAll(() => {
+  if (typeof window === 'undefined') return;
   window.location.href = 'https://jhipster.tech/';
 
   // Make sure axios is never executed.

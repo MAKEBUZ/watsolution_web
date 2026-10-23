@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import { openDocumentUrl } from '@/shared/security/safe-navigation';
 import type { IInvoice } from '@/shared/model/invoice.model';
 
 const invoices = ref<IInvoice[]>([]);
@@ -99,7 +100,7 @@ const downloadInvoice = async (inv: IInvoice) => {
   try {
     const res = await axios.get(`api/invoices/download/${inv.id}`);
     if (res.data?.url) {
-      window.open(res.data.url, '_blank');
+      openDocumentUrl(res.data.url);
     }
   } catch {
     alert('No hay PDF disponible para esta factura.');

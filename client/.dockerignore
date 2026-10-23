@@ -5,3 +5,7 @@ coverage
 *.md
 .git
 .gitignore
+.env
+.env.*
+*.pem
+*.key

@@ -41,10 +41,19 @@ describe('Formatter i18n', () => {
       return objectURL;
     });
 
-    dataUtilsService.openFile('text', 'data');
+    dataUtilsService.openFile('text/plain', 'data');
 
-    expect(window.open).toHaveBeenCalledWith(objectURL);
+    expect(window.open).toHaveBeenCalledWith(objectURL, '_blank', 'noopener,noreferrer');
   });
+
+  it.each(['text/html', 'text/html; charset=utf-8', 'image/svg+xml', 'application/xhtml+xml', 'application/javascript'])(
+    'does not preview active content with the application origin: %s', type => {
+      const open = vitest.spyOn(window, 'open').mockReturnValue(null);
+      open.mockClear();
+      expect(() => dataUtilsService.openFile(type, btoa('<script>alert(1)</script>'))).toThrow();
+      expect(open).not.toHaveBeenCalled();
+    },
+  );
 
   it('should check text ends with suffix', () => {
     const result = dataUtilsService.endsWith('rocky', 'JHipster rocks!');

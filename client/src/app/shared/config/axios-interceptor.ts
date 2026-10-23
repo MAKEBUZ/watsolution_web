@@ -2,6 +2,14 @@ import { getAccessToken, setAccessToken, refreshAccessToken, getSessionGeneratio
 import axios from 'axios';
 
 const onRequestSuccess = config => {
+  // This client carries session credentials: never let a URL/baseURL send them off-origin.
+  const base = new URL(SERVER_API_URL, window.location.origin);
+  const url = new URL(config.url ?? '', config.baseURL ? new URL(config.baseURL, base) : base);
+  if (url.origin !== window.location.origin || url.username || url.password || !['https:', 'http:'].includes(url.protocol)) {
+    throw new Error('Authenticated requests must stay on the application origin');
+  }
+  config.baseURL = undefined;
+  config.url = url.pathname + url.search;
   config.headers ??= {};
   config._sessionGeneration = getSessionGeneration();
   const token = getAccessToken();
@@ -9,7 +17,6 @@ const onRequestSuccess = config => {
   if (config.url?.includes('api/authenticate')) config.headers['X-Session-Transport'] = 'web';
   config.withCredentials = true;
   config.timeout = 30000;
-  config.url = `${SERVER_API_URL}${config.url}`;
   return config;
 };
 const setupAxiosInterceptors = (onUnauthenticated, onServerError) => {

@@ -1,11 +1,8 @@
 import { URL, fileURLToPath } from 'node:url';
-import { defineConfig, normalizePath } from 'vite';
+import { defineConfig } from 'vite';
 
 import vue from '@vitejs/plugin-vue';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-
-const { getAbsoluteFSPath } = await import('swagger-ui-dist');
-const swaggerUiPath = getAbsoluteFSPath();
+import { swaggerAssets } from './swagger-assets.mts';
 
 const isStandalone = process.env.STANDALONE === 'true';
 
@@ -13,19 +10,7 @@ const isStandalone = process.env.STANDALONE === 'true';
 let config = defineConfig({
   plugins: [
     vue(),
-    viteStaticCopy({
-      targets: [
-        {
-          src: [
-            `${normalizePath(swaggerUiPath)}/*.{js,css,html,png}`,
-            `!${normalizePath(swaggerUiPath)}/**/index.html`,
-            normalizePath(fileURLToPath(new URL('./dist/axios.min.js', import.meta.resolve('axios/package.json')))),
-            normalizePath(fileURLToPath(new URL('./src/swagger-ui/index.html', import.meta.url))),
-          ],
-          dest: 'swagger-ui',
-        },
-      ],
-    }),
+    swaggerAssets(),
   ],
   root: fileURLToPath(new URL('./src/', import.meta.url)),
   publicDir: isStandalone ? false : fileURLToPath(new URL('./../server/dist/static/public', import.meta.url)),
@@ -53,10 +38,10 @@ let config = defineConfig({
   define: {
     I18N_HASH: '"generated_hash"',
     SERVER_API_URL: '"/"',
-    APP_VERSION: `"${process.env.APP_VERSION ? process.env.APP_VERSION : 'DEV'}"`,
+    APP_VERSION: JSON.stringify(process.env.APP_VERSION || 'DEV'),
   },
   server: {
-    host: true,
+    host: '127.0.0.1',
     port: 9000,
     proxy: {
       '/api/notifications/stream': {

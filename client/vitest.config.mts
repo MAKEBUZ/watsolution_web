@@ -13,6 +13,18 @@ export default mergeConfig(
     test: {
       globals: true,
       environment: 'happy-dom', // happy-dom provides a better performance but doesn't have a default url.
+      environmentOptions: {
+        happyDOM: {
+          settings: {
+            // Unit tests simulate SDK loading; never download or evaluate third-party scripts.
+            enableJavaScriptEvaluation: false,
+            disableJavaScriptFileLoading: true,
+            enableCSSFileLoading: false,
+            enableIframePageLoading: false,
+            handleDisabledFileLoadingAsSuccess: true,
+          },
+        },
+      },
       setupFiles: [fileURLToPath(new URL('./src/app/test-setup.ts', import.meta.url))],
       reporters: ['default', 'vitest-sonar-reporter'],
       outputFile: {

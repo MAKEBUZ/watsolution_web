@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+// Remove credentials left by older releases even when the session API is offline.
+if (typeof window !== 'undefined') {
+  window.localStorage.removeItem('jhi-authenticationToken');
+  window.sessionStorage.removeItem('jhi-authenticationToken');
+}
+
 let token: string | null = null;
 let refreshing: Promise<void> | undefined;
 let generation = 0;
