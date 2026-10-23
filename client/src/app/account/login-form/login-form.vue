@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <b-alert
-          show
+          :model-value="true"
           data-cy="loginError"
           variant="danger"
           v-if="authenticationError"
@@ -35,7 +35,7 @@
             >
             </b-form-input>
           </b-form-group>
-          <b-form-checkbox id="rememberMe" name="rememberMe" v-model="rememberMe" checked>
+          <b-form-checkbox id="rememberMe" name="rememberMe" v-model="rememberMe">
             <span v-text="t$('login.form.rememberme')"></span>
           </b-form-checkbox>
           <div>
@@ -44,7 +44,7 @@
         </b-form>
         <p></p>
         <div>
-          <b-alert show variant="warning">
+          <b-alert :model-value="true" variant="warning">
             <b-link
               :to="'/account/reset/request'"
               class="alert-link"
@@ -54,7 +54,7 @@
           </b-alert>
         </div>
         <div>
-          <b-alert show variant="warning">
+          <b-alert :model-value="true" variant="warning">
             <span v-text="t$('global.messages.info.register.noaccount')"></span>
             <b-link :to="'/register'" class="alert-link" v-text="t$('global.messages.info.register.link')"></b-link>
           </b-alert>

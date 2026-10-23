@@ -7,6 +7,7 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
+import { configureHttpSecurity } from './security/http-security';
 const logger: Logger = new Logger('Main');
 const port = process.env.PORT || process.env.NODE_SERVER_PORT || config.get('server.port');
 
@@ -25,19 +26,7 @@ async function bootstrap(): Promise<void> {
       forbidUnknownValues: false,
     }),
   );
-  // Disable ETag and prevent index.html from being cached by the browser.
-  const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.set('etag', false);
-  expressApp.use((req, res, next) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader('X-Frame-Options', 'DENY');
-    if (req.path.startsWith('/api/') || req.path === '/' || req.path.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-    }
-    next();
-  });
+  configureHttpSecurity(app.getHttpAdapter().getInstance());
 
   const staticClientPath = config.getClientPath();
   if (fs.existsSync(staticClientPath)) {

@@ -1,3 +1,4 @@
+import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -35,7 +36,7 @@ export class NoticiaController {
   @Roles(RoleType.USER)
   @ApiResponse({ status: 200, description: 'List all noticias', type: NoticiaDTO })
   async getAll(@Req() req: Request): Promise<NoticiaDTO[]> {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.noticia);
     const [results, count] = await this.noticiaService.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,

@@ -1,3 +1,4 @@
+import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -39,7 +40,7 @@ export class AddressController {
     type: AddressDTO,
   })
   async getAll(@Req() req: Request): Promise<AddressDTO[]> {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.address);
     const [results, count] = await this.addressService.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,

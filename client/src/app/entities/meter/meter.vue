@@ -88,13 +88,13 @@
       </table>
     </div>
     <b-modal ref="removeEntity" id="removeEntity">
-      <template #modal-title>
+      <template #title>
         <span id="watsolutionApp.meter.delete.question" data-cy="meterDeleteDialogHeading" v-text="t$('entity.delete.title')"></span>
       </template>
       <div class="modal-body">
         <p id="jhi-delete-meter-heading" v-text="t$('watsolutionApp.meter.delete.question', { id: removeId })"></p>
       </div>
-      <template #modal-footer>
+      <template #footer>
         <div>
           <button type="button" class="btn btn-secondary" v-text="t$('entity.action.cancel')" @click="closeDialog()"></button>
 

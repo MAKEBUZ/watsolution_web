@@ -1,12 +1,24 @@
-import type { BvToast } from 'bootstrap-vue';
-import { getCurrentInstance } from 'vue';
+import { useToast } from 'bootstrap-vue-next';
 import { type Composer, useI18n } from 'vue-i18n';
 
+interface ToastSink {
+  toast(message: string, options: Record<string, any>): void;
+}
+
 export const useAlertService = () => {
-  const bvToast = getCurrentInstance().root.proxy._bv__toast;
-  if (!bvToast) {
-    throw new Error('BootstrapVue toast component was not found');
-  }
+  const { create } = useToast();
+  const bvToast: ToastSink = {
+    toast(body, options) {
+      create({
+        body,
+        title: options.title,
+        variant: options.variant,
+        position: 'top-center',
+        modelValue: options.autoHideDelay,
+        solid: true,
+      });
+    },
+  };
   const i18n = useI18n();
   return new AlertService({
     bvToast,
@@ -15,10 +27,10 @@ export const useAlertService = () => {
 };
 
 export default class AlertService {
-  private bvToast: BvToast;
+  private bvToast: ToastSink;
   private i18n: Composer;
 
-  constructor({ bvToast, i18n }: { bvToast: BvToast; i18n: Composer }) {
+  constructor({ bvToast, i18n }: { bvToast: ToastSink; i18n: Composer }) {
     this.bvToast = bvToast;
     this.i18n = i18n;
   }

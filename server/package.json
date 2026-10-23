@@ -110,5 +110,11 @@
     "tsc-watch": "6.2.1",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.8.2"
+  },
+  "overrides": {
+    "js-yaml@>=5.0.0 <5.5.0": "5.5.0"
+  },
+  "engines": {
+    "node": ">=22.14.0"
   }
 }

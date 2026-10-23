@@ -38,13 +38,14 @@ export class HeaderUtil {
     const pageNumber = page.pageable.page;
     const pageSize = page.pageable.size;
     const links = [];
-    if (pageNumber < page.total - 1) {
+    const lastPage = Math.max(0, Math.ceil(page.total / pageSize) - 1);
+    if (pageNumber < lastPage) {
       links.push(this.prepareLink(url, pageNumber + 1, pageSize, 'next'));
     }
     if (pageNumber > 0) {
       links.push(this.prepareLink(url, pageNumber - 1, pageSize, 'prev'));
     }
-    links.push(this.prepareLink(url, page.total - 1, pageSize, 'last'));
+    links.push(this.prepareLink(url, lastPage, pageSize, 'last'));
     links.push(this.prepareLink(url, 0, pageSize, 'first'));
     res.set('Link', links.join(','));
   }

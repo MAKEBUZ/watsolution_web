@@ -68,7 +68,6 @@
                   variant="danger"
                   class="btn btn-sm"
                   data-cy="entityDeleteButton"
-                  v-b-modal.removeEntity
                 >
                   <font-awesome-icon icon="times"></font-awesome-icon>
                   <span class="d-none d-md-inline" v-text="t$('entity.action.delete')"></span>
@@ -80,13 +79,13 @@
       </table>
     </div>
     <b-modal ref="removeEntity" id="removeEntity">
-      <template #modal-title>
+      <template #title>
         <span id="watsolutionApp.address.delete.question" data-cy="addressDeleteDialogHeading" v-text="t$('entity.delete.title')"></span>
       </template>
       <div class="modal-body">
         <p id="jhi-delete-address-heading" v-text="t$('watsolutionApp.address.delete.question', { id: removeId })"></p>
       </div>
-      <template #modal-footer>
+      <template #footer>
         <div>
           <button type="button" class="btn btn-secondary" v-text="t$('entity.action.cancel')" @click="closeDialog()"></button>
           <button

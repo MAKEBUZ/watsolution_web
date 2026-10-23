@@ -13,6 +13,7 @@ export function swaggerAssets(): Plugin {
     if (/\.(js|css|html|png)$/.test(name) && name !== 'index.html') files.set(name, join(directory, name));
   }
   files.set('index.html', fileURLToPath(new URL('./src/swagger-ui/index.html', import.meta.url)));
+  files.set('swagger-init.js', fileURLToPath(new URL('./src/swagger-ui/swagger-init.js', import.meta.url)));
   const require = createRequire(import.meta.url);
   files.set('axios.min.js', join(dirname(require.resolve('axios/package.json')), 'dist', 'axios.min.js'));
   const contentTypes = { js: 'application/javascript', css: 'text/css', html: 'text/html', png: 'image/png' };
