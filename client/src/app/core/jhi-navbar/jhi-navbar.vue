@@ -43,7 +43,7 @@
           <router-link class="nav-link" to="/register">Registrarse</router-link>
         </li>
         <li class="nav-item" v-if="authenticated">
-          <b-nav-item-dropdown right id="account-menu" class="pointer" data-cy="accountMenu">
+          <b-nav-item-dropdown end id="account-menu" class="pointer" data-cy="accountMenu">
             <template #button-content>
               <span class="user-avatar mr-1">{{ userInitials }}</span>
               <span class="d-none d-md-inline">{{ currentUsername }}</span>

@@ -30,32 +30,7 @@
           </div>
           <div class="form-group">
             <label class="form-control-label" v-text="t$('watsolutionApp.meter.readingDate')" for="meter-readingDate"></label>
-            <b-input-group class="mb-3">
-              <b-input-group-prepend>
-                <b-form-datepicker
-                  aria-controls="meter-readingDate"
-                  v-model="v$.readingDate.$model"
-                  name="readingDate"
-                  class="form-control"
-                  :locale="currentLanguage"
-                  button-only
-                  today-button
-                  reset-button
-                  close-button
-                >
-                </b-form-datepicker>
-              </b-input-group-prepend>
-              <b-form-input
-                id="meter-readingDate"
-                data-cy="readingDate"
-                type="text"
-                class="form-control"
-                name="readingDate"
-                :class="{ valid: !v$.readingDate.$invalid, invalid: v$.readingDate.$invalid }"
-                v-model="v$.readingDate.$model"
-                required
-              />
-            </b-input-group>
+            <ws-date-input id="meter-readingDate" name="readingDate" :locale="currentLanguage" v-model="v$.readingDate.$model" required />
             <div v-if="v$.readingDate.$anyDirty && v$.readingDate.$invalid">
               <small class="form-text text-danger" v-for="error of v$.readingDate.$errors" :key="error.$uid">{{ error.$message }}</small>
             </div>

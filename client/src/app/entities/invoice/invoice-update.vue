@@ -14,64 +14,14 @@
           </div>
           <div class="form-group">
             <label class="form-control-label" v-text="t$('watsolutionApp.invoice.issueDate')" for="invoice-issueDate"></label>
-            <b-input-group class="mb-3">
-              <b-input-group-prepend>
-                <b-form-datepicker
-                  aria-controls="invoice-issueDate"
-                  v-model="v$.issueDate.$model"
-                  name="issueDate"
-                  class="form-control"
-                  :locale="currentLanguage"
-                  button-only
-                  today-button
-                  reset-button
-                  close-button
-                >
-                </b-form-datepicker>
-              </b-input-group-prepend>
-              <b-form-input
-                id="invoice-issueDate"
-                data-cy="issueDate"
-                type="text"
-                class="form-control"
-                name="issueDate"
-                :class="{ valid: !v$.issueDate.$invalid, invalid: v$.issueDate.$invalid }"
-                v-model="v$.issueDate.$model"
-                required
-              />
-            </b-input-group>
+            <ws-date-input id="invoice-issueDate" name="issueDate" :locale="currentLanguage" v-model="v$.issueDate.$model" required />
             <div v-if="v$.issueDate.$anyDirty && v$.issueDate.$invalid">
               <small class="form-text text-danger" v-for="error of v$.issueDate.$errors" :key="error.$uid">{{ error.$message }}</small>
             </div>
           </div>
           <div class="form-group">
             <label class="form-control-label" v-text="t$('watsolutionApp.invoice.dueDate')" for="invoice-dueDate"></label>
-            <b-input-group class="mb-3">
-              <b-input-group-prepend>
-                <b-form-datepicker
-                  aria-controls="invoice-dueDate"
-                  v-model="v$.dueDate.$model"
-                  name="dueDate"
-                  class="form-control"
-                  :locale="currentLanguage"
-                  button-only
-                  today-button
-                  reset-button
-                  close-button
-                >
-                </b-form-datepicker>
-              </b-input-group-prepend>
-              <b-form-input
-                id="invoice-dueDate"
-                data-cy="dueDate"
-                type="text"
-                class="form-control"
-                name="dueDate"
-                :class="{ valid: !v$.dueDate.$invalid, invalid: v$.dueDate.$invalid }"
-                v-model="v$.dueDate.$model"
-                required
-              />
-            </b-input-group>
+            <ws-date-input id="invoice-dueDate" name="dueDate" :locale="currentLanguage" v-model="v$.dueDate.$model" required />
             <div v-if="v$.dueDate.$anyDirty && v$.dueDate.$invalid">
               <small class="form-text text-danger" v-for="error of v$.dueDate.$errors" :key="error.$uid">{{ error.$message }}</small>
             </div>

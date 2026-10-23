@@ -6,10 +6,24 @@ eg $input-color: red;
 ****************************/
 // Override Boostrap variables
 // Import Bootstrap source files from node_modules
+@import 'bootstrap/scss/functions';
 @import 'bootswatch/dist/spacelab/variables';
 @import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-vue/src/index.scss';
+
 @import 'bootswatch/dist/spacelab/bootswatch';
+
+// Preserve spacing and forms on existing screens while using Bootstrap 5.
+.mr-1 { margin-right: .25rem !important; }
+.mr-2 { margin-right: .5rem !important; }
+.ml-2 { margin-left: .5rem !important; }
+.ml-auto { margin-left: auto !important; }
+.text-right { text-align: right !important; }
+.form-group { margin-bottom: 1rem; }
+.form-row { display: flex; flex-wrap: wrap; margin: 0 -.3125rem; }
+.form-row > [class*='col'] { padding: 0 .3125rem; }
+.custom-select { @extend .form-select; }
+.badge-info { color: #000; background-color: $info; }
+.sr-only { @include visually-hidden(); }
 /* Dirty fix on navbar active link with bootswatch theme */
 nav li.router-link-active .navbar-dropdown-menu {
   color: $navbar-dark-active-color;

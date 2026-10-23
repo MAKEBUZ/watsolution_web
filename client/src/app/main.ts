@@ -1,6 +1,6 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.common with an alias.
-import Vue, { computed, createApp, onMounted, provide, watch } from 'vue';
+// Vue 3 runtime with precompiled templates: no Vue 2 compatibility or eval compiler.
+import { computed, createApp, h, onMounted, provide, watch } from 'vue';
+import { BApp } from 'bootstrap-vue-next';
 import { createPinia, storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
@@ -18,6 +18,7 @@ import { useStore, useTranslationStore } from '@/store';
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 import '../content/scss/main.scss';
 import '../content/scss/water-system.scss';
 import TranslationService from '@/locale/translation.service';
@@ -30,44 +31,10 @@ const pinia = createPinia();
 
 // jhipster-needle-add-entity-service-to-main-import - JHipster will import entities services here
 
-initBootstrapVue(Vue);
-
-Vue.configureCompat({
-  MODE: 2,
-  ATTR_FALSE_VALUE: 'suppress-warning',
-  COMPONENT_FUNCTIONAL: 'suppress-warning',
-  COMPONENT_V_MODEL: 'suppress-warning',
-  CONFIG_OPTION_MERGE_STRATS: 'suppress-warning',
-  CONFIG_WHITESPACE: 'suppress-warning',
-  CUSTOM_DIR: 'suppress-warning',
-  GLOBAL_EXTEND: 'suppress-warning',
-  GLOBAL_MOUNT: 'suppress-warning',
-  GLOBAL_PRIVATE_UTIL: 'suppress-warning',
-  GLOBAL_PROTOTYPE: 'suppress-warning',
-  GLOBAL_SET: 'suppress-warning',
-  INSTANCE_ATTRS_CLASS_STYLE: 'suppress-warning',
-  INSTANCE_CHILDREN: 'suppress-warning',
-  INSTANCE_DELETE: 'suppress-warning',
-  INSTANCE_DESTROY: 'suppress-warning',
-  INSTANCE_EVENT_EMITTER: 'suppress-warning',
-  INSTANCE_EVENT_HOOKS: 'suppress-warning',
-  INSTANCE_LISTENERS: 'suppress-warning',
-  INSTANCE_SCOPED_SLOTS: 'suppress-warning',
-  INSTANCE_SET: 'suppress-warning',
-  OPTIONS_BEFORE_DESTROY: 'suppress-warning',
-  OPTIONS_DATA_MERGE: 'suppress-warning',
-  OPTIONS_DESTROYED: 'suppress-warning',
-  RENDER_FUNCTION: 'suppress-warning',
-  WATCH_ARRAY: 'suppress-warning',
-  PRIVATE_APIS: 'suppress-warning',
-});
-
 const i18n = initI18N();
 
 const app = createApp({
-  compatConfig: { MODE: 3 },
-  components: { App },
-  template: '<App/>',
+  render: () => h(BApp, null, { default: () => h(App) }),
   setup(_props, { emit }) {
     const loginService = new LoginService({ emit });
     provide('loginService', loginService);
@@ -150,6 +117,7 @@ const app = createApp({
   },
 });
 
+initBootstrapVue(app);
 initFortAwesome(app);
 
 app

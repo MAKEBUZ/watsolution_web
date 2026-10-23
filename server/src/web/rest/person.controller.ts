@@ -1,3 +1,4 @@
+import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
 import { randomBytes } from 'crypto';
 import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 import {
@@ -58,7 +59,7 @@ export class PersonController {
   @Roles(RoleType.ADMIN)
   @ApiResponse({ status: 200, description: 'List all records', type: PersonDTO })
   async getAll(@Req() req: Request): Promise<PersonDTO[]> {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.person);
     const [results, count] = await this.personService.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,

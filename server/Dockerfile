@@ -1,24 +1,24 @@
 # ── Stage 1: build ───────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Needed to compile native modules (sqlite3, bcrypt) on Alpine
 RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 # Install all deps (devDeps required for tsc + ts-node)
-RUN npm install --prefer-offline
+RUN npm ci --no-audit --no-fund
 
 COPY . .
 # Compile TypeScript, copy YAML config, create dist/static placeholder
 RUN npm run build:prod
 
 # Remove devDependencies so the copied node_modules is production-only
-RUN npm prune --production
+RUN npm prune --omit=dev --ignore-scripts --no-audit --no-fund
 
 # ── Stage 2: production image ────────────────────────────────
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 

@@ -1,3 +1,4 @@
+import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
 import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 import {
   Body,
@@ -40,7 +41,7 @@ export class MeterController {
     type: MeterDTO,
   })
   async getAll(@Req() req: Request): Promise<MeterDTO[]> {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.meter);
     const [results, count] = await this.meterService.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,

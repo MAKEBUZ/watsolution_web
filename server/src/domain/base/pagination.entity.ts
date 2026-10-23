@@ -2,20 +2,28 @@
 import { Expose as JsonProperty, Type } from 'class-transformer';
 import { ParsedQs } from 'qs';
 import { BaseEntity } from './base.entity';
+import { BadRequestException } from '@nestjs/common';
 
 export class Sort {
   public property: string;
-  public direction: 'ASC' | 'DESC' | string;
-  constructor(sort: string) {
-    if (sort) {
-      [this.property, this.direction] = sort.split(',');
+  public direction: 'ASC' | 'DESC';
+  constructor(sort: string, allowedFields: readonly string[] = ['id']) {
+    const [property, direction = 'ASC', extra] = typeof sort === 'string' ? sort.split(',') : [];
+    if (
+      !allowedFields.includes(property) ||
+      extra !== undefined ||
+      !/^(asc|desc)$/i.test(direction) ||
+      property.split('.').some(key => ['__proto__', 'prototype', 'constructor'].includes(key))
+    ) {
+      throw new BadRequestException('Invalid sort');
     }
+    this.property = property;
+    this.direction = direction.toUpperCase() as 'ASC' | 'DESC';
   }
 
   asOrder(): any {
-    const order = {};
-    order[this.property] = this.direction;
-    return order;
+    // Relation columns are explicit allow-listed paths, never SQL fragments.
+    return this.property.split('.').reduceRight<any>((value, key) => ({ [key]: value }), this.direction);
   }
 }
 
@@ -29,22 +37,31 @@ export class PageRequest {
   @Type(() => Sort)
   sort: Sort = new Sort('id,ASC');
 
-  constructor(page: number | PaginationQueryType, size: number | PaginationQueryType, sort: PaginationQueryType) {
+  constructor(
+    page: number | PaginationQueryType,
+    size: number | PaginationQueryType,
+    sort: PaginationQueryType,
+    allowedFields: readonly string[] = ['id'],
+  ) {
     this.page = PageRequest.handleNumberTypes(page, this.page);
     this.size = PageRequest.handleNumberTypes(size, this.size);
-    this.sort = new Sort(PageRequest.handleQueryType(sort));
+    if (this.page < 0 || this.size < 1 || this.size > 500 || !Number.isSafeInteger(this.page * this.size)) {
+      throw new BadRequestException('Invalid pagination');
+    }
+    const sorts = sort === undefined ? ['id,ASC'] : Array.isArray(sort) ? sort : [sort];
+    if (!sorts.length || sorts.length > 10 || sorts.some(value => typeof value !== 'string')) {
+      throw new BadRequestException('Invalid sort');
+    }
+    const validated = sorts.map(value => new Sort(value as string, allowedFields));
+    this.sort = validated[0];
   }
 
   public static handleNumberTypes(pp: number | PaginationQueryType, fallback: number): number {
-    if (typeof pp === 'number') {
-      return pp;
+    if (pp === undefined) return fallback;
+    if ((typeof pp !== 'number' && (typeof pp !== 'string' || !/^\d+$/.test(pp))) || !Number.isSafeInteger(Number(pp))) {
+      throw new BadRequestException('Invalid pagination');
     }
-    const query = PageRequest.handleQueryType(pp);
-    if (query) {
-      const parsed = parseInt(query, 10);
-      return Number.isNaN(parsed) ? fallback : parsed;
-    }
-    return fallback;
+    return Number(pp);
   }
 
   public static handleQueryType(pa: PaginationQueryType): string | undefined {

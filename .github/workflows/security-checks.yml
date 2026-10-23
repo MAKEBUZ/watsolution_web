@@ -5,6 +5,17 @@ on:
 permissions:
   contents: read
 jobs:
+  railway-images:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Build standalone Railway frontend with its lockfile
+        run: docker build -f client/Dockerfile -t watsolution-client:ci client
+      - name: Build standalone Railway backend with its lockfile
+        run: docker build -f server/Dockerfile -t watsolution-server:ci server
   postgres-sessions:
     runs-on: ubuntu-24.04
     # Allow cold browser/OS downloads without consuming the test execution budget.
@@ -77,7 +88,7 @@ jobs:
       - run: npm ci --ignore-scripts --no-fund
       - run: npm audit --omit=dev --audit-level=high
       - name: Audit frontend runtime and development tooling
-        run: npm audit --workspace client --include=dev --audit-level=high
+        run: npm audit --workspace client --include=dev --audit-level=low
       - run: node node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit
       - run: node node_modules/jest/bin/jest.js --config server/package.json --runInBand
       - run: node ../node_modules/vitest/vitest.mjs run

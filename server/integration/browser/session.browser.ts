@@ -37,6 +37,7 @@ import { Person } from '../../src/domain/person.entity';
 import { ActivityLog } from '../../src/domain/activity-log.entity';
 import { SessionController } from '../../src/web/rest/session.controller';
 import { startNginx } from './nginx-fixture';
+import { configureHttpSecurity } from '../../src/security/http-security';
 
 // A minimal protected probe, not a replacement for testing the complete application UI.
 @Controller('api/browser-probe')
@@ -95,11 +96,12 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
       define: { SERVER_API_URL: JSON.stringify('/') },
     });
     app.use('/session-client.js', (_req, res) => res.type('application/javascript').send(bundled.outputFiles[0].text));
+    configureHttpSecurity(app.getHttpAdapter().getInstance());
     app.use('/test-session', (_req, res) => res.type('html').send(`<!doctype html><html lang="es"><title>Prueba aislada de sesión</title>
       <input id="password" type="password" aria-label="Contraseña de prueba"><button id="login">Entrar</button>
       <button id="refresh">Renovar</button><output id="result"></output><script src="/session-client.js"></script>
-      <script>
-      document.querySelector('#login').onclick = async () => {
+      <script src="/session-probe.js"></script></html>`));
+    app.use('/session-probe.js', (_req, res) => res.type('application/javascript').send(`      document.querySelector('#login').onclick = async () => {
         const r = await fetch('/api/authenticate', { method:'POST', headers:{'Content-Type':'application/json','X-Session-Transport':'web'},
           body:JSON.stringify({username:'browser-user',password:document.querySelector('#password').value}) });
         const data=await r.json(); window.loginResponse=data; ws.setAccessToken(data.id_token);
@@ -109,7 +111,7 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
         try { await ws.refreshAccessToken(); document.querySelector('#result').textContent='renewed'; }
         catch { document.querySelector('#result').textContent='rejected'; }
       };
-      </script></html>`));
+`));
     app.use(express.static(webDist));
     app.use((req, res, next) => {
       if (req.method !== 'GET' || /^\/(api|management|i18n)(\/|$)/.test(req.path) || req.path.includes('.')) return next();
@@ -133,7 +135,7 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
   const login = async () => {
     const page = await context.newPage(); await page.goto(origin + '/test-session');
     await page.locator('#password').fill(password); await page.locator('#login').click();
-    await page.waitForFunction(`document.querySelector('#result').textContent === '200'`);
+    await page.locator('#result').filter({ hasText: /^200$/ }).waitFor();
     return page;
   };
 
@@ -152,7 +154,7 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
   it('renews after a reload using the browser-managed cookie and real session module', async () => {
     const page = await login(); await page.reload();
     expect(await page.evaluate('ws.getAccessToken()')).toBeNull();
-    await page.locator('#refresh').click(); await page.waitForFunction(`document.querySelector('#result').textContent === 'renewed'`);
+    await page.locator('#refresh').click(); await page.locator('#result').filter({ hasText: /^renewed$/ }).waitFor();
     expect(await responseStatus(page)).toBe(200);
   });
   it('serializes two tabs with navigator.locks and keeps the rotated family active', async () => {
@@ -170,7 +172,7 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     expect(await first.evaluate(`fetch('/api/session/logout', {method:'POST',headers:{'X-Session-Transport':'web'}}).then(r=>r.status)`)).toBe(201);
     expect((await context.cookies()).some(c => c.name === '__Host-watsolution-refresh')).toBe(false);
     expect(await responseStatus(second)).toBe(401);
-    await second.locator('#refresh').click(); await second.waitForFunction(`document.querySelector('#result').textContent === 'rejected'`);
+    await second.locator('#refresh').click(); await second.locator('#result').filter({ hasText: /^rejected$/ }).waitFor();
   });
   it('keeps unknown API responses separate from the SPA fallback', async () => {
     const api = await context.request.get(origin + '/api/does-not-exist');
@@ -188,7 +190,10 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     expect(response.headers()['x-frame-options']).toBe('SAMEORIGIN');
     expect(response.headers()['content-security-policy']).toContain("frame-ancestors 'self'");
     expect(response.headers()['content-security-policy']).toContain("object-src 'none'");
-    expect(response.headers()['cache-control']).toBe('no-store');
+    expect(response.headers()['cache-control']).toContain('no-store');
+    expect(response.headers()['x-powered-by']).toBeUndefined();
+    expect(response.headers()['server'] ?? '').not.toMatch(/\d+\.\d+/);
+    expect(response.headers()['strict-transport-security']).toBe('max-age=31536000');
     expect((await context.request.get(origin + '/.env')).status()).toBe(404);
     expect((await context.request.get(origin + '/.git/config')).status()).toBe(404);
   });
@@ -215,6 +220,47 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     await page.locator('.sidebar-profile .name').filter({ hasText: 'Administrador de prueba' }).waitFor();
     return page;
   };
+  it('preserves user pagination, delete confirmation and success alerts after the Vue 3 migration', async () => {
+    const page = await loginUi();
+    let removed = 0;
+    await context.route('**/api/admin/users**', async route => {
+      if (route.request().method() === 'DELETE') {
+        removed++;
+        return route.fulfill({ status: 204, headers: { 'x-watsolutionapp-alert': 'Usuario eliminado', 'x-watsolutionapp-params': 'synthetic-user' } });
+      }
+      const second = new URL(route.request().url()).searchParams.get('page') === '1';
+      return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'x-total-count': '45' },
+        body: JSON.stringify([{ id: second ? 22 : 21, login: 'synthetic-user', email: 'synthetic@example.invalid', activated: true,
+          authorities: ['ROLE_USER'], langKey: 'es', createdDate: '2026-01-01' }]) });
+    });
+    await page.goto(origin + '/admin/user-management');
+    await page.locator('tr#synthetic-user').waitFor();
+    await page.locator('.pagination [aria-label="Go to page 2"]').click();
+    await page.locator('tr#synthetic-user td').first().filter({ hasText: /^\s*22\s*$/ }).waitFor();
+    await page.locator('tr#synthetic-user .delete').click();
+    await page.getByRole('dialog').waitFor({ state: 'visible' });
+    await page.getByRole('dialog').getByRole('button', { name: 'Cancelar', exact: true }).click();
+    await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    expect(removed).toBe(0);
+    await page.locator('tr#synthetic-user .delete').click();
+    await page.locator('#confirm-delete-user').click();
+    await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    await page.locator('.toast-body').filter({ hasText: 'Usuario eliminado' }).waitFor();
+    expect(removed).toBe(1);
+  });
+  it('blocks inline script injection and connections to unauthorized origins under the real CSP', async () => {
+    const page = await context.newPage();
+    await page.goto(origin + '/login');
+    await page.locator('#username').waitFor();
+    const result = await page.evaluate(`(async () => {
+      const script = document.createElement('script');
+      script.textContent = 'window.injected = true'; document.body.appendChild(script);
+      let blocked = false;
+      try { await fetch('https://untrusted.example.invalid/collect'); } catch { blocked = true; }
+      return { injected: window.injected === true, blocked };
+    })()`);
+    expect(result).toEqual({ injected: false, blocked: true });
+  });
   it('opens the real login page when the API is unreachable without inventing a failed logout', async () => {
     await context.route('**/api/**', route => route.abort('failed'));
     await context.route('**/management/**', route => route.abort('failed'));

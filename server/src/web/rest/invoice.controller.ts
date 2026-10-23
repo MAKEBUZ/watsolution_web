@@ -1,3 +1,4 @@
+import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
 import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 import {
   Body,
@@ -50,7 +51,7 @@ export class InvoiceController {
     type: InvoiceDTO,
   })
   async getAll(@Req() req: Request): Promise<InvoiceDTO[]> {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.invoice);
     const [results, count] = await this.invoiceService.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,

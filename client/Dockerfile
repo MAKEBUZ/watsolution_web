@@ -3,8 +3,8 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install --prefer-offline
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts --no-audit --no-fund
 
 COPY . .
 RUN STANDALONE=true npm run vite-build
@@ -13,7 +13,7 @@ RUN STANDALONE=true npm run vite-build
 FROM nginx:1.27-alpine
 
 # gettext provides envsubst for runtime template substitution
-RUN apk add --no-cache gettext
+RUN apk add --no-cache gettext ca-certificates
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 

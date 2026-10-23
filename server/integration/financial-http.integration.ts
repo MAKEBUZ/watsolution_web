@@ -89,6 +89,27 @@ describe('Financial routes with real guards and PostgreSQL', () => {
     return token ? req.set('Authorization', `Bearer ${token}`) : req;
   };
 
+  it('rejects SQL-like sort and pagination payloads before queries and preserves legitimate relation sorting', async () => {
+    const count = await fixture.db.getRepository(Invoice).count();
+    for (const sort of ['id; DROP TABLE invoice,ASC', 'id,DESC; SELECT pg_sleep(10)', 'password,ASC', '__proto__,ASC']) {
+      await call('get', '/api/invoices').query({ sort }).expect(400);
+    }
+    for (const size of ['-1', '0', '9999999999', '20 OR 1=1']) {
+      await call('get', '/api/meters').query({ size }).expect(400);
+    }
+    await call('get', '/api/invoices').query({ sort: 'person.id,desc', size: 20 }).expect(200);
+    expect(await fixture.db.getRepository(Invoice).count()).toBe(count);
+  });
+
+  it('treats a SQL login payload as a literal and never authenticates it', async () => {
+    const count = await fixture.db.getRepository(User).count();
+    await request(app.getHttpServer()).post('/api/authenticate')
+      .send({ username: "' OR 1=1 --", password: 'synthetic-invalid-password' }).expect(401);
+    await request(app.getHttpServer()).post('/api/authenticate')
+      .send({ username: { login: 'admin' }, password: 'synthetic-invalid-password' }).expect(400);
+    expect(await fixture.db.getRepository(User).count()).toBe(count);
+  });
+
   it.each(['PENDING', 'ACTIVE_ORDER', 'PAID'])('denies every generic write with ADMIN for %s and leaves rows unchanged', async state => {
     const people = fixture.db.getRepository(Person), meters = fixture.db.getRepository(Meter), invoices = fixture.db.getRepository(Invoice);
     const person = await people.save({ fullName: 'Synthetic', documentNumber: randomUUID(), status: PersonStatus.ACTIVE });

@@ -110,7 +110,7 @@
         <div class="modal-body">
           <p id="jhi-delete-user-heading" v-text="t$('userManagement.delete.question', { login: removeId })"></p>
         </div>
-        <template #modal-footer>
+        <template #footer>
           <div>
             <button type="button" class="btn btn-secondary" v-text="t$('entity.action.cancel')" @click="closeDialog()"></button>
             <button
@@ -129,7 +129,7 @@
         <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
       </div>
       <div class="row justify-content-center">
-        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage" :change="loadPage(page)"></b-pagination>
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage" @update:model-value="loadPage($event)"></b-pagination>
       </div>
     </div>
   </div>

@@ -18,13 +18,16 @@ export async function startNginx(upstream: string, webDist: string, key: string,
   let template = readFileSync(resolve(__dirname, '../../../client/nginx.conf'), 'utf8');
   if (!template.includes('${PORT}') || !template.includes('/usr/share/nginx/html')) throw new Error('Unexpected proxy template');
   template = template.replace('${PORT}', `127.0.0.1:${port} ssl`)
-    .replace('/usr/share/nginx/html', quoted(webDist)).split('${BACKEND_URL}').join(upstream);
+    .replace('/usr/share/nginx/html', quoted(webDist)).split('${BACKEND_URL}').join(upstream)
+    // Trust only the explicit disposable test certificate; verification stays enabled.
+    .replace('/etc/ssl/certs/ca-certificates.crt', quoted(cert));
   template = template.replace('server {', `server {
     ssl_certificate ${quoted(cert)};
     ssl_certificate_key ${quoted(key)};
     # These exact locations exist only in the test harness.
     location = /test-session { proxy_pass ${upstream}; }
     location = /session-client.js { proxy_pass ${upstream}; }
+    location = /session-probe.js { proxy_pass ${upstream}; }
   `);
   const config = join(dir, 'nginx.conf');
   writeFileSync(config, `pid ${quoted(join(dir, 'nginx.pid'))};

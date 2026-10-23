@@ -1,3 +1,4 @@
+import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
 import {
   Body,
   BadRequestException,
@@ -49,7 +50,7 @@ export class UserController {
     type: UserDTO,
   })
   async getAllUsers(@Req() req: Request): Promise<UserDTO[]> {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.user);
     const [results, count] = await this.userService.findAndCount({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,

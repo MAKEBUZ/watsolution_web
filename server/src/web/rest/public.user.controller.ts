@@ -1,3 +1,4 @@
+import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
 import { ClassSerializerInterceptor, Controller, Get, Logger, Req, UseInterceptors, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -26,7 +27,7 @@ export class PublicUserController {
     type: UserDTO,
   })
   async getAllPublicUsers(@Req() req: Request): Promise<UserDTO[]> {
-    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
+    const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.user);
     const [results, count] = await this.authService.getAllUsers({
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
