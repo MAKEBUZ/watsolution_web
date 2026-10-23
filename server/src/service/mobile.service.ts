@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { DataSource, MoreThan } from 'typeorm';
+import { DataSource, In, MoreThan } from 'typeorm';
 import { createHash, createPrivateKey, sign } from 'crypto';
 import { Person } from '../domain/person.entity';
 import { Meter } from '../domain/meter.entity';
@@ -50,14 +50,46 @@ export class MobileService {
   async bootstrap(user: UserDTO, after = 0) {
     if (!Number.isSafeInteger(after) || after < 0) throw new BadRequestException();
     const admin = user.authorities.includes('ROLE_ADMIN');
+    if (!admin && !user.authorities.includes('ROLE_OPERATOR')) throw new ForbiddenException();
     const people = await this.db.getRepository(Person).find({ where: admin ? { id: MoreThan(after) } : { id: MoreThan(after), assignedOperatorId: user.id }, relations: { address: true }, take: 101, order: { id: 'ASC' } });
     const more = people.length > 100;
+    const page = people.slice(0, 100);
+    const latest = page.length ? await this.db.getRepository(Meter)
+      .createQueryBuilder('meter')
+      .innerJoin('meter.person', 'person')
+      .select('person.id', 'personId')
+      .addSelect('meter.id', 'id')
+      .addSelect('meter.waterMeasure', 'waterMeasure')
+      .addSelect('meter.readingDate', 'readingDate')
+      .where('person.id IN (:...ids)', { ids: page.map(person => person.id) })
+      .distinctOn(['person.id'])
+      .orderBy('person.id', 'ASC')
+      .addOrderBy('meter.readingDate', 'DESC')
+      .addOrderBy('meter.id', 'DESC')
+      .getRawMany() : [];
+    const byPerson = new Map(latest.map(last => [Number(last.personId), last]));
     const rows = [];
-    for (const person of people.slice(0, 100)) {
-      const last = await this.db.getRepository(Meter).findOne({ where: { person: { id: person.id } }, order: { readingDate: 'DESC', id: 'DESC' } });
+    for (const person of page) {
+      const last = byPerson.get(person.id);
       rows.push({ id: person.id, fullName: person.fullName, subscriberNumber: person.subscriberNumber, address: person.address ? { neighborhood: person.address.neighborhood, street: person.address.street, houseNumber: person.address.houseNumber, city: person.address.city } : null, previousMeterId: last?.id ?? null, previousReading: last ? Number(last.waterMeasure) : null, previousDate: last?.readingDate ?? null });
     }
     return { people: rows, next: more ? rows[rows.length - 1].id : null, serverTime: new Date().toISOString() };
+  }
+
+  async access(user: UserDTO, ids: unknown) {
+    if (!Array.isArray(ids) || ids.length > 100 || ids.some(id => !Number.isSafeInteger(id) || id < 1)) {
+      throw new BadRequestException('At most 100 valid identifiers required');
+    }
+    if (!ids.length) return { allowedIds: [] };
+    const admin = user.authorities?.includes('ROLE_ADMIN');
+    if (!admin && !user.authorities?.includes('ROLE_OPERATOR')) throw new ForbiddenException();
+    const rows = await this.db.getRepository(Person).find({
+      select: { id: true },
+      where: admin ? { id: In(ids) } : { id: In(ids), assignedOperatorId: user.id },
+    });
+    // No personal fields or explanation that would reveal another operator's
+    // assignments. Missing and inaccessible identifiers are indistinguishable.
+    return { allowedIds: rows.map(row => row.id) };
   }
 
   async capture(user: UserDTO, value: unknown) {

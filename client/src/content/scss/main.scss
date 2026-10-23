@@ -3,7 +3,11 @@
 @use './mixins' as *;
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: $color-text;
@@ -49,7 +53,7 @@ ul {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 $spacing-sm;
-  
+
   @include tablet {
     padding: 0 $spacing-md;
   }
@@ -90,16 +94,18 @@ ul {
   font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: transform 0.2s, background-color 0.2s;
+  transition:
+    transform 0.2s,
+    background-color 0.2s;
   min-width: 44px;
   min-height: 44px;
   text-align: center;
   line-height: 1;
-  
+
   &:active {
     transform: scale(0.98);
   }
-  
+
   &--primary {
     background-color: $color-primary;
     color: white;
@@ -107,7 +113,7 @@ ul {
       background-color: color.adjust($color-primary, $lightness: -10%);
     }
   }
-  
+
   &--secondary {
     background-color: $color-secondary;
     color: white;
@@ -115,7 +121,7 @@ ul {
       background-color: color.adjust($color-secondary, $lightness: -10%);
     }
   }
-  
+
   &--outline {
     background-color: transparent;
     border: 2px solid $color-primary;
@@ -365,4 +371,48 @@ ul {
 .auth-switch a {
   font-weight: 800;
   color: rgba(255, 255, 255, 0.96);
+}
+
+/* Shared interaction foundations: keyboard, touch and reduced motion. */
+:root {
+  --ws-ink: #123f50;
+  --ws-accent: #076c78;
+  --ws-line: #d4e4e8;
+}
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid #087c85;
+  outline-offset: 4px;
+}
+.skip-link {
+  position: fixed;
+  top: -100px;
+  z-index: 20000;
+  padding: 14px 20px;
+}
+.skip-link:focus {
+  top: 8px;
+  left: 8px;
+}
+.btn--primary {
+  background: var(--ws-accent);
+}
+.btn--outline {
+  border-color: var(--ws-accent);
+  color: var(--ws-accent);
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

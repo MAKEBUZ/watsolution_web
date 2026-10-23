@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import WaterNetwork from '@/core/water/water-network.vue';
+import WaterJourney from '@/core/water/water-journey.vue';
 
 const router = useRouter();
 
@@ -8,26 +10,26 @@ const features = [
     title: 'Gestión de Redes',
     description: 'Control total sobre la infraestructura de tuberías y nodos de distribución.',
     icon: 'network-wired',
-    color: '#0077be'
+    color: '#0077be',
   },
   {
     title: 'Integración de sensores pendiente',
     description: 'El prototipo no recibe mediciones verificadas de flujo, presión o nivel.',
     icon: 'chart-line',
-    color: '#00ced1'
+    color: '#00ced1',
   },
   {
     title: 'Reportes Automáticos',
     description: 'Genera informes de consumo y eficiencia hídrica con un solo clic.',
     icon: 'file',
-    color: '#40e0d0'
+    color: '#40e0d0',
   },
   {
     title: 'Alertas de Mantenimiento',
     description: 'Capacidad propuesta para una futura integración; no disponible en el prototipo.',
     icon: 'bell',
-    color: '#3498db'
-  }
+    color: '#3498db',
+  },
 ];
 
 const testimonials = [
@@ -36,15 +38,15 @@ const testimonials = [
     role: 'Director de Operaciones',
     company: 'Acueducto Metropolitano',
     text: 'watsolution ha transformado nuestra capacidad de respuesta ante fugas. Hemos reducido las pérdidas técnicas en un 15% en solo seis meses.',
-    avatar: 'https://i.pravatar.cc/150?u=roberto'
+    avatar: 'https://i.pravatar.cc/150?u=roberto',
   },
   {
     name: 'Elena Martínez',
     role: 'Ingeniera de Redes',
     company: 'Aguas del Valle',
     text: 'La facilidad de uso de la PWA nos permite que nuestros operarios en campo reporten incidencias con fotos y ubicación GPS en tiempo real.',
-    avatar: 'https://i.pravatar.cc/150?u=elena'
-  }
+    avatar: 'https://i.pravatar.cc/150?u=elena',
+  },
 ];
 
 const goToPortal = () => {
@@ -57,63 +59,49 @@ const goToPortal = () => {
     <!-- Hero Section -->
     <section id="inicio" class="hero">
       <div class="hero__waves">
-        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-        <defs>
-        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-        </defs>
-        <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(0,119,190,0.7" />
-        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(0,206,209,0.5)" />
-        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(64,224,208,0.3)" />
-        <use xlink:href="#gentle-wave" x="48" y="7" fill="#f0faff" />
-        </g>
+        <svg
+          class="waves"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 24 150 28"
+          preserveAspectRatio="none"
+          shape-rendering="auto"
+        >
+          <defs>
+            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+          </defs>
+          <g class="parallax">
+            <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(0,119,190,0.7)" />
+            <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(0,206,209,0.5)" />
+            <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(64,224,208,0.3)" />
+            <use xlink:href="#gentle-wave" x="48" y="7" fill="#f0faff" />
+          </g>
         </svg>
       </div>
 
       <div class="container hero__content">
         <div class="hero__text">
-          <h1 class="hero__title">Gestión Inteligente de <span>Acueductos</span></h1>
+          <p class="hero__eyebrow">WATSOLUTION · GESTIÓN DEL AGUA</p>
+          <h1 class="hero__title">Cada gota tiene<br /><span>un camino.</span></h1>
           <p class="hero__description">
-            Prototipo académico para explorar la gestión de acueductos. La integración de sensores está pendiente.
+            Consulta tus facturas, conoce tu consumo y accede a la información de tu acueducto en un solo lugar.
           </p>
           <div class="hero__actions">
-            <button class="btn btn--primary" @click="goToPortal">Comenzar Ahora <font-awesome-icon icon="arrow-right" /></button>
-            <button class="btn btn--outline">Ver Dashboard</button>
+            <button class="btn btn--primary" @click="goToPortal">Ingresar a mi cuenta <font-awesome-icon icon="arrow-right" /></button>
+            <a class="btn btn--outline" href="#dashboard">Explorar el portal</a>
           </div>
+          <a class="hero__scroll-link" href="#water-story">Descubre el recorrido del agua <span aria-hidden="true">&darr;</span></a>
         </div>
         <div class="hero__image">
-          <div class="hero__card">
-            <div class="hero__card-header">
-              <div class="hero__card-dot"></div>
-              <div class="hero__card-dot"></div>
-              <div class="hero__card-dot"></div>
-            </div>
-            <div class="hero__card-body">
-              <p role="note">Demostración visual: valores ilustrativos, sin mediciones de sensores.</p>
-            <div class="mockup-graph">
-                <div class="mockup-bar" style="height: 60%"></div>
-                <div class="mockup-bar" style="height: 80%"></div>
-                <div class="mockup-bar" style="height: 45%"></div>
-                <div class="mockup-bar" style="height: 90%"></div>
-                <div class="mockup-bar" style="height: 70%"></div>
-              </div>
-              <div class="mockup-stats">
-                <div class="mockup-stat">
-                  <span class="mockup-label">Flujo ilustrativo</span>
-                  <span class="mockup-value">1,240 L/s</span>
-                </div>
-                <div class="mockup-stat">
-                  <span class="mockup-label">Presión</span>
-                  <span class="mockup-value">4.2 Bar</span>
-                </div>
-              </div>
-            </div>
+          <div class="hero__illustration">
+            <WaterNetwork :progress="0.72" /><span class="hero__seal">DEL ORIGEN<br />A TU HOGAR</span>
           </div>
+          <p class="hero__caption">Una red de personas. Un recurso que compartimos.</p>
         </div>
       </div>
     </section>
 
+    <WaterJourney />
     <!-- Features Section -->
     <section id="caracteristicas" class="features">
       <div class="container">
@@ -165,11 +153,11 @@ const goToPortal = () => {
 
           <div class="demos__side">
             <div class="demos__device demos__device--tablet">
-              <div class="demos__screen"></div>
+              <div class="demos__screen"><WaterNetwork :progress="1" /></div>
               <div class="demos__device-label"><font-awesome-icon icon="tablet-alt" /> Tablet</div>
             </div>
             <div class="demos__device demos__device--mobile">
-              <div class="demos__screen"></div>
+              <div class="demos__screen"><WaterNetwork :progress="0.85" /></div>
               <div class="demos__device-label"><font-awesome-icon icon="mobile-alt" /> Mobile</div>
             </div>
           </div>
@@ -191,7 +179,7 @@ const goToPortal = () => {
             <font-awesome-icon icon="quote-left" class="testimonial-card__quote" size="2x" />
             <p class="testimonial-card__text">{{ testimonial.text }}</p>
             <div class="testimonial-card__footer">
-              <img :src="testimonial.avatar" :alt="testimonial.name" class="testimonial-card__avatar" loading="lazy">
+              <img :src="testimonial.avatar" :alt="testimonial.name" class="testimonial-card__avatar" loading="lazy" />
               <div class="testimonial-card__info">
                 <h4 class="testimonial-card__name">{{ testimonial.name }}</h4>
                 <p class="testimonial-card__role">{{ testimonial.role }}, {{ testimonial.company }}</p>
@@ -205,269 +193,351 @@ const goToPortal = () => {
 </template>
 
 <style scoped>
-/* Hero */
+.home-container {
+  background: #fffdf5;
+  color: #143e43;
+}
 .hero {
   position: relative;
-  min-height: 92vh;
-  display: flex;
-  align-items: center;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+  padding: 84px 0 74px;
+  background: #fffdf5;
 }
 .hero__waves {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 15vh;
-  min-height: 100px;
-  max-height: 150px;
-  z-index: 1;
+  display: none;
 }
 .hero__content {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 4rem;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 50px;
   align-items: center;
-  position: relative;
-  z-index: 2;
+  max-width: 1240px;
 }
-@media (min-width: 1024px) {
-  .hero__content { grid-template-columns: 1fr 1fr; }
+.hero__eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+  color: #076d73;
+  margin-bottom: 28px;
 }
 .hero__title {
-  font-size: 2.5rem;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  font-weight: 800;
-  color: #2c3e50;
+  font-size: clamp(48px, 6.8vw, 92px);
+  font-weight: 750;
+  letter-spacing: -0.065em;
+  line-height: 0.99;
+  margin: 0 0 28px;
+  color: #143e43;
 }
-.hero__title span { color: #0077be; }
-@media (min-width: 768px) { .hero__title { font-size: 3.5rem; } }
+.hero__title span {
+  font:
+    italic 1.08em Georgia,
+    serif;
+  color: #087f83;
+}
 .hero__description {
-  font-size: 1.1rem;
-  color: #7f8c8d;
-  margin-bottom: 2rem;
-  max-width: 500px;
+  font-size: 18px;
+  line-height: 1.75;
+  color: #536b68;
+  max-width: 440px;
+  margin-bottom: 32px;
 }
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-}
-.hero__image {
-  display: flex;
-  justify-content: center;
-  perspective: 1000px;
-}
-.hero__card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  transform: rotateY(-10deg) rotateX(5deg);
-  transition: transform 0.5s ease;
-}
-.hero__card:hover { transform: rotateY(0deg) rotateX(0deg); }
-.hero__card-header {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 2rem;
-}
-.hero__card-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #e2e8f0;
-}
-.hero__card-dot:nth-child(1) { background: #ff5f56; }
-.hero__card-dot:nth-child(2) { background: #ffbd2e; }
-.hero__card-dot:nth-child(3) { background: #27c93f; }
-.waves { position: relative; width: 100%; height: 100%; }
-.parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
-.parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; }
-.parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
-.parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
-.parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
-@keyframes move-forever {
-  0% { transform: translate3d(-90px,0,0); }
-  100% { transform: translate3d(85px,0,0); }
-}
-.mockup-graph {
-  display: flex;
-  align-items: flex-end;
   gap: 12px;
-  height: 150px;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 8px;
 }
-.mockup-bar {
-  flex: 1;
-  background: #0077be;
-  border-radius: 4px 4px 0 0;
-  transition: height 1s ease;
+.hero__illustration {
+  position: relative;
+  background: #e6f0e8;
+  border-radius: 48% 48% 12px 12px;
+  padding: 25px 12px 0;
 }
-.mockup-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-.mockup-stat { display: flex; flex-direction: column; }
-.mockup-label { font-size: 0.8rem; color: #7f8c8d; }
-.mockup-value { font-weight: 700; color: #2c3e50; font-size: 1.2rem; }
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: transform 0.2s, background-color 0.2s;
-  min-width: 44px;
-  min-height: 44px;
+.hero__seal {
+  position: absolute;
+  right: 5px;
+  top: 30px;
+  border: 1px solid #143e43;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: grid;
+  place-content: center;
+  transform: rotate(12deg);
   text-align: center;
-  line-height: 1;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  background: #e5c587;
 }
-.btn:active { transform: scale(0.98); }
-.btn--primary {
-  background-color: #0077be;
-  color: white;
-}
-.btn--primary:hover {
-  background-color: #005f99;
-}
-.btn--outline {
-  background-color: transparent;
-  border: 2px solid #0077be;
-  color: #0077be;
-}
-.btn--outline:hover {
-  background-color: #0077be;
-  color: white;
-}
-
-/* Features */
-.features { padding: 8rem 0; background-color: #ffffff; }
-.features__header {
+.hero__caption {
+  font-size: 12px;
   text-align: center;
-  margin-bottom: 8rem;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
+  color: #536b68;
+  margin-top: 16px;
 }
-.features__title {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  font-weight: 800;
+.features,
+.demos,
+.testimonials {
+  padding: 90px 0;
 }
-.features__title span { color: #0077be; }
-@media (min-width: 768px) { .features__title { font-size: 2.5rem; } }
-.features__subtitle { font-size: 1.1rem; color: #7f8c8d; }
+.features__header,
+.demos__header,
+.testimonials__header {
+  max-width: 760px;
+  margin-bottom: 40px;
+}
+.features__title,
+.demos__title,
+.testimonials__title {
+  font-size: clamp(30px, 3.8vw, 48px);
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+  color: #143e43;
+  margin-bottom: 16px;
+}
+.features__subtitle,
+.demos__subtitle,
+.testimonials__subtitle {
+  font-size: 16px;
+  color: #536b68;
+  line-height: 1.7;
+}
 .features__grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
 }
-@media (min-width: 768px) { .features__grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .features__grid { grid-template-columns: repeat(4, 1fr); } }
 .feature-card {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid #f1f5f9;
-  transition: all 0.3s ease;
+  padding: 28px 24px;
+  border-top: 3px solid #087f83;
+  background: #f4f2e9;
+  border-radius: 0 0 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
-.feature-card:hover { transform: translateY(-10px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); border-color: #0077be; }
 .feature-card__icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  margin-bottom: 26px;
 }
-.feature-card__title { font-size: 1.25rem; font-weight: 700; color: #2c3e50; }
-.feature-card__description { font-size: 0.95rem; color: #7f8c8d; line-height: 1.6; flex: 1; }
-.feature-card__link { font-size: 0.9rem; font-weight: 600; color: #0077be; margin-top: 1rem; }
-.feature-card__link:hover { text-decoration: underline; }
-
-/* Demos */
-.demos { padding: 8rem 0; background-color: #f8fafc; overflow: hidden; }
-.demos__header { text-align: center; margin-bottom: 8rem; }
-.demos__title { font-size: 2rem; color: #2c3e50; margin-bottom: 1rem; font-weight: 800; }
-@media (min-width: 768px) { .demos__title { font-size: 2.5rem; } }
-.demos__subtitle { font-size: 1.1rem; color: #7f8c8d; }
+.feature-card__title {
+  font-size: 20px;
+  letter-spacing: -0.025em;
+  margin-bottom: 14px;
+}
+.feature-card__description {
+  font-size: 14px;
+  color: #536b68;
+  line-height: 1.75;
+  flex: 1;
+}
+.feature-card__link {
+  font-size: 13px;
+  color: #076d73;
+  font-weight: 700;
+  margin-top: 24px;
+}
+.demos {
+  background: #143e43;
+  color: #fffdf5;
+}
+.demos__title {
+  color: #fffdf5;
+}
+.demos__subtitle {
+  color: #b9d4cc;
+}
 .demos__display {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 4rem;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 32px;
   align-items: center;
 }
-@media (min-width: 1024px) { .demos__display { grid-template-columns: 2fr 1fr; } }
-.demos__device {
-  background: #1e293b;
-  border-radius: 20px;
-  padding: 12px;
-  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-  position: relative;
+.demos__screen {
+  border: 9px solid #264e50;
+  border-radius: 22px;
+  background: #f4f2e9;
+  overflow: hidden;
+  min-height: 180px;
 }
-.demos__device--desktop { aspect-ratio: 16/10; }
-.demos__device--tablet { aspect-ratio: 3/4; width: 70%; margin-left: auto; }
-.demos__device--mobile { aspect-ratio: 9/16; width: 50%; margin-top: -4rem; }
 .demos__device-label {
-  position: absolute; bottom: -30px; left: 0; width: 100%; text-align: center;
-  font-size: 0.8rem; font-weight: 600; color: #7f8c8d;
-  display: flex; align-items: center; justify-content: center; gap: 4px;
+  font-size: 12px;
+  margin: 12px 0;
+  color: #c2ddd3;
 }
-.demos__screen { background: white; width: 100%; height: 100%; border-radius: 12px; overflow: hidden; }
-.demos__side { display: flex; flex-direction: column; gap: 8rem; }
-.demos__dashboard-mockup { display: flex; height: 100%; }
-.sidebar-mockup { width: 60px; background: #f1f5f9; border-right: 1px solid #e2e8f0; }
+.demos__side {
+  display: grid;
+  grid-template-columns: 1fr 0.6fr;
+  gap: 20px;
+  align-items: end;
+}
+.demos__dashboard-mockup {
+  display: flex;
+  height: 320px;
+  padding: 12px;
+}
+.sidebar-mockup {
+  width: 18%;
+  background: #143e43;
+  border-radius: 8px;
+}
 .content-mockup {
-  flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 12px;
+  flex: 1;
+  padding: 14px;
 }
-.header-mockup { height: 20px; background: #f1f5f9; border-radius: 4px; width: 100%; }
-.grid-mockup { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.card-mockup { height: 40px; background: #f1f5f9; border-radius: 4px; }
-.chart-mockup { flex: 1; background: linear-gradient(to bottom, #f1f5f9 0%, transparent 100%); border-radius: 4px; }
-
-/* Testimonials */
-.testimonials { padding: 8rem 0; background-color: #ffffff; }
-.testimonials__header { text-align: center; margin-bottom: 8rem; }
-.testimonials__title { font-size: 2rem; font-weight: 800; color: #2c3e50; margin-bottom: 1rem; }
-.testimonials__subtitle { font-size: 1.1rem; color: #7f8c8d; }
+.header-mockup {
+  height: 24px;
+  background: #d5e5db;
+  border-radius: 4px;
+  margin-bottom: 18px;
+}
+.grid-mockup {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.card-mockup {
+  height: 48px;
+  border-radius: 6px;
+  background: #b8dcd2;
+}
+.chart-mockup {
+  height: 135px;
+  margin-top: 14px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0, transparent 25px, #c9dcd3 26px), linear-gradient(160deg, transparent 48%, #078b9140 49%);
+  border-radius: 8px;
+}
+.testimonials > p {
+  max-width: 1200px;
+  margin: 0 auto 24px;
+  padding: 0 24px;
+  font-size: 12px;
+  color: #536b68;
+}
 .testimonials__grid {
-  display: grid; grid-template-columns: 1fr; gap: 4rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
-@media (min-width: 768px) { .testimonials__grid { grid-template-columns: repeat(2, 1fr); } }
 .testimonial-card {
-  padding: 4rem; background: #f8fafc; border-radius: 24px; position: relative; transition: transform 0.3s ease;
+  border: 1px solid #d6dfd5;
+  border-radius: 4px 24px 24px;
+  padding: 32px;
+  background: #fffdf5;
 }
-.testimonial-card:hover { transform: scale(1.02); }
-.testimonial-card__quote { color: #0077be; opacity: 0.2; margin-bottom: 1rem; }
+.testimonial-card__quote {
+  color: #087f83;
+  margin-bottom: 20px;
+}
 .testimonial-card__text {
-  font-size: 1.2rem; font-style: italic; color: #2c3e50; line-height: 1.6; margin-bottom: 4rem;
+  font:
+    italic 20px/1.6 Georgia,
+    serif;
 }
-.testimonial-card__footer { display: flex; align-items: center; gap: 1rem; }
+.testimonial-card__footer {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 24px;
+}
 .testimonial-card__avatar {
-  width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #d5e5db;
 }
-.testimonial-card__name { font-weight: 700; color: #2c3e50; }
-.testimonial-card__role { font-size: 0.9rem; color: #7f8c8d; }
-
-/* Container */
-.container {
-  width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1rem;
+.testimonial-card__name {
+  font-size: 15px;
 }
-@media (min-width: 768px) { .container { padding: 0 2rem; } }
+.testimonial-card__role {
+  font-size: 12px;
+  color: #536b68;
+}
+@media (max-width: 900px) {
+  .features__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hero__content {
+    gap: 24px;
+  }
+  .hero__seal {
+    width: 75px;
+    height: 75px;
+    font-size: 8px;
+  }
+  .demos__display {
+    grid-template-columns: 1fr;
+  }
+  .demos__side {
+    max-width: 460px;
+  }
+  .hero__title {
+    font-size: 60px;
+  }
+}
+@media (max-width: 600px) {
+  .hero {
+    padding: 42px 0 48px;
+  }
+  .hero__content {
+    grid-template-columns: 1fr;
+  }
+  .hero__title {
+    font-size: 58px;
+  }
+  .hero__description {
+    font-size: 16px;
+  }
+  .hero__actions .btn {
+    width: 100%;
+  }
+  .hero__image {
+    margin-top: 20px;
+  }
+  .features,
+  .demos,
+  .testimonials {
+    padding: 55px 0;
+  }
+  .features__grid,
+  .testimonials__grid {
+    grid-template-columns: 1fr;
+  }
+  .feature-card {
+    padding: 26px;
+  }
+  .feature-card__icon {
+    margin-bottom: 18px;
+  }
+  .demos__dashboard-mockup {
+    height: 240px;
+  }
+  .chart-mockup {
+    height: 80px;
+  }
+  .testimonial-card {
+    padding: 24px;
+  }
+}
+.hero__scroll-link {
+  display: inline-flex;
+  gap: 22px;
+  align-items: center;
+  margin-top: 25px;
+  font-size: 12px;
+  color: #396a60;
+  text-decoration: none;
+  border-bottom: 1px solid #b7cabc;
+  padding-bottom: 8px;
+}
+.hero__scroll-link span {
+  font-size: 22px;
+}
+.hero__scroll-link:hover {
+  color: #087f83;
+  border-color: #087f83;
+}
 </style>

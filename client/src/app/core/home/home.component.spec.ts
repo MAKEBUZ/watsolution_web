@@ -5,7 +5,9 @@ vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }));
 describe('Public home', () => {
   it('sends the primary entry action to login', async () => {
     const wrapper = shallowMount(Home, { global: { stubs: { 'font-awesome-icon': true } } });
-    const entry = wrapper.findAll('button').find(button => button.text().includes('Comenzar Ahora'));
-    expect(entry).toBeDefined(); await entry!.trigger('click'); expect(push).toHaveBeenCalledWith('/login');
+    const entry = wrapper.findAll('button').find(button => button.text().includes('Ingresar a mi cuenta'));
+    expect(entry).toBeDefined();
+    await entry!.trigger('click');
+    expect(push).toHaveBeenCalledWith('/login');
   });
 });

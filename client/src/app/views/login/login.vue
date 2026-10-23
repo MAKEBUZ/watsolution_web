@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { setAccessToken } from '@/shared/config/web-session';
 import { ref } from 'vue';
+import WaterNetwork from '@/core/water/water-network.vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAccountStore } from '@/shared/config/store/account-store';
@@ -12,14 +13,18 @@ const username = ref('');
 const password = ref('');
 const rememberMe = ref(false);
 const showPassword = ref(false);
-const authenticationError = ref(false);
+const authenticationError = ref('');
 const privacyAccepted = ref(false);
+const submitting = ref(false);
 
 const handleLogin = async () => {
-  authenticationError.value = false;
+  if (submitting.value) return;
+  submitting.value = true;
+  authenticationError.value = '';
+  let loadingAccount = false;
   try {
     const result = await axios.post('api/authenticate', {
-      username: username.value,
+      username: username.value.trim(),
       password: password.value,
       rememberMe: rememberMe.value,
     });
@@ -28,29 +33,47 @@ const handleLogin = async () => {
     let jwt: string | null = null;
     if (bearerToken && bearerToken.startsWith('Bearer ')) {
       jwt = bearerToken.slice(7);
-    } else if (result.data?.id_token) {
+    } else if (typeof result.data?.id_token === 'string') {
       jwt = result.data.id_token;
     }
 
-    if (jwt) {
-      if (rememberMe.value) {
-        setAccessToken(jwt);
-        sessionStorage.removeItem('jhi-authenticationToken');
-      } else {
-        setAccessToken(jwt);
-        localStorage.removeItem('jhi-authenticationToken');
-      }
+    if (!jwt) {
+      authenticationError.value = 'El servidor no devolvió una sesión válida. Inténtalo nuevamente.';
+      return;
     }
 
+    setAccessToken(jwt);
+    loadingAccount = true;
     await store.loadAccountAction();
+    if (!store.authenticated) {
+      authenticationError.value = 'No se pudo cargar tu cuenta. Inténtalo nuevamente.';
+      return;
+    }
     const authorities: string[] = store.account?.authorities ?? [];
     if (authorities.includes('ROLE_ADMIN')) {
       await router.replace('/admin');
     } else {
       await router.replace('/portal');
     }
-  } catch {
-    authenticationError.value = true;
+  } catch (error) {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    if (loadingAccount) {
+      authenticationError.value = 'No se pudo cargar tu cuenta. Inténtalo nuevamente.';
+    } else if (status === 401) {
+      authenticationError.value = 'Usuario o contraseña incorrectos, o cuenta sin activar. Usa tu nombre de usuario.';
+    } else if (status === 403) {
+      authenticationError.value = 'El servidor no permite iniciar sesión desde esta web. Contacta al administrador.';
+    } else if (status === 429) {
+      authenticationError.value = 'Demasiados intentos. Espera un minuto y vuelve a intentarlo.';
+    } else if (status && status >= 500) {
+      authenticationError.value = 'El servidor no está disponible. Inténtalo nuevamente más tarde.';
+    } else if (axios.isAxiosError(error) && !error.response) {
+      authenticationError.value = 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo nuevamente.';
+    } else {
+      authenticationError.value = 'No se pudo iniciar sesión. Inténtalo nuevamente.';
+    }
+  } finally {
+    submitting.value = false;
   }
 };
 
@@ -61,76 +84,34 @@ const togglePasswordVisibility = () => {
 
 <template>
   <section class="auth-scene">
-    <svg class="auth-art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs>
-        <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#9fc3ef" stop-opacity="0.65" />
-          <stop offset="1" stop-color="#5d93d3" stop-opacity="0.85" />
-        </linearGradient>
-
-        <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#6ba1df" stop-opacity="0.75" />
-          <stop offset="1" stop-color="#2e5f9b" stop-opacity="0.9" />
-        </linearGradient>
-
-        <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#1a4e73" stop-opacity="0.9" />
-          <stop offset="1" stop-color="#07192b" stop-opacity="1" />
-        </linearGradient>
-      </defs>
-
-      <g opacity="0.9" fill="#ffffff">
-        <path d="M115 260c35-60 120-80 175-40 20-35 62-52 102-40 25-45 80-65 130-45 55 23 70 85 38 127H115z" opacity="0.55" />
-        <path d="M980 240c35-55 115-74 168-38 18-32 58-48 96-38 24-40 70-58 116-40 52 21 66 78 36 116H980z" opacity="0.5" />
-      </g>
-
-      <path d="M0 585C190 500 350 520 470 575c120 56 260 55 360-10 120-79 260-112 610 20v330H0V585z" fill="url(#m1)" />
-      <path d="M0 650c190-110 360-100 520-32 160 68 320 58 430-12 140-90 280-110 490-22v360H0V650z" fill="url(#m2)" />
-      <path d="M0 735c190-110 390-120 560-40 170 80 340 70 470-10 170-104 280-108 410-55v340H0V735z" fill="url(#m3)" />
-
-      <g fill="#050d18" opacity="0.9">
-        <path d="M128 812l24-68 24 68h-14l-4 34h-12l-4-34h-14z" />
-        <path d="M184 826l18-50 18 50h-10l-3 24h-10l-3-24h-10z" />
-        <path d="M1248 812l24-68 24 68h-14l-4 34h-12l-4-34h-14z" />
-        <path d="M1192 826l18-50 18 50h-10l-3 24h-10l-3-24h-10z" />
-      </g>
-
-      <g fill="#050d18" opacity="0.92">
-        <path d="M0 900V610c22 30 36 58 44 86 10 34 10 76 10 204H0z" />
-        <path d="M40 900V640c34 34 54 70 60 108 8 50 7 90 7 152H40z" />
-        <path d="M1440 900V620c-22 28-36 56-44 84-10 34-10 76-10 196h54z" />
-        <path d="M1400 900V650c-34 34-54 70-60 108-8 50-7 90-7 142h67z" />
-      </g>
-    </svg>
+    <aside class="auth-story">
+      <p class="ws-eyebrow">CONECTADOS POR EL AGUA</p>
+      <h2>Tu agua.<br /><em>Tu tranquilidad.</em></h2>
+      <WaterNetwork :progress="1" />
+      <p>Un lugar para entender tu consumo,<br />consultar tus facturas y cuidar lo que compartimos.</p>
+    </aside>
 
     <div class="auth-content">
       <div class="auth-card">
-        <h1 class="auth-title">LOGIN</h1>
+        <p class="auth-eyebrow">TU PORTAL WATSOLUTION</p>
+        <h1 class="auth-title">Bienvenido de nuevo</h1>
+        <p class="auth-intro">Consulta tus facturas, revisa tu consumo y mantente al día con tu servicio.</p>
 
-        <div v-if="authenticationError" class="auth-error">
-          Usuario o contraseña incorrectos.
-        </div>
+        <div v-if="authenticationError" class="auth-error" role="alert">{{ authenticationError }}</div>
 
-        <form class="auth-form" @submit.prevent="handleLogin">
+        <form class="auth-form" :aria-busy="submitting" @submit.prevent="handleLogin">
           <div class="auth-field">
-            <label class="auth-label" for="username">Email</label>
+            <label class="auth-label" for="username">Nombre de usuario</label>
 
             <div class="auth-input">
-              <input
-                id="username"
-                v-model="username"
-                class="auth-input__control"
-                type="text"
-                autocomplete="username"
-                required
-              >
+              <input id="username" v-model="username" class="auth-input__control" type="text" autocomplete="username" required />
 
               <font-awesome-icon class="auth-input__icon" icon="envelope" :size="18" />
             </div>
           </div>
 
           <div class="auth-field">
-            <label class="auth-label" for="password">Password</label>
+            <label class="auth-label" for="password">Contraseña</label>
 
             <div class="auth-input">
               <input
@@ -140,7 +121,7 @@ const togglePasswordVisibility = () => {
                 :type="showPassword ? 'text' : 'password'"
                 autocomplete="current-password"
                 required
-              >
+              />
 
               <button
                 type="button"
@@ -155,28 +136,24 @@ const togglePasswordVisibility = () => {
 
             <div class="auth-row">
               <label class="auth-remember">
-                <input v-model="rememberMe" type="checkbox">
-                <span>Remember Me</span>
+                <input v-model="rememberMe" type="checkbox" />
+                <span>Recordarme</span>
               </label>
 
-              <router-link to="/account/reset/request" class="auth-forgot">
-                Forgot Password?
-              </router-link>
+              <router-link to="/account/reset/request" class="auth-forgot"> ¿Olvidaste tu contraseña? </router-link>
             </div>
           </div>
 
           <label class="auth-privacy">
-            <input v-model="privacyAccepted" type="checkbox" class="auth-privacy__check">
+            <input v-model="privacyAccepted" type="checkbox" class="auth-privacy__check" />
             <span>
               He leído y acepto la
-              <router-link to="/politica-privacidad" target="_blank" class="auth-privacy__link">
-                Política de Privacidad
-              </router-link>
+              <router-link to="/politica-privacidad" target="_blank" class="auth-privacy__link"> Política de Privacidad </router-link>
             </span>
           </label>
 
-          <button class="auth-submit" type="submit" :disabled="!privacyAccepted">
-            Login
+          <button class="auth-submit" type="submit" :disabled="!privacyAccepted || submitting">
+            {{ submitting ? 'Ingresando…' : 'Ingresar a mi cuenta' }}
           </button>
         </form>
       </div>
@@ -184,293 +161,220 @@ const togglePasswordVisibility = () => {
   </section>
 </template>
 
-<style lang="scss" scoped>
-@use 'sass:color';
-@use '../../../content/scss/variables' as *;
-
+<style scoped>
 .auth-scene {
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: calc(clamp(18px, 3.4vw, 36px) + 70px) clamp(18px, 3.4vw, 36px) clamp(18px, 3.4vw, 36px);
-  background: linear-gradient(180deg, #d7e6ff 0%, #c8dcff 42%, #0f2f4b 100%);
-}
-
-.auth-scene::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.98) 0 140px, rgba(255, 255, 255, 0) 141px),
-    radial-gradient(circle at 18% 30%, rgba(255, 255, 255, 0.85) 0 88px, rgba(255, 255, 255, 0) 89px),
-    radial-gradient(circle at 26% 26%, rgba(255, 255, 255, 0.85) 0 70px, rgba(255, 255, 255, 0) 71px),
-    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.85) 0 92px, rgba(255, 255, 255, 0) 93px),
-    radial-gradient(circle at 74% 28%, rgba(255, 255, 255, 0.78) 0 84px, rgba(255, 255, 255, 0) 85px),
-    radial-gradient(circle at 82% 26%, rgba(255, 255, 255, 0.78) 0 66px, rgba(255, 255, 255, 0) 67px),
-    radial-gradient(circle at 90% 30%, rgba(255, 255, 255, 0.78) 0 88px, rgba(255, 255, 255, 0) 89px);
-  filter: blur(0.2px);
-  opacity: 0.95;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.auth-scene::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 38%, rgba(10, 22, 36, 0.18) 100%),
-    radial-gradient(circle at 22% 22%, rgba(90, 160, 220, 0.16) 0%, rgba(90, 160, 220, 0) 58%),
-    radial-gradient(circle at 78% 26%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 60%);
-  opacity: 0.95;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.auth-art {
-  position: absolute;
-  inset: -2vh -8vw;
-  width: calc(100% + 16vw);
-  height: calc(100% + 4vh);
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.92;
-  filter: saturate(0.92) brightness(0.96) contrast(1.05) blur(0.35px);
-}
-
-.auth-content {
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  padding: 64px max(24px, calc((100vw - 1200px) / 2));
+  background: #f4f2e9;
+  min-height: calc(100svh - 70px);
   align-items: center;
+}
+.auth-scene::before,
+.auth-scene::after {
+  display: none;
+}
+.auth-story {
+  color: #143e43;
+  max-width: 500px;
+}
+.auth-story h2 {
+  font-size: clamp(40px, 4.4vw, 64px);
+  letter-spacing: -0.05em;
+  line-height: 1.04;
+  margin: 20px 0;
+}
+.auth-story em {
+  font-family: Georgia, serif;
+  color: #087f83;
+  font-weight: 400;
+}
+.auth-story .water-network {
+  max-height: 320px;
+  margin: 24px 0;
+}
+.auth-story > p:last-child {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #536b68;
+}
+.auth-content {
+  min-width: 0;
+  display: flex;
   justify-content: center;
-  padding: clamp(10px, 2.6vw, 22px) 0 clamp(26px, 5.8vw, 44px);
+  padding: 0;
 }
-
 .auth-card {
-  width: min(560px, 92vw);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(248, 250, 255, 0.85) 0%, rgba(200, 225, 255, 0.62) 48%, rgba(28, 83, 125, 0.42) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 30px 80px rgba(9, 26, 45, 0.45);
-  backdrop-filter: blur(18px);
-  padding: clamp(22px, 4.5vw, 38px) clamp(20px, 4.2vw, 44px) clamp(18px, 4vw, 34px);
-}
-
-.auth-title {
-  text-align: center;
-  font-size: clamp(22px, 2.2vw, 30px);
-  letter-spacing: 0.06em;
-  font-weight: 800;
-  color: rgba(7, 14, 26, 0.9);
-  margin-bottom: clamp(16px, 2.4vw, 24px);
-}
-
-.auth-error {
-  margin: 0 auto 16px;
   width: 100%;
-  max-width: 420px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 120, 120, 0.35);
-  color: rgba(140, 15, 15, 0.95);
-  font-size: 0.9rem;
-  text-align: center;
+  max-width: 470px;
+  background: #fffdf8;
+  border: 1px solid #d4ddd3;
+  border-radius: 4px 32px 32px;
+  padding: 40px;
+  box-shadow: 0 24px 60px #143e4309;
 }
-
+.auth-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #087f83;
+  margin-bottom: 20px;
+}
+.auth-title {
+  font-size: 34px;
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+  color: #143e43;
+  margin-bottom: 14px;
+  text-align: left;
+}
+.auth-intro {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #536b68;
+  margin-bottom: 30px;
+}
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  display: grid;
+  gap: 22px;
 }
-
 .auth-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  gap: 9px;
 }
-
 .auth-label {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: rgba(10, 20, 35, 0.72);
+  font-size: 13px;
+  font-weight: 750;
+  color: #143e43;
 }
-
 .auth-input {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 6px 40px 6px 0;
-  border-bottom: 1px solid rgba(10, 20, 35, 0.42);
+  border: 1px solid #9cb4aa;
+  border-radius: 8px;
+  padding: 0 44px 0 14px;
+  background: #fffdf8;
+  min-height: 54px;
 }
-
+.auth-input:focus-within {
+  outline: 3px solid #087f8330;
+  border-color: #087f83;
+}
 .auth-input__control {
   width: 100%;
-  border: none;
-  outline: none;
   background: transparent;
-  font-size: 1rem;
-  padding: 8px 0;
-  color: rgba(6, 12, 22, 0.92);
+  border: 0;
+  outline: 0;
+  padding: 12px 0;
+  font-size: 16px;
+  color: #143e43;
 }
-
-.auth-input__control::placeholder {
-  color: rgba(6, 12, 22, 0.45);
-}
-
-.auth-input:focus-within {
-  border-bottom-color: rgba(0, 0, 0, 0.7);
-}
-
 .auth-input__icon,
 .auth-input__button {
   position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(10, 20, 35, 0.58);
+  right: 8px;
+  color: #4d6a63;
 }
-
 .auth-input__button {
-  background: transparent;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
   min-width: 44px;
   min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  background: none;
+  border: 0;
 }
-
 .auth-row {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 14px;
-  margin-top: 2px;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 12px;
 }
-
-.auth-remember {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: rgba(10, 20, 35, 0.72);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  user-select: none;
-}
-
-.auth-remember input {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 1px solid rgba(10, 20, 35, 0.28);
-  background: rgba(255, 255, 255, 0.92);
-  display: inline-grid;
-  place-items: center;
-}
-
-.auth-remember input:checked {
-  background: rgba(255, 255, 255, 0.98);
-}
-
-.auth-remember input:checked::after {
-  content: '';
-  width: 8px;
-  height: 5px;
-  border-left: 2px solid rgba(10, 20, 35, 0.7);
-  border-bottom: 2px solid rgba(10, 20, 35, 0.7);
-  transform: rotate(-45deg);
-}
-
-.auth-forgot {
-  font-size: 0.82rem;
-  color: rgba(10, 20, 35, 0.72);
-  font-weight: 700;
-}
-
-.auth-submit {
-  margin-top: 10px;
-  height: 52px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: linear-gradient(180deg, rgba(168, 197, 255, 0.95) 0%, rgba(114, 144, 214, 0.95) 100%);
-  box-shadow: 0 18px 35px rgba(9, 26, 45, 0.35);
-  color: rgba(255, 255, 255, 0.96);
-  font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-}
-
-.auth-submit:active {
-  transform: translateY(1px);
-}
-
-.auth-submit:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.auth-submit:disabled:active {
-  transform: none;
-}
-
+.auth-remember,
 .auth-privacy {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  color: rgba(10, 20, 35, 0.72);
-  font-size: 0.88rem;
-  font-weight: 600;
-  line-height: 1.4;
-  user-select: none;
-  cursor: pointer;
-  margin-top: -4px;
+  gap: 9px;
+  color: #405f58;
+  line-height: 1.6;
+  font-size: 12px;
 }
-
-.auth-privacy__check {
-  appearance: none;
-  flex-shrink: 0;
+.auth-remember input,
+.auth-privacy input {
   width: 18px;
   height: 18px;
-  margin-top: 1px;
-  border-radius: 4px;
-  border: 1px solid rgba(10, 20, 35, 0.28);
-  background: rgba(255, 255, 255, 0.92);
-  display: inline-grid;
-  place-items: center;
+  flex-shrink: 0;
+  accent-color: #087f83;
+  appearance: auto;
+}
+.auth-forgot,
+.auth-privacy__link {
+  color: #076d73;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.auth-submit {
+  background: #143e43;
+  color: #fffdf5;
+  border: 0;
+  border-radius: 8px;
+  min-height: 54px;
+  font-weight: 750;
+  font-size: 15px;
   cursor: pointer;
 }
-
-.auth-privacy__check:checked {
-  background: rgba(255, 255, 255, 0.98);
+.auth-submit:disabled {
+  background: #dce5dc;
+  color: #536b68;
+  cursor: not-allowed;
 }
-
-.auth-privacy__check:checked::after {
-  content: '';
-  width: 8px;
-  height: 5px;
-  border-left: 2px solid rgba(10, 20, 35, 0.7);
-  border-bottom: 2px solid rgba(10, 20, 35, 0.7);
-  transform: rotate(-45deg);
+.auth-error {
+  padding: 14px;
+  background: #ffede5;
+  border-left: 3px solid #a64227;
+  color: #7d2c19;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
-
-.auth-privacy__link {
-  color: rgba(30, 80, 160, 0.9);
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+@media (max-width: 900px) {
+  .auth-scene {
+    gap: 28px;
+    padding: 40px 24px;
+  }
+  .auth-card {
+    padding: 30px;
+  }
+  .auth-story h2 {
+    font-size: 42px;
+  }
 }
-
-.auth-privacy__link:hover {
-  color: rgba(30, 80, 160, 1);
+@media (max-width: 650px) {
+  .auth-scene {
+    grid-template-columns: 1fr;
+    padding: 28px 18px;
+    gap: 24px;
+  }
+  .auth-story h2 {
+    font-size: 36px;
+  }
+  .auth-story .water-network,
+  .auth-story > p:last-child {
+    display: none;
+  }
+  .auth-story .ws-eyebrow {
+    font-size: 9px;
+  }
+  .auth-story h2 br {
+    display: none;
+  }
+  .auth-card {
+    max-width: none;
+    padding: 28px 22px;
+  }
+  .auth-title {
+    font-size: 29px;
+  }
 }
 </style>

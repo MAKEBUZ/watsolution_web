@@ -31,3 +31,25 @@ describe('Mobile capture boundaries', () => {
     expect(f.meters.save).not.toHaveBeenCalled(); expect(f.operations.insert).not.toHaveBeenCalled();
   });
 });
+
+describe('Mobile access reconciliation', () => {
+  it('restricts operators to assigned identifiers and returns no personal fields', async () => {
+    const find = jest.fn(async (_options: unknown) => [{ id: 7 }]);
+    const service = new MobileService({ getRepository: () => ({ find }) } as any);
+    const result = await service.access({ id: 2, authorities: ['ROLE_OPERATOR'] } as any, [7, 8]);
+    expect(result).toEqual({ allowedIds: [7] });
+    expect(find.mock.calls[0][0]).toMatchObject({ select: { id: true }, where: { assignedOperatorId: 2 } });
+  });
+  it('rejects oversized and malformed batches before querying', async () => {
+    const getRepository = jest.fn();
+    const service = new MobileService({ getRepository } as any);
+    for (const ids of [null, [0], ['7'], Array(101).fill(7)]) {
+      await expect(service.access({ id: 2, authorities: ['ROLE_OPERATOR'] } as any, ids)).rejects.toThrow();
+    }
+    expect(getRepository).not.toHaveBeenCalled();
+  });
+  it('denies customer access even when invoked outside the controller', async () => {
+    const service = new MobileService({ getRepository: jest.fn() } as any);
+    await expect(service.access({ id: 2, authorities: ['ROLE_USER'] } as any, [7])).rejects.toThrow();
+  });
+});

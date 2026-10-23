@@ -1,28 +1,29 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, computed, watch } from 'vue'
-import { Chart, registerables } from 'chart.js'
-import { useAccountStore } from '@/shared/config/store/account-store'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
-import MisFacturas from './mis-facturas.vue'
-import MiConsumo from './mi-consumo.vue'
-import NotificationBell from '@/core/notifications/notification-bell.vue'
-import { useNotifications } from '@/composables/useNotifications'
+import { nextTick, onMounted, onUnmounted, ref, computed, watch } from 'vue';
+import { Chart, registerables } from 'chart.js';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import WaterNetwork from '@/core/water/water-network.vue';
+import MisFacturas from './mis-facturas.vue';
+import MiConsumo from './mi-consumo.vue';
+import NotificationBell from '@/core/notifications/notification-bell.vue';
+import { useNotifications } from '@/composables/useNotifications';
 
-Chart.register(...registerables)
+Chart.register(...registerables);
 
-const accountStore = useAccountStore()
-const router = useRouter()
-const lineChartRef = ref<HTMLCanvasElement | null>(null)
-const activeSection = ref('resumen')
-let lineChart: Chart | null = null
+const accountStore = useAccountStore();
+const router = useRouter();
+const lineChartRef = ref<HTMLCanvasElement | null>(null);
+const activeSection = ref('resumen');
+let lineChart: Chart | null = null;
 
 const userName = computed(() => {
-  const acc = accountStore.account
-  if (!acc) return 'Usuario'
-  return acc.firstName || acc.login || 'Usuario'
-})
-const userInitial = computed(() => (userName.value[0] || 'U').toUpperCase())
+  const acc = accountStore.account;
+  if (!acc) return 'Usuario';
+  return acc.firstName || acc.login || 'Usuario';
+});
+const userInitial = computed(() => (userName.value[0] || 'U').toUpperCase());
 
 const navItems = [
   { id: 'resumen', label: 'Resumen', icon: 'grid' },
@@ -31,170 +32,177 @@ const navItems = [
   { id: 'notificaciones', label: 'Notificaciones', icon: 'bell' },
   { id: 'tramites', label: 'Trámites', icon: 'clipboard' },
   { id: 'soporte', label: 'Soporte', icon: 'message-square' },
-]
+];
 
-const { notifications: allNotifs } = useNotifications()
+const { notifications: allNotifs } = useNotifications();
 
 const notifIconMap: Record<string, string> = {
   'invoice.created': '📄',
   'invoice.due_soon': '⏰',
   'invoice.overdue': '⚠️',
   'invoice.paid': '✅',
-}
+};
 const notifLabelMap: Record<string, string> = {
   'invoice.created': 'Nueva factura',
   'invoice.due_soon': 'Por vencer',
   'invoice.overdue': 'Vencida',
   'invoice.paid': 'Pagada',
+};
+function notifIcon(type: string) {
+  return notifIconMap[type] ?? '🔔';
 }
-function notifIcon(type: string) { return notifIconMap[type] ?? '🔔' }
-function notifLabel(type: string) { return notifLabelMap[type] ?? type }
+function notifLabel(type: string) {
+  return notifLabelMap[type] ?? type;
+}
 
 // ── State ─────────────────────────────────────────────────────────────────────
 interface RecentInvoice {
-  id: string
-  date: string
-  amount: string
-  statusLabel: string
-  statusClass: string
+  id: string;
+  date: string;
+  amount: string;
+  statusLabel: string;
+  statusClass: string;
 }
 
-const loading = ref(true)
-const errorMsg = ref('')
+const loading = ref(true);
+const errorMsg = ref('');
 
 // Card 1 — Factura Actual
-const invoiceAmount = ref('–')
-const invoiceDate = ref('')
-const invoiceStatusLabel = ref('')
-const invoiceStatusClass = ref('')
+const invoiceAmount = ref('–');
+const invoiceDate = ref('');
+const invoiceStatusLabel = ref('');
+const invoiceStatusClass = ref('');
 
 // Card 2 — Consumo
-const consumoValue = ref('–')
+const consumoValue = ref('–');
 
 // Card 3 — Estado servicio
-const serviceLabel = ref('–')
-const serviceIcon = ref('✅')
-const serviceIconBg = ref('#d1fae5')
-const serviceDetail = ref('')
+const serviceLabel = ref('–');
+const serviceIcon = ref('✅');
+const serviceIconBg = ref('#d1fae5');
+const serviceDetail = ref('');
 
 // Chart data (stored so we can render after DOM is ready)
-const chartLabels = ref<string[]>([])
-const chartValues = ref<number[]>([])
+const chartLabels = ref<string[]>([]);
+const chartValues = ref<number[]>([]);
 
-const recentInvoices = ref<RecentInvoice[]>([])
+const recentInvoices = ref<RecentInvoice[]>([]);
 
 const quickActions = [
   { label: 'Reportar Fuga', desc: 'Notifica una fuga en tu sector', icon: '💧' },
   { label: 'Reclamaciones', desc: 'Haz una reclamación formal', icon: '📋' },
   { label: 'Certificados', desc: 'Descarga certificados oficiales', icon: '📄' },
   { label: 'Actualizar Datos', desc: 'Modifica tu información', icon: '👤' },
-]
+];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function fmtDate(d: any): string {
-  if (!d) return '–'
-  return new Date(d).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+  if (!d) return '–';
+  return new Date(d).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function fmtCurrency(n: number): string {
-  return `$${Number(n).toLocaleString('es-CO')}`
+  return `$${Number(n).toLocaleString('es-CO')}`;
 }
 
 function invoiceStatusInfo(status: string): { label: string; cls: string } {
-  if (status === 'PAID') return { label: 'Pagada', cls: 'paid' }
-  if (status === 'CANCELLED') return { label: 'Cancelada', cls: 'cancelled' }
-  return { label: 'Pendiente', cls: 'pending' }
+  if (status === 'PAID') return { label: 'Pagada', cls: 'paid' };
+  if (status === 'CANCELLED') return { label: 'Cancelada', cls: 'cancelled' };
+  return { label: 'Pendiente', cls: 'pending' };
 }
 
 // ── Load data ─────────────────────────────────────────────────────────────────
 async function loadDashboard() {
-  loading.value = true
-  errorMsg.value = ''
+  loading.value = true;
+  errorMsg.value = '';
   try {
-    const { data } = await axios.get('api/portal/dashboard')
+    const { data } = await axios.get('api/portal/dashboard');
 
     // Card 1 — last invoice (any status)
     if (data.currentInvoice) {
-      const si = invoiceStatusInfo(data.currentInvoice.status)
-      invoiceAmount.value = fmtCurrency(data.currentInvoice.amountDue)
-      invoiceDate.value = fmtDate(data.currentInvoice.issueDate)
-      invoiceStatusLabel.value = si.label
-      invoiceStatusClass.value = si.cls
+      const si = invoiceStatusInfo(data.currentInvoice.status);
+      invoiceAmount.value = fmtCurrency(data.currentInvoice.amountDue);
+      invoiceDate.value = fmtDate(data.currentInvoice.issueDate);
+      invoiceStatusLabel.value = si.label;
+      invoiceStatusClass.value = si.cls;
     } else {
-      invoiceAmount.value = 'Sin facturas'
-      invoiceDate.value = ''
-      invoiceStatusLabel.value = ''
-      invoiceStatusClass.value = ''
+      invoiceAmount.value = 'Sin facturas';
+      invoiceDate.value = '';
+      invoiceStatusLabel.value = '';
+      invoiceStatusClass.value = '';
     }
 
     // Card 2 — latest meter reading
-    consumoValue.value = `${Number(data.monthlyConsumption).toLocaleString('es-CO')} m³`
+    consumoValue.value = `${Number(data.monthlyConsumption).toLocaleString('es-CO')} m³`;
 
     // Card 3 — service status
     if (data.serviceStatus === 'MOROSO') {
-      serviceLabel.value = 'En mora'
-      serviceIcon.value = '⚠️'
-      serviceIconBg.value = '#fef3c7'
-      serviceDetail.value = 'Tiene facturas vencidas'
+      serviceLabel.value = 'En mora';
+      serviceIcon.value = '⚠️';
+      serviceIconBg.value = '#fef3c7';
+      serviceDetail.value = 'Tiene facturas vencidas';
     } else if (data.serviceStatus === 'SUSPENDIDO') {
-      serviceLabel.value = 'Suspendido'
-      serviceIcon.value = '🚫'
-      serviceIconBg.value = '#fee2e2'
-      serviceDetail.value = 'Contacte al administrador'
+      serviceLabel.value = 'Suspendido';
+      serviceIcon.value = '🚫';
+      serviceIconBg.value = '#fee2e2';
+      serviceDetail.value = 'Contacte al administrador';
     } else {
-      serviceLabel.value = 'Activo'
-      serviceIcon.value = '✅'
-      serviceIconBg.value = '#d1fae5'
-      serviceDetail.value = 'Sin novedades'
+      serviceLabel.value = 'Activo';
+      serviceIcon.value = '✅';
+      serviceIconBg.value = '#d1fae5';
+      serviceDetail.value = 'Sin novedades';
     }
 
     // Last 5 invoices list
     recentInvoices.value = (data.invoiceHistory ?? []).map((inv: any) => {
-      const si = invoiceStatusInfo(inv.status)
+      const si = invoiceStatusInfo(inv.status);
       return {
         id: `FAC-${String(inv.id).padStart(3, '0')}`,
         date: fmtDate(inv.issueDate),
         amount: fmtCurrency(inv.amountDue),
         statusLabel: si.label,
         statusClass: si.cls,
-      }
-    })
+      };
+    });
 
     // Store chart data and render after DOM update
-    chartLabels.value = (data.consumptionTrend ?? []).map((p: any) => p.month)
-    chartValues.value = (data.consumptionTrend ?? []).map((p: any) => Number(p.value))
-    await nextTick()
-    renderChart()
+    chartLabels.value = (data.consumptionTrend ?? []).map((p: any) => p.month);
+    chartValues.value = (data.consumptionTrend ?? []).map((p: any) => Number(p.value));
+    await nextTick();
+    renderChart();
   } catch (err: any) {
-    const msg = err?.response?.data?.message ?? err?.message ?? 'Error al cargar datos'
-    errorMsg.value = msg
-    console.error('Portal dashboard error:', err)
+    const msg = err?.response?.data?.message ?? err?.message ?? 'Error al cargar datos';
+    errorMsg.value = msg;
+    console.error('Portal dashboard error:', err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 // ── Chart ─────────────────────────────────────────────────────────────────────
 function renderChart() {
-  if (!lineChartRef.value || chartLabels.value.length === 0) return
-  lineChart?.destroy()
+  if (!lineChartRef.value || chartLabels.value.length === 0) return;
+  lineChart?.destroy();
   lineChart = new Chart(lineChartRef.value, {
     type: 'line',
     data: {
       labels: chartLabels.value,
-      datasets: [{
-        label: 'Consumo m³',
-        data: chartValues.value,
-        borderColor: '#0077be',
-        backgroundColor: 'rgba(0,119,190,0.08)',
-        tension: 0.4,
-        fill: true,
-        pointBackgroundColor: '#0077be',
-        pointRadius: 5,
-        pointHoverRadius: 7,
-      }],
+      datasets: [
+        {
+          label: 'Consumo m³',
+          data: chartValues.value,
+          borderColor: '#0077be',
+          backgroundColor: 'rgba(0,119,190,0.08)',
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: '#0077be',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        },
+      ],
     },
     options: {
+      animation: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? false : undefined,
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
@@ -203,19 +211,23 @@ function renderChart() {
         x: { grid: { display: false } },
       },
     },
-  })
+  });
 }
 
 // Re-render chart when user navigates back to Resumen tab
-watch(activeSection, async (val) => {
+watch(activeSection, async val => {
   if (val === 'resumen' && chartLabels.value.length > 0) {
-    await nextTick()
-    renderChart()
+    await nextTick();
+    renderChart();
   }
-})
+});
 
-onMounted(() => { loadDashboard() })
-onUnmounted(() => { lineChart?.destroy() })
+onMounted(() => {
+  loadDashboard();
+});
+onUnmounted(() => {
+  lineChart?.destroy();
+});
 </script>
 
 <template>
@@ -227,20 +239,104 @@ onUnmounted(() => { lineChart?.destroy() })
         <button class="sidebar-brand__close" @click="router.push('/')" title="Ir al inicio">✕</button>
       </div>
 
-      <nav class="sidebar-nav">
+      <nav class="sidebar-nav" aria-label="Secciones de mi portal">
         <button
           v-for="item in navItems"
           :key="item.id"
           :class="['sidebar-nav__item', { active: activeSection === item.id }]"
+          :aria-current="activeSection === item.id ? 'page' : undefined"
           @click="activeSection = item.id"
         >
           <span class="sidebar-nav__icon">
-            <svg v-if="item.icon === 'grid'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
-            <svg v-if="item.icon === 'file-text'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0121 9.414V19a2 2 0 01-2 2z"/></svg>
-            <svg v-if="item.icon === 'droplet'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3C12 3 5 10 5 15a7 7 0 0014 0c0-5-7-12-7-12z"/></svg>
-            <svg v-if="item.icon === 'clipboard'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-            <svg v-if="item.icon === 'bell'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-            <svg v-if="item.icon === 'message-square'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <svg
+              v-if="item.icon === 'grid'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2" />
+              <rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2" />
+              <rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2" />
+              <rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2" />
+            </svg>
+            <svg
+              v-if="item.icon === 'file-text'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0121 9.414V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <svg
+              v-if="item.icon === 'droplet'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3C12 3 5 10 5 15a7 7 0 0014 0c0-5-7-12-7-12z" />
+            </svg>
+            <svg
+              v-if="item.icon === 'clipboard'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+            <svg
+              v-if="item.icon === 'bell'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
+            <svg
+              v-if="item.icon === 'message-square'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
           </span>
           <span class="sidebar-nav__label">{{ item.label }}</span>
         </button>
@@ -263,18 +359,30 @@ onUnmounted(() => { lineChart?.destroy() })
 
       <!-- Resumen section -->
       <div v-if="activeSection === 'resumen'" class="portal-content">
-
         <!-- Error banner -->
-        <div v-if="errorMsg" class="error-banner">
+        <div v-if="errorMsg" class="error-banner" role="alert">
           ⚠️ {{ errorMsg }}
+          <button type="button" class="link-btn" :disabled="loading" @click="loadDashboard">Reintentar</button>
         </div>
 
+        <p v-if="loading" role="status">Cargando tu resumen de consumo y facturas…</p>
+        <section class="service-intro" aria-labelledby="service-intro-title">
+          <div class="service-intro__copy">
+            <p class="ws-eyebrow">TU CONEXIÓN CON EL AGUA</p>
+            <h2 id="service-intro-title">Un servicio cercano.<br /><em>Todo a tu alcance.</em></h2>
+            <p>Consulta tus facturas, conoce tu consumo y encuentra ayuda para cuidar tu servicio.</p>
+            <div class="portal-primary-actions">
+              <button class="btn btn--primary" @click="activeSection = 'facturas'">Consultar mis facturas</button>
+              <button class="btn btn--outline" @click="router.push('/pagos')">Ir a pagos</button>
+            </div>
+          </div>
+          <div class="service-intro__art"><WaterNetwork /></div>
+        </section>
         <!-- 3 KPI cards -->
         <div class="stat-cards stat-cards--3">
-
           <!-- Card 1: Factura Actual (latest invoice + status) -->
           <div class="stat-card">
-            <div class="stat-card__icon" style="background:#e0f2fe">🧾</div>
+            <div class="stat-card__icon" style="background: #e0f2fe">🧾</div>
             <div class="stat-card__info">
               <p class="stat-card__label">Factura Actual</p>
               <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
@@ -290,7 +398,7 @@ onUnmounted(() => { lineChart?.destroy() })
 
           <!-- Card 2: Consumo (latest meter reading) -->
           <div class="stat-card">
-            <div class="stat-card__icon" style="background:#d1fae5">💧</div>
+            <div class="stat-card__icon" style="background: #d1fae5">💧</div>
             <div class="stat-card__info">
               <p class="stat-card__label">Último Consumo</p>
               <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
@@ -320,11 +428,12 @@ onUnmounted(() => { lineChart?.destroy() })
             <span class="chart-card__badge">Últimos 6 meses</span>
           </div>
           <div class="chart-wrapper">
-            <canvas ref="lineChartRef"></canvas>
+            <canvas ref="lineChartRef" role="img" aria-label="Tendencia de consumo en metros cúbicos"></canvas>
+            <p v-if="!loading && !errorMsg && chartLabels.length === 0" class="chart-empty">
+              Aún no hay lecturas para mostrar tu tendencia de consumo.
+            </p>
           </div>
-          <button class="chart-card__link" @click="activeSection = 'consumo'">
-            Ver análisis completo →
-          </button>
+          <button class="chart-card__link" @click="activeSection = 'consumo'">Ver análisis completo →</button>
         </div>
 
         <!-- Bottom row -->
@@ -340,7 +449,22 @@ onUnmounted(() => { lineChart?.destroy() })
             <div v-else class="invoice-list">
               <div v-for="inv in recentInvoices" :key="inv.id" class="invoice-item">
                 <div class="invoice-item__left">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="invoice-icon"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0121 9.414V19a2 2 0 01-2 2z"/></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    class="invoice-icon"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0121 9.414V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
                   <div>
                     <p class="invoice-item__id">{{ inv.id }}</p>
                     <p class="invoice-item__date">{{ inv.date }}</p>
@@ -368,7 +492,9 @@ onUnmounted(() => { lineChart?.destroy() })
                     <p class="quick-item__desc">{{ action.desc }}</p>
                   </div>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
               </button>
             </div>
           </div>
@@ -386,7 +512,14 @@ onUnmounted(() => { lineChart?.destroy() })
           <h2 class="notif-history__title">Mis Notificaciones</h2>
           <p class="notif-history__sub">Últimos 30 movimientos registrados en tu cuenta</p>
           <div v-if="allNotifs.length === 0" class="notif-history__empty">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#ccc"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#ccc">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
             <p>Sin notificaciones</p>
           </div>
           <div v-else class="notif-history__list">
@@ -400,7 +533,9 @@ onUnmounted(() => { lineChart?.destroy() })
               <div class="notif-history__body">
                 <div class="notif-history__row">
                   <span class="notif-history__item-title">{{ n.title }}</span>
-                  <span class="notif-history__badge" :class="`notif-history__badge--${n.type.split('.')[1]}`">{{ notifLabel(n.type) }}</span>
+                  <span class="notif-history__badge" :class="`notif-history__badge--${n.type.split('.')[1]}`">{{
+                    notifLabel(n.type)
+                  }}</span>
                 </div>
                 <p class="notif-history__msg">{{ n.message }}</p>
                 <p class="notif-history__date">{{ fmtDate(n.createdAt) }}</p>
@@ -431,7 +566,9 @@ onUnmounted(() => { lineChart?.destroy() })
                   <p class="quick-item__desc">{{ action.desc }}</p>
                 </div>
               </div>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
             </button>
           </div>
         </div>
@@ -577,6 +714,7 @@ onUnmounted(() => { lineChart?.destroy() })
 .portal-main {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -662,13 +800,15 @@ onUnmounted(() => { lineChart?.destroy() })
 }
 
 @media (max-width: 1200px) {
-  .stat-cards, .stat-cards--3 {
+  .stat-cards,
+  .stat-cards--3 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .stat-cards, .stat-cards--3 {
+  .stat-cards,
+  .stat-cards--3 {
     grid-template-columns: 1fr;
   }
 }
@@ -692,9 +832,18 @@ onUnmounted(() => { lineChart?.destroy() })
   padding: 2px 8px;
   border-radius: 20px;
 }
-.inv-badge.pending  { background: #fef3c7; color: #92400e; }
-.inv-badge.paid     { background: #d1fae5; color: #065f46; }
-.inv-badge.cancelled{ background: #f1f5f9; color: #64748b; }
+.inv-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+.inv-badge.paid {
+  background: #d1fae5;
+  color: #065f46;
+}
+.inv-badge.cancelled {
+  background: #f1f5f9;
+  color: #64748b;
+}
 
 .invoice-empty {
   font-size: 0.88rem;
@@ -1109,10 +1258,16 @@ onUnmounted(() => { lineChart?.destroy() })
     transition: background 0.15s;
     position: relative;
 
-    &:last-child { border-bottom: none; }
-    &:hover { background: #fafafa; }
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      background: #fafafa;
+    }
 
-    &--unread { background: #fff8f0; }
+    &--unread {
+      background: #fff8f0;
+    }
   }
 
   &__icon {
@@ -1148,10 +1303,22 @@ onUnmounted(() => { lineChart?.destroy() })
     background: #e8f4fd;
     color: #0077be;
 
-    &--paid { background: #d1fae5; color: #065f46; }
-    &--overdue { background: #fee2e2; color: #991b1b; }
-    &--due_soon { background: #fef3c7; color: #92400e; }
-    &--created { background: #e8f4fd; color: #0077be; }
+    &--paid {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    &--overdue {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    &--due_soon {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    &--created {
+      background: #e8f4fd;
+      color: #0077be;
+    }
   }
 
   &__msg {
@@ -1177,6 +1344,94 @@ onUnmounted(() => { lineChart?.destroy() })
     background: #e67e22;
     flex-shrink: 0;
     margin-top: 6px;
+  }
+}
+
+.portal-layout {
+  background: #f1f6f7;
+}
+.portal-sidebar {
+  background: #123f50;
+}
+.portal-topbar {
+  border-bottom: 1px solid #d4e4e8;
+}
+.portal-topbar__greeting {
+  color: #123f50;
+  letter-spacing: -0.035em;
+}
+.portal-primary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card,
+.chart-card,
+.portal-card {
+  border: 1px solid #d4e4e8;
+  box-shadow: none;
+  border-radius: 18px;
+}
+.stat-card__value {
+  color: #123f50;
+  font-variant-numeric: tabular-nums;
+}
+.chart-wrapper {
+  position: relative;
+}
+.chart-empty {
+  position: absolute;
+  inset: 40% 20px auto;
+  text-align: center;
+  color: #536b76;
+}
+.notif-history__date,
+.portal-topbar__sub {
+  color: #586e78;
+}
+@media (max-width: 768px) {
+  .portal-layout {
+    flex-direction: column;
+  }
+  .portal-main {
+    width: 100%;
+  }
+  .portal-sidebar {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    position: static;
+  }
+  .sidebar-brand {
+    display: none;
+  }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+    gap: 4px;
+  }
+  .sidebar-nav__item {
+    width: auto;
+    min-height: 48px;
+    flex: 0 0 auto;
+    padding: 10px 14px;
+  }
+  .sidebar-nav__label {
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  .portal-content {
+    padding: 20px 16px;
+  }
+  .portal-topbar {
+    padding: 22px 16px;
+  }
+  .portal-primary-actions > * {
+    flex: 1 1 140px;
   }
 }
 </style>

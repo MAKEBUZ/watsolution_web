@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
 import { useAccountStore } from '@/shared/config/store/account-store'
-import {
-  LayoutDashboard, Users, FileText, Newspaper,
-  TrendingUp, LogOut, ChevronRight, Menu, X, User, Home
-} from 'lucide-vue-next'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const router = useRouter()
@@ -14,10 +10,10 @@ const isSidebarOpen = ref(true)
 const isMobile = ref(false)
 
 const menuItems = [
-  { name: 'Resumen', routeName: 'admin-summary', icon: LayoutDashboard },
-  { name: 'Usuarios', routeName: 'admin-users', icon: Users },
-  { name: 'Facturación', routeName: 'admin-billing', icon: FileText },
-  { name: 'Noticias', routeName: 'admin-news', icon: Newspaper },
+  { name: 'Resumen', routeName: 'admin-summary', icon: 'tachometer-alt' },
+  { name: 'Usuarios', routeName: 'admin-users', icon: 'users' },
+  { name: 'Facturación', routeName: 'admin-billing', icon: 'file-invoice-dollar' },
+  { name: 'Noticias', routeName: 'admin-news', icon: 'newspaper' },
 ]
 
 const handleLogout = () => {
@@ -62,8 +58,8 @@ const closeSidebarOnMobile = () => {
       <div class="sidebar-header">
         <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
         <button class="toggle-btn" @click="toggleSidebar">
-          <Menu v-if="!isSidebarOpen" :size="20" />
-          <X v-else :size="20" />
+          <font-awesome-icon v-if="!isSidebarOpen" icon="bars" />
+          <font-awesome-icon v-else icon="times" />
         </button>
       </div>
 
@@ -77,10 +73,10 @@ const closeSidebarOnMobile = () => {
           @click="closeSidebarOnMobile"
         >
           <div class="nav-icon-container">
-            <component :is="item.icon" :size="22" :stroke-width="2.5" />
+            <font-awesome-icon :icon="item.icon" />
           </div>
           <span v-if="isSidebarOpen || isMobile">{{ item.name }}</span>
-          <ChevronRight v-if="isSidebarOpen && !isMobile" class="chevron" :size="14" />
+          <font-awesome-icon v-if="isSidebarOpen && !isMobile" class="chevron" icon="chevron-right" />
         </router-link>
       </nav>
 
@@ -93,11 +89,11 @@ const closeSidebarOnMobile = () => {
           </div>
         </div>
         <button class="home-btn" @click="router.push({ name: 'Home' })">
-          <Home :size="20" />
+          <font-awesome-icon icon="home" />
           <span v-if="isSidebarOpen || isMobile">Volver al Inicio</span>
         </button>
         <button class="logout-btn" @click="handleLogout">
-          <LogOut :size="20" />
+          <font-awesome-icon icon="sign-out-alt" />
           <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
         </button>
       </div>
