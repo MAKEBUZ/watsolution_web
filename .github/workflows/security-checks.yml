@@ -6,8 +6,9 @@ permissions:
   contents: read
 jobs:
   postgres-sessions:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    # Allow cold browser/OS downloads without consuming the test execution budget.
+    timeout-minutes: 25
     services:
       postgres:
         image: postgres:17
@@ -34,7 +35,9 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts --no-fund
       - run: node node_modules/jest/bin/jest.js --config server/integration/jest.config.json --runInBand --coverage=false
-      - run: npx --no-install playwright install --with-deps chromium
+      - name: Install headless Chromium and system dependencies
+        timeout-minutes: 15
+        run: npx --no-install playwright install --with-deps --only-shell chromium
       - name: Generate disposable loopback TLS certificate
         run: |
           mkdir -p tmp/browser-tls
