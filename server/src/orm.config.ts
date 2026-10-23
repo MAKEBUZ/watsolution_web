@@ -31,7 +31,7 @@ function ormConfig(): TypeOrmModuleOptions {
   if (backendEnv === 'prod') {
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) {
-      ormLogger.error('DATABASE_URL is not set! Add it in Railway → service → Variables tab as ${{Postgres.DATABASE_URL}}');
+      ormLogger.error('DATABASE_URL is required in the private server environment.');
     } else {
       ormLogger.log('Database configuration loaded');
     }

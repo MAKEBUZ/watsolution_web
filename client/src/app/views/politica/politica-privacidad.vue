@@ -149,7 +149,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll));
               <div class="pp-info-card__icon">🌐</div>
               <div>
                 <div class="pp-info-card__label">Plataforma</div>
-                <div class="pp-info-card__val">WatSolution — watsolutionweb-production.up.railway.app</div>
+                <div class="pp-info-card__val">WatSolution — watsolution.3-142-23-99.sslip.io</div>
               </div>
             </div>
           </div>
@@ -349,7 +349,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll));
               <tbody>
                 <tr><td>WhatsApp Business API (Meta)</td><td>Envío de notificaciones de facturación, pagos y soporte</td><td>Número de celular y contenido del mensaje</td></tr>
                 <tr><td>Proveedor de SMS</td><td>Mensajes SMS como canal de respaldo</td><td>Número de celular y texto del mensaje</td></tr>
-                <tr><td>Railway (Infraestructura)</td><td>Hospedaje del backend, BD PostgreSQL y almacenamiento S3</td><td>Todos los datos de la plataforma (bajo contrato)</td></tr>
+                <tr><td>Amazon Web Services (Infraestructura)</td><td>Hospedaje del backend, BD PostgreSQL y almacenamiento privado</td><td>Datos alojados por la plataforma</td></tr>
                 <tr><td>Pasarela PSE (futuro)</td><td>Pagos en línea (simulación en fase 1)</td><td>No se transmiten datos financieros reales en fase 1</td></tr>
               </tbody>
             </table>
@@ -430,7 +430,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll));
                 <tr><td>Comunicación de cambios</td><td>Notificación por WhatsApp y publicación en el portal web</td></tr>
                 <tr><td>Plazo de comunicación</td><td>10 días hábiles de antelación antes de que los cambios entren en vigencia</td></tr>
                 <tr><td>Versión actual</td><td>Versión 1.0 — Mayo 2026</td></tr>
-                <tr><td>Acceso al documento</td><td>watsolutionweb-production.up.railway.app/politica-privacidad</td></tr>
+                <tr><td>Acceso al documento</td><td>watsolution.3-142-23-99.sslip.io/politica-privacidad</td></tr>
               </tbody>
             </table>
           </div>

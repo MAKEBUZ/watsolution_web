@@ -15,7 +15,7 @@ export function configureHttpSecurity(app: Express) {
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('Content-Security-Policy', contentSecurityPolicy);
     res.setHeader('Permissions-Policy', permissionsPolicy);
-    // Railway terminates TLS before forwarding to Node. Browsers ignore HSTS on HTTP.
+    // The HTTPS reverse proxy terminates TLS. Browsers ignore HSTS on HTTP.
     res.setHeader('Strict-Transport-Security', 'max-age=31536000');
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     res.setHeader('Pragma', 'no-cache');

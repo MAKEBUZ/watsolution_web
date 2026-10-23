@@ -31,7 +31,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY package*.json ./
 
-# Railway injects PORT dynamically; the app reads process.env.PORT first.
+# The deployment supplies PORT; the app reads process.env.PORT first.
 EXPOSE 3000
 
 CMD ["node", "dist/main.js"]

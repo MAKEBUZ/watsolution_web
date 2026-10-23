@@ -25,6 +25,6 @@ RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
 
-# BACKEND_URL must be set in Railway → client service → Variables tab
-# Example: BACKEND_URL = https://your-backend.up.railway.app
+# Set BACKEND_URL to the HTTPS API origin when using the bundled proxy.
+# The AWS Compose deployment supplies its own internal reverse proxy.
 CMD ["/docker-entrypoint.sh"]

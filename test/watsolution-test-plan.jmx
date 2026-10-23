@@ -2,24 +2,24 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Watsolution API Tests" enabled="true">
-      <stringProp name="TestPlan.comments">Watsolution backend - Railway: back-production-b5f3.up.railway.app</stringProp>
+      <stringProp name="TestPlan.comments">WatSolution isolated test backend; configure the variables below for a test environment.</stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
         <collectionProp name="Arguments.arguments">
           <elementProp name="BASE_URL" elementType="Argument">
             <stringProp name="Argument.name">BASE_URL</stringProp>
-            <stringProp name="Argument.value">back-production-b5f3.up.railway.app</stringProp>
+            <stringProp name="Argument.value">localhost</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="BASE_PORT" elementType="Argument">
             <stringProp name="Argument.name">BASE_PORT</stringProp>
-            <stringProp name="Argument.value">443</stringProp>
+            <stringProp name="Argument.value">3000</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="BASE_PROTOCOL" elementType="Argument">
             <stringProp name="Argument.name">BASE_PROTOCOL</stringProp>
-            <stringProp name="Argument.value">https</stringProp>
+            <stringProp name="Argument.value">http</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="ADMIN_USER" elementType="Argument">
@@ -29,7 +29,7 @@
           </elementProp>
           <elementProp name="ADMIN_PASS" elementType="Argument">
             <stringProp name="Argument.name">ADMIN_PASS</stringProp>
-            <stringProp name="Argument.value">admin</stringProp>
+            <stringProp name="Argument.value">${__P(ADMIN_PASS,)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="USER_LOGIN" elementType="Argument">
@@ -39,17 +39,17 @@
           </elementProp>
           <elementProp name="USER_PASS" elementType="Argument">
             <stringProp name="Argument.name">USER_PASS</stringProp>
-            <stringProp name="Argument.value">user</stringProp>
+            <stringProp name="Argument.value">${__P(USER_PASS,)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="STATIC_ADMIN_TOKEN" elementType="Argument">
             <stringProp name="Argument.name">STATIC_ADMIN_TOKEN</stringProp>
-            <stringProp name="Argument.value">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlcm5hbWUiOiJhZG1pbiIsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iLCJST0xFX1VTRVIiXSwiaWF0IjoxNzc5NzUyOTA0LCJleHAiOjE3Nzk3NTMyMDR9.FrqtdpQTHv-3PVSggIDXQ289j18zBG_6RADFoJKAOaI</stringProp>
+            <stringProp name="Argument.value"></stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="STATIC_USER_TOKEN" elementType="Argument">
             <stringProp name="Argument.name">STATIC_USER_TOKEN</stringProp>
-            <stringProp name="Argument.value">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJ1c2VyIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc3OTc1MjkzNiwiZXhwIjoxNzc5NzUzMjM2fQ.emiOT4KILOz-DdGsgEGHpHz8sRCVKmP56s9obWS3xM8</stringProp>
+            <stringProp name="Argument.value"></stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="TEST_PERSON_ID" elementType="Argument">
@@ -150,7 +150,7 @@ if (token != null &amp;&amp; token != "TOKEN_NOT_FOUND") {
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
             </collectionProp>
-            <stringProp name="Assertion.custom_message">Admin login failed - check credentials and Railway URL</stringProp>
+            <stringProp name="Assertion.custom_message">Admin login failed - check credentials and test backend URL</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>

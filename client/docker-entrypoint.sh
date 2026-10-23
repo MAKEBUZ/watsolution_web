@@ -3,8 +3,7 @@ set -e
 
 if [ -z "$BACKEND_URL" ]; then
   echo "ERROR: BACKEND_URL is required."
-  echo "Add it in Railway → client service → Variables:"
-  echo "  BACKEND_URL = https://your-backend.up.railway.app"
+  echo "Set BACKEND_URL to the HTTPS origin of the AWS API."
   exit 1
 fi
 
