@@ -10,13 +10,15 @@ vi.mock('vue-router', () => ({ useRoute: () => route, useRouter: () => ({ replac
 describe('Logout feedback and cross-tab events', () => {
   beforeEach(() => { localStorage.clear(); route.path = '/'; route.matched = []; replace.mockClear(); setActivePinia(createPinia()); });
   afterEach(() => { localStorage.clear(); vi.restoreAllMocks(); });
-  const render = () => mount(App, { global: { stubs: { Header: true, Footer: true, ChatBot: true, 'router-view': true } } });
+  const render = () => mount(App, { global: { stubs: { Header: true, Footer: true, ChatBot: true, 'router-view': true, 'router-link': true } } });
   it('shows pending and failed confirmation with a retry action', async () => {
     const wrapper = render(); const store = useAccountStore();
     store.logoutStatus = 'pending'; await nextTick();
     expect(wrapper.get('[role="status"]').text()).toContain('Cerrando');
     store.logoutStatus = 'failed'; await nextTick();
-    expect(wrapper.get('[role="alert"]').text()).toContain('no pudimos confirmar');
+    expect(wrapper.get('[role="alert"]').text()).toContain('No pudimos confirmar');
+    expect(wrapper.get('[role="alert"] router-link-stub').attributes('to')).toBe('/login');
+    expect(wrapper.get('main [role="alert"]').exists()).toBe(true);
     const retry = vi.spyOn(store, 'logout').mockResolvedValue(true);
     await wrapper.get('[role="alert"] button').trigger('click');
     expect(retry).toHaveBeenCalledOnce(); wrapper.unmount();

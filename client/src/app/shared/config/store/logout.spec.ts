@@ -13,7 +13,7 @@ describe('Web logout', () => {
     const store = useAccountStore();
     await expect(store.logout()).resolves.toBe(true);
     expect(post).toHaveBeenCalledWith(expect.stringContaining('api/session/logout'), {}, {
-      withCredentials: true, headers: { 'X-Session-Transport': 'web' },
+      withCredentials: true, timeout: 10000, headers: { 'X-Session-Transport': 'web' },
     });
     expect(store.logoutStatus).toBe('confirmed');
     await expect(refreshAccessToken()).rejects.toThrow('Session explicitly closed');

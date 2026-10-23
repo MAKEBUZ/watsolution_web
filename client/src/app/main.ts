@@ -12,6 +12,7 @@ import JhiItemCountComponent from './shared/jhi-item-count.vue';
 import JhiSortIndicatorComponent from './shared/sort/jhi-sort-indicator.vue';
 import LoginService from './account/login.service';
 import AccountService from './account/account.service';
+import { createSessionGuard } from './router/session-guard';
 import { setupAxiosInterceptors } from '@/shared/config/axios-interceptor';
 import { useStore, useTranslationStore } from '@/store';
 
@@ -109,40 +110,22 @@ const app = createApp({
       await changeLanguage(lang);
     });
 
-    router.beforeResolve(async (to, from, next) => {
+    const sessionGuard = createSessionGuard(store, accountService);
+    router.beforeResolve(to => {
       // Make sure login modal is closed
       loginService.hideLogin();
 
-      if (!store.authenticated) {
-        await accountService.update();
-      }
-      if (to.meta?.authorities && to.meta.authorities.length > 0) {
-        const value = await accountService.hasAnyAuthorityAndCheckAuth(to.meta.authorities);
-        if (!value) {
-          if (!store.authenticated) {
-            next({ path: '/login', query: { redirect: to.fullPath } });
-            return;
-          }
-          if (from.path !== '/forbidden') {
-            next({ path: '/forbidden' });
-            return;
-          }
-        }
-      }
-      next();
+      return sessionGuard(to);
     });
 
     setupAxiosInterceptors(
       error => {
-        const url = error.response?.config?.url;
-        const status = error.status || error.response.status;
-        if (status === 401) {
-          // Store logged out state.
-          store.logout();
-          if (!url.endsWith('api/account') && !url.endsWith('api/authenticate')) {
-            // Ask for a new authentication
-            loginService.openLogin();
-            return;
+        const url = error.config?.url ?? error.response?.config?.url ?? '';
+        const status = error.status || error.response?.status;
+        if (status === 401 && !url.includes('api/authenticate')) {
+          store.clearLocalSession();
+          if (router.currentRoute.value.matched.some(record => record.meta.authorities?.length)) {
+            void router.replace('/login');
           }
         }
         return Promise.reject(error);

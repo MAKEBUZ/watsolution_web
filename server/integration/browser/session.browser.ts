@@ -199,13 +199,44 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     await page.locator('#username').fill('ui-admin');
     await page.locator('#password').fill(password);
     await page.locator('.auth-privacy__check').check();
-    // Let the initial anonymous account lookup and logout finish before submitting credentials.
-    await page.waitForFunction('localStorage.getItem("watsolution-logout")?.startsWith("confirmed:")');
     await page.locator('button[type="submit"]').click();
     await page.waitForURL('**/admin/resumen');
     await page.locator('.sidebar-profile .name').filter({ hasText: 'Administrador de prueba' }).waitFor();
     return page;
   };
+  it('opens the real login page when the API is unreachable without inventing a failed logout', async () => {
+    await context.route('**/api/**', route => route.abort('failed'));
+    await context.route('**/management/**', route => route.abort('failed'));
+    const page = await context.newPage();
+    const logoutRequests: string[] = [];
+    page.on('request', request => {
+      if (request.url().endsWith('/api/session/logout')) logoutRequests.push(request.url());
+    });
+    await page.goto(origin + '/');
+    await page.locator('header a[href="/login"]').first().click();
+    await page.locator('#username').waitFor({ timeout: 5000 });
+    expect(new URL(page.url()).pathname).toBe('/login');
+    expect(await page.locator('.logout-feedback').count()).toBe(0);
+    expect(logoutRequests).toHaveLength(0);
+  });
+  it('keeps login reachable after failed server logout while blocking cookie restoration', async () => {
+    const page = await loginUi();
+    let logoutRequests = 0;
+    await context.route('**/api/session/logout', route => { logoutRequests++; return route.abort('failed'); });
+    await page.locator('.logout-btn').click();
+    await page.locator('#username').waitFor({ timeout: 5000 });
+    await page.locator('.logout-feedback[role="alert"]').waitFor();
+    expect(await page.locator('.sidebar-profile').count()).toBe(0);
+    expect((await context.cookies()).some(cookie => cookie.name === '__Host-watsolution-refresh')).toBe(true);
+    await page.goto(origin + '/admin/resumen');
+    await page.locator('#username').waitFor({ timeout: 5000 });
+    expect(new URL(page.url()).pathname).toBe('/login');
+    expect(await page.evaluate('localStorage.getItem("watsolution-logout")?.startsWith("pending:")')).toBe(true);
+    expect(logoutRequests).toBe(1);
+    await page.getByRole('button', { name: 'Reintentar cierre de sesión' }).click();
+    await page.locator('.logout-feedback[role="alert"]').waitFor();
+    expect(logoutRequests).toBe(2);
+  });
   it('logs in through the actual Vue UI and restores identity after a protected-page reload', async () => {
     const page = await loginUi();
     const account = page.waitForResponse(r => r.url().endsWith('/api/account') && r.status() === 200);

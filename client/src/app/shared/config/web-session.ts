@@ -4,6 +4,7 @@ let token: string | null = null;
 let refreshing: Promise<void> | undefined;
 let generation = 0;
 export const logoutStorageKey = 'watsolution-logout';
+export const sessionRequestTimeout = 10000;
 export const getAccessToken = () => token;
 export const getSessionGeneration = () => generation;
 export function setAccessToken(value: string | null) {
@@ -19,7 +20,9 @@ export function refreshAccessToken(): Promise<void> {
   const started = generation;
   const rotate = async () => {
     if (started !== generation || localStorage.getItem(logoutStorageKey)) throw new Error('Session changed');
-    const result = await axios.create().post(`${SERVER_API_URL}api/session/refresh`, {}, { withCredentials: true, headers: { 'X-Session-Transport': 'web' } });
+    const result = await axios.create().post(`${SERVER_API_URL}api/session/refresh`, {}, {
+      withCredentials: true, timeout: sessionRequestTimeout, headers: { 'X-Session-Transport': 'web' },
+    });
     if (started !== generation || localStorage.getItem(logoutStorageKey)) throw new Error('Session changed');
     if (typeof result.data.id_token !== 'string') throw new Error('Invalid session response');
     token = result.data.id_token;
