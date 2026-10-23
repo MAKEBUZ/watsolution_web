@@ -19,8 +19,8 @@
       <AdminMobileNav v-if="isAdminRoute && accountStore.authenticated" />
       <router-view v-if="!requiresAuthentication || accountStore.authenticated"></router-view>
     </main>
-    <Footer v-if="!isAdminRoute" />
-    <ChatBot />
+    <Footer v-if="!isAdminRoute && !isWorkspaceRoute" />
+    <ChatBot v-if="!isAdminRoute && !isWorkspaceRoute" />
   </div>
 </template>
 
@@ -64,6 +64,7 @@ export default defineComponent({
     return {
       accountStore,
       route,
+      isWorkspaceRoute: computed(() => ['/portal', '/pagos'].includes(route.path)),
       isAdminRoute,
       requiresAuthentication,
     };
@@ -95,3 +96,5 @@ export default defineComponent({
   padding-top: 0;
 }
 </style>
+
+<style src="../content/scss/workspace.scss" lang="scss"></style>

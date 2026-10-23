@@ -217,3 +217,29 @@ For more information, refer to the [Code quality page][].
 [NestJS CLI]: https://docs.nestjs.com/cli/usages
 [Leaflet]: https://leafletjs.com/
 [DefinitelyTyped]: https://definitelytyped.org/
+
+## Revisión local del frontend
+
+Con las dependencias instaladas (`npm install`), ejecuta desde la raíz:
+
+```bash
+npm run review
+```
+
+Este comando inicia Vite en http://localhost:9000 y la API en el puerto 8080,
+con el perfil `dev` y las variables del archivo local `env` de la raíz.
+La conexión utiliza `DATABASE_PUBLIC_URL`. El archivo `env` contiene secretos y no debe versionarse.
+
+- Inicio: http://localhost:9000/
+- Portal del suscriptor: http://localhost:9000/portal
+- Pagos: http://localhost:9000/pagos
+- Resumen administrativo: http://localhost:9000/admin/resumen
+
+Usa una cuenta existente con el rol correspondiente. El portal y los pagos requieren
+un perfil de suscriptor vinculado. Las pantallas consultan las API existentes; no se
+introducen datos de demostración en la aplicación.
+
+Para abrir la pasarela, el servidor requiere `BOLD_API_KEY` y `BOLD_SECRET_KEY`.
+La confirmación real depende de la configuración de Bold y su webhook accesible.
+Sin esas claves se puede revisar la interfaz y la selección de facturas, pero no
+completar el pago. El asistente es opcional y requiere `OPENAI_API_KEY` para atender consultas.

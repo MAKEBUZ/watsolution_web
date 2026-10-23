@@ -22,6 +22,7 @@
     "lint:fix": "echo \"INFO: no client found\"",
     "prettier:check": "prettier --check \"{,src/**/}*.{md,json,yml,js,cjs,mjs,ts,cts,mts,html,vue,css,scss}\"",
     "prettier:format": "prettier --write \"{,src/**/}*.{md,json,yml,js,cjs,mjs,ts,cts,mts,html,vue,css,scss}\"",
+    "review": "concurrently -k -n server,client \"npm run review -w server\" \"npm run start:client\"",
     "services:up": "docker compose -f docker/services.yml up --wait",
     "start": "concurrently -k -s first -n application,client -c red,green npm:start:server npm:start:client",
     "start:client": "npm run start -w client",

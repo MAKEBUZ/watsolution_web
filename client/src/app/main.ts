@@ -22,17 +22,7 @@ import '../content/scss/water-system.scss';
 import TranslationService from '@/locale/translation.service';
 import NoticiaService from '@/entities/noticia/noticia.service';
 import ReporteService from '@/entities/reporte/reporte.service';
-import {
-  Chart,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
 const pinia = createPinia();
@@ -129,6 +119,10 @@ const app = createApp({
       if (to.meta?.authorities && to.meta.authorities.length > 0) {
         const value = await accountService.hasAnyAuthorityAndCheckAuth(to.meta.authorities);
         if (!value) {
+          if (!store.authenticated) {
+            next({ path: '/login', query: { redirect: to.fullPath } });
+            return;
+          }
           if (from.path !== '/forbidden') {
             next({ path: '/forbidden' });
             return;

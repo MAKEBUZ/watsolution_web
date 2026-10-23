@@ -165,3 +165,4 @@ client/dist/
 server/.env
 client/.env
 client/.env.local
+env
