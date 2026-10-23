@@ -1,0 +1,52 @@
+[
+  {
+    "test": "Portal selecciona persona de cuenta 42 para un login literal 42; el controlador no pasa el ID autenticado 99",
+    "result": "Confirmado con repositorios simulados",
+    "authenticatedUser": {
+      "id": 99,
+      "login": "42"
+    },
+    "query": [
+      {
+        "userId": "42"
+      },
+      {
+        "email": "42"
+      }
+    ],
+    "returnedPersonOwner": "42"
+  },
+  {
+    "test": "Descarga PDF sobrescribe un pago confirmado durante la subida",
+    "result": "Confirmado con intercalado simulado de repositorio y S3",
+    "statusAfterPayment": "PAID",
+    "statusAfterDownload": "PENDING"
+  },
+  {
+    "test": "Solicitudes concurrentes crean dos referencias Bold; una deja de estar asociada",
+    "result": "Confirmado con repositorio simulado",
+    "distinctReferences": true,
+    "firstStillMapped": false
+  },
+  {
+    "test": "Fallo al guardar persona después de crear cuenta",
+    "result": "Confirmado: cuenta persistida; solo se compensa dirección",
+    "userSaved": true,
+    "addressDeleted": true
+  },
+  {
+    "test": "21 registros / tamaño 20",
+    "expectedLastPage": 1,
+    "actualLink": "</api/people?page=1&size=20>; rel=\"next\",</api/people?page=20&size=20>; rel=\"last\",</api/people?page=0&size=20>; rel=\"first\""
+  },
+  {
+    "test": "DTO factura acepta negativos, fechas y estado inválidos",
+    "validationErrors": 0,
+    "result": "Confirmado con class-validator instalado"
+  },
+  {
+    "test": "Interpolación de nombre de usuario en traducción HTML",
+    "rawHtmlPreserved": true,
+    "result": "Revisar v-html: cadena sin escape"
+  }
+]

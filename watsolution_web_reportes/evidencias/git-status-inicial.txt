@@ -1,0 +1,78 @@
+D  .editorconfig
+D  CLAUDE.md
+ M client/package.json
+ M client/src/app/account/account.service.ts
+ M client/src/app/account/login-form/login-form.component.spec.ts
+ M client/src/app/account/login-form/login-form.component.ts
+ M client/src/app/admin/user-management/user-management-edit.component.ts
+ M client/src/app/admin/user-management/user-management-edit.vue
+ M client/src/app/composables/useNotifications.ts
+ M client/src/app/core/home/home.component.spec.ts
+ M client/src/app/shared/config/axios-interceptor.spec.ts
+ M client/src/app/shared/config/axios-interceptor.ts
+ M client/src/app/shared/config/store/account-store.ts
+ M client/src/app/views/admin/admin-facturacion.vue
+ M client/src/app/views/login/login.component.ts
+ M client/src/app/views/login/login.vue
+ M package-lock.json
+ M package.json
+D  schema.jdl
+ M server/package.json
+ M server/src/app.module.ts
+ M server/src/client/interceptors/logging.interceptor.ts
+ M server/src/config/application.yml
+ M server/src/domain/person.entity.ts
+ M server/src/domain/user.entity.ts
+ M server/src/main.ts
+ M server/src/module/admin.module.ts
+ M server/src/module/auth.module.ts
+ M server/src/orm.config.ts
+ M server/src/security/guards/roles.guard.ts
+ M server/src/security/passport.jwt.strategy.ts
+ M server/src/security/payload.interface.ts
+ M server/src/security/role-type.ts
+ M server/src/service/ai.service.ts
+ M server/src/service/auth.service.ts
+ M server/src/service/bold.service.ts
+ M server/src/service/bucket.service.ts
+ M server/src/service/dto/user.dto.ts
+ M server/src/service/user.service.ts
+ M server/src/web/rest/account.controller.ts
+ M server/src/web/rest/address.controller.ts
+ M server/src/web/rest/admin.controller.ts
+ M server/src/web/rest/ai.controller.ts
+ M server/src/web/rest/bold.controller.ts
+ M server/src/web/rest/invoice.controller.ts
+ M server/src/web/rest/meter.controller.ts
+ M server/src/web/rest/notification.controller.ts
+ M server/src/web/rest/person.controller.ts
+ M server/src/web/rest/public.user.controller.ts
+ M server/src/web/rest/reporte.controller.ts
+ M server/src/web/rest/user.controller.ts
+ M server/src/web/rest/user.jwt.controller.ts
+?? .github/
+?? client/src/app/shared/config/web-session.spec.ts
+?? client/src/app/shared/config/web-session.ts
+?? server/src/domain/auth-session.entity.ts
+?? server/src/domain/mobile-operation.entity.ts
+?? server/src/migrations/1791158400000-SecureMobile.ts
+?? server/src/module/mobile.module.ts
+?? server/src/secure-migration.ts
+?? server/src/security/guards/record-access.guard.ts
+?? server/src/security/jwt-settings.ts
+?? server/src/security/login-rate-limit.service.ts
+?? server/src/security/passport.jwt.strategy.spec.ts
+?? server/src/security/password-policy.ts
+?? server/src/security/security-baseline.spec.ts
+?? server/src/security/web-session.ts
+?? server/src/service/billing.service.spec.ts
+?? server/src/service/billing.service.ts
+?? server/src/service/bold.service.spec.ts
+?? server/src/service/mobile.service.spec.ts
+?? server/src/service/mobile.service.ts
+?? server/src/service/privacy.spec.ts
+?? server/src/service/session.service.spec.ts
+?? server/src/service/session.service.ts
+?? server/src/web/rest/mobile.controller.ts
+?? server/src/web/rest/session.controller.ts
+?? watsolution_web_reportes/

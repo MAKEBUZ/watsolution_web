@@ -1,0 +1,32 @@
+[
+  {
+    "archivo": "backend.log",
+    "sha256": "47E4075E158D9ABDDA6AF0A95B6F2C952146C9132A5D036F87A0AC908E6EAB23",
+    "bytes": 3187
+  },
+  {
+    "archivo": "bold-antes.log",
+    "sha256": "7ACCEB52358B712F32E72DA6492C0DA408B107524E31FDFB48C7998FB2E25453",
+    "bytes": 8618
+  },
+  {
+    "archivo": "ci.json",
+    "sha256": "1B5E3DE554A401B31859010298B668795DE5317DFC5F2C0642B50041001FB6B4",
+    "bytes": 3877
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "9DD38453AE63A5BD66666D1D8FE2DF3DA4BFE08CFE304A11A36C4F2413806C7A",
+    "bytes": 14838
+  },
+  {
+    "archivo": "integracion-sin-destino.log",
+    "sha256": "2E072FBF3111C46150B9AC509FC49BA4C23BEF4FBD329353EB41683958908C71",
+    "bytes": 6794
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "406FED26439E834F6EDAA5A5A3099F1DE1E5B3A47FD73309723CCC583909D5E8",
+    "bytes": 556
+  }
+]

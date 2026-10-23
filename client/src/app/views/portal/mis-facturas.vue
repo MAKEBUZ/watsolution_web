@@ -15,7 +15,7 @@ const effectiveStatus = (inv: IInvoice): EffectiveStatus => {
   if (inv.status === 'PAID') return 'PAID';
   if (inv.status === 'CANCELLED') return 'CANCELLED';
   if (inv.status === 'PENDING') {
-    const due = new Date(String(inv.dueDate).slice(0, 10) + 'T23:59:59');
+    const due = new Date(inv.dueDate as any);
     return due < new Date() ? 'OVERDUE' : 'PENDING';
   }
   return 'PENDING';
@@ -77,11 +77,7 @@ onMounted(async () => {
 
 const formatDate = (date: any): string => {
   if (!date) return '—';
-  return new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(date)) ? `${date}T12:00:00` : date).toLocaleDateString('es-CO', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+  return new Date(date).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
 const formatAmount = (amount: any): string => {
@@ -116,34 +112,66 @@ const downloadInvoice = async (inv: IInvoice) => {
 <template>
   <div class="mf-wrapper">
     <!-- Loading -->
-    <div v-if="loading" class="mf-loading">
+    <div v-if="loading" class="mf-loading" role="status">
       <div class="mf-spinner"></div>
       <p>Cargando tus facturas...</p>
     </div>
 
     <!-- Error: no person linked -->
-    <div v-else-if="error" class="mf-error-state">
+    <div v-else-if="error" class="mf-error-state" role="alert">
       <div class="mf-error-state__icon">⚠️</div>
-      <h3>Sin perfil de suscriptor</h3>
+      <h3>No pudimos mostrar tus facturas</h3>
       <p>{{ error }}</p>
     </div>
 
     <template v-else>
       <!-- Summary cards -->
       <div class="mf-summary">
-        <div class="mf-sum-card mf-sum-card--blue" @click="filterStatus = ''">
+        <div
+          class="mf-sum-card mf-sum-card--blue"
+          @click="filterStatus = ''"
+          role="button"
+          tabindex="0"
+          @keydown.enter="filterStatus = ''"
+          @keydown.space.prevent="filterStatus = ''"
+          :aria-pressed="filterStatus === ''"
+        >
           <p class="mf-sum-card__label">Total Facturas</p>
           <p class="mf-sum-card__val">{{ summary.total }}</p>
         </div>
-        <div class="mf-sum-card mf-sum-card--yellow" @click="filterStatus = 'PENDING'">
+        <div
+          class="mf-sum-card mf-sum-card--yellow"
+          @click="filterStatus = 'PENDING'"
+          role="button"
+          tabindex="0"
+          @keydown.enter="filterStatus = 'PENDING'"
+          @keydown.space.prevent="filterStatus = 'PENDING'"
+          :aria-pressed="filterStatus === 'PENDING'"
+        >
           <p class="mf-sum-card__label">Pendientes</p>
           <p class="mf-sum-card__val">{{ summary.pending }}</p>
         </div>
-        <div class="mf-sum-card mf-sum-card--red" @click="filterStatus = 'OVERDUE'">
+        <div
+          class="mf-sum-card mf-sum-card--red"
+          @click="filterStatus = 'OVERDUE'"
+          role="button"
+          tabindex="0"
+          @keydown.enter="filterStatus = 'OVERDUE'"
+          @keydown.space.prevent="filterStatus = 'OVERDUE'"
+          :aria-pressed="filterStatus === 'OVERDUE'"
+        >
           <p class="mf-sum-card__label">En Mora</p>
           <p class="mf-sum-card__val">{{ summary.overdue }}</p>
         </div>
-        <div class="mf-sum-card mf-sum-card--green" @click="filterStatus = 'PAID'">
+        <div
+          class="mf-sum-card mf-sum-card--green"
+          @click="filterStatus = 'PAID'"
+          role="button"
+          tabindex="0"
+          @keydown.enter="filterStatus = 'PAID'"
+          @keydown.space.prevent="filterStatus = 'PAID'"
+          :aria-pressed="filterStatus === 'PAID'"
+        >
           <p class="mf-sum-card__label">Pagadas</p>
           <p class="mf-sum-card__val">{{ summary.paid }}</p>
         </div>
@@ -161,6 +189,7 @@ const downloadInvoice = async (inv: IInvoice) => {
             v-for="opt in filterOptions"
             :key="opt.value"
             :class="['mf-filter-btn', { active: filterStatus === opt.value }]"
+            :aria-pressed="filterStatus === opt.value"
             @click="filterStatus = opt.value"
           >
             {{ opt.label }}
@@ -179,7 +208,13 @@ const downloadInvoice = async (inv: IInvoice) => {
       </div>
 
       <!-- Table -->
-      <div v-else class="mf-table-wrap">
+      <div
+        v-else
+        class="mf-table-wrap"
+        tabindex="0"
+        role="region"
+        aria-label="Historial de facturas. Desplaza horizontalmente para ver todas las columnas"
+      >
         <table class="mf-table">
           <thead>
             <tr>
@@ -218,9 +253,6 @@ const downloadInvoice = async (inv: IInvoice) => {
               </td>
               <td>
                 <div class="action-btns">
-                  <router-link v-if="inv.status === 'PENDING'" :to="{ path: '/pagos', query: { invoiceId: inv.id } }" class="dl-btn"
-                    >Pagar</router-link
-                  >
                   <button
                     class="dl-btn"
                     :class="{ 'dl-btn--loading': downloadingId === inv.id }"
@@ -298,6 +330,8 @@ const downloadInvoice = async (inv: IInvoice) => {
 
 <style scoped>
 .mf-wrapper {
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 20px;

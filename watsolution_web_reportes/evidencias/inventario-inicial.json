@@ -1,0 +1,4204 @@
+{
+  "files": [
+    ".dockerignore",
+    ".gitattributes",
+    ".github/workflows/security-checks.yml",
+    ".gitignore",
+    ".jhipster/Address.json",
+    ".jhipster/Invoice.json",
+    ".jhipster/Meter.json",
+    ".jhipster/Person.json",
+    ".prettierignore",
+    ".prettierrc",
+    ".yo-rc.json",
+    "client/.dockerignore",
+    "client/.postcssrc.js",
+    "client/docker-entrypoint.sh",
+    "client/Dockerfile",
+    "client/eslint.config.mjs",
+    "client/nginx.conf",
+    "client/package.json",
+    "client/railway.toml",
+    "client/src/404.html",
+    "client/src/app/account/account.service.spec.ts",
+    "client/src/app/account/account.service.ts",
+    "client/src/app/account/activate/activate.component.spec.ts",
+    "client/src/app/account/activate/activate.component.ts",
+    "client/src/app/account/activate/activate.service.ts",
+    "client/src/app/account/activate/activate.vue",
+    "client/src/app/account/change-password/change-password.component.spec.ts",
+    "client/src/app/account/change-password/change-password.component.ts",
+    "client/src/app/account/change-password/change-password.vue",
+    "client/src/app/account/login-form/login-form.component.spec.ts",
+    "client/src/app/account/login-form/login-form.component.ts",
+    "client/src/app/account/login-form/login-form.vue",
+    "client/src/app/account/login.service.ts",
+    "client/src/app/account/register/register.component.spec.ts",
+    "client/src/app/account/register/register.component.ts",
+    "client/src/app/account/register/register.service.ts",
+    "client/src/app/account/register/register.vue",
+    "client/src/app/account/reset-password/finish/reset-password-finish.component.spec.ts",
+    "client/src/app/account/reset-password/finish/reset-password-finish.component.ts",
+    "client/src/app/account/reset-password/finish/reset-password-finish.vue",
+    "client/src/app/account/reset-password/init/reset-password-init.component.spec.ts",
+    "client/src/app/account/reset-password/init/reset-password-init.component.ts",
+    "client/src/app/account/reset-password/init/reset-password-init.vue",
+    "client/src/app/account/settings/settings.component.spec.ts",
+    "client/src/app/account/settings/settings.component.ts",
+    "client/src/app/account/settings/settings.vue",
+    "client/src/app/admin/docs/docs.component.ts",
+    "client/src/app/admin/docs/docs.vue",
+    "client/src/app/admin/user-management/user-management-edit.component.spec.ts",
+    "client/src/app/admin/user-management/user-management-edit.component.ts",
+    "client/src/app/admin/user-management/user-management-edit.vue",
+    "client/src/app/admin/user-management/user-management-view.component.spec.ts",
+    "client/src/app/admin/user-management/user-management-view.component.ts",
+    "client/src/app/admin/user-management/user-management-view.vue",
+    "client/src/app/admin/user-management/user-management.component.spec.ts",
+    "client/src/app/admin/user-management/user-management.component.ts",
+    "client/src/app/admin/user-management/user-management.service.ts",
+    "client/src/app/admin/user-management/user-management.vue",
+    "client/src/app/app.component.ts",
+    "client/src/app/app.vue",
+    "client/src/app/composables/useNotifications.ts",
+    "client/src/app/constants.ts",
+    "client/src/app/core/chatbot/chatbot.vue",
+    "client/src/app/core/error/error.component.spec.ts",
+    "client/src/app/core/error/error.component.ts",
+    "client/src/app/core/error/error.vue",
+    "client/src/app/core/home/features.vue",
+    "client/src/app/core/home/hero.vue",
+    "client/src/app/core/home/home.component.spec.ts",
+    "client/src/app/core/home/home.component.ts",
+    "client/src/app/core/home/home.vue",
+    "client/src/app/core/jhi-footer/jhi-footer.component.ts",
+    "client/src/app/core/jhi-footer/jhi-footer.vue",
+    "client/src/app/core/jhi-navbar/jhi-navbar.component.spec.ts",
+    "client/src/app/core/jhi-navbar/jhi-navbar.component.ts",
+    "client/src/app/core/jhi-navbar/jhi-navbar.vue",
+    "client/src/app/core/layout/footer.vue",
+    "client/src/app/core/layout/header.vue",
+    "client/src/app/core/notifications/notification-bell.vue",
+    "client/src/app/core/ribbon/ribbon.component.spec.ts",
+    "client/src/app/core/ribbon/ribbon.component.ts",
+    "client/src/app/core/ribbon/ribbon.vue",
+    "client/src/app/declarations.d.ts",
+    "client/src/app/entities/address/address-details.component.spec.ts",
+    "client/src/app/entities/address/address-details.component.ts",
+    "client/src/app/entities/address/address-details.vue",
+    "client/src/app/entities/address/address-update.component.spec.ts",
+    "client/src/app/entities/address/address-update.component.ts",
+    "client/src/app/entities/address/address-update.vue",
+    "client/src/app/entities/address/address.component.spec.ts",
+    "client/src/app/entities/address/address.component.ts",
+    "client/src/app/entities/address/address.service.spec.ts",
+    "client/src/app/entities/address/address.service.ts",
+    "client/src/app/entities/address/address.vue",
+    "client/src/app/entities/entities-menu.component.ts",
+    "client/src/app/entities/entities-menu.vue",
+    "client/src/app/entities/entities.component.ts",
+    "client/src/app/entities/entities.vue",
+    "client/src/app/entities/invoice/invoice-details.component.spec.ts",
+    "client/src/app/entities/invoice/invoice-details.component.ts",
+    "client/src/app/entities/invoice/invoice-details.vue",
+    "client/src/app/entities/invoice/invoice-payment-result.component.ts",
+    "client/src/app/entities/invoice/invoice-payment-result.vue",
+    "client/src/app/entities/invoice/invoice-update.component.spec.ts",
+    "client/src/app/entities/invoice/invoice-update.component.ts",
+    "client/src/app/entities/invoice/invoice-update.vue",
+    "client/src/app/entities/invoice/invoice.component.spec.ts",
+    "client/src/app/entities/invoice/invoice.component.ts",
+    "client/src/app/entities/invoice/invoice.service.spec.ts",
+    "client/src/app/entities/invoice/invoice.service.ts",
+    "client/src/app/entities/invoice/invoice.vue",
+    "client/src/app/entities/meter/meter-details.component.spec.ts",
+    "client/src/app/entities/meter/meter-details.component.ts",
+    "client/src/app/entities/meter/meter-details.vue",
+    "client/src/app/entities/meter/meter-update.component.spec.ts",
+    "client/src/app/entities/meter/meter-update.component.ts",
+    "client/src/app/entities/meter/meter-update.vue",
+    "client/src/app/entities/meter/meter.component.spec.ts",
+    "client/src/app/entities/meter/meter.component.ts",
+    "client/src/app/entities/meter/meter.service.spec.ts",
+    "client/src/app/entities/meter/meter.service.ts",
+    "client/src/app/entities/meter/meter.vue",
+    "client/src/app/entities/noticia/noticia.service.ts",
+    "client/src/app/entities/person/person-details.component.spec.ts",
+    "client/src/app/entities/person/person-details.component.ts",
+    "client/src/app/entities/person/person-details.vue",
+    "client/src/app/entities/person/person-update.component.spec.ts",
+    "client/src/app/entities/person/person-update.component.ts",
+    "client/src/app/entities/person/person-update.vue",
+    "client/src/app/entities/person/person.component.spec.ts",
+    "client/src/app/entities/person/person.component.ts",
+    "client/src/app/entities/person/person.service.spec.ts",
+    "client/src/app/entities/person/person.service.ts",
+    "client/src/app/entities/person/person.vue",
+    "client/src/app/entities/reporte/reporte.service.ts",
+    "client/src/app/entities/user/user.service.ts",
+    "client/src/app/locale/translation.service.ts",
+    "client/src/app/main.ts",
+    "client/src/app/router/account.ts",
+    "client/src/app/router/admin.ts",
+    "client/src/app/router/entities.ts",
+    "client/src/app/router/index.ts",
+    "client/src/app/router/pages.ts",
+    "client/src/app/router/watsolution.ts",
+    "client/src/app/services/admin.service.ts",
+    "client/src/app/services/portal.service.ts",
+    "client/src/app/shared/alert/alert.service.spec.ts",
+    "client/src/app/shared/alert/alert.service.ts",
+    "client/src/app/shared/composables/date-format.ts",
+    "client/src/app/shared/composables/index.ts",
+    "client/src/app/shared/composables/validation.ts",
+    "client/src/app/shared/computables/arrays.ts",
+    "client/src/app/shared/computables/index.ts",
+    "client/src/app/shared/config/axios-interceptor.spec.ts",
+    "client/src/app/shared/config/axios-interceptor.ts",
+    "client/src/app/shared/config/config-bootstrap-vue.ts",
+    "client/src/app/shared/config/config.ts",
+    "client/src/app/shared/config/dayjs.ts",
+    "client/src/app/shared/config/languages.ts",
+    "client/src/app/shared/config/store/account-store.ts",
+    "client/src/app/shared/config/store/news-store.ts",
+    "client/src/app/shared/config/store/translation-store.ts",
+    "client/src/app/shared/config/web-session.spec.ts",
+    "client/src/app/shared/config/web-session.ts",
+    "client/src/app/shared/data/data-utils.service.spec.ts",
+    "client/src/app/shared/data/data-utils.service.ts",
+    "client/src/app/shared/jhi-item-count.component.ts",
+    "client/src/app/shared/jhi-item-count.vue",
+    "client/src/app/shared/model/activity-log.model.ts",
+    "client/src/app/shared/model/address.model.ts",
+    "client/src/app/shared/model/enumerations/activity-action.model.ts",
+    "client/src/app/shared/model/enumerations/invoice-status.model.ts",
+    "client/src/app/shared/model/enumerations/noticia-category.model.ts",
+    "client/src/app/shared/model/enumerations/noticia-status.model.ts",
+    "client/src/app/shared/model/enumerations/person-status.model.ts",
+    "client/src/app/shared/model/enumerations/reporte-status.model.ts",
+    "client/src/app/shared/model/enumerations/reporte-type.model.ts",
+    "client/src/app/shared/model/invoice.model.ts",
+    "client/src/app/shared/model/meter.model.ts",
+    "client/src/app/shared/model/noticia.model.ts",
+    "client/src/app/shared/model/person.model.ts",
+    "client/src/app/shared/model/portal-data.model.ts",
+    "client/src/app/shared/model/reporte.model.ts",
+    "client/src/app/shared/model/user.model.ts",
+    "client/src/app/shared/security/authority.ts",
+    "client/src/app/shared/sort/jhi-sort-indicator.component.ts",
+    "client/src/app/shared/sort/jhi-sort-indicator.vue",
+    "client/src/app/shared/sort/sorts.spec.ts",
+    "client/src/app/shared/sort/sorts.ts",
+    "client/src/app/shims-vue.d.ts",
+    "client/src/app/store.ts",
+    "client/src/app/test-setup.ts",
+    "client/src/app/views/admin/admin-actividad.component.ts",
+    "client/src/app/views/admin/admin-actividad.vue",
+    "client/src/app/views/admin/admin-facturacion.component.ts",
+    "client/src/app/views/admin/admin-facturacion.vue",
+    "client/src/app/views/admin/admin-noticias.component.ts",
+    "client/src/app/views/admin/admin-noticias.vue",
+    "client/src/app/views/admin/admin-panel.component.ts",
+    "client/src/app/views/admin/admin-panel.vue",
+    "client/src/app/views/admin/admin-portal.vue",
+    "client/src/app/views/admin/admin-resumen.component.ts",
+    "client/src/app/views/admin/admin-resumen.vue",
+    "client/src/app/views/admin/admin-usuarios.component.ts",
+    "client/src/app/views/admin/admin-usuarios.vue",
+    "client/src/app/views/login/login.component.ts",
+    "client/src/app/views/login/login.vue",
+    "client/src/app/views/noticias/centro-noticias.component.ts",
+    "client/src/app/views/noticias/centro-noticias.vue",
+    "client/src/app/views/pagos/pagos.component.ts",
+    "client/src/app/views/pagos/pagos.vue",
+    "client/src/app/views/politica/politica-privacidad.vue",
+    "client/src/app/views/portal/mi-consumo.vue",
+    "client/src/app/views/portal/mis-facturas.vue",
+    "client/src/app/views/portal/portal-dashboard.component.ts",
+    "client/src/app/views/portal/portal-dashboard.vue",
+    "client/src/content/css/loading.css",
+    "client/src/content/images/jhipster_family_member_0.svg",
+    "client/src/content/images/jhipster_family_member_0_head-192.png",
+    "client/src/content/images/jhipster_family_member_0_head-256.png",
+    "client/src/content/images/jhipster_family_member_0_head-384.png",
+    "client/src/content/images/jhipster_family_member_0_head-512.png",
+    "client/src/content/images/jhipster_family_member_1.svg",
+    "client/src/content/images/jhipster_family_member_1_head-192.png",
+    "client/src/content/images/jhipster_family_member_1_head-256.png",
+    "client/src/content/images/jhipster_family_member_1_head-384.png",
+    "client/src/content/images/jhipster_family_member_1_head-512.png",
+    "client/src/content/images/jhipster_family_member_2.svg",
+    "client/src/content/images/jhipster_family_member_2_head-192.png",
+    "client/src/content/images/jhipster_family_member_2_head-256.png",
+    "client/src/content/images/jhipster_family_member_2_head-384.png",
+    "client/src/content/images/jhipster_family_member_2_head-512.png",
+    "client/src/content/images/jhipster_family_member_3.svg",
+    "client/src/content/images/jhipster_family_member_3_head-192.png",
+    "client/src/content/images/jhipster_family_member_3_head-256.png",
+    "client/src/content/images/jhipster_family_member_3_head-384.png",
+    "client/src/content/images/jhipster_family_member_3_head-512.png",
+    "client/src/content/images/logo-jhipster.png",
+    "client/src/content/scss/global.scss",
+    "client/src/content/scss/main.scss",
+    "client/src/content/scss/vendor.scss",
+    "client/src/content/scss/_bootstrap-variables.scss",
+    "client/src/content/scss/_mixins.scss",
+    "client/src/content/scss/_variables.scss",
+    "client/src/content/scss/_watsolution-mixins.scss",
+    "client/src/content/scss/_watsolution-variables.scss",
+    "client/src/favicon.ico",
+    "client/src/i18n/es/activate.json",
+    "client/src/i18n/es/address.json",
+    "client/src/i18n/es/error.json",
+    "client/src/i18n/es/es.js",
+    "client/src/i18n/es/global.json",
+    "client/src/i18n/es/home.json",
+    "client/src/i18n/es/invoice.json",
+    "client/src/i18n/es/invoiceStatus.json",
+    "client/src/i18n/es/login.json",
+    "client/src/i18n/es/meter.json",
+    "client/src/i18n/es/password.json",
+    "client/src/i18n/es/person.json",
+    "client/src/i18n/es/personStatus.json",
+    "client/src/i18n/es/register.json",
+    "client/src/i18n/es/reset.json",
+    "client/src/i18n/es/sessions.json",
+    "client/src/i18n/es/settings.json",
+    "client/src/i18n/es/user-management.json",
+    "client/src/index.html",
+    "client/src/manifest.webapp",
+    "client/src/robots.txt",
+    "client/src/swagger-ui/index.html",
+    "client/src/WEB-INF/web.xml",
+    "client/tsconfig.app.json",
+    "client/tsconfig.json",
+    "client/tsconfig.node.json",
+    "client/tsconfig.vitest.json",
+    "client/vite.config.mts",
+    "client/vitest.config.mts",
+    "docker/app.yml",
+    "docker/postgresql.yml",
+    "docker/prometheus/prometheus.yml",
+    "docker/services.yml",
+    "docker/sonar.yml",
+    "Dockerfile",
+    "package-lock.json",
+    "package.json",
+    "README.md",
+    "server/.dockerignore",
+    "server/.env",
+    "server/Dockerfile",
+    "server/e2e/account.e2e-spec.ts",
+    "server/e2e/address.e2e-spec.ts",
+    "server/e2e/app.e2e-spec.ts",
+    "server/e2e/invoice.e2e-spec.ts",
+    "server/e2e/jest.e2e.config.json",
+    "server/e2e/meter.e2e-spec.ts",
+    "server/e2e/person.e2e-spec.ts",
+    "server/e2e/setup.test.js",
+    "server/e2e/user.e2e-spec.ts",
+    "server/eslint.config.mjs",
+    "server/nest-cli.json",
+    "server/ormconfig.ts",
+    "server/package.json",
+    "server/railway.toml",
+    "server/README.md",
+    "server/scripts/copy-resources.ts",
+    "server/scripts/entrypoint.sh",
+    "server/sonar-project.properties",
+    "server/src/app.module.ts",
+    "server/src/client/header-util.ts",
+    "server/src/client/interceptors/logging.interceptor.ts",
+    "server/src/client/request.ts",
+    "server/src/config/application-dev.yml",
+    "server/src/config/application-prod.yml",
+    "server/src/config/application-test.yml",
+    "server/src/config/application.yml",
+    "server/src/config.ts",
+    "server/src/domain/activity-log.entity.ts",
+    "server/src/domain/address.entity.ts",
+    "server/src/domain/auth-session.entity.ts",
+    "server/src/domain/authority.entity.ts",
+    "server/src/domain/base/base.entity.ts",
+    "server/src/domain/base/pagination.entity.spec.ts",
+    "server/src/domain/base/pagination.entity.ts",
+    "server/src/domain/enumeration/activity-action.ts",
+    "server/src/domain/enumeration/invoice-status.ts",
+    "server/src/domain/enumeration/noticia-category.ts",
+    "server/src/domain/enumeration/noticia-status.ts",
+    "server/src/domain/enumeration/person-status.ts",
+    "server/src/domain/enumeration/reporte-status.ts",
+    "server/src/domain/enumeration/reporte-type.ts",
+    "server/src/domain/invoice.entity.ts",
+    "server/src/domain/meter.entity.ts",
+    "server/src/domain/mobile-operation.entity.ts",
+    "server/src/domain/noticia.entity.ts",
+    "server/src/domain/notification.entity.ts",
+    "server/src/domain/person.entity.ts",
+    "server/src/domain/reporte.entity.ts",
+    "server/src/domain/user.entity.ts",
+    "server/src/main.ts",
+    "server/src/migrations/1570200270081-CreateTables.ts",
+    "server/src/migrations/1570200490072-SeedUsersRoles.ts",
+    "server/src/migrations/1747000000000-AddInvoiceRateFields.ts",
+    "server/src/migrations/1747000000001-FixInvoiceColumns.ts",
+    "server/src/migrations/1748000000000-AddBoldFieldsToInvoice.ts",
+    "server/src/migrations/1749000000001-AddDocumentEmbeddings.ts",
+    "server/src/migrations/1749100000000-AddNotifications.ts",
+    "server/src/migrations/1791158400000-SecureMobile.ts",
+    "server/src/module/activity-log.module.ts",
+    "server/src/module/address.module.ts",
+    "server/src/module/admin.module.ts",
+    "server/src/module/ai.module.ts",
+    "server/src/module/auth.module.ts",
+    "server/src/module/bold.module.ts",
+    "server/src/module/invoice.module.ts",
+    "server/src/module/meter.module.ts",
+    "server/src/module/mobile.module.ts",
+    "server/src/module/noticia.module.ts",
+    "server/src/module/notification.module.ts",
+    "server/src/module/person.module.ts",
+    "server/src/module/portal.module.ts",
+    "server/src/module/reporte.module.ts",
+    "server/src/module/user.module.ts",
+    "server/src/orm.config.ts",
+    "server/src/secure-migration.ts",
+    "server/src/security/decorators/auth-user.decorator.ts",
+    "server/src/security/decorators/roles.decorator.ts",
+    "server/src/security/guards/auth.guard.ts",
+    "server/src/security/guards/record-access.guard.ts",
+    "server/src/security/guards/roles.guard.ts",
+    "server/src/security/index.ts",
+    "server/src/security/jwt-settings.ts",
+    "server/src/security/login-rate-limit.service.ts",
+    "server/src/security/passport.jwt.strategy.spec.ts",
+    "server/src/security/passport.jwt.strategy.ts",
+    "server/src/security/password-policy.ts",
+    "server/src/security/password-util.ts",
+    "server/src/security/payload.interface.ts",
+    "server/src/security/role-type.ts",
+    "server/src/security/security-baseline.spec.ts",
+    "server/src/security/web-session.ts",
+    "server/src/service/activity-log.service.ts",
+    "server/src/service/address.service.ts",
+    "server/src/service/admin-stats.service.ts",
+    "server/src/service/ai.service.ts",
+    "server/src/service/auth.service.ts",
+    "server/src/service/billing.service.spec.ts",
+    "server/src/service/billing.service.ts",
+    "server/src/service/bold.service.spec.ts",
+    "server/src/service/bold.service.ts",
+    "server/src/service/bucket.service.ts",
+    "server/src/service/dto/activity-log.dto.ts",
+    "server/src/service/dto/address.dto.ts",
+    "server/src/service/dto/admin-stats.dto.ts",
+    "server/src/service/dto/base.dto.ts",
+    "server/src/service/dto/billing-form.dto.ts",
+    "server/src/service/dto/create-person-with-account.dto.ts",
+    "server/src/service/dto/invoice.dto.ts",
+    "server/src/service/dto/meter.dto.ts",
+    "server/src/service/dto/noticia.dto.ts",
+    "server/src/service/dto/password-change.dto.ts",
+    "server/src/service/dto/person.dto.ts",
+    "server/src/service/dto/portal-data.dto.ts",
+    "server/src/service/dto/reporte.dto.ts",
+    "server/src/service/dto/user-login.dto.ts",
+    "server/src/service/dto/user.dto.ts",
+    "server/src/service/invoice-pdf.service.ts",
+    "server/src/service/invoice.service.ts",
+    "server/src/service/mapper/activity-log.mapper.ts",
+    "server/src/service/mapper/address.mapper.ts",
+    "server/src/service/mapper/invoice.mapper.ts",
+    "server/src/service/mapper/meter.mapper.ts",
+    "server/src/service/mapper/noticia.mapper.ts",
+    "server/src/service/mapper/person.mapper.ts",
+    "server/src/service/mapper/reporte.mapper.ts",
+    "server/src/service/mapper/user.mapper.ts",
+    "server/src/service/meter.service.ts",
+    "server/src/service/mobile.service.spec.ts",
+    "server/src/service/mobile.service.ts",
+    "server/src/service/noticia.service.ts",
+    "server/src/service/notification.service.ts",
+    "server/src/service/person.service.ts",
+    "server/src/service/portal.service.ts",
+    "server/src/service/privacy.spec.ts",
+    "server/src/service/reporte.service.ts",
+    "server/src/service/session.service.spec.ts",
+    "server/src/service/session.service.ts",
+    "server/src/service/user.service.ts",
+    "server/src/swagger.ts",
+    "server/src/web/rest/account.controller.ts",
+    "server/src/web/rest/address.controller.ts",
+    "server/src/web/rest/admin.controller.ts",
+    "server/src/web/rest/ai.controller.ts",
+    "server/src/web/rest/bold.controller.ts",
+    "server/src/web/rest/invoice.controller.ts",
+    "server/src/web/rest/management.controller.ts",
+    "server/src/web/rest/meter.controller.ts",
+    "server/src/web/rest/mobile.controller.ts",
+    "server/src/web/rest/noticia.controller.ts",
+    "server/src/web/rest/notification.controller.ts",
+    "server/src/web/rest/person.controller.ts",
+    "server/src/web/rest/portal.controller.ts",
+    "server/src/web/rest/public-noticias.controller.ts",
+    "server/src/web/rest/public.user.controller.ts",
+    "server/src/web/rest/reporte.controller.ts",
+    "server/src/web/rest/session.controller.ts",
+    "server/src/web/rest/tank-level.gateway.ts",
+    "server/src/web/rest/user.controller.ts",
+    "server/src/web/rest/user.jwt.controller.ts",
+    "server/test/admin/management.controller.spec.ts",
+    "server/tsconfig.build.json",
+    "server/tsconfig.json",
+    "server/webpack.server.prod.config.js",
+    "sonar-project.properties",
+    "test/watsolution-test-plan.jmx",
+    "tmp/.vite-cache/results.json",
+    "tmp/test-results/TESTS-results-vitest.xml"
+  ],
+  "dirs": [
+    ".github",
+    ".github/workflows",
+    ".jhipster",
+    "client",
+    "client/src",
+    "client/src/app",
+    "client/src/app/account",
+    "client/src/app/account/activate",
+    "client/src/app/account/change-password",
+    "client/src/app/account/login-form",
+    "client/src/app/account/register",
+    "client/src/app/account/reset-password",
+    "client/src/app/account/reset-password/finish",
+    "client/src/app/account/reset-password/init",
+    "client/src/app/account/settings",
+    "client/src/app/admin",
+    "client/src/app/admin/docs",
+    "client/src/app/admin/user-management",
+    "client/src/app/composables",
+    "client/src/app/core",
+    "client/src/app/core/chatbot",
+    "client/src/app/core/error",
+    "client/src/app/core/home",
+    "client/src/app/core/jhi-footer",
+    "client/src/app/core/jhi-navbar",
+    "client/src/app/core/layout",
+    "client/src/app/core/notifications",
+    "client/src/app/core/ribbon",
+    "client/src/app/entities",
+    "client/src/app/entities/address",
+    "client/src/app/entities/invoice",
+    "client/src/app/entities/meter",
+    "client/src/app/entities/noticia",
+    "client/src/app/entities/person",
+    "client/src/app/entities/reporte",
+    "client/src/app/entities/user",
+    "client/src/app/locale",
+    "client/src/app/router",
+    "client/src/app/services",
+    "client/src/app/shared",
+    "client/src/app/shared/alert",
+    "client/src/app/shared/composables",
+    "client/src/app/shared/computables",
+    "client/src/app/shared/config",
+    "client/src/app/shared/config/store",
+    "client/src/app/shared/data",
+    "client/src/app/shared/model",
+    "client/src/app/shared/model/enumerations",
+    "client/src/app/shared/security",
+    "client/src/app/shared/sort",
+    "client/src/app/views",
+    "client/src/app/views/admin",
+    "client/src/app/views/login",
+    "client/src/app/views/noticias",
+    "client/src/app/views/pagos",
+    "client/src/app/views/politica",
+    "client/src/app/views/portal",
+    "client/src/content",
+    "client/src/content/css",
+    "client/src/content/images",
+    "client/src/content/scss",
+    "client/src/i18n",
+    "client/src/i18n/es",
+    "client/src/swagger-ui",
+    "client/src/WEB-INF",
+    "docker",
+    "docker/prometheus",
+    "server",
+    "server/e2e",
+    "server/scripts",
+    "server/src",
+    "server/src/client",
+    "server/src/client/interceptors",
+    "server/src/config",
+    "server/src/domain",
+    "server/src/domain/base",
+    "server/src/domain/enumeration",
+    "server/src/migrations",
+    "server/src/module",
+    "server/src/security",
+    "server/src/security/decorators",
+    "server/src/security/guards",
+    "server/src/service",
+    "server/src/service/dto",
+    "server/src/service/mapper",
+    "server/src/web",
+    "server/src/web/rest",
+    "server/test",
+    "server/test/admin",
+    "test",
+    "tmp",
+    "tmp/.vite-cache",
+    "tmp/test-results"
+  ],
+  "skip": [
+    ".git",
+    "client/node_modules",
+    "node_modules",
+    "server/dist",
+    "server/node_modules",
+    "watsolution_web_reportes"
+  ],
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "bytes": 226,
+      "sha256": "0a4ffbde63a6539bcc9b856829cae0e3c3a811b5c3f28a0426f3de1999100e0f",
+      "lines": 18,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 3563,
+      "sha256": "09c68170dfa2f6db2736ab3716b5d01cc8807e4b27b9272ec35a51d42cd51b74",
+      "lines": 151,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".github/workflows/security-checks.yml",
+      "bytes": 857,
+      "sha256": "e3fc03eba5cf917c6a90fbff2103d0c45986c7ff26256ce51c378e0faec26462",
+      "lines": 26,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 2363,
+      "sha256": "0afb4dfc986f2117ab62ce3c76e6a14736169afeaf0dc5ddeacf9e845b774bb4",
+      "lines": 167,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".jhipster/Address.json",
+      "bytes": 801,
+      "sha256": "b6eb06216013e86834fb5863d845c80977f8e70dc55609220960a376ff0dcc47",
+      "lines": 40,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".jhipster/Invoice.json",
+      "bytes": 1312,
+      "sha256": "93842918fce27390213cdc8cd0644b84ee9fa313aec1fd245600bff6dc376c1b",
+      "lines": 57,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".jhipster/Meter.json",
+      "bytes": 1025,
+      "sha256": "f1d68ce8cc945fcd21ede5e607ec2800c5e79604270247bcfe223cdbcf5c9c3d",
+      "lines": 46,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".jhipster/Person.json",
+      "bytes": 1052,
+      "sha256": "f574a50de56e043223dfc03cb9cb57b417623f8825cc402defa6612a15fdc85d",
+      "lines": 49,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".prettierignore",
+      "bytes": 94,
+      "sha256": "25e9e74dd5e5f8361e5287303498b7f64578d1c5ceb8a7191312ed8c1a9770cd",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".prettierrc",
+      "bytes": 152,
+      "sha256": "8ef63cef4d76b6c472ba82d78b5c2515fcdb46949000d5d5af8ceaf76b641940",
+      "lines": 9,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": ".yo-rc.json",
+      "bytes": 1102,
+      "sha256": "def7689a4d5a318415e8b96437b279b7844cd535233b6e8547e910082395bbf1",
+      "lines": 40,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/.dockerignore",
+      "bytes": 59,
+      "sha256": "37087df2a6198a08c2c679d36b3ae7b54ac0379099d3675f06cb388fcfc84580",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/.postcssrc.js",
+      "bytes": 255,
+      "sha256": "63f0e951b63a38a088f59c14a0c00e59057a904ad27fc1197aefc45663ea7e1a",
+      "lines": 11,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/docker-entrypoint.sh",
+      "bytes": 387,
+      "sha256": "16db696504c14af7f48b30a1e071c4a6880081216fc3db519ab120ccee5d2b95",
+      "lines": 18,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/Dockerfile",
+      "bytes": 1036,
+      "sha256": "94de0e62f507abf0b8712c33f64905163a78fa0a70dfc2f307edff37d05afb22",
+      "lines": 31,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/eslint.config.mjs",
+      "bytes": 2215,
+      "sha256": "38da3a9be8985e721fc6d78230dbcc6e36b4f1cc814adeb87935c20a357b1c9b",
+      "lines": 67,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/nginx.conf",
+      "bytes": 1314,
+      "sha256": "1ecdc5c8e56ed9f68c51428c067f8cd5077d804be2ed219a9f3086bf7636173d",
+      "lines": 39,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/package.json",
+      "bytes": 3452,
+      "sha256": "170c54d76761ff85169ba6e614a62790e5ffc1e34affd2333a46cd4cf8d42f7e",
+      "lines": 110,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/railway.toml",
+      "bytes": 140,
+      "sha256": "b046074dbf671ca9472c6b556200bdbc6497d61ce1b27df70d9cf78e38d1b79c",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/404.html",
+      "bytes": 1267,
+      "sha256": "269d0b64df040f42c5b4b791ad37df939a696d73b7cb0ffb45d6602536046e9f",
+      "lines": 59,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/account.service.spec.ts",
+      "bytes": 3923,
+      "sha256": "d71b542318129ab18dbc9439b065484e7e011dbd8f7325081e3faf7b739e25d3",
+      "lines": 111,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/account.service.ts",
+      "bytes": 2418,
+      "sha256": "114d934f4b8759b9624f878726852147c1e4de72b76781b733c224b11f6a1483",
+      "lines": 90,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/activate/activate.component.spec.ts",
+      "bytes": 1633,
+      "sha256": "dcb28429fa3e14822d85142a28a3bbb437e1683f5628fb6dee1e248e1f0dc4a2",
+      "lines": 64,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/activate/activate.component.ts",
+      "bytes": 1168,
+      "sha256": "e8b4712e6deb8796793dea73467cabcf20add23a99803fcdf51f520edae2d350",
+      "lines": 42,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/activate/activate.service.ts",
+      "bytes": 298,
+      "sha256": "57f39c512db3110e95464fd0f87e15977b146e8c344057b4a530f02e3135c813",
+      "lines": 14,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/activate/activate.vue",
+      "bytes": 609,
+      "sha256": "f0068a4a7e1396faea4e343f954d5ac05b6d3fd6da81118bb318a9c6dc1c2828",
+      "lines": 17,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/change-password/change-password.component.spec.ts",
+      "bytes": 2568,
+      "sha256": "ca56c0ff753b0c77ed955357ea072e3826c693d92e441e2a95a88a351bcf6452",
+      "lines": 85,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/change-password/change-password.component.ts",
+      "bytes": 1965,
+      "sha256": "cc01debc770808428cc6d93e37d20408c4644e116a26e7ac2165c481ba401dd6",
+      "lines": 72,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/change-password/change-password.vue",
+      "bytes": 4843,
+      "sha256": "b3379a1806edeb0d144dfb3f662208017bee3e3c98a9f2714f18dfcd8828c8ae",
+      "lines": 107,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/login-form/login-form.component.spec.ts",
+      "bytes": 3886,
+      "sha256": "ae95ebf7b6e9b13b334465c42d868a213ea45dccea5e0193aa6a5fd9420ef7ff",
+      "lines": 138,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/login-form/login-form.component.ts",
+      "bytes": 2132,
+      "sha256": "604407b17512beeacb78c8c078b3cd94a499690ec76ca311fb9b92e9c732913d",
+      "lines": 66,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/login-form/login-form.vue",
+      "bytes": 2385,
+      "sha256": "0b9f5ab06f1f3cebe9eb57fea9f75a3e796b20fb66e5ec8fc297b8c97cbc2651",
+      "lines": 68,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/login.service.ts",
+      "bytes": 387,
+      "sha256": "401d0020b61b9554c9ea787b0900ac655b8776e935aefddd8eb02a2bc86768c8",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/register/register.component.spec.ts",
+      "bytes": 4829,
+      "sha256": "b2a09ddca0c27da2b5dce561add176b15fa0f1db2098d78ebb7787ba614bab7a",
+      "lines": 136,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/register/register.component.ts",
+      "bytes": 3191,
+      "sha256": "fd704bc0e2cd0703c2aef8b8cf9aa03f55d7ce01026b9e04de89fcfa50afb0f2",
+      "lines": 102,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/register/register.service.ts",
+      "bytes": 187,
+      "sha256": "fa499eb88880aa4333a281494e6d90eda38b5a01f76fcf346a3b76178f417b58",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/register/register.vue",
+      "bytes": 8459,
+      "sha256": "e64c7bf929d191af3da4e795faab4fa394d384e2841bedafde6c97bba6c2a7f1",
+      "lines": 189,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/reset-password/finish/reset-password-finish.component.spec.ts",
+      "bytes": 1416,
+      "sha256": "9c4f210daf1427f8ae951fe62094d6a532d598af184cf65e3b8e784c4b808951",
+      "lines": 59,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/reset-password/finish/reset-password-finish.component.ts",
+      "bytes": 2178,
+      "sha256": "54747ed0051d1a88b63562f6e4076bbca66bad03d83dbdee75117ff6f23f2fdd",
+      "lines": 81,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/reset-password/finish/reset-password-finish.vue",
+      "bytes": 4270,
+      "sha256": "c12806b410ce0fc9dd1929e655fcce3b275a636cc23ba9aea631bdb778871e5f",
+      "lines": 98,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/reset-password/init/reset-password-init.component.spec.ts",
+      "bytes": 1296,
+      "sha256": "bcaeb20d632e799ae68d11caf5f8af8ae9baede4090bf2f8a7653ed5ed4e567f",
+      "lines": 53,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/reset-password/init/reset-password-init.component.ts",
+      "bytes": 1393,
+      "sha256": "f33641646a92aa118f1b2d680686de5d26105f0b46eab937eaa3ab6a0300657d",
+      "lines": 61,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/reset-password/init/reset-password-init.vue",
+      "bytes": 2589,
+      "sha256": "1c6971b0973eef348c6cf0453ec5501d165ec961f89db83f7666d92c08bed82f",
+      "lines": 69,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/settings/settings.component.spec.ts",
+      "bytes": 2869,
+      "sha256": "7258c0e9a3c5e5c559ad45169c38da00b2a504b85545a9b41e4584da7e40cb27",
+      "lines": 112,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/settings/settings.component.ts",
+      "bytes": 2113,
+      "sha256": "3a953606523691f2f43d3a044d1a26edd63343066572724a80dbabcafe4cca26",
+      "lines": 78,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/account/settings/settings.vue",
+      "bytes": 6225,
+      "sha256": "13a964f9db718517039b7806d9448458fd22445f29c2dc2df07be07b6f6fbbd6",
+      "lines": 139,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/docs/docs.component.ts",
+      "bytes": 131,
+      "sha256": "15c7b8364a0297d901004bbd0e8dbaebe0de6cca0175ee812fc0d31efe1bfc6a",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/docs/docs.vue",
+      "bytes": 285,
+      "sha256": "4c5edf08348daaf6f3f74f48f66e3bf7267fcfb062a32b241b51cce595f84eb0",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management-edit.component.spec.ts",
+      "bytes": 4720,
+      "sha256": "19e202cae316965a1f2dcd4e178ed4a66312e2d76a367b010363c3518c917de9",
+      "lines": 154,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management-edit.component.ts",
+      "bytes": 3666,
+      "sha256": "c8a870fce48119703afd2d0b64a33bbd36c4bd6beea09dfc7a78fd9bcab905af",
+      "lines": 124,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management-edit.vue",
+      "bytes": 7465,
+      "sha256": "75a0240a4f4fe3b83d6d885e201398b611dda855c3ce9bbab39bdffb83d206ae",
+      "lines": 157,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management-view.component.spec.ts",
+      "bytes": 2118,
+      "sha256": "61202f0825a1ff877da3fe82e66931351c96c88b3b4bf9f10076a92e41a5683b",
+      "lines": 85,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management-view.component.ts",
+      "bytes": 1205,
+      "sha256": "c7d3f852c7d85bb26fae9fdf1cdd2e713dc4d2a86999b4990cde0fd357831ad9",
+      "lines": 41,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management-view.vue",
+      "bytes": 2615,
+      "sha256": "59c254c6f1ba1bc6637861ba34ca6c3e6cdf4a8f89fb72db84f1440f86665ae5",
+      "lines": 60,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management.component.spec.ts",
+      "bytes": 3208,
+      "sha256": "25c1d8804f30a3b0f5273602e8363d407e0544b31bd26ae54b90cc3676b84c36",
+      "lines": 115,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management.component.ts",
+      "bytes": 4056,
+      "sha256": "e4e896eb0be824ad4bfcab0a2cb20b9bd56082ffee75a0f5210f348cc7b36c28",
+      "lines": 143,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management.service.ts",
+      "bytes": 961,
+      "sha256": "3ec10230b1fe68aae74531f3a47f838265e06239b5232c24136909c6fe9676c4",
+      "lines": 33,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/admin/user-management/user-management.vue",
+      "bytes": 7169,
+      "sha256": "a589a19c78d6fd0e22653120782e87bae9b87c79dededc4047bc6f44a39fb0e7",
+      "lines": 139,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/app.component.ts",
+      "bytes": 965,
+      "sha256": "9069076511bc4a417b457392e380941a943f7f737c90817fdc551c7a0b212ffe",
+      "lines": 34,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/app.vue",
+      "bytes": 1155,
+      "sha256": "13565956e515e670c94cc5d38f73b10e23e9d44ec3fd8a009fd316560dd60a2d",
+      "lines": 55,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/composables/useNotifications.ts",
+      "bytes": 2400,
+      "sha256": "52ad1b29a343bb2a5e0ec787726ddb72a3e1bf4b2e5174e0c73a5cb7476bf900",
+      "lines": 89,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/constants.ts",
+      "bytes": 245,
+      "sha256": "ee16c97ba22466ce1efd690b3991f3bdf3cab8e9785e23fda38af76f0edc8db6",
+      "lines": 5,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/chatbot/chatbot.vue",
+      "bytes": 10871,
+      "sha256": "36392d67a89afb69f3dc384c44aae55499a2b6cc300e99625d0fe1602e0bea44",
+      "lines": 327,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/error/error.component.spec.ts",
+      "bytes": 2839,
+      "sha256": "c5850914760798836757568611856f2afa613b2579b90b1a6be4b1d01ea46fae",
+      "lines": 111,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/error/error.component.ts",
+      "bytes": 1040,
+      "sha256": "8275877febbf91a73a9eae377f25ba5fe6ab0a7c7ff039cb486a5a46f76da63e",
+      "lines": 34,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/error/error.vue",
+      "bytes": 638,
+      "sha256": "f49b7289f0afa44acf1d0ddc0011627117ab9162203480fa594c317a9e506d37",
+      "lines": 21,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/home/features.vue",
+      "bytes": 3679,
+      "sha256": "268b1e2efbbd26736aba362680cd2b1887e328ae2f82d0f8fb43f73745dd73c1",
+      "lines": 156,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/home/hero.vue",
+      "bytes": 6062,
+      "sha256": "383b54d6c6c30f0411854390fa37113df560ded57a230ef7c3d778a9cf519215",
+      "lines": 246,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/home/home.component.spec.ts",
+      "bytes": 609,
+      "sha256": "cffa8392b3b0fbd8c522a876f362be1b12a98a7138d1420fa51f58e58dbc3616",
+      "lines": 12,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/home/home.component.ts",
+      "bytes": 673,
+      "sha256": "96a895a3b622d2a3649d56e1d28e541471f5c393fd5d5758f2bc9212be4476c3",
+      "lines": 24,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/home/home.vue",
+      "bytes": 16959,
+      "sha256": "f333f8952dd0a22a5734b35f3f65860dbe0091899fbed05db038c4174868a2f2",
+      "lines": 472,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/jhi-footer/jhi-footer.component.ts",
+      "bytes": 235,
+      "sha256": "dcf67ca5e8a2be806331b8c37a7a35a7ef7bc5d70f8cbc059d6c2ffc21a8060f",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/jhi-footer/jhi-footer.vue",
+      "bytes": 169,
+      "sha256": "65292a815a2cf6b8eeb3b2d78b1dc32e3a6a275d3aeba46fdad85d5c7e91021f",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/jhi-navbar/jhi-navbar.component.spec.ts",
+      "bytes": 3398,
+      "sha256": "d59ba1a1de352e37d6114352fc5b72692382b6ceb422d04725190e6bdafc0ed9",
+      "lines": 109,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/jhi-navbar/jhi-navbar.component.ts",
+      "bytes": 3387,
+      "sha256": "2a19d7f5e3e1f205b683fba5bccb5dc90c4f15bfa689a7daf73318a79c1d725f",
+      "lines": 102,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/jhi-navbar/jhi-navbar.vue",
+      "bytes": 4190,
+      "sha256": "6c85c9e953333cb051d5e7b9ffc904135dba9064605e5bf3c35de00e1b499817",
+      "lines": 111,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/layout/footer.vue",
+      "bytes": 3799,
+      "sha256": "c716b17cbc28c22c0acc57845be7d1f13cbfe679dbf3d6126fc457bdd345d9a9",
+      "lines": 158,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/layout/header.vue",
+      "bytes": 8775,
+      "sha256": "6ecec8cb7cd1f8a3f91cd1474cd8b9c0bcaec284a2d72033aee981dcc1c10ff4",
+      "lines": 365,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/notifications/notification-bell.vue",
+      "bytes": 4861,
+      "sha256": "52fb9d82f6f6c45b4be91f741f23cbb3f14f44f411b23136d50e077eb165c703",
+      "lines": 207,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/ribbon/ribbon.component.spec.ts",
+      "bytes": 1299,
+      "sha256": "f06b71ee8bb48a3d469e5c6593277ff49fb0bce180508bdc566ebe3b377e3860",
+      "lines": 45,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/ribbon/ribbon.component.ts",
+      "bytes": 543,
+      "sha256": "5a9d90acbcdf8fb56c5a45ea4374921d56cb1204da20fc11730f1c977b9c4c06",
+      "lines": 20,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/core/ribbon/ribbon.vue",
+      "bytes": 1099,
+      "sha256": "41aca5a9755ed105e59385c7164014c9ccb102aa0ad2dc6a86fc067160402eb7",
+      "lines": 44,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/declarations.d.ts",
+      "bytes": 394,
+      "sha256": "64d0dac0340d7ec7be2c23a5da48b516d8a6f2df6f9b90f4831fb729bbd251a8",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address-details.component.spec.ts",
+      "bytes": 2567,
+      "sha256": "2ef71674b736a28acc40c6706ddcd21c04cf5897e5ab2806f7f89af2b91c7cf1",
+      "lines": 90,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address-details.component.ts",
+      "bytes": 1224,
+      "sha256": "630c694587bf27f016aff1fe32faebed286f293072dfa25de9d48086fbce34e6",
+      "lines": 44,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address-details.vue",
+      "bytes": 2230,
+      "sha256": "91a1701d29fe7dc31af7417421e23a92086a8eab589784407b180f806510f4fb",
+      "lines": 60,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address-update.component.spec.ts",
+      "bytes": 3987,
+      "sha256": "69b6668943b38ac5823c0d7665a76b3122fec1a1049a9bee1dfa2a5c300abf18",
+      "lines": 132,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address-update.component.ts",
+      "bytes": 3107,
+      "sha256": "a0f33257cc066f498a92b82bc9fe9a050bc56b24efedec1859601991cb141bc0",
+      "lines": 101,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address-update.vue",
+      "bytes": 5033,
+      "sha256": "5f71fccad7978980f02f3a64120212c04bcd43b03024e5805da8eb7faafc9a8a",
+      "lines": 115,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address.component.spec.ts",
+      "bytes": 2969,
+      "sha256": "cab69e13885f3844605b18e1b6b735006e6c8dbddb802c75290d35e74cb316ca",
+      "lines": 101,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address.component.ts",
+      "bytes": 2180,
+      "sha256": "e5556bc6296f16c3063dc08b8c249f71e1209a9d770f73bed7dece04a7126806",
+      "lines": 79,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address.service.spec.ts",
+      "bytes": 4934,
+      "sha256": "9348a4015f6ea87bc5407fb2938293324fdb27bf2f38c39db3f4e980e41262d5",
+      "lines": 176,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address.service.ts",
+      "bytes": 1992,
+      "sha256": "981ca729ba31ad3ce935b1f60f155554dabb897de10f7f84bf4c3b63aa698f2e",
+      "lines": 86,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/address/address.vue",
+      "bytes": 5209,
+      "sha256": "017a3b99dfdf8056dd9d5f02b39f3376f6156cf071a7244dab85bfea3493616d",
+      "lines": 107,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/entities-menu.component.ts",
+      "bytes": 262,
+      "sha256": "45b663e1bbbc88f021979562c7acb34c41c1d3f83067c5b5665569a53ca6d458",
+      "lines": 14,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/entities-menu.vue",
+      "bytes": 883,
+      "sha256": "3b51b6cd6796c4cfdc67855523127c481ce1843098c906e73c3d0f0773b8cb36",
+      "lines": 24,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/entities.component.ts",
+      "bytes": 951,
+      "sha256": "ffb00cabc9036d56387b9042d4abcc95291e26643b8c9448c0331e3377643a3a",
+      "lines": 22,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/entities.vue",
+      "bytes": 117,
+      "sha256": "3178f17eacadc6a6df8037c4f43d0a01543f70fdd79fa26a48955e4a7325f822",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-details.component.spec.ts",
+      "bytes": 2567,
+      "sha256": "4b3fc62f392ae96f24123ef1b0333eb7b7584f853d70b22984a8ee2757695f6e",
+      "lines": 90,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-details.component.ts",
+      "bytes": 3474,
+      "sha256": "5fad70aa0d6cc8bb8170c9a56094c345db9f2e18ca9a2734d3c5db0b17e2b01c",
+      "lines": 97,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-details.vue",
+      "bytes": 3690,
+      "sha256": "de6fe9f2d57da64ca48724636c53096371b9daebaed5c147041594c7a2c04046",
+      "lines": 92,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-payment-result.component.ts",
+      "bytes": 1664,
+      "sha256": "02b9f608f8b26c188497a3a3e48361f13c607fe1ade7a1da3a99051ee876f407",
+      "lines": 55,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-payment-result.vue",
+      "bytes": 8622,
+      "sha256": "4fe62ca50be144328ea279da574ecb7ff1f1063730b7508aee408d694d02e7e3",
+      "lines": 308,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-update.component.spec.ts",
+      "bytes": 5229,
+      "sha256": "c00227aab30680e4ab9b8be870a1dd9c2ff6e897e00b3cfba55e6d2b8726552b",
+      "lines": 166,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-update.component.ts",
+      "bytes": 4476,
+      "sha256": "776a55ee87ddb6c359bc3ef653101d61d8c2c5b75a4044e6b79374ff9cb2e8e6",
+      "lines": 141,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice-update.vue",
+      "bytes": 8634,
+      "sha256": "1a908e4b68af1caa071bdce4bd064a456f24f3342211f87c59479f99ec24685a",
+      "lines": 192,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice.component.spec.ts",
+      "bytes": 4971,
+      "sha256": "8cb97ee35a791909dc50c27c589e78caa6a1c755f06b9b2269f425a5d8e28ceb",
+      "lines": 165,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice.component.ts",
+      "bytes": 3835,
+      "sha256": "d1b920d3ba65681e9e13eca7cca726dd41740530e3186bcb8ebc6d6715787812",
+      "lines": 138,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice.service.spec.ts",
+      "bytes": 6253,
+      "sha256": "221eee63f37d80439bf175a5248ce94fb7363055a28d4e6aad0a4b8f7b033b00",
+      "lines": 198,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice.service.ts",
+      "bytes": 2125,
+      "sha256": "afc76cf77329248d4e228494576c27f5c1802f3eb916f003e0ea1ef64b104a68",
+      "lines": 88,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/invoice/invoice.vue",
+      "bytes": 8060,
+      "sha256": "99da065c0559b0f3812fa1be77912c95899cabaa85a3fb990491a4e2d8fb79a8",
+      "lines": 154,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter-details.component.spec.ts",
+      "bytes": 2517,
+      "sha256": "fa8ee7a03ce12d0bce1ec4a102f71cf9224604cbb72c7bbe71ee903b371b78c3",
+      "lines": 90,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter-details.component.ts",
+      "bytes": 1304,
+      "sha256": "466b805abca1ece43767b65341706e125fbf392f1e5d816f81c2c241b61f4bdb",
+      "lines": 47,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter-details.vue",
+      "bytes": 2535,
+      "sha256": "2766c4b211f2b410bb4ee99f9d349b75b2170085ca5418730edaffab480e0d43",
+      "lines": 64,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter-update.component.spec.ts",
+      "bytes": 5157,
+      "sha256": "3282961dc38dbe9b7531034a127848cfbd7de02683683527d596572a49ab03da",
+      "lines": 166,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter-update.component.ts",
+      "bytes": 4029,
+      "sha256": "1a989a8ff01b79d2a994b1475ca440e5ea4e1873b2482d0fe1944541d6f48a54",
+      "lines": 132,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter-update.vue",
+      "bytes": 6186,
+      "sha256": "844055435af39969a2155f6c18ee3b9c941a1654d929289565bab659c2c081cb",
+      "lines": 136,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter.component.spec.ts",
+      "bytes": 4668,
+      "sha256": "001fdfe8fe01f72f72f3f29e10e6362e5e4d62ef6ed84ee1c127f091b9bbea4b",
+      "lines": 157,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter.component.ts",
+      "bytes": 4670,
+      "sha256": "3d3edb231144725085919f46949690b2ea1aabd61b4adbe0f39289a3821a025e",
+      "lines": 164,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter.service.spec.ts",
+      "bytes": 5670,
+      "sha256": "9d7e8eb028e50d3e8cb99ab284c98f2454b27c8e0da4bdee26297172a7fe78c0",
+      "lines": 185,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter.service.ts",
+      "bytes": 2095,
+      "sha256": "fe4f5ab59561275e157aa5c1ee51b2b542efd1d8a2bead6eb58932327d78fc9c",
+      "lines": 88,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/meter/meter.vue",
+      "bytes": 6935,
+      "sha256": "813b43f3a3bce25463c8ecd4aa1dd554171f18890c8f51a2464be0fff1f5b018",
+      "lines": 137,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/noticia/noticia.service.ts",
+      "bytes": 1889,
+      "sha256": "cb54808f64f3a1dab6e93733b4fc583abc60b552a5e3d1fcc016662bc85333f0",
+      "lines": 63,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person-details.component.spec.ts",
+      "bytes": 2542,
+      "sha256": "51f7b24a348a7c2ff3fa99056e2368ce67d7e369da81286634756ea97096f5f7",
+      "lines": 90,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person-details.component.ts",
+      "bytes": 1323,
+      "sha256": "4bdfa77dc3c12966784193d950557f302308e334133ca9f6a7b88d3b54d947a3",
+      "lines": 47,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person-details.vue",
+      "bytes": 2621,
+      "sha256": "6b89b709a2d8d58e5b3be01039b0413b393b7dd51c6e4f8fbad606449cdf153d",
+      "lines": 68,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person-update.component.spec.ts",
+      "bytes": 4958,
+      "sha256": "44d00107f841aef357aa24c8cd75e87be63fc5f9b2f3bf7cb8dd71cff7e36616",
+      "lines": 161,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person-update.component.ts",
+      "bytes": 3874,
+      "sha256": "0d57178a6f43788302bffe374df8cd5be32d94911cad660c98b25545a571b59e",
+      "lines": 124,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person-update.vue",
+      "bytes": 6150,
+      "sha256": "b0665bea11b1914c7eaacd87d3588cbd74550ad971ca2ed7a6d71a9e0b78bdf3",
+      "lines": 139,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person.component.spec.ts",
+      "bytes": 4703,
+      "sha256": "cc525611da6920715607ea4d226a1d587088c2224c95569db5762a1647c7b08f",
+      "lines": 157,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person.component.ts",
+      "bytes": 4689,
+      "sha256": "0889f4cc3e7d4a4d15aa2d99ce3d79ad77de82598a96a4f25702ef8069ec5638",
+      "lines": 164,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person.service.spec.ts",
+      "bytes": 5411,
+      "sha256": "6cd99c8816b32e5bf2d2470f77601a80b6601ea096d07bb018eb18205970f81e",
+      "lines": 180,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person.service.ts",
+      "bytes": 2109,
+      "sha256": "68ea446074ffa4f783f2d7c70d3ef800e43003f2041c4d99045028e7920c2f13",
+      "lines": 88,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/person/person.vue",
+      "bytes": 7108,
+      "sha256": "7674e03711e8b023b4b7ea93edd6a9ee683a2b23a6c27d024903ee2787c91a94",
+      "lines": 138,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/reporte/reporte.service.ts",
+      "bytes": 1590,
+      "sha256": "3c9350c0311c5a55eb3073d1dd96840b703674c2d0b6dc8b742a42dd152e5919",
+      "lines": 53,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/entities/user/user.service.ts",
+      "bytes": 369,
+      "sha256": "76e9618cb43c6ff6f8da5d107e3768d0fabc2c9834f64e7f7261913ff35864d8",
+      "lines": 19,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/locale/translation.service.ts",
+      "bytes": 1062,
+      "sha256": "8d5ce113ffdaa488d3c954b370323c6111873790cd8b226fb72a531ad7d5a1be",
+      "lines": 36,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/main.ts",
+      "bytes": 6150,
+      "sha256": "315564f49864c28aa3ad0a16c18718bf9f15726ebcadd02905d74618f6ea3996",
+      "lines": 184,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/router/account.ts",
+      "bytes": 1271,
+      "sha256": "7b3c791b85ff7baf4a4aa198369c66cc14f327b9d669cd01761f481f7a08d4c1",
+      "lines": 44,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/router/admin.ts",
+      "bytes": 1307,
+      "sha256": "cb1c7c1ede7039fb7e2a99b4f689979dae72bf069956aae45150a3dee76c166c",
+      "lines": 40,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/router/entities.ts",
+      "bytes": 3992,
+      "sha256": "9c2055c03fe320b0d4b3519eb27cda26f35c59afe8f1d0a07374812bc2b55132",
+      "lines": 132,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/router/index.ts",
+      "bytes": 1185,
+      "sha256": "9d6b07a3de6b204163d267d8715859e4298b74682fdcfefe3d7811492ab857dd",
+      "lines": 51,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/router/pages.ts",
+      "bytes": 214,
+      "sha256": "398672bf1f5b6a3771d5c7b76b6e455f71a5a52b39d1db10d53f3bf2bb3a1023",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/router/watsolution.ts",
+      "bytes": 2949,
+      "sha256": "e7be3b1e4239aca39c93a7475fea591679bb99348f2229c00564b735db9e4e10",
+      "lines": 107,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/services/admin.service.ts",
+      "bytes": 1375,
+      "sha256": "4e2728febd06a3589cbec2c8e69388c32ed9bcfe264b233244f54262196ef7a0",
+      "lines": 54,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/services/portal.service.ts",
+      "bytes": 495,
+      "sha256": "60fc341e0ed775f3cbd56925fe2d5964069860b67436b6a2394f9345748d530f",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/alert/alert.service.spec.ts",
+      "bytes": 5257,
+      "sha256": "f91a28806445be41d69ee8410d0e00286dfe74b21767fd2bf0a9568216c9a716",
+      "lines": 188,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/alert/alert.service.ts",
+      "bytes": 2675,
+      "sha256": "01f0b4050a755167ecba9a2a8f81347f27ffe78c545237e5fb26838c36697111",
+      "lines": 92,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/composables/date-format.ts",
+      "bytes": 1765,
+      "sha256": "c0a0cc5aeb20f663e02a1f9c0826d0ac5e5a745e68b60277583e372ee9ebbcf8",
+      "lines": 51,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/composables/index.ts",
+      "bytes": 95,
+      "sha256": "e26e60999ce8f4c281085d1e121570acd98f778d14d293dba60c8e563a25a0f0",
+      "lines": 3,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/composables/validation.ts",
+      "bytes": 1029,
+      "sha256": "a0f3b2a5e97c0f2dddb73e71477431c415a3f91b60240a8b825e1e57c5373a46",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/computables/arrays.ts",
+      "bytes": 1937,
+      "sha256": "37bcc424bf0766a91141ad741f42a9d250fbd28e6cc72cc6ae36de1b6c236496",
+      "lines": 61,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/computables/index.ts",
+      "bytes": 27,
+      "sha256": "9c3157edfb77f6e309b6027405dd598be4c4ab4ed523be59c1b0e4873fb533f3",
+      "lines": 2,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/axios-interceptor.spec.ts",
+      "bytes": 1818,
+      "sha256": "49dca97562b1a4c41a3879995d0bf98de0ba1e55e71f491c5ecaa8f83950e9fa",
+      "lines": 30,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/axios-interceptor.ts",
+      "bytes": 2134,
+      "sha256": "be91d866852b10fc63516c213d4e857eecda7a13c5a5380bc76a829dff415a6f",
+      "lines": 46,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/config-bootstrap-vue.ts",
+      "bytes": 1632,
+      "sha256": "64c15216f37bc0f5ab596e2b0bfa9dcae7c532c6c9834e0f4b9aead24084edb8",
+      "lines": 59,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/config.ts",
+      "bytes": 8706,
+      "sha256": "e2799755b685238e103411b71395d661ac37d3d7e4de22b3237f0f35b8c8497d",
+      "lines": 215,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/dayjs.ts",
+      "bytes": 435,
+      "sha256": "9678944630c537d178c0b94411503ef4a939dcdb3d1cd89a09b95a7b67d1a728",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/languages.ts",
+      "bytes": 188,
+      "sha256": "b69ea18d2b1e8c7a04e1bdf0c2395c5acff27a151b1f64f9114fed9581f28e92",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/store/account-store.ts",
+      "bytes": 2358,
+      "sha256": "390bb74d13d46b4cd041915e6e615fbbc486e6e7816407a3b39897342c699905",
+      "lines": 74,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/store/news-store.ts",
+      "bytes": 637,
+      "sha256": "ab3d8a5cc02cf081ea6a5f5bcd4330df48bb0380de90dc89cc35e3e3aa09a03c",
+      "lines": 25,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/store/translation-store.ts",
+      "bytes": 426,
+      "sha256": "c981148cfba4b0219a125ba964a6e42bf1582ec57a68f44a5d392ab66ac86712",
+      "lines": 18,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/web-session.spec.ts",
+      "bytes": 1319,
+      "sha256": "bccd36db6bd9c530380cc36bc62da562514c77798bf938d844aa49004a228b73",
+      "lines": 21,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/config/web-session.ts",
+      "bytes": 1204,
+      "sha256": "c0cb44fac1c5bb0976ce5b0f358b28764d982a9bd04f353cad90e57084dc5d76",
+      "lines": 26,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/data/data-utils.service.spec.ts",
+      "bytes": 3846,
+      "sha256": "2edb7634f11624fdff22640043c84b05abd3971d39b7b39a4566597230ee4d32",
+      "lines": 118,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/data/data-utils.service.ts",
+      "bytes": 4395,
+      "sha256": "6ac7c31fc01f6fc7497f30c5c0c8897d632212f32e7fd9a0777cce9d97bfe8d6",
+      "lines": 161,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/jhi-item-count.component.ts",
+      "bytes": 606,
+      "sha256": "71aa6574dcd1dcb7a951d387e9fb34778c5a0291c26e6f9ecff8b54162c77e66",
+      "lines": 22,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/jhi-item-count.vue",
+      "bytes": 217,
+      "sha256": "37e6b89cb8923e39cd1390eedc3d2a18fd31a57e326ddfaa1d54862bbd165c42",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/activity-log.model.ts",
+      "bytes": 333,
+      "sha256": "0f6249731f7377ddefb81c051889ac0819291d18e83f4cef636f31920f2b5c57",
+      "lines": 12,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/address.model.ts",
+      "bytes": 524,
+      "sha256": "b3179b30033f540ead08ad2398295eb71cf7348478384b03ddd61ce6d141f819",
+      "lines": 22,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/enumerations/activity-action.model.ts",
+      "bytes": 205,
+      "sha256": "ee9e3ca6633d7e67bcfa6cd1c729bc1902873f53d46fd80c740dba301572e6fd",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/enumerations/invoice-status.model.ts",
+      "bytes": 106,
+      "sha256": "210a19e6b8a07bd09a6dbfe26375e5fa986de2d86a20621aedcc5702dbda1972",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/enumerations/noticia-category.model.ts",
+      "bytes": 122,
+      "sha256": "5ef7f7366e6c64e390437494616540a5b14f49c239b332e0b28c2d3da6aa7eb1",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/enumerations/noticia-status.model.ts",
+      "bytes": 80,
+      "sha256": "6edcb8e4447b439991f2552f3993876e745ced2edbf678ef1ad7aae2f50aff26",
+      "lines": 5,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/enumerations/person-status.model.ts",
+      "bytes": 81,
+      "sha256": "434f8e969feb66166329957933974815232a5c211dafe6afac01610ad7af43a6",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/enumerations/reporte-status.model.ts",
+      "bytes": 114,
+      "sha256": "a110abfd09d67dc794c41b5140895ce30114552095c2f0b3bcd905601dee775e",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/enumerations/reporte-type.model.ts",
+      "bytes": 112,
+      "sha256": "57cd3332e2656f970f53ab956e192f5a581bafb46d30942271a06285de3a360f",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/invoice.model.ts",
+      "bytes": 1337,
+      "sha256": "3fe952f528a58a4ca4fdb1c95278603a8cf758899252a282a9ce73ee6ecdfee5",
+      "lines": 44,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/meter.model.ts",
+      "bytes": 654,
+      "sha256": "7d48300fc4cc3da9bb595cffe371a13e926b639e3b5bc7c05844289822288c2e",
+      "lines": 25,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/noticia.model.ts",
+      "bytes": 855,
+      "sha256": "455fe747bfd13042a8da66d303fd082a96f0c42ddf25e6d80fd69533e2e27021",
+      "lines": 27,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/person.model.ts",
+      "bytes": 1217,
+      "sha256": "95adda4065886ea18cab8fe456a4d2c814d7bb56866eb9a7971b759eff12ffc5",
+      "lines": 39,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/portal-data.model.ts",
+      "bytes": 248,
+      "sha256": "240282329c1ce47b00582062f8fcfed8c9228a551fcfea03e17d8a1c35a0e321",
+      "lines": 9,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/reporte.model.ts",
+      "bytes": 782,
+      "sha256": "eb627e407e4b92cb6c17aafcc35ea508e92135a18a5cb6ab8e12f23ae66d00f6",
+      "lines": 24,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/model/user.model.ts",
+      "bytes": 791,
+      "sha256": "6d471b8d206d8453c58623eeb1a50e51c02f0737932347dc6efc1b413e15126b",
+      "lines": 34,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/security/authority.ts",
+      "bytes": 76,
+      "sha256": "26c2acd6bc556e5349aef523518cb6f6d6a97983999354fe5099402b33d1ca5c",
+      "lines": 5,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/sort/jhi-sort-indicator.component.ts",
+      "bytes": 241,
+      "sha256": "13bd67339718ce62006eb2242f363fafbf3c3a751d2bc57cd4b4e3bddb52b24b",
+      "lines": 12,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/sort/jhi-sort-indicator.vue",
+      "bytes": 222,
+      "sha256": "00e4ff2f6bb7f7d42c28553603765ccbf32ad8273c09497b7f193910408386ed",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/sort/sorts.spec.ts",
+      "bytes": 251,
+      "sha256": "31fa39301cb6ae0c1fa0331af7d048c8d91f2c0f61402d8e3c6e09dc0f005473",
+      "lines": 10,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shared/sort/sorts.ts",
+      "bytes": 418,
+      "sha256": "e3766359d9a270b2d995d7b0ec26b7059b3f8478b0a0e76038b9d903ffd7180e",
+      "lines": 14,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/shims-vue.d.ts",
+      "bytes": 148,
+      "sha256": "efbffcd265b826b3420c0187716731875a6d3fa58cce4a997654ec2ecf3009fe",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/store.ts",
+      "bytes": 452,
+      "sha256": "9d78f5d7b152a401fcd05f8aedaaacb6bc2f34720f02eec33189ff7394ca4ff9",
+      "lines": 11,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/test-setup.ts",
+      "bytes": 535,
+      "sha256": "3a65304153a10be0be8ef2c50af981740000d85c475527e1c095fd0c6da34669",
+      "lines": 22,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-actividad.component.ts",
+      "bytes": 2164,
+      "sha256": "7d7f8378d30aa3cc9fba93bb1a7e53e522c75841199b04c617a959ce5856d7a3",
+      "lines": 67,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-actividad.vue",
+      "bytes": 13085,
+      "sha256": "f01f93c9b73cd829e75706781107a1163bd7698761201f59678a306fdeafce3e",
+      "lines": 481,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-facturacion.component.ts",
+      "bytes": 3404,
+      "sha256": "2a89c69c49b243ce609de76588424cd5ad547c2e816a6440aec111d5cbc59ed4",
+      "lines": 94,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-facturacion.vue",
+      "bytes": 22490,
+      "sha256": "72b4a5d4d85587ed20f3ee7c73b101cab5be91a88f0a408820d21fb0d1a8f281",
+      "lines": 807,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-noticias.component.ts",
+      "bytes": 2980,
+      "sha256": "2b2f3d4dbf4f7324cbbdc28e4863be90efc1bbfbc4a3541641dcebc7f3b456e3",
+      "lines": 99,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-noticias.vue",
+      "bytes": 20196,
+      "sha256": "3d974b5989926a973cba236c5ef6a65d5b643491dc9ab24322b92d022db9b30c",
+      "lines": 774,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-panel.component.ts",
+      "bytes": 1436,
+      "sha256": "37722808714c59c0939f9fd9b4f7740890ab18d3c76584ee8b93b255a2dcb78b",
+      "lines": 47,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-panel.vue",
+      "bytes": 8392,
+      "sha256": "375aae7d728e0c0c5f6934a6af2dcc6a312d2962ed73faf873971c75064203aa",
+      "lines": 341,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-portal.vue",
+      "bytes": 1700,
+      "sha256": "c0e7df586c0b62158e2a8eefa78c68e91bbe5247cc6b89eab76cfd9dd84a3761",
+      "lines": 89,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-resumen.component.ts",
+      "bytes": 1736,
+      "sha256": "5d5080ff7a445df5f9c1fdebe36ef0a8cb8f7d1aa70058a6ec6b536bf35e8344",
+      "lines": 55,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-resumen.vue",
+      "bytes": 26050,
+      "sha256": "4f93ace424af66ee673e64716fda992304e5fa83e2e88ca115fb315b82a19348",
+      "lines": 939,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-usuarios.component.ts",
+      "bytes": 1952,
+      "sha256": "69fc67ddbb6d26a0969d3399a49199ac290f2f60c2d0caf60b056f32f4a88159",
+      "lines": 56,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/admin/admin-usuarios.vue",
+      "bytes": 52184,
+      "sha256": "131c2fbc7782c8a3482a9fac5d9dcaf7094254b8750428f661835e4d8c92e2a3",
+      "lines": 1740,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/login/login.component.ts",
+      "bytes": 1820,
+      "sha256": "5d1f808365319f85e8fc4b8f30671ca72a7308fa403e80c8cc689b47ddffac1d",
+      "lines": 54,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/login/login.vue",
+      "bytes": 13160,
+      "sha256": "a8fdd2d2648b4a13170ec57f829f4aae4552bc455994f0a3419be5c91f8dffb2",
+      "lines": 477,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/noticias/centro-noticias.component.ts",
+      "bytes": 1864,
+      "sha256": "253ca7d837b9e604ae9955d85d182af2d7e558b82084e99702fc3fcda8dd13d6",
+      "lines": 53,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/noticias/centro-noticias.vue",
+      "bytes": 9203,
+      "sha256": "3e1db01a222a9eb1f7c3caf88ccfdd03f9d035729e418c763fa2881a74c4d843",
+      "lines": 375,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/pagos/pagos.component.ts",
+      "bytes": 1446,
+      "sha256": "0358dbb4973cd131112039c5f0f2524a84eb17ccefc8bff7986ab4845ecbe12f",
+      "lines": 49,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/pagos/pagos.vue",
+      "bytes": 21258,
+      "sha256": "595d8075f453ba84323da963ecf8f59a38a99cc899efe6e7c62bb355eb9c97c2",
+      "lines": 610,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/politica/politica-privacidad.vue",
+      "bytes": 44629,
+      "sha256": "07efc00ddb7cc93fc79427f7689efcf8a0082b2279abfcd86402cab976194c8b",
+      "lines": 937,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/portal/mi-consumo.vue",
+      "bytes": 22093,
+      "sha256": "cfe27abda85399b1f7e906e7123ae772bac78a84854df7a72dcc01f130b13c89",
+      "lines": 763,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/portal/mis-facturas.vue",
+      "bytes": 15628,
+      "sha256": "525d2f6ce4b4c7f34c32235c6ca77d8321d179ab9343d8e0816b804eadbd52dc",
+      "lines": 587,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/portal/portal-dashboard.component.ts",
+      "bytes": 3638,
+      "sha256": "49936112c546d50ef514a58ffbe7987b975985d4a8934b709f4a31c5bec20442",
+      "lines": 108,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/app/views/portal/portal-dashboard.vue",
+      "bytes": 33487,
+      "sha256": "8e125104375e1344ed0699b31686f2f7dfe00be71adfdb03223a6160ebad12a1",
+      "lines": 1183,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/css/loading.css",
+      "bytes": 3631,
+      "sha256": "645d4a7fb11d0aa6aec9c09e0b9aea686f72c110ae76f7f65c3a1c970366c674",
+      "lines": 153,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_0.svg",
+      "bytes": 12225,
+      "sha256": "18ed58edd4bcc324ef886d5674f4548ef8d82937a205d43216f08815c18ca8e2",
+      "lines": 1,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_0_head-192.png",
+      "bytes": 13439,
+      "sha256": "baab05deaf96210f1558e3f6ee7c19de2e72201f72a42bf843228d337d1e3280",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_0_head-256.png",
+      "bytes": 7037,
+      "sha256": "c67519e69afa8625a6ad6ad8d0d91cac19f2395d2ac623f31f9cba97217572c9",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_0_head-384.png",
+      "bytes": 10350,
+      "sha256": "0501b7d383e7310b58ed2fe2906c34c496e5b9bb8b5aa90ce3a65de1f9999c6f",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_0_head-512.png",
+      "bytes": 11431,
+      "sha256": "50248079102100ffe93a696f1bf4b4fd9cbc56411d57b300c4ef42f4b1ee4c64",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_1.svg",
+      "bytes": 227303,
+      "sha256": "e25aec239170e88a890e3c0ab1e63a78c47a2afc33fb61ae36fe90546ce5f422",
+      "lines": 1,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_1_head-192.png",
+      "bytes": 7046,
+      "sha256": "ac3d4b16640c0844049c5270b5f489c0c7ad14947dffa1a384b84a052ca55814",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_1_head-256.png",
+      "bytes": 9505,
+      "sha256": "93314e17529ea3fbf527a486c015b3c4742bbf71032782b5530b83dc76924e09",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_1_head-384.png",
+      "bytes": 15054,
+      "sha256": "48a13418fdc488e705951430c42ef6012cb16cac835223a8fcfa7495724e1da3",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_1_head-512.png",
+      "bytes": 16456,
+      "sha256": "91fb65773c9c5572b6a466891d3344a669a82ea6f7aa530b42430e1b5d36d5e7",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_2.svg",
+      "bytes": 22597,
+      "sha256": "f9b847a95e3dde4bca984227f9d623d312c3462d030dedf62533b3577c76b2c3",
+      "lines": 1,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_2_head-192.png",
+      "bytes": 5423,
+      "sha256": "dab4a802f999f84bc5f85498196acf7de99712ec55720dad8bec0f07e1845770",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_2_head-256.png",
+      "bytes": 6687,
+      "sha256": "0d7a336ea1bc9f49d5ef73d58b56a7e3f4e6a6f69aaa18e9f6d41910895b5835",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_2_head-384.png",
+      "bytes": 9682,
+      "sha256": "605022b738dc2a2baac90c952dd6f9b2ab6281f4f8353955bce4d7e8a6d5077a",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_2_head-512.png",
+      "bytes": 10514,
+      "sha256": "bf42898b57624bd12c664ffea4e3ee8da3ad5987dc46c4adc705e42048332407",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_3.svg",
+      "bytes": 19098,
+      "sha256": "2b068c86012ace45ced6d85ab6a3ed74c699e7caabda5a3bbb522cc8d58ad68b",
+      "lines": 1,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_3_head-192.png",
+      "bytes": 6148,
+      "sha256": "ee9a358d7f168ca0cb85cb71df0d92f1719dc48169c32c1f469575101ad2d5b1",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_3_head-256.png",
+      "bytes": 8028,
+      "sha256": "97c29382ee672762dbda763fc6f6d65df13848778bf44d4ee468c6332f61bee8",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_3_head-384.png",
+      "bytes": 11998,
+      "sha256": "0ee7ac05310006b97fb6e89d824c2cabc662d895b72519bf877693a7139fa7a5",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/jhipster_family_member_3_head-512.png",
+      "bytes": 13555,
+      "sha256": "2b9ae26f01cccf8dc6aa9d3c3f2838efa72f7170b1af40980fb8ddc03a989586",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/images/logo-jhipster.png",
+      "bytes": 605,
+      "sha256": "3739ed3988e21170422b67e73b0585919df52f5782012c057163b63af3e6bdcc",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/global.scss",
+      "bytes": 7578,
+      "sha256": "a614ded17943da726a75cd2fbb7e4a9cc0f603824e294c4f89ca67099dbfc302",
+      "lines": 347,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/main.scss",
+      "bytes": 8151,
+      "sha256": "c6b7662c360c8f6c59516876f4e20ab978900a987a5822c2f5ecea4d9778f7b2",
+      "lines": 369,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/vendor.scss",
+      "bytes": 653,
+      "sha256": "fc2146e94b191bb68818374d0ac10c8138aabe5633665a9b067ed61f347f3db2",
+      "lines": 19,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/_bootstrap-variables.scss",
+      "bytes": 274,
+      "sha256": "18b509808f57190ff3790e24848218dda116eb0a0c8bcfe53fec47853b718e84",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/_mixins.scss",
+      "bytes": 693,
+      "sha256": "058f3a6c79c9eeb26b668db37d2074d9e28e2b91c7f3c31d8cf16b967d77f73b",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/_variables.scss",
+      "bytes": 785,
+      "sha256": "5da3b8ac7ccda95fd9b008ad75fe6671216ae33a380b0f9a78a11de858df5a80",
+      "lines": 29,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/_watsolution-mixins.scss",
+      "bytes": 703,
+      "sha256": "427b09369954e545cd0e5015af0194df27d0b393e0e91e65b7687df8cead88ba",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/content/scss/_watsolution-variables.scss",
+      "bytes": 785,
+      "sha256": "5da3b8ac7ccda95fd9b008ad75fe6671216ae33a380b0f9a78a11de858df5a80",
+      "lines": 29,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/favicon.ico",
+      "bytes": 1574,
+      "sha256": "6caeba3b5c7a7b091fab2ec1c4de2a8d48553bafb896c4c3c1c7f1e4804ab4ca",
+      "lines": null,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/activate.json",
+      "bytes": 295,
+      "sha256": "2239e48e5ac4018d9054ab6be07fba7fc6a6e8465ff120248471d6df65d8aa81",
+      "lines": 10,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/address.json",
+      "bytes": 931,
+      "sha256": "3d9da5a4cb8a7d6a4e831b9bec816aa41a1d87192ad577fa4bdbed9c3cbc2769",
+      "lines": 30,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/error.json",
+      "bytes": 525,
+      "sha256": "bc570e6a2d44a3729a3468e37c042ac54241a3f54b22470bd60fba4389c23566",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/es.js",
+      "bytes": 138,
+      "sha256": "f7ce7c6a8aef3ffb9fd1c7eff7f00301d2943c82613f58b124a4e0a7a2d24bee",
+      "lines": 4,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/global.json",
+      "bytes": 5977,
+      "sha256": "2a2636346313a45dc8e3d3b25153c536fd747ecfceaebfc197a4dff5b04f7de7",
+      "lines": 151,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/home.json",
+      "bytes": 631,
+      "sha256": "30b8d6c34837ed9c573d22601e4285ac16afe63710c77d7294ed28319333bec0",
+      "lines": 20,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/invoice.json",
+      "bytes": 992,
+      "sha256": "4cb20cdf74cbd501630b333d65a5ebf8f39206499144daede75e16af4c97b07e",
+      "lines": 32,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/invoiceStatus.json",
+      "bytes": 168,
+      "sha256": "b9e55a61966f4db5bb48327a4f2db23d84af465217e2f78d6a3898ce03ffa683",
+      "lines": 11,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/login.json",
+      "bytes": 527,
+      "sha256": "4a4a30be28b866576ab67cd4abc0807d9c0dedd783c19a42efa603c4925ecf0f",
+      "lines": 20,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/meter.json",
+      "bytes": 923,
+      "sha256": "e60f64eaa003ba2333aaf73ce32f746c2f587503e16ee63e4953a3c1a7e6d9d1",
+      "lines": 30,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/password.json",
+      "bytes": 340,
+      "sha256": "ca141476138cf3a8357948c038577717e3d55345cc593a9dde46a31802886331",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/person.json",
+      "bytes": 942,
+      "sha256": "5f18995309dfa04750069b6f31844361986877cae0bb4d6b39268f3edf14624f",
+      "lines": 31,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/personStatus.json",
+      "bytes": 140,
+      "sha256": "96ec4e6ff0866a8a6b1ecc4e5fb94e667e9c05af0e23d5c791dc607fd12fe01e",
+      "lines": 10,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/register.json",
+      "bytes": 972,
+      "sha256": "0802820600f355b0dd92783f98dc96680fe3ce2e40a2ff3e1e2a78421563d525",
+      "lines": 25,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/reset.json",
+      "bytes": 942,
+      "sha256": "9efe51a2a4f425f250c6fceebfb20f4d82ef64ef3a726db351ffe8f539b3ce87",
+      "lines": 27,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/sessions.json",
+      "bytes": 435,
+      "sha256": "80ebba46ee838951a1514780e3181093503f5842152435bafd0f8dec3bd33fa4",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/settings.json",
+      "bytes": 1195,
+      "sha256": "35d9a714659cfc9df07c29e2f94f7d1391a1ec0943df95374acb1ca6c98e47cc",
+      "lines": 33,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/i18n/es/user-management.json",
+      "bytes": 986,
+      "sha256": "29314ee61e5425fbaac247520b26abc24eb3d16e4d43f63fa6c0bc7004ffc781",
+      "lines": 32,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/index.html",
+      "bytes": 5306,
+      "sha256": "b28c0db3dd83ff84f4a9530d460bd393933e25cb5b38ce358079573cfd2023f8",
+      "lines": 125,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/manifest.webapp",
+      "bytes": 788,
+      "sha256": "669a7cfe9f8dee318db41ebc7aa364126f07039fad3e6f0501a0e0e0c51537f2",
+      "lines": 32,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/robots.txt",
+      "bytes": 226,
+      "sha256": "bde317cd91e7ea26b9e3a05792eab6fcfb8156d7985d692b5df7ccddf819082a",
+      "lines": 11,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/swagger-ui/index.html",
+      "bytes": 3971,
+      "sha256": "b754442edcaa7490eafb40c89364bdc6fd60550747f4fe5426cc9d5bf1b11ff7",
+      "lines": 116,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/src/WEB-INF/web.xml",
+      "bytes": 436,
+      "sha256": "498ad5472f7db471a392ef733adaba05e71942c839c655511e16ce8fcce58057",
+      "lines": 14,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/tsconfig.app.json",
+      "bytes": 307,
+      "sha256": "6bca564dd9e06ff3e62201e77d37ff03f6be17777d57f7bd8149a162fb049433",
+      "lines": 14,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/tsconfig.json",
+      "bytes": 205,
+      "sha256": "9f87e62f78524a00698d5ca3df2859104c8fb2e0b6166c3ded6f395fe35e1e3a",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/tsconfig.node.json",
+      "bytes": 243,
+      "sha256": "eb60472cbda3d72fb6fa033214fe38bee72ec4082fa40cf5f8dd54f6e3697929",
+      "lines": 11,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/tsconfig.vitest.json",
+      "bytes": 162,
+      "sha256": "5df5fa55e30e6e3a6b102bcb1776b233941853d97feb4cdf2d9a4e0ec1695b62",
+      "lines": 10,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/vite.config.mts",
+      "bytes": 3014,
+      "sha256": "01f0851ee4ac99bc0df40184bdf8e6f41ac7637c995ad3d6f8ce95ed7f569d62",
+      "lines": 95,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "client/vitest.config.mts",
+      "bytes": 962,
+      "sha256": "3f1b2dbab93ec60c4090756c32fc005258554503502d76a5cf52784a789bc0ee",
+      "lines": 31,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "docker/app.yml",
+      "bytes": 473,
+      "sha256": "a9675010ac104c99df08acfd1d266085a3064b9565456480cba038899555aab3",
+      "lines": 27,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "docker/postgresql.yml",
+      "bytes": 656,
+      "sha256": "fea0f5fc12f735869f857a52511e20e542fb56b9df9911c8d51c12f669a7cc80",
+      "lines": 20,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "docker/prometheus/prometheus.yml",
+      "bytes": 1302,
+      "sha256": "db244d9bb0d8ceb8ee2b43541092717a92f358e0defb314019c92fa660fae2bc",
+      "lines": 32,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "docker/services.yml",
+      "bytes": 232,
+      "sha256": "236bbe17e99351dbe1f38037a4e4676e7b74b9be6e7ecfc3fa7dbb32dd0e26f0",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "docker/sonar.yml",
+      "bytes": 684,
+      "sha256": "6d64cbc7867a0fea36c2b592a51b3459e3b72a715236bc61afd63ccd5fee8c21",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "Dockerfile",
+      "bytes": 421,
+      "sha256": "94c29cea8a88f5396a4a801b37eb6187a3e915032498bfa85ba47b70d86dfa9d",
+      "lines": 24,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 975563,
+      "sha256": "6be700f820fefb772fe1fea6abdca22bd3d706b1ad3b838e0f379301c598e02a",
+      "lines": 26985,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "package.json",
+      "bytes": 2192,
+      "sha256": "0a8a6790684ec68cac903f7c8d8fe6fa2e21be0c4de234d22072b890d613fe25",
+      "lines": 57,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "README.md",
+      "bytes": 8223,
+      "sha256": "7a875f5d47de648de5feccea7dc788ec5bb1298c5f3a223a821b45d91ba757d4",
+      "lines": 190,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/.dockerignore",
+      "bytes": 71,
+      "sha256": "0fc8a59f058bd1d9f04b2148b460288b2ade190719ccd2b82f7620d08d09460c",
+      "lines": 10,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/.env",
+      "bytes": 342,
+      "sha256": "79598ca3d30912b254b34384e6e35682b90b5ceb45d8458c4986b235a193bbf6",
+      "lines": 9,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/Dockerfile",
+      "bytes": 1223,
+      "sha256": "de3111a946d7bba0cf45dc8e7363ff4ab99a87480d5a2b49eb1287a952ffeecb",
+      "lines": 38,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/account.e2e-spec.ts",
+      "bytes": 4669,
+      "sha256": "411248a187e9dcf00023182c7824857727e8bb4f1c57506c6d613c8d51ba0dc7",
+      "lines": 133,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/address.e2e-spec.ts",
+      "bytes": 2945,
+      "sha256": "be054bcb7cc1e9dde7869fcd25aee07d32a5f6dfdcaa88dcec2dff8b95d62b45",
+      "lines": 86,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/app.e2e-spec.ts",
+      "bytes": 1400,
+      "sha256": "d768faccda96fde55ea269f9b69a084bdb59ac1a940a263286b099c8a62fcc81",
+      "lines": 43,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/invoice.e2e-spec.ts",
+      "bytes": 2933,
+      "sha256": "9c0e53d56378c391f5ee6e621d13deb672841be9fa1532598c72d5150f7d7c73",
+      "lines": 86,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/jest.e2e.config.json",
+      "bytes": 314,
+      "sha256": "6d7f8005cd7fae600e9ba1b79d47b96476ce3a24bdef1f2441277bc9b1b82fb1",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/meter.e2e-spec.ts",
+      "bytes": 2879,
+      "sha256": "6e638d4d002f377b0708d11c1f95afc51f2be31825d792e28bc6e45a1a506a96",
+      "lines": 85,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/person.e2e-spec.ts",
+      "bytes": 2891,
+      "sha256": "b337e818c2f871c43bb25604c81aa9eacf537a5272bd8d0af01b191e2e99a15d",
+      "lines": 85,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/setup.test.js",
+      "bytes": 35,
+      "sha256": "39e7aa051ffaf6c09fe9ba80e04bb1774dd1cf46a24879691dc12a6fcc5422a2",
+      "lines": 2,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/e2e/user.e2e-spec.ts",
+      "bytes": 3620,
+      "sha256": "d0cf1541cee397978649b94399c90c0a38e92a79f521922589efc84b9ffb099a",
+      "lines": 103,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/eslint.config.mjs",
+      "bytes": 1398,
+      "sha256": "549037cf01ac50b4999de04237457f977d983f0811b6b41e9c018e7829ea7be0",
+      "lines": 46,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/nest-cli.json",
+      "bytes": 89,
+      "sha256": "67da23f24ce9915cb0c2a7a40061be61a6592f2a958102164f727414b0ed5771",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/ormconfig.ts",
+      "bytes": 78,
+      "sha256": "1112bb8724f9ba63720645a6292489f130f95ba461113329a00d83423b21b000",
+      "lines": 4,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/package.json",
+      "bytes": 4066,
+      "sha256": "a9144633294276e3d98801752ed57bf77c4729069642c43d68e73d1596ba7c38",
+      "lines": 112,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/railway.toml",
+      "bytes": 176,
+      "sha256": "903f0ed50eaab8815252c838daf894232384733df88ee98690a771c391fc83fa",
+      "lines": 9,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/README.md",
+      "bytes": 6710,
+      "sha256": "bf582ffbd4e610e4b67aa138a36b66b0601e8a1f22b9259990dabd0b20e66a80",
+      "lines": 179,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/scripts/copy-resources.ts",
+      "bytes": 375,
+      "sha256": "189cb7c5b58eea405a3998ee50e8070649266463565de8a2fd586d5b5a0200d2",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/scripts/entrypoint.sh",
+      "bytes": 146,
+      "sha256": "b42daaa586c9720eac86578a32fc81c4df142a5dde62f46a193e467371fe480a",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/sonar-project.properties",
+      "bytes": 237,
+      "sha256": "99cd74eec501fabc5ec26d3654d93e4a2f515b08d24c1b7c7a3fdaa91f9f8a36",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/app.module.ts",
+      "bytes": 2300,
+      "sha256": "2cd386bd6b8ec3d3a143c2ce7843e4f9028abce14f71a7f248cdadcd6167e12f",
+      "lines": 56,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/client/header-util.ts",
+      "bytes": 2360,
+      "sha256": "1d9ff3cc251749af8be1c3556d451616ad9385d115f6167378b9270fb42e48cf",
+      "lines": 60,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/client/interceptors/logging.interceptor.ts",
+      "bytes": 566,
+      "sha256": "ec191c4447480c2590896973b335bb2538489b0f598635c4d9b6999b5d88e3d6",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/client/request.ts",
+      "bytes": 181,
+      "sha256": "01a04bbd670724fa72c3cb93005c5ef897e732da8106cb5a7760d6d148fd0234",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/config/application-dev.yml",
+      "bytes": 1754,
+      "sha256": "e79d7a8a90d4247b5635b767f5f43cf60132ef9d2a06237d924b396e57cd5225",
+      "lines": 50,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/config/application-prod.yml",
+      "bytes": 3681,
+      "sha256": "9037218648fd059606d70440bd4136cd8ebfd889d433ace4b27e8ae2c5fd8d41",
+      "lines": 74,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/config/application-test.yml",
+      "bytes": 1755,
+      "sha256": "3db3f4fd7fec042c887eab2d0cb509a447322b190a978da5fb8e8fa38f92eac4",
+      "lines": 50,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/config/application.yml",
+      "bytes": 3331,
+      "sha256": "c202f54cbbd6d7eb376c0fc7869371273f93539461fcadd01ad8694c7ca5bb1e",
+      "lines": 90,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/config.ts",
+      "bytes": 5427,
+      "sha256": "154c74aa32bc96ecf6cb5fe07f8c9ef03612ac197a07062cc1d7fcadad6ced40",
+      "lines": 140,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/activity-log.entity.ts",
+      "bytes": 992,
+      "sha256": "36167097ed4553fabb7fb39753f1c90c9f4aa6702b051a0fe2b95fc50fd80f65",
+      "lines": 34,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/address.entity.ts",
+      "bytes": 892,
+      "sha256": "1e03efb5c6b296462664a11123fa0a680d4221beb4464ba977219615f2f559bd",
+      "lines": 33,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/auth-session.entity.ts",
+      "bytes": 428,
+      "sha256": "5d3f800b9fa987f78d8ff07e84bef97a2186d31ee017a26b09dffbf1d4b8335b",
+      "lines": 12,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/authority.entity.ts",
+      "bytes": 260,
+      "sha256": "9efd7add975cfa9a2983b03c4ff5b58207eb4d038d81be0eabe1fbc20a50f389",
+      "lines": 10,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/base/base.entity.ts",
+      "bytes": 358,
+      "sha256": "299f821f205a522336678d6be8017040680103f519007db24be66e1c247a213f",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/base/pagination.entity.spec.ts",
+      "bytes": 997,
+      "sha256": "d12e3e2e49fde792cc1bc95aee8f138db8ea6157481b434df810802a87814da8",
+      "lines": 27,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/base/pagination.entity.ts",
+      "bytes": 1802,
+      "sha256": "098ccd574193ecc38a3fc9e06f0e0727838918877478a0f7dc2c1dfdd95b0e5b",
+      "lines": 66,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/enumeration/activity-action.ts",
+      "bytes": 205,
+      "sha256": "ee9e3ca6633d7e67bcfa6cd1c729bc1902873f53d46fd80c740dba301572e6fd",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/enumeration/invoice-status.ts",
+      "bytes": 106,
+      "sha256": "210a19e6b8a07bd09a6dbfe26375e5fa986de2d86a20621aedcc5702dbda1972",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/enumeration/noticia-category.ts",
+      "bytes": 122,
+      "sha256": "5ef7f7366e6c64e390437494616540a5b14f49c239b332e0b28c2d3da6aa7eb1",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/enumeration/noticia-status.ts",
+      "bytes": 80,
+      "sha256": "6edcb8e4447b439991f2552f3993876e745ced2edbf678ef1ad7aae2f50aff26",
+      "lines": 5,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/enumeration/person-status.ts",
+      "bytes": 81,
+      "sha256": "434f8e969feb66166329957933974815232a5c211dafe6afac01610ad7af43a6",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/enumeration/reporte-status.ts",
+      "bytes": 114,
+      "sha256": "a110abfd09d67dc794c41b5140895ce30114552095c2f0b3bcd905601dee775e",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/enumeration/reporte-type.ts",
+      "bytes": 112,
+      "sha256": "57cd3332e2656f970f53ab956e192f5a581bafb46d30942271a06285de3a360f",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/invoice.entity.ts",
+      "bytes": 1994,
+      "sha256": "b9692c5a3ee93fdeed2a930b89344c41628b03a4587a1f33cde783d04eb0f712",
+      "lines": 64,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/meter.entity.ts",
+      "bytes": 953,
+      "sha256": "4bc6f0213463c8fd89c0d3a0927292c46d63022eee6b3f1f06f52c370ac2106f",
+      "lines": 36,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/mobile-operation.entity.ts",
+      "bytes": 402,
+      "sha256": "54c28a9400dcf4cf0957dc3e972ce59479e6fc06fcde48aea5e42d26e5224a64",
+      "lines": 12,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/noticia.entity.ts",
+      "bytes": 1148,
+      "sha256": "11af2c0f8e1984e565713a1cb92b8d9fa56feaa7a832d54fc801424e791bc727",
+      "lines": 38,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/notification.entity.ts",
+      "bytes": 785,
+      "sha256": "937dc4d90a74b510a55b36545b446eb27e10a6cacc8ec21fee7d90df02dac6a5",
+      "lines": 31,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/person.entity.ts",
+      "bytes": 1670,
+      "sha256": "13f1bec2548465352110310b522c39e278f7b6f8f0c05957e2968014d7b6c8c8",
+      "lines": 60,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/reporte.entity.ts",
+      "bytes": 1031,
+      "sha256": "ab7de8b4a450690d3d7a0c3e618fcd62c160a3728b0b3e0aba10c2cfa9003a24",
+      "lines": 33,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/domain/user.entity.ts",
+      "bytes": 1005,
+      "sha256": "0b59992e5dce97e8ae041f59a45b7aeafb8cdf20be47b6798aec76e8ee3e400f",
+      "lines": 45,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/main.ts",
+      "bytes": 2061,
+      "sha256": "875aec836cde18bd2f0e50a1650313e80440d7be0069de56cba865b07cb002a6",
+      "lines": 55,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1570200270081-CreateTables.ts",
+      "bytes": 545,
+      "sha256": "ceadadaeb044d32752a9cf6c9b49d90d1f04622001c9e1e2ea1888afcab690ec",
+      "lines": 17,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1570200490072-SeedUsersRoles.ts",
+      "bytes": 2339,
+      "sha256": "6d2f1d91cb0a16fc6394d2446b2100ec680e20b8610adf379620e6899cbf7f6f",
+      "lines": 84,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1747000000000-AddInvoiceRateFields.ts",
+      "bytes": 553,
+      "sha256": "3d15d0ddffd00d46dac18b85325bc2a5b09cd9d7122a90567f636e3cdaac31ff",
+      "lines": 17,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1747000000001-FixInvoiceColumns.ts",
+      "bytes": 1033,
+      "sha256": "4235f2b1229e390d01b0724aa81cdc948d79d0e935bb6c207b1eea885771445c",
+      "lines": 30,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1748000000000-AddBoldFieldsToInvoice.ts",
+      "bytes": 895,
+      "sha256": "210b4f5819e5b655b28e447fa8fb455ca92c75f0cea6da8f9dba86471674a583",
+      "lines": 25,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1749000000001-AddDocumentEmbeddings.ts",
+      "bytes": 755,
+      "sha256": "a420d7fd4377a5c53f33dc0f1762a353c004a9f854641d9cc934cf4e2498ee16",
+      "lines": 21,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1749100000000-AddNotifications.ts",
+      "bytes": 932,
+      "sha256": "af24bf315d1fece01de86446131a96bb811ab85c75e4f91637c30f0b53c30c93",
+      "lines": 24,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/migrations/1791158400000-SecureMobile.ts",
+      "bytes": 1925,
+      "sha256": "ac7b739554e8a2c19e8371aff235c4501b3006a6d16367db56bafc6ef4959fd4",
+      "lines": 28,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/activity-log.module.ts",
+      "bytes": 402,
+      "sha256": "9c5e1fb6b04e0ed48589e0588326727ef61266cacc80b015c6e04ccd22e13fc8",
+      "lines": 12,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/address.module.ts",
+      "bytes": 474,
+      "sha256": "5295e26e0f8257d894c372bc0743da8de2e09c752f95fcc6454e7e577406d965",
+      "lines": 14,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/admin.module.ts",
+      "bytes": 1224,
+      "sha256": "1dc52c44ec71ac6a0ba28698b955cfca33ade57393f0bb46aa0b5c0e9f7ee62e",
+      "lines": 24,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/ai.module.ts",
+      "bytes": 468,
+      "sha256": "0d3dfc007d05bec5f50c4602de0433ab1dc69960970146ab7ef9c04158362acb",
+      "lines": 14,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/auth.module.ts",
+      "bytes": 1446,
+      "sha256": "dfa6ec86e04a78cc5bc69aef11a64d12fbe2191a0f98c1bfefda56b72783eca5",
+      "lines": 33,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/bold.module.ts",
+      "bytes": 632,
+      "sha256": "9e1a4a07f4dad29e0ede4f60f972e8ae60bf2ba2b628bf6c9b2da85c44afec63",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/invoice.module.ts",
+      "bytes": 848,
+      "sha256": "2438b61028ca977d177dab2e5999205e283673d734ce5fa43556909c9dac1d29",
+      "lines": 20,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/meter.module.ts",
+      "bytes": 527,
+      "sha256": "c2b5fb0621aba4a140989b1179230a0ed82136c7d59e3802f97c3d2dd33119bb",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/mobile.module.ts",
+      "bytes": 499,
+      "sha256": "63ed834d2092e0b701ac8222e8a83f576d6285dd935161a8e8a5a79ac8023ddb",
+      "lines": 10,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/noticia.module.ts",
+      "bytes": 584,
+      "sha256": "d1ff66da25b180144c60eeaa5943d150457e360bd29cf58d3bf75be2e184d00d",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/notification.module.ts",
+      "bytes": 644,
+      "sha256": "32d291a65f992e972fde0cf151b84257d03e245e1d1286a6d4f40aceb504d7d9",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/person.module.ts",
+      "bytes": 586,
+      "sha256": "06b147d41a99787c81d6028f7844ce827893cbf364df30b9c80a8c19535e2af2",
+      "lines": 16,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/portal.module.ts",
+      "bytes": 552,
+      "sha256": "20819012824ab766d359adc58a4b1e7e5207dd11bc669dac07ab7b9589361f61",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/reporte.module.ts",
+      "bytes": 549,
+      "sha256": "9493610a277fa61d0f58d21e9a6e7939c64369ae2f105b3a5064decd4977debf",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/module/user.module.ts",
+      "bytes": 538,
+      "sha256": "5dd5145b6712ba5f3fb209c59e006de603236db5790c8b9e50e9bb74e1d8e984",
+      "lines": 15,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/orm.config.ts",
+      "bytes": 4154,
+      "sha256": "868e308dff30637f9d4260761fc7861ccdfacfb0c2d26b0f36c87b481b2f22d6",
+      "lines": 113,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/secure-migration.ts",
+      "bytes": 1789,
+      "sha256": "d8aa062abcf881023b9d246d161e897e930362dab489848e4ffc6590ea5cf321",
+      "lines": 27,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/decorators/auth-user.decorator.ts",
+      "bytes": 247,
+      "sha256": "80f14e47cca5f97c828ec32305651dfcea978334aab283fa622e79f98e9bfecc",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/decorators/roles.decorator.ts",
+      "bytes": 173,
+      "sha256": "b222a74b99d9fc8d563c9cf248860f1c0945927812f8c3585357eb7a5f77343c",
+      "lines": 5,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/guards/auth.guard.ts",
+      "bytes": 344,
+      "sha256": "265bb01c8ba0182ce16dedfe0baa5df8b6aaa5b4c04a38b37bdfad4dae246f23",
+      "lines": 12,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/guards/record-access.guard.ts",
+      "bytes": 1759,
+      "sha256": "f5ee75507ec0ad499466be61d87566c1cde023bbfb16f65327347dba2632be01",
+      "lines": 32,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/guards/roles.guard.ts",
+      "bytes": 707,
+      "sha256": "8c8afc06ef84336981e3166890f9ecdd6ac467499bbc70913b88c28df2a8c327",
+      "lines": 22,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/index.ts",
+      "bytes": 239,
+      "sha256": "e198f25d96e5b7ac8516953415ec282432bb451263fbf1896e9c7a21aa01787f",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/jwt-settings.ts",
+      "bytes": 689,
+      "sha256": "10254acad865d6bb254416acc6f7c7ae7ff59837030ee98f7ada9ef3ae5bc7bb",
+      "lines": 18,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/login-rate-limit.service.ts",
+      "bytes": 1254,
+      "sha256": "0e9953bbd92e967bd8dc9b4a9c6dc389422b53056eb74b60c9dd17c72912b77d",
+      "lines": 28,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/passport.jwt.strategy.spec.ts",
+      "bytes": 694,
+      "sha256": "b64034d158f3c4fffdba3892fefe587f4fc97603eb3bb658108ddb52728bae15",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/passport.jwt.strategy.ts",
+      "bytes": 941,
+      "sha256": "d5ea4f2a70970e4dc2a0e1c8d7e80b72fa98a974068b2ecd590f6e4c505dca3c",
+      "lines": 30,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/password-policy.ts",
+      "bytes": 458,
+      "sha256": "1e921f64eacd8a542dd0b1bcc6a94ccd183bb294e6e128fe172ee14ebc2c7f23",
+      "lines": 8,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/password-util.ts",
+      "bytes": 626,
+      "sha256": "afdf32279fb3659a057954c0023eeaf9e886f79f2187dea181df8ed536ec6f40",
+      "lines": 19,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/payload.interface.ts",
+      "bytes": 105,
+      "sha256": "d05cec9e046d1626f4d57678e14399b60af0d33331b0ef58d0ac7ded3de210f2",
+      "lines": 7,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/role-type.ts",
+      "bytes": 148,
+      "sha256": "3cecf3dcefa2e194ff088fb709d0ba2bc5bf9c2af542d9349ca70892ea894441",
+      "lines": 9,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/security-baseline.spec.ts",
+      "bytes": 2667,
+      "sha256": "d658a2859e80dd499d0326a704010459eca6a89a237c1e8941cebe0a6afbb9d8",
+      "lines": 40,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/security/web-session.ts",
+      "bytes": 1118,
+      "sha256": "d782ddfb7d6096c1e6627c7dc19182a1ff22777930ba5e9247015fc094b2287a",
+      "lines": 18,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/activity-log.service.ts",
+      "bytes": 1512,
+      "sha256": "6f294c73feee12334e98f01ac0de5c54b09d341b55a1fe89cd14ecd7694a003d",
+      "lines": 40,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/address.service.ts",
+      "bytes": 2469,
+      "sha256": "1eb4baa4cfe4d4ed1e663262a2c453a29ef638ff220e97e728440fda34d14dba",
+      "lines": 65,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/admin-stats.service.ts",
+      "bytes": 5399,
+      "sha256": "c2f8d9c7816313078418de85f5c7ef18b55bad1b70a10b8b4dd96c4b6400a9e6",
+      "lines": 145,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/ai.service.ts",
+      "bytes": 5480,
+      "sha256": "f9c41db542a3b58d406fd398d6bb179e2bbe3d6ea9306e46935e242b06e8ffcc",
+      "lines": 116,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/auth.service.ts",
+      "bytes": 5764,
+      "sha256": "55d4d868654dee4e57f8d6697254d99514fda446b41aa48fe22fc11496c52aae",
+      "lines": 134,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/billing.service.spec.ts",
+      "bytes": 717,
+      "sha256": "ed25f357002cc1e22380d23dced7b7c5ef48c7d89ed4187752f067e5b1f2414c",
+      "lines": 9,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/billing.service.ts",
+      "bytes": 3381,
+      "sha256": "aa6a1a0a67edd162353572495fd8abeb566905a35abee7429187ff8dddfa4622",
+      "lines": 44,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/bold.service.spec.ts",
+      "bytes": 2509,
+      "sha256": "72ee295dd0278868cb312a49d8f13a346499f4ad5bc1d24a88c106a7b59579d6",
+      "lines": 36,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/bold.service.ts",
+      "bytes": 5514,
+      "sha256": "5ed6680f5745daab1d3945dcab4274cf7aecb07a4d5f4077f3b8680629f19a00",
+      "lines": 85,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/bucket.service.ts",
+      "bytes": 1389,
+      "sha256": "0da263a7aac69725dc313fe82fb8181eef38692d693660c2dfe7c944d781ad96",
+      "lines": 45,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/activity-log.dto.ts",
+      "bytes": 1032,
+      "sha256": "1aae90c182ea161e4c3ce149912953778bfb2fc77f47cfabd422307961e652af",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/address.dto.ts",
+      "bytes": 931,
+      "sha256": "51ebecf37f7c32d779df14c9456f6b11e7e625dd2fe8e8a1c09020b1881c8bd4",
+      "lines": 34,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/admin-stats.dto.ts",
+      "bytes": 1300,
+      "sha256": "9bb5583f0e234632569453a85b18bd2bfd0440f9955048772c4fe56400984c9d",
+      "lines": 61,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/base.dto.ts",
+      "bytes": 168,
+      "sha256": "bd24d6284cc7aac07b8836471310de8253bfdf7b81475135a967b6173711222d",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/billing-form.dto.ts",
+      "bytes": 940,
+      "sha256": "0ca98ccd4cb8aa9a5bb7834086da3369d43fcfb7477154763f4f1bc0e7bf1d5f",
+      "lines": 34,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/create-person-with-account.dto.ts",
+      "bytes": 1665,
+      "sha256": "b8625bf5f3bfb6f37cfdb58fad639fe4ddff6e893a70256bcee71e8c4825e00e",
+      "lines": 49,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/invoice.dto.ts",
+      "bytes": 2023,
+      "sha256": "270b3fff14332ecced164e8c8f9885bed5f8c35777147d1016960bfb5abfba71",
+      "lines": 66,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/meter.dto.ts",
+      "bytes": 1055,
+      "sha256": "8d70a141daab2af36b1974ba6403ed21f2fbb816244cdd83c843425ce02158b7",
+      "lines": 36,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/noticia.dto.ts",
+      "bytes": 1230,
+      "sha256": "627e8d31a08a7d576632ba3c7866d24606f8f596fa604408df40f74c74057868",
+      "lines": 39,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/password-change.dto.ts",
+      "bytes": 475,
+      "sha256": "47d7b3e790ce1912201b8c61e9983c967c0bfc6ba17a2df0402fbe2662609bef",
+      "lines": 18,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/person.dto.ts",
+      "bytes": 1776,
+      "sha256": "5602724b8ae61569a8e0ad7081cf1c6b89139b260aae2e65c7de60bb4402c194",
+      "lines": 58,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/portal-data.dto.ts",
+      "bytes": 924,
+      "sha256": "71cedd2bfe52f4681f7e59c900fdc47cbcc8c00927823c08de6cc481b0059e2b",
+      "lines": 32,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/reporte.dto.ts",
+      "bytes": 1090,
+      "sha256": "12d705fa6b91b7e30c13dfb1123eb5655e6251d5e9d4e606d630ea20fa4b06b9",
+      "lines": 33,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/user-login.dto.ts",
+      "bytes": 477,
+      "sha256": "996f1ef6442717db40434d9149c62861e7648ce67a9311f41fbfc11b48aaae30",
+      "lines": 19,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/dto/user.dto.ts",
+      "bytes": 1436,
+      "sha256": "145fb7ac7775f49b7b355af7db51329eb3362c984f3e2368124b04f9629475e1",
+      "lines": 56,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/invoice-pdf.service.ts",
+      "bytes": 4779,
+      "sha256": "e67ae3963b7ac93905294e14fcd4972482b6ad90166e02a4df0080095c882e1d",
+      "lines": 110,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/invoice.service.ts",
+      "bytes": 5136,
+      "sha256": "8bbe7c7248b15f94faf693dca58f51231f1dafea7d41eab68bf73e7f186578eb",
+      "lines": 120,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/activity-log.mapper.ts",
+      "bytes": 799,
+      "sha256": "76206f2717ad412f37d24772a817649cfe666f2ec89c2b5c8c352e03b658b717",
+      "lines": 29,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/address.mapper.ts",
+      "bytes": 798,
+      "sha256": "454087a306e9b27a4e9fce6c1a21baa9c9658b3011e921bee260d0c28e2ffc71",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/invoice.mapper.ts",
+      "bytes": 798,
+      "sha256": "f9997d1a119b6377a56b026de0904fa522c159171aa98966e396c16c18e566cb",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/meter.mapper.ts",
+      "bytes": 774,
+      "sha256": "62f9197a13e70992593d419b8db7a20346a9222b7df513947318891c5d1dfef8",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/noticia.mapper.ts",
+      "bytes": 753,
+      "sha256": "284fc4418eebcf1dda2a7e513d36c1bd009afcb0ec7ba1045da6f2f7c3d50a73",
+      "lines": 29,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/person.mapper.ts",
+      "bytes": 786,
+      "sha256": "ca34c6c7c5ddced6c976b394b74dfa07b7553a6db721af4a7c4c5049b55203ed",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/reporte.mapper.ts",
+      "bytes": 753,
+      "sha256": "ae7e168251474f1f803998d00562309ea56b5a940ba31dd159648ab2fc5de68d",
+      "lines": 29,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mapper/user.mapper.ts",
+      "bytes": 735,
+      "sha256": "d1388a6ce4050b2735248432d329747dd057de527326c08f1c87771a7a8e1d1f",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/meter.service.ts",
+      "bytes": 3008,
+      "sha256": "6910c481a9e876c568f40868ab93d565e2bf2f75d3032aa86743e559e24e1adb",
+      "lines": 84,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mobile.service.spec.ts",
+      "bytes": 2495,
+      "sha256": "549d18f5f85424327b1a20b5cc770b27460bee468d31b7c13eebf1d029808106",
+      "lines": 34,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/mobile.service.ts",
+      "bytes": 6910,
+      "sha256": "04b82f454ad9268a08a08eb991b8b2612f3259e5df7f398f5042ad69fa612ca2",
+      "lines": 87,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/noticia.service.ts",
+      "bytes": 2798,
+      "sha256": "df3802d043ade775f8be357788eab2f3141b97b2996eb62b0b20167cc4aba241",
+      "lines": 72,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/notification.service.ts",
+      "bytes": 4420,
+      "sha256": "7bf468ca826e1bdc316c4ee15f63567ae348b0e5fd77b3c93c211e3284ce1e46",
+      "lines": 113,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/person.service.ts",
+      "bytes": 2516,
+      "sha256": "3e11e353ae6cf66a4a9bbb89ca884511c6cc00b4bd1416fa41fb110a1df7719b",
+      "lines": 70,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/portal.service.ts",
+      "bytes": 4554,
+      "sha256": "2808deabb4497b29917fbc8a3c7e864fc731e84b0a267827254f57ef866b299c",
+      "lines": 115,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/privacy.spec.ts",
+      "bytes": 870,
+      "sha256": "0a6c1efb140f2ec19a3d5e8deccd9aeb8f893f05b7069ceadd7b78e88d4b9446",
+      "lines": 13,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/reporte.service.ts",
+      "bytes": 2919,
+      "sha256": "62c25612cf5de61332cfcd5c7e3e82dc06e3c85cacf5a482cd25290204fabffd",
+      "lines": 79,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/session.service.spec.ts",
+      "bytes": 2008,
+      "sha256": "e0c7d2a080a9172008cbb70bd73bd0b84fbb971665dcb34acce5d52a66679ba0",
+      "lines": 33,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/session.service.ts",
+      "bytes": 2640,
+      "sha256": "d32e181d10d47e616b94b27f9d0b05aa131e4827696f20a55cd0f21dbeddda17",
+      "lines": 53,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/service/user.service.ts",
+      "bytes": 3230,
+      "sha256": "dc17b27b4cc3e287f12d69a69ce97590369e390b2719a2da2608d54fafe0b58b",
+      "lines": 85,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/swagger.ts",
+      "bytes": 779,
+      "sha256": "c66578ca23d5cedbdefcba82562b9eff6c2a230151b3cefcc2b9c309828cc390",
+      "lines": 19,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/account.controller.ts",
+      "bytes": 4338,
+      "sha256": "3e3f08b1a48d40420946a11c474a84355e1cf4c9467c65eac8deba910ea313bd",
+      "lines": 140,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/address.controller.ts",
+      "bytes": 3769,
+      "sha256": "0019132999b680c2129657693fee3da54d359b5936ed550bf0d760308c21f454",
+      "lines": 116,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/admin.controller.ts",
+      "bytes": 5406,
+      "sha256": "b270bc16030b971ec1eecd8165c4ca3ccf6a82bcf739fc268b10f160f3dce430",
+      "lines": 133,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/ai.controller.ts",
+      "bytes": 1597,
+      "sha256": "7e52e9f5cd239e0556c9ef8b4386afed5e87e8f2e2ad8396323b1f58284be75a",
+      "lines": 46,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/bold.controller.ts",
+      "bytes": 2273,
+      "sha256": "e7abd684e80cdc9a93da808fe9e5af5ef0ef3ca39da401e507995178bdef40b5",
+      "lines": 53,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/invoice.controller.ts",
+      "bytes": 8988,
+      "sha256": "d46bd8aa1dacfe85a554a78e13559db99a58c5b3749ba89cd2fba2fb1cfc6bab",
+      "lines": 235,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/management.controller.ts",
+      "bytes": 750,
+      "sha256": "2f125f30c2533ffd64770fd8cfa7482340129cb5744228228e3534f30d59bcdc",
+      "lines": 25,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/meter.controller.ts",
+      "bytes": 4355,
+      "sha256": "228ad8b01ae3b97f702df5cdcd3c58970e9b8d60958ceaee4d4d9952f85d4957",
+      "lines": 132,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/mobile.controller.ts",
+      "bytes": 1938,
+      "sha256": "86ad5807b070bc55a8ee461281777d58bd139f7896af4ba3a165b73977509a5d",
+      "lines": 36,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/noticia.controller.ts",
+      "bytes": 3580,
+      "sha256": "e421b339b9974220642a2455b2f4f75c7494178c68574d6b54a0822bbdeacd3b",
+      "lines": 92,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/notification.controller.ts",
+      "bytes": 1866,
+      "sha256": "22977b38c24988bf0971a39dcf95da444a6166e8b23eae1568186b338493bc85",
+      "lines": 45,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/person.controller.ts",
+      "bytes": 7119,
+      "sha256": "da2413597c84cbb9ead925d6ee002288f6590a78ffd80444a465299967c3a30d",
+      "lines": 185,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/portal.controller.ts",
+      "bytes": 1212,
+      "sha256": "712d2a7fe10e7bb672de7c650d6a9c50ccc574c260b71c6f1d09c74b09f8fa2f",
+      "lines": 27,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/public-noticias.controller.ts",
+      "bytes": 883,
+      "sha256": "8024b849fa3c14696dcde3ee2ac53954728029700587a2eb7ac37610e01c33e4",
+      "lines": 21,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/public.user.controller.ts",
+      "bytes": 1980,
+      "sha256": "1b57ee86250258597e64d9732bd53d066f883d2258e405a989367ecc3d6ed011",
+      "lines": 56,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/reporte.controller.ts",
+      "bytes": 3082,
+      "sha256": "2d2f3efc799ba95b8c7ace2ed23a191361484fe7ab0c6ae594970f71dc42094b",
+      "lines": 83,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/session.controller.ts",
+      "bytes": 1358,
+      "sha256": "0453fe766a1bea4c08d0495dd2eb0d26846d915eb2cb9fe0bd9c01764f9863cb",
+      "lines": 30,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/tank-level.gateway.ts",
+      "bytes": 1580,
+      "sha256": "df1458574f88f85137b24f4b59bfa800c5c6a24123a0faa9b6cca45dbd633117",
+      "lines": 56,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/user.controller.ts",
+      "bytes": 5071,
+      "sha256": "685eb2bf106412cc860e672baedd188613c52ff72f5239f06b8e283f9bd87a5c",
+      "lines": 131,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/src/web/rest/user.jwt.controller.ts",
+      "bytes": 1395,
+      "sha256": "613e4a72a700baf76249f9321dd7d325c2a66e2369d8ecaddc6abb686bc3b93a",
+      "lines": 35,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/test/admin/management.controller.spec.ts",
+      "bytes": 623,
+      "sha256": "d7c31536c36d5059b90fbef704dc2e1292fd7976d0708f26156fc63f2e2ca24f",
+      "lines": 20,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/tsconfig.build.json",
+      "bytes": 97,
+      "sha256": "0bb79afa0aae2d1acd1f08c45bb92a95156d4a625e012a08d0f0afb2297bae59",
+      "lines": 6,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/tsconfig.json",
+      "bytes": 5195,
+      "sha256": "5e89fdc7fb0e8a7f98e60c5f67637dcd8b2269e9d01f784d6a1232bf69b289d6",
+      "lines": 61,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "server/webpack.server.prod.config.js",
+      "bytes": 831,
+      "sha256": "df8743b72a74ea7de64588e8e3e5042e8947811b26868f99bde5300565d38b2d",
+      "lines": 43,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "sonar-project.properties",
+      "bytes": 824,
+      "sha256": "e2210f57e2aa4f53aae5eb3745ac810b2dbd4cf9adab3341218bedda4451c4f4",
+      "lines": 19,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "test/watsolution-test-plan.jmx",
+      "bytes": 74249,
+      "sha256": "02b2107dd0d5909cdde2ccb02685e581c1d5a8d56d96680123e56521d2314c38",
+      "lines": 1229,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "tmp/.vite-cache/results.json",
+      "bytes": 3621,
+      "sha256": "65fcd57050ecd56cd1e1db82f36cb4692191951ec70430d2d91fd3cd479f0077",
+      "lines": 1,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    },
+    {
+      "path": "tmp/test-results/TESTS-results-vitest.xml",
+      "bytes": 24445,
+      "sha256": "05ca40223685c83d173a72e0a8d063c421dcbc9c0a1f02b6ad193744cc98ba97",
+      "lines": 256,
+      "state": "no revisado",
+      "notes": "Lectura y análisis por realizar"
+    }
+  ]
+}

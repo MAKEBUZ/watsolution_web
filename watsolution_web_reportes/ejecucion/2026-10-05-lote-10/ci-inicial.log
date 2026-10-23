@@ -1,0 +1,1007 @@
+﻿2026-10-06T04:35:13.7804586Z Current runner version: '2.337.0'
+2026-10-06T04:35:13.7841912Z ##[group]Runner Image Provisioner
+2026-10-06T04:35:13.7843721Z Hosted Compute Agent
+2026-10-06T04:35:13.7844800Z Version: 20260901.588
+2026-10-06T04:35:13.7846171Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-06T04:35:13.7847515Z Build Date: 2026-09-01T19:56:44Z
+2026-10-06T04:35:13.7848899Z Worker ID: {86fa1aed-3204-4ec7-80f1-caf12bad9138}
+2026-10-06T04:35:13.7850281Z Azure Region: eastus2
+2026-10-06T04:35:13.7851253Z ##[endgroup]
+2026-10-06T04:35:13.7854006Z ##[group]Operating System
+2026-10-06T04:35:13.7855069Z Ubuntu
+2026-10-06T04:35:13.7856045Z 24.04.5
+2026-10-06T04:35:13.7856933Z LTS
+2026-10-06T04:35:13.7857894Z ##[endgroup]
+2026-10-06T04:35:13.7858835Z ##[group]Runner Image
+2026-10-06T04:35:13.7859809Z Image: ubuntu-24.04
+2026-10-06T04:35:13.7860876Z Version: 20260927.320.1
+2026-10-06T04:35:13.7863076Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-06T04:35:13.7866417Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+2026-10-06T04:35:13.7868297Z ##[endgroup]
+2026-10-06T04:35:13.7870245Z ##[group]GITHUB_TOKEN Permissions
+2026-10-06T04:35:13.7873077Z Contents: read
+2026-10-06T04:35:13.7874386Z Metadata: read
+2026-10-06T04:35:13.7875311Z ##[endgroup]
+2026-10-06T04:35:13.7878569Z Secret source: Actions
+2026-10-06T04:35:13.7880364Z Cache mode: write
+2026-10-06T04:35:13.7881661Z Prepare workflow directory
+2026-10-06T04:35:13.8532442Z Prepare all required actions
+2026-10-06T04:35:13.8606743Z Getting action download info
+2026-10-06T04:35:14.0402097Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-06T04:35:14.1438110Z Download action repository 'actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-10-06T04:35:14.3351096Z Complete job name: postgres-sessions
+2026-10-06T04:35:14.3883815Z ##[group]Checking docker version
+2026-10-06T04:35:14.3896839Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+2026-10-06T04:35:14.4791778Z '1.48'
+2026-10-06T04:35:14.4806557Z Docker daemon API version: '1.48'
+2026-10-06T04:35:14.4807376Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+2026-10-06T04:35:14.4980126Z '1.48'
+2026-10-06T04:35:14.4993054Z Docker client API version: '1.48'
+2026-10-06T04:35:14.4998145Z ##[endgroup]
+2026-10-06T04:35:14.5001069Z ##[group]Clean up resources from previous jobs
+2026-10-06T04:35:14.5006674Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=32a3d9"
+2026-10-06T04:35:14.5151641Z ##[command]/usr/bin/docker network prune --force --filter "label=32a3d9"
+2026-10-06T04:35:14.5282498Z ##[endgroup]
+2026-10-06T04:35:14.5283017Z ##[group]Create local container network
+2026-10-06T04:35:14.5292837Z ##[command]/usr/bin/docker network create --label 32a3d9 github_network_ede5692f7e5d43488960759f78cb07d1
+2026-10-06T04:35:14.5804858Z 7296752e414552cd0b235f7628b9e7fd7ccf09a5efe730fd21af56c156c1829a
+2026-10-06T04:35:14.5822098Z ##[endgroup]
+2026-10-06T04:35:14.5847193Z ##[group]Starting postgres service container
+2026-10-06T04:35:14.5869129Z ##[command]/usr/bin/docker pull postgres:17
+2026-10-06T04:35:14.8792888Z 17: Pulling from library/postgres
+2026-10-06T04:35:14.9599235Z ecc510c1e359: Pulling fs layer
+2026-10-06T04:35:14.9600340Z fcdd3a481359: Pulling fs layer
+2026-10-06T04:35:14.9601323Z b86134c2eeb6: Pulling fs layer
+2026-10-06T04:35:14.9602306Z 57644501a07f: Pulling fs layer
+2026-10-06T04:35:14.9603259Z affbe3357b39: Pulling fs layer
+2026-10-06T04:35:14.9604487Z 3be737420556: Pulling fs layer
+2026-10-06T04:35:14.9605411Z e30751283c57: Pulling fs layer
+2026-10-06T04:35:14.9606394Z c5602f014e9e: Pulling fs layer
+2026-10-06T04:35:14.9607495Z c9432d362cca: Pulling fs layer
+2026-10-06T04:35:14.9608496Z dc30f2779c66: Pulling fs layer
+2026-10-06T04:35:14.9609566Z d43ee31e40df: Pulling fs layer
+2026-10-06T04:35:14.9611059Z 8aebe6431dc8: Pulling fs layer
+2026-10-06T04:35:14.9612120Z 52fc2be321a4: Pulling fs layer
+2026-10-06T04:35:14.9613170Z 99ce35cabaf9: Pulling fs layer
+2026-10-06T04:35:14.9618277Z 57644501a07f: Waiting
+2026-10-06T04:35:14.9619297Z affbe3357b39: Waiting
+2026-10-06T04:35:14.9620389Z d43ee31e40df: Waiting
+2026-10-06T04:35:14.9621334Z 3be737420556: Waiting
+2026-10-06T04:35:14.9622289Z e30751283c57: Waiting
+2026-10-06T04:35:14.9623292Z 8aebe6431dc8: Waiting
+2026-10-06T04:35:14.9625674Z 52fc2be321a4: Waiting
+2026-10-06T04:35:14.9626766Z c5602f014e9e: Waiting
+2026-10-06T04:35:14.9627692Z dc30f2779c66: Waiting
+2026-10-06T04:35:14.9628690Z 99ce35cabaf9: Waiting
+2026-10-06T04:35:14.9629737Z c9432d362cca: Waiting
+2026-10-06T04:35:15.0402112Z fcdd3a481359: Verifying Checksum
+2026-10-06T04:35:15.0404214Z fcdd3a481359: Download complete
+2026-10-06T04:35:15.1055764Z b86134c2eeb6: Verifying Checksum
+2026-10-06T04:35:15.1059502Z b86134c2eeb6: Download complete
+2026-10-06T04:35:15.1293707Z 57644501a07f: Verifying Checksum
+2026-10-06T04:35:15.1295821Z 57644501a07f: Download complete
+2026-10-06T04:35:15.1790641Z ecc510c1e359: Verifying Checksum
+2026-10-06T04:35:15.1792874Z ecc510c1e359: Download complete
+2026-10-06T04:35:15.2268958Z 3be737420556: Verifying Checksum
+2026-10-06T04:35:15.2272904Z 3be737420556: Download complete
+2026-10-06T04:35:15.2297832Z e30751283c57: Verifying Checksum
+2026-10-06T04:35:15.2300889Z e30751283c57: Download complete
+2026-10-06T04:35:15.2360689Z affbe3357b39: Download complete
+2026-10-06T04:35:15.2771028Z c5602f014e9e: Verifying Checksum
+2026-10-06T04:35:15.2776265Z c5602f014e9e: Download complete
+2026-10-06T04:35:15.2865410Z dc30f2779c66: Verifying Checksum
+2026-10-06T04:35:15.2867042Z dc30f2779c66: Download complete
+2026-10-06T04:35:15.3301140Z d43ee31e40df: Verifying Checksum
+2026-10-06T04:35:15.3302744Z d43ee31e40df: Download complete
+2026-10-06T04:35:15.3376499Z 8aebe6431dc8: Verifying Checksum
+2026-10-06T04:35:15.3378186Z 8aebe6431dc8: Download complete
+2026-10-06T04:35:15.3806214Z 52fc2be321a4: Verifying Checksum
+2026-10-06T04:35:15.3807893Z 52fc2be321a4: Download complete
+2026-10-06T04:35:15.3909142Z 99ce35cabaf9: Download complete
+2026-10-06T04:35:15.7545926Z c9432d362cca: Verifying Checksum
+2026-10-06T04:35:15.7549349Z c9432d362cca: Download complete
+2026-10-06T04:35:16.3239888Z ecc510c1e359: Pull complete
+2026-10-06T04:35:19.0844751Z fcdd3a481359: Pull complete
+2026-10-06T04:35:19.2530620Z b86134c2eeb6: Pull complete
+2026-10-06T04:35:19.3036903Z 57644501a07f: Pull complete
+2026-10-06T04:35:19.6043019Z affbe3357b39: Pull complete
+2026-10-06T04:35:19.6798773Z 3be737420556: Pull complete
+2026-10-06T04:35:19.6889368Z e30751283c57: Pull complete
+2026-10-06T04:35:19.6980134Z c5602f014e9e: Pull complete
+2026-10-06T04:35:22.7405563Z c9432d362cca: Pull complete
+2026-10-06T04:35:22.7525962Z dc30f2779c66: Pull complete
+2026-10-06T04:35:22.7633225Z d43ee31e40df: Pull complete
+2026-10-06T04:35:22.7736054Z 8aebe6431dc8: Pull complete
+2026-10-06T04:35:22.7841064Z 52fc2be321a4: Pull complete
+2026-10-06T04:35:22.7925372Z 99ce35cabaf9: Pull complete
+2026-10-06T04:35:22.7964125Z Digest: sha256:c6222b54873a2fb19591cb06b93ef2825c03cdb680396e3600f24921f340f630
+2026-10-06T04:35:22.7975240Z Status: Downloaded newer image for postgres:17
+2026-10-06T04:35:22.7985316Z docker.io/library/postgres:17
+2026-10-06T04:35:22.8056290Z ##[command]/usr/bin/docker create --name f609baa403614895962ca0575d1e216b_postgres17_dfd526 --label 32a3d9 --network github_network_ede5692f7e5d43488960759f78cb07d1 --network-alias postgres -p 55432:5432 --health-cmd "pg_isready -U ws_test -d ws_integration" --health-interval 2s --health-timeout 3s --health-retries 20 -e "POSTGRES_DB=ws_integration" -e "POSTGRES_USER=ws_test" -e "POSTGRES_PASSWORD=ws_test_only" -e GITHUB_ACTIONS=true -e CI=true postgres:17
+2026-10-06T04:35:22.8302945Z 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:35:22.8324669Z ##[command]/usr/bin/docker start 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:35:23.0475495Z 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:35:23.0493225Z ##[command]/usr/bin/docker ps --all --filter id=1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+2026-10-06T04:35:23.0649036Z 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b Up Less than a second (health: starting)
+2026-10-06T04:35:23.0669339Z ##[command]/usr/bin/docker port 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:35:23.0808772Z 5432/tcp -> 0.0.0.0:55432
+2026-10-06T04:35:23.0809465Z 5432/tcp -> [::]:55432
+2026-10-06T04:35:23.0858505Z ##[endgroup]
+2026-10-06T04:35:23.0867629Z ##[group]Waiting for all services to be ready
+2026-10-06T04:35:23.0880969Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:35:23.1029421Z starting
+2026-10-06T04:35:23.1050436Z postgres service is starting, waiting 2 seconds before checking again.
+2026-10-06T04:35:25.1046463Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:35:25.1185820Z healthy
+2026-10-06T04:35:25.1201597Z postgres service is healthy.
+2026-10-06T04:35:25.1202266Z ##[endgroup]
+2026-10-06T04:35:25.1492484Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-06T04:35:25.1493176Z with:
+2026-10-06T04:35:25.1493394Z   persist-credentials: false
+2026-10-06T04:35:25.1493895Z   repository: MAKEBUZ/watsolution_web
+2026-10-06T04:35:25.1496463Z   token: ***
+2026-10-06T04:35:25.1496674Z   ssh-strict: true
+2026-10-06T04:35:25.1496876Z   ssh-user: git
+2026-10-06T04:35:25.1497065Z   clean: true
+2026-10-06T04:35:25.1497271Z   sparse-checkout-cone-mode: true
+2026-10-06T04:35:25.1497524Z   fetch-depth: 1
+2026-10-06T04:35:25.1497721Z   fetch-tags: false
+2026-10-06T04:35:25.1497939Z   show-progress: true
+2026-10-06T04:35:25.1498146Z   lfs: false
+2026-10-06T04:35:25.1498338Z   submodules: false
+2026-10-06T04:35:25.1498541Z   set-safe-directory: true
+2026-10-06T04:35:25.1498786Z   allow-unsafe-pr-checkout: false
+2026-10-06T04:35:25.1561632Z env:
+2026-10-06T04:35:25.1561872Z   BACKEND_ENV: test
+2026-10-06T04:35:25.1562136Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:35:25.1562818Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:35:25.1563128Z ##[endgroup]
+2026-10-06T04:35:25.2548170Z Syncing repository: MAKEBUZ/watsolution_web
+2026-10-06T04:35:25.2550019Z ##[group]Getting Git version info
+2026-10-06T04:35:25.2550488Z Working directory is '/home/runner/work/watsolution_web/watsolution_web'
+2026-10-06T04:35:25.2551418Z [command]/usr/bin/git version
+2026-10-06T04:35:25.2612132Z git version 2.55.0
+2026-10-06T04:35:25.2636140Z ##[endgroup]
+2026-10-06T04:35:25.2648432Z Temporarily overriding HOME='/home/runner/work/_temp/4e640a8d-fb43-47bd-b528-c11d8b50b07c' before making global git config changes
+2026-10-06T04:35:25.2649954Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-06T04:35:25.2655664Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/watsolution_web/watsolution_web
+2026-10-06T04:35:25.2709545Z Deleting the contents of '/home/runner/work/watsolution_web/watsolution_web'
+2026-10-06T04:35:25.2712150Z ##[group]Determining repository object format
+2026-10-06T04:35:25.2714153Z ##[endgroup]
+2026-10-06T04:35:25.2719288Z ##[group]Initializing the repository
+2026-10-06T04:35:25.2719921Z [command]/usr/bin/git init /home/runner/work/watsolution_web/watsolution_web
+2026-10-06T04:35:25.2868282Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-06T04:35:25.2869197Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-06T04:35:25.2870080Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-06T04:35:25.2871196Z hint: call:
+2026-10-06T04:35:25.2871532Z hint:
+2026-10-06T04:35:25.2872009Z hint: 	git config --global init.defaultBranch <name>
+2026-10-06T04:35:25.2872535Z hint:
+2026-10-06T04:35:25.2873011Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-06T04:35:25.2874073Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-06T04:35:25.2874788Z hint:
+2026-10-06T04:35:25.2875106Z hint: 	git branch -m <name>
+2026-10-06T04:35:25.2875474Z hint:
+2026-10-06T04:35:25.2875997Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-06T04:35:25.2877297Z Initialized empty Git repository in /home/runner/work/watsolution_web/watsolution_web/.git/
+2026-10-06T04:35:25.2893212Z [command]/usr/bin/git remote add origin https://github.com/MAKEBUZ/watsolution_web
+2026-10-06T04:35:25.2949986Z ##[endgroup]
+2026-10-06T04:35:25.2950927Z ##[group]Disabling automatic garbage collection
+2026-10-06T04:35:25.2954434Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-06T04:35:25.2988707Z ##[endgroup]
+2026-10-06T04:35:25.2989420Z ##[group]Setting up auth
+2026-10-06T04:35:25.2989998Z Removing SSH command configuration
+2026-10-06T04:35:25.2997257Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-06T04:35:25.3031239Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-06T04:35:25.3488683Z Removing HTTP extra header
+2026-10-06T04:35:25.3494498Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-06T04:35:25.3531516Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-06T04:35:25.3748964Z Removing includeIf entries pointing to credentials config files
+2026-10-06T04:35:25.3755966Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-06T04:35:25.3796479Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-06T04:35:25.4024427Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-06T04:35:25.4064023Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path /home/runner/work/_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.4098750Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.4137882Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.4174396Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.4204842Z ##[endgroup]
+2026-10-06T04:35:25.4205241Z ##[group]Fetching the repository
+2026-10-06T04:35:25.4211194Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1fd3bdac5470d0063bc83528b509178facc87d71:refs/remotes/origin/test/full-ui-session-flow
+2026-10-06T04:35:25.7704649Z From https://github.com/MAKEBUZ/watsolution_web
+2026-10-06T04:35:25.7705783Z  * [new ref]         1fd3bdac5470d0063bc83528b509178facc87d71 -> origin/test/full-ui-session-flow
+2026-10-06T04:35:25.7717264Z [command]/usr/bin/git branch --list --remote origin/test/full-ui-session-flow
+2026-10-06T04:35:25.7748367Z   origin/test/full-ui-session-flow
+2026-10-06T04:35:25.7757402Z [command]/usr/bin/git rev-parse refs/remotes/origin/test/full-ui-session-flow
+2026-10-06T04:35:25.7787374Z 1fd3bdac5470d0063bc83528b509178facc87d71
+2026-10-06T04:35:25.7792103Z ##[endgroup]
+2026-10-06T04:35:25.7792482Z ##[group]Determining the checkout info
+2026-10-06T04:35:25.7799302Z ##[endgroup]
+2026-10-06T04:35:25.7799776Z [command]/usr/bin/git sparse-checkout disable
+2026-10-06T04:35:25.7864812Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-06T04:35:25.7903091Z ##[group]Checking out the ref
+2026-10-06T04:35:25.7910125Z [command]/usr/bin/git checkout --progress --force -B test/full-ui-session-flow refs/remotes/origin/test/full-ui-session-flow
+2026-10-06T04:35:25.8264581Z Switched to a new branch 'test/full-ui-session-flow'
+2026-10-06T04:35:25.8270334Z branch 'test/full-ui-session-flow' set up to track 'origin/test/full-ui-session-flow'.
+2026-10-06T04:35:25.8277651Z ##[endgroup]
+2026-10-06T04:35:25.8330524Z [command]/usr/bin/git log -1 --format=%H
+2026-10-06T04:35:25.8362570Z 1fd3bdac5470d0063bc83528b509178facc87d71
+2026-10-06T04:35:25.8372392Z ##[group]Removing auth
+2026-10-06T04:35:25.8372870Z Removing SSH command configuration
+2026-10-06T04:35:25.8377527Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-06T04:35:25.8416677Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-06T04:35:25.8646674Z Removing HTTP extra header
+2026-10-06T04:35:25.8650185Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-06T04:35:25.8684588Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-06T04:35:25.8905407Z Removing includeIf entries pointing to credentials config files
+2026-10-06T04:35:25.8914480Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-06T04:35:25.8944683Z includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path
+2026-10-06T04:35:25.8945908Z includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path
+2026-10-06T04:35:25.8946943Z includeif.gitdir:/github/workspace/.git.path
+2026-10-06T04:35:25.8947555Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-06T04:35:25.8957396Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path
+2026-10-06T04:35:25.8987698Z /home/runner/work/_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.9000996Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-a2b57587\-dd71\-42c0\-90da\-b02c666f0cc5\.config
+2026-10-06T04:35:25.9043218Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path
+2026-10-06T04:35:25.9084064Z /home/runner/work/_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.9094376Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/watsolution_web/watsolution_web/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-a2b57587\-dd71\-42c0\-90da\-b02c666f0cc5\.config
+2026-10-06T04:35:25.9130647Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-06T04:35:25.9218023Z /github/runner_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.9220954Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-a2b57587\-dd71\-42c0\-90da\-b02c666f0cc5\.config
+2026-10-06T04:35:25.9272108Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-06T04:35:25.9290454Z /github/runner_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config
+2026-10-06T04:35:25.9298635Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-a2b57587\-dd71\-42c0\-90da\-b02c666f0cc5\.config
+2026-10-06T04:35:25.9337945Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-06T04:35:25.9556221Z Removing credentials config '/home/runner/work/_temp/git-credentials-a2b57587-dd71-42c0-90da-b02c666f0cc5.config'
+2026-10-06T04:35:25.9565915Z ##[endgroup]
+2026-10-06T04:35:25.9803275Z ##[group]Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+2026-10-06T04:35:25.9803889Z with:
+2026-10-06T04:35:25.9804103Z   node-version: 24
+2026-10-06T04:35:25.9804324Z   cache: npm
+2026-10-06T04:35:25.9804557Z   check-latest: false
+2026-10-06T04:35:25.9807084Z   token: ***
+2026-10-06T04:35:25.9807326Z   package-manager-cache: true
+2026-10-06T04:35:25.9807594Z env:
+2026-10-06T04:35:25.9807793Z   BACKEND_ENV: test
+2026-10-06T04:35:25.9808048Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:35:25.9808600Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:35:25.9808918Z ##[endgroup]
+2026-10-06T04:35:26.1253027Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-06T04:35:26.1259218Z ##[group]Environment details
+2026-10-06T04:35:26.5664760Z node: v24.21.0
+2026-10-06T04:35:26.5665165Z npm: 11.19.0
+2026-10-06T04:35:26.5665494Z yarn: 1.22.22
+2026-10-06T04:35:26.5666269Z ##[endgroup]
+2026-10-06T04:35:26.5684458Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+2026-10-06T04:35:26.6748465Z /home/runner/.npm
+2026-10-06T04:35:26.7624357Z npm cache is not found
+2026-10-06T04:35:26.7760689Z ##[group]Run npm ci --ignore-scripts --no-fund
+2026-10-06T04:35:26.7761125Z [36;1mnpm ci --ignore-scripts --no-fund[0m
+2026-10-06T04:35:26.7984580Z shell: /usr/bin/bash -e {0}
+2026-10-06T04:35:26.7984861Z env:
+2026-10-06T04:35:26.7985052Z   BACKEND_ENV: test
+2026-10-06T04:35:26.7985314Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:35:26.7985974Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:35:26.7986291Z ##[endgroup]
+2026-10-06T04:35:31.8558125Z npm warn deprecated supertest@7.1.0: Please upgrade to supertest v7.1.3+, see release notes at https://github.com/forwardemail/supertest/releases/tag/v7.1.3 - maintenance is supported by Forward Email @ https://forwardemail.net
+2026-10-06T04:35:32.3935942Z npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+2026-10-06T04:35:33.5209851Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2026-10-06T04:35:33.5955522Z npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:33.8837434Z npm warn deprecated superagent@9.0.2: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
+2026-10-06T04:35:38.7226622Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:38.8523995Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:39.0911868Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:39.8625761Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:40.3412276Z npm warn deprecated glob@11.0.1: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:41.6614289Z npm warn deprecated popper.js@1.16.1: You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1
+2026-10-06T04:35:42.2735176Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:42.6044256Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:42.6462659Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:42.7106938Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:42.7830502Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:42.8747004Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:42.9025303Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:42.9527229Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:43.0960285Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:43.1247440Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:43.1479165Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:43.1703978Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:43.1866448Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:43.2052172Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-06T04:35:44.6019122Z npm warn deprecated bootstrap@4.6.2: This version of Bootstrap is no longer supported. Please upgrade to the latest version.
+2026-10-06T04:35:46.7787999Z npm warn deprecated vue@2.7.16: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
+2026-10-06T04:37:14.8191167Z 
+2026-10-06T04:37:14.8191986Z added 1846 packages, and audited 1849 packages in 2m
+2026-10-06T04:37:15.1176378Z 
+2026-10-06T04:37:15.1178878Z 115 vulnerabilities (8 low, 19 moderate, 79 high, 9 critical)
+2026-10-06T04:37:15.1179395Z 
+2026-10-06T04:37:15.1179765Z To address issues that do not require attention, run:
+2026-10-06T04:37:15.1180390Z   npm audit fix
+2026-10-06T04:37:15.1180589Z 
+2026-10-06T04:37:15.1180949Z To address all issues (including breaking changes), run:
+2026-10-06T04:37:15.1181548Z   npm audit fix --force
+2026-10-06T04:37:15.1181799Z 
+2026-10-06T04:37:15.1182044Z Run `npm audit` for details.
+2026-10-06T04:37:15.2272158Z ##[group]Run node node_modules/jest/bin/jest.js --config server/integration/jest.config.json --runInBand --coverage=false
+2026-10-06T04:37:15.2273108Z [36;1mnode node_modules/jest/bin/jest.js --config server/integration/jest.config.json --runInBand --coverage=false[0m
+2026-10-06T04:37:15.2341718Z shell: /usr/bin/bash -e {0}
+2026-10-06T04:37:15.2341969Z env:
+2026-10-06T04:37:15.2342157Z   BACKEND_ENV: test
+2026-10-06T04:37:15.2342412Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:37:15.2343008Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:37:15.2343325Z ##[endgroup]
+2026-10-06T04:37:21.7895198Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:20 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-06T04:37:21.7897380Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:20 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-06T04:37:21.7900312Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:20 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-06T04:37:24.7810256Z PASS server/integration/financial-http.integration.ts (9.005 s)
+2026-10-06T04:37:25.8239388Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:25 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-06T04:37:25.8242089Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:25 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-06T04:37:25.8253311Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:25 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-06T04:37:26.0298496Z PASS server/integration/billing.integration.ts
+2026-10-06T04:37:26.7179906Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:26 AM [32m    LOG[39m [38;5;3m[PortalService] [39m[32mPortal data loaded: invoices=0, consumption=0, status=ACTIVO[39m
+2026-10-06T04:37:26.7182343Z [32m[Nest] 4002  - [39m10/06/2026, 4:37:26 AM [32m    LOG[39m [38;5;3m[PortalService] [39m[32mPortal data loaded: invoices=0, consumption=0, status=ACTIVO[39m
+2026-10-06T04:37:26.8276330Z PASS server/integration/session.integration.ts
+2026-10-06T04:37:26.8294413Z 
+2026-10-06T04:37:26.8302978Z Test Suites: 3 passed, 3 total
+2026-10-06T04:37:26.8303835Z Tests:       27 passed, 27 total
+2026-10-06T04:37:26.8304424Z Snapshots:   0 total
+2026-10-06T04:37:26.8304891Z Time:        11.283 s
+2026-10-06T04:37:26.8305318Z Ran all test suites.
+2026-10-06T04:37:26.9671958Z ##[group]Run npx --no-install playwright install --with-deps chromium
+2026-10-06T04:37:26.9672494Z [36;1mnpx --no-install playwright install --with-deps chromium[0m
+2026-10-06T04:37:26.9737154Z shell: /usr/bin/bash -e {0}
+2026-10-06T04:37:26.9737415Z env:
+2026-10-06T04:37:26.9737609Z   BACKEND_ENV: test
+2026-10-06T04:37:26.9737871Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:37:26.9738483Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:37:26.9738798Z ##[endgroup]
+2026-10-06T04:37:27.7200354Z Installing dependencies...
+2026-10-06T04:37:27.7285192Z Switching to root user to install dependencies...
+2026-10-06T04:37:27.8188263Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-06T04:37:27.8534172Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-06T04:37:27.8545877Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-06T04:37:27.8551341Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-06T04:37:27.8612951Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-06T04:37:27.8617129Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-06T04:37:27.9930765Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+2026-10-06T04:37:28.0033093Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [515 kB]
+2026-10-06T04:37:28.0130848Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [458 kB]
+2026-10-06T04:37:28.0423087Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1370 kB]
+2026-10-06T04:37:28.0515113Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [305 kB]
+2026-10-06T04:37:28.0535112Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [181 kB]
+2026-10-06T04:37:28.0537767Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1701 kB]
+2026-10-06T04:37:28.0630156Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [341 kB]
+2026-10-06T04:37:28.0654540Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [388 kB]
+2026-10-06T04:37:28.0682355Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1728 kB]
+2026-10-06T04:37:28.0779495Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [395 kB]
+2026-10-06T04:37:28.0822060Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [13.3 kB]
+2026-10-06T04:37:28.0824884Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+2026-10-06T04:37:28.1461560Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5764 B]
+2026-10-06T04:37:28.1472069Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [12.6 kB]
+2026-10-06T04:37:28.1538704Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1071 kB]
+2026-10-06T04:37:28.1595468Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [222 kB]
+2026-10-06T04:37:28.1612399Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [46.4 kB]
+2026-10-06T04:37:28.1621623Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1216 kB]
+2026-10-06T04:37:28.1681997Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [244 kB]
+2026-10-06T04:37:28.1699406Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [76.3 kB]
+2026-10-06T04:37:28.1709825Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1566 kB]
+2026-10-06T04:37:28.1788242Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [361 kB]
+2026-10-06T04:37:32.3264449Z Fetched 12.6 MB in 1s (9292 kB/s)
+2026-10-06T04:37:33.1323903Z Reading package lists...
+2026-10-06T04:37:33.1561661Z Reading package lists...
+2026-10-06T04:37:33.3283255Z Building dependency tree...
+2026-10-06T04:37:33.3290526Z Reading state information...
+2026-10-06T04:37:33.4751964Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-06T04:37:33.4752849Z libasound2t64 set to manually installed.
+2026-10-06T04:37:33.4754061Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-06T04:37:33.4754914Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-06T04:37:33.4755720Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-06T04:37:33.4756453Z libatk1.0-0t64 set to manually installed.
+2026-10-06T04:37:33.4757209Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-06T04:37:33.4757984Z libatspi2.0-0t64 set to manually installed.
+2026-10-06T04:37:33.4758728Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-06T04:37:33.4759396Z libcairo2 set to manually installed.
+2026-10-06T04:37:33.4760053Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-06T04:37:33.4760507Z libcups2t64 set to manually installed.
+2026-10-06T04:37:33.4760951Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-06T04:37:33.4761372Z libdbus-1-3 set to manually installed.
+2026-10-06T04:37:33.4761824Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-06T04:37:33.4762395Z libdrm2 set to manually installed.
+2026-10-06T04:37:33.4762819Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+2026-10-06T04:37:33.4763251Z libglib2.0-0t64 set to manually installed.
+2026-10-06T04:37:33.4764026Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-06T04:37:33.4764441Z libnspr4 set to manually installed.
+2026-10-06T04:37:33.4764859Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-10-06T04:37:33.4765439Z libnss3 set to manually installed.
+2026-10-06T04:37:33.4765875Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-06T04:37:33.4766325Z libpango-1.0-0 set to manually installed.
+2026-10-06T04:37:33.4766749Z libx11-6 is already the newest version (2:1.8.7-1build1).
+2026-10-06T04:37:33.4767131Z libx11-6 set to manually installed.
+2026-10-06T04:37:33.4767492Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-06T04:37:33.4767961Z libxcb1 set to manually installed.
+2026-10-06T04:37:33.4768374Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-06T04:37:33.4768791Z libxcomposite1 set to manually installed.
+2026-10-06T04:37:33.4769204Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-06T04:37:33.4769606Z libxdamage1 set to manually installed.
+2026-10-06T04:37:33.4770001Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-06T04:37:33.4770839Z libxext6 set to manually installed.
+2026-10-06T04:37:33.4771254Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-06T04:37:33.4771645Z libxfixes3 set to manually installed.
+2026-10-06T04:37:33.4772045Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-06T04:37:33.4772446Z libxkbcommon0 set to manually installed.
+2026-10-06T04:37:33.4772852Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-06T04:37:33.4773241Z libxrandr2 set to manually installed.
+2026-10-06T04:37:33.4773899Z xvfb is already the newest version (2:21.1.12-1ubuntu1.8).
+2026-10-06T04:37:33.4774553Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-06T04:37:33.4775139Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-06T04:37:33.4775571Z libfontconfig1 set to manually installed.
+2026-10-06T04:37:33.4776011Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.1).
+2026-10-06T04:37:33.4776441Z libfreetype6 set to manually installed.
+2026-10-06T04:37:33.4777020Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-06T04:37:33.4777446Z fonts-liberation set to manually installed.
+2026-10-06T04:37:33.4777852Z The following additional packages will be installed:
+2026-10-06T04:37:33.4778353Z   libgl1-mesa-dri libglx-mesa0 mesa-libgallium xfonts-encodings xfonts-utils
+2026-10-06T04:37:33.4778868Z Recommended packages:
+2026-10-06T04:37:33.4779143Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-10-06T04:37:33.4939898Z The following NEW packages will be installed:
+2026-10-06T04:37:33.4940768Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-06T04:37:33.4945268Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-06T04:37:33.4945749Z   xfonts-utils
+2026-10-06T04:37:33.4949294Z The following packages will be upgraded:
+2026-10-06T04:37:33.4953908Z   libgbm1 libgl1-mesa-dri libglx-mesa0 mesa-libgallium
+2026-10-06T04:37:33.5110297Z 4 upgraded, 9 newly installed, 0 to remove and 21 not upgraded.
+2026-10-06T04:37:33.5111029Z Need to get 32.1 MB of archives.
+2026-10-06T04:37:33.5111851Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-06T04:37:33.5112905Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-06T04:37:33.5631538Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-06T04:37:33.7489109Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-06T04:37:33.8980135Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-06T04:37:33.9168906Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-06T04:37:33.9639970Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-06T04:37:34.1336785Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgl1-mesa-dri amd64 25.2.8-0ubuntu0.24.04.4 [38.0 kB]
+2026-10-06T04:37:34.1522655Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglx-mesa0 amd64 25.2.8-0ubuntu0.24.04.4 [110 kB]
+2026-10-06T04:37:34.1730008Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgbm1 amd64 25.2.8-0ubuntu0.24.04.4 [34.2 kB]
+2026-10-06T04:37:34.1915250Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 mesa-libgallium amd64 25.2.8-0ubuntu0.24.04.4 [10.8 MB]
+2026-10-06T04:37:34.2893196Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-06T04:37:34.3112226Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-06T04:37:34.3306712Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-06T04:37:34.3511274Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-06T04:37:34.6010480Z Fetched 32.1 MB in 1s (37.6 MB/s)
+2026-10-06T04:37:34.6257501Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-06T04:37:34.6547702Z (Reading database ... 
+2026-10-06T04:37:34.6548294Z (Reading database ... 5%
+2026-10-06T04:37:34.6548808Z (Reading database ... 10%
+2026-10-06T04:37:34.6549095Z (Reading database ... 15%
+2026-10-06T04:37:34.6549391Z (Reading database ... 20%
+2026-10-06T04:37:34.6549655Z (Reading database ... 25%
+2026-10-06T04:37:34.6549906Z (Reading database ... 30%
+2026-10-06T04:37:34.6550160Z (Reading database ... 35%
+2026-10-06T04:37:34.6550407Z (Reading database ... 40%
+2026-10-06T04:37:34.6550661Z (Reading database ... 45%
+2026-10-06T04:37:34.6551042Z (Reading database ... 50%
+2026-10-06T04:37:34.6596120Z (Reading database ... 55%
+2026-10-06T04:37:34.7696120Z (Reading database ... 60%
+2026-10-06T04:37:34.9752550Z (Reading database ... 65%
+2026-10-06T04:37:35.1651319Z (Reading database ... 70%
+2026-10-06T04:37:35.3676524Z (Reading database ... 75%
+2026-10-06T04:37:35.5263880Z (Reading database ... 80%
+2026-10-06T04:37:35.7164538Z (Reading database ... 85%
+2026-10-06T04:37:35.9235210Z (Reading database ... 90%
+2026-10-06T04:37:36.0825210Z (Reading database ... 95%
+2026-10-06T04:37:36.0825864Z (Reading database ... 100%
+2026-10-06T04:37:36.0826794Z (Reading database ... 202296 files and directories currently installed.)
+2026-10-06T04:37:36.0867987Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-06T04:37:36.0959702Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-06T04:37:36.3201821Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-06T04:37:36.3328022Z Preparing to unpack .../01-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-06T04:37:36.3337229Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-06T04:37:36.4099068Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-06T04:37:36.4224499Z Preparing to unpack .../02-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-06T04:37:36.4231055Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-06T04:37:36.5332801Z Selecting previously unselected package fonts-unifont.
+2026-10-06T04:37:36.5456086Z Preparing to unpack .../03-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-06T04:37:36.5463064Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-06T04:37:36.6511222Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-06T04:37:36.6635764Z Preparing to unpack .../04-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-06T04:37:36.6731571Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-06T04:37:37.1456499Z Preparing to unpack .../05-libgl1-mesa-dri_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T04:37:37.1594039Z Unpacking libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T04:37:37.2074112Z Preparing to unpack .../06-libglx-mesa0_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T04:37:37.2104592Z Unpacking libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T04:37:37.2454721Z Preparing to unpack .../07-libgbm1_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T04:37:37.2474131Z Unpacking libgbm1:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T04:37:37.2827639Z Preparing to unpack .../08-mesa-libgallium_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-06T04:37:37.2848140Z Unpacking mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-06T04:37:37.4464156Z Selecting previously unselected package xfonts-encodings.
+2026-10-06T04:37:37.4590691Z Preparing to unpack .../09-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-06T04:37:37.4596950Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-06T04:37:37.4872827Z Selecting previously unselected package xfonts-utils.
+2026-10-06T04:37:37.4996118Z Preparing to unpack .../10-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-06T04:37:37.5002920Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-06T04:37:37.5363104Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-06T04:37:37.5497525Z Preparing to unpack .../11-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-06T04:37:37.5511881Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-06T04:37:37.5860016Z Selecting previously unselected package xfonts-scalable.
+2026-10-06T04:37:37.5990742Z Preparing to unpack .../12-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-06T04:37:37.5997562Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-06T04:37:37.6436697Z Setting up mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T04:37:37.6461939Z Setting up libgbm1:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T04:37:37.6479454Z Setting up libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T04:37:37.6549011Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-06T04:37:37.6657054Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-06T04:37:37.6673433Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-06T04:37:37.6690558Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-06T04:37:37.6706844Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-06T04:37:37.6768593Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-06T04:37:37.6783318Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-06T04:37:37.6800600Z Setting up libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-06T04:37:37.6818383Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-06T04:37:37.6857666Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-06T04:37:37.7150822Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-06T04:37:37.7425642Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-06T04:37:37.7762882Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-06T04:37:37.7784018Z Not building database; man-db/auto-update is not 'true'.
+2026-10-06T04:37:37.7795444Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-06T04:37:38.5112883Z 
+2026-10-06T04:37:38.5113739Z Running kernel seems to be up-to-date.
+2026-10-06T04:37:38.5114205Z 
+2026-10-06T04:37:38.5114478Z No services need to be restarted.
+2026-10-06T04:37:38.5114815Z 
+2026-10-06T04:37:38.5115135Z No containers need to be restarted.
+2026-10-06T04:37:38.5115453Z 
+2026-10-06T04:37:38.5115780Z No user sessions are running outdated binaries.
+2026-10-06T04:37:38.5116147Z 
+2026-10-06T04:37:38.5116649Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-06T04:37:39.3298632Z Downloading Chrome for Testing 153.0.8010.12 (playwright chromium v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-linux64.zip
+2026-10-06T04:37:39.7190308Z |                                                                                |   0% of 186.8 MiB
+2026-10-06T04:37:39.8842121Z |■■■■■■■■                                                                        |  10% of 186.8 MiB
+2026-10-06T04:37:39.9680752Z |■■■■■■■■■■■■■■■■                                                                |  20% of 186.8 MiB
+2026-10-06T04:37:40.0646774Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 186.8 MiB
+2026-10-06T04:37:40.1348228Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 186.8 MiB
+2026-10-06T04:37:40.2230279Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 186.8 MiB
+2026-10-06T04:37:40.2958144Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 186.8 MiB
+2026-10-06T04:37:40.3795303Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 186.8 MiB
+2026-10-06T04:37:40.4634495Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 186.8 MiB
+2026-10-06T04:37:40.5332221Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 186.8 MiB
+2026-10-06T04:37:40.6185240Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 186.8 MiB
+2026-10-06T04:37:43.8386969Z Chrome for Testing 153.0.8010.12 (playwright chromium v1243) downloaded to /home/runner/.cache/ms-playwright/chromium-1243
+2026-10-06T04:37:43.8390926Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-06T04:37:44.2228250Z |                                                                                |   0% of 2.3 MiB
+2026-10-06T04:37:44.2353821Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-06T04:37:44.2415096Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-06T04:37:44.2484267Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-06T04:37:44.2528183Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-06T04:37:44.2559148Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-06T04:37:44.2588858Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-06T04:37:44.2603247Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-06T04:37:44.2633183Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-06T04:37:44.2659822Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-06T04:37:44.2673263Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-06T04:37:44.3275344Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-06T04:37:44.3277781Z Downloading Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-headless-shell-linux64.zip
+2026-10-06T04:37:44.7206756Z |                                                                                |   0% of 114.3 MiB
+2026-10-06T04:37:44.8375656Z |■■■■■■■■                                                                        |  10% of 114.3 MiB
+2026-10-06T04:37:44.9043623Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.3 MiB
+2026-10-06T04:37:44.9525565Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.3 MiB
+2026-10-06T04:37:45.0031850Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.3 MiB
+2026-10-06T04:37:45.0618968Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.3 MiB
+2026-10-06T04:37:45.1001052Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.3 MiB
+2026-10-06T04:37:45.1495322Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.3 MiB
+2026-10-06T04:37:45.1880340Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.3 MiB
+2026-10-06T04:37:45.2238486Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.3 MiB
+2026-10-06T04:37:45.2791548Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.3 MiB
+2026-10-06T04:37:47.5556727Z Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1243
+2026-10-06T04:37:47.5894685Z ##[group]Run mkdir -p tmp/browser-tls
+2026-10-06T04:37:47.5895249Z [36;1mmkdir -p tmp/browser-tls[0m
+2026-10-06T04:37:47.5896242Z [36;1mopenssl req -x509 -newkey rsa:2048 -nodes -days 1 -keyout tmp/browser-tls/key.pem -out tmp/browser-tls/cert.pem -subj '/CN=127.0.0.1' -addext 'subjectAltName=IP:127.0.0.1'[0m
+2026-10-06T04:37:47.5960883Z shell: /usr/bin/bash -e {0}
+2026-10-06T04:37:47.5961142Z env:
+2026-10-06T04:37:47.5961327Z   BACKEND_ENV: test
+2026-10-06T04:37:47.5961580Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:37:47.5962176Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:37:47.5962481Z ##[endgroup]
+2026-10-06T04:37:47.6716453Z .....+.....+......+...+.+............+........+....+...+.....+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*..+......+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+.....+......+...+...............+....+..+..........+...+......+..+..................+.+.....+..........+......+..+...+..................+.+...+........+...+......+.+..+..........+......+......+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-06T04:37:47.8051231Z ............+.+.....+..........+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.....+...+........+.+.........+...........+.+..............+...+.+.....+....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*..+....+...........+.............+...+...+.....+....+............+.....+...+...+...+....+...............+......+..+.........+.+.....+....+...+..+.........+....+...............+..+.+..+.+......+.........+..+...+......+.+..+................+.........+............+........+.+.........+........+...+.........+......+......+.+.....+....+...+..+......+...+..........+.....+.......+...+......+........+.+..+............+.......+....................+..........+......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-06T04:37:47.8080232Z -----
+2026-10-06T04:37:47.8135319Z ##[group]Run node ../node_modules/vite/bin/vite.js build --outDir "$GITHUB_WORKSPACE/tmp/browser-app"
+2026-10-06T04:37:47.8136103Z [36;1mnode ../node_modules/vite/bin/vite.js build --outDir "$GITHUB_WORKSPACE/tmp/browser-app"[0m
+2026-10-06T04:37:47.8197115Z shell: /usr/bin/bash -e {0}
+2026-10-06T04:37:47.8197365Z env:
+2026-10-06T04:37:47.8197552Z   BACKEND_ENV: test
+2026-10-06T04:37:47.8197799Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:37:47.8198524Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:37:47.8198838Z ##[endgroup]
+2026-10-06T04:37:48.2796908Z [36mvite v6.2.4 [32mbuilding for production...[36m[39m
+2026-10-06T04:37:48.5015782Z transforming...
+2026-10-06T04:37:48.5813138Z Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+2026-10-06T04:37:48.5814524Z   npx update-browserslist-db@latest
+2026-10-06T04:37:48.5815586Z   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-10-06T04:37:49.3655635Z [33m../node_modules/bootstrap-vue/esm/index.js (23:19): A comment
+2026-10-06T04:37:49.3656000Z 
+2026-10-06T04:37:49.3656107Z "/*#__PURE__*/"
+2026-10-06T04:37:49.3656260Z 
+2026-10-06T04:37:49.3657197Z in "../node_modules/bootstrap-vue/esm/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+2026-10-06T04:37:55.9892138Z [32m✓[39m 2626 modules transformed.
+2026-10-06T04:37:56.3195105Z rendering chunks...
+2026-10-06T04:37:56.3664172Z [33mwarnings when minifying css:
+2026-10-06T04:37:56.3665451Z ▲ [WARNING] Cannot use type selector "__title" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3666149Z 
+2026-10-06T04:37:56.3666301Z     <stdin>:1468:1:
+2026-10-06T04:37:56.3666829Z       1468 │ &__title[data-v-272ea572] {
+2026-10-06T04:37:56.3667414Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3667969Z            ╵  :is(__title[data-v-272ea572])
+2026-10-06T04:37:56.3668220Z 
+2026-10-06T04:37:56.3669476Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3670662Z 
+2026-10-06T04:37:56.3670668Z 
+2026-10-06T04:37:56.3671139Z ▲ [WARNING] Cannot use type selector "__sub" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3671519Z 
+2026-10-06T04:37:56.3671614Z     <stdin>:1474:1:
+2026-10-06T04:37:56.3671909Z       1474 │ &__sub[data-v-272ea572] {
+2026-10-06T04:37:56.3672232Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3672566Z            ╵  :is(__sub[data-v-272ea572])
+2026-10-06T04:37:56.3672746Z 
+2026-10-06T04:37:56.3674248Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3675675Z 
+2026-10-06T04:37:56.3675685Z 
+2026-10-06T04:37:56.3677085Z ▲ [WARNING] Cannot use type selector "__empty" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3678081Z 
+2026-10-06T04:37:56.3678291Z     <stdin>:1479:1:
+2026-10-06T04:37:56.3678773Z       1479 │ &__empty[data-v-272ea572] {
+2026-10-06T04:37:56.3679134Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3679487Z            ╵  :is(__empty[data-v-272ea572])
+2026-10-06T04:37:56.3679684Z 
+2026-10-06T04:37:56.3681339Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3682491Z 
+2026-10-06T04:37:56.3682497Z 
+2026-10-06T04:37:56.3682969Z ▲ [WARNING] Cannot use type selector "__list" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3683815Z 
+2026-10-06T04:37:56.3683918Z     <stdin>:1495:1:
+2026-10-06T04:37:56.3684227Z       1495 │ &__list[data-v-272ea572] {
+2026-10-06T04:37:56.3684553Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3684880Z            ╵  :is(__list[data-v-272ea572])
+2026-10-06T04:37:56.3685065Z 
+2026-10-06T04:37:56.3686279Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3687447Z 
+2026-10-06T04:37:56.3687452Z 
+2026-10-06T04:37:56.3687916Z ▲ [WARNING] Cannot use type selector "__item" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3688296Z 
+2026-10-06T04:37:56.3688381Z     <stdin>:1508:1:
+2026-10-06T04:37:56.3688625Z       1508 │ &__item {
+2026-10-06T04:37:56.3688860Z            │  ~~~~~~
+2026-10-06T04:37:56.3689095Z            ╵  :is(__item)
+2026-10-06T04:37:56.3689233Z 
+2026-10-06T04:37:56.3690439Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3691562Z 
+2026-10-06T04:37:56.3691567Z 
+2026-10-06T04:37:56.3692034Z ▲ [WARNING] Cannot use type selector "--unread" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3692412Z 
+2026-10-06T04:37:56.3692499Z     <stdin>:1528:1:
+2026-10-06T04:37:56.3692891Z       1528 │ &--unread[data-v-272ea572] { background: #fff8f0;
+2026-10-06T04:37:56.3693275Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3693855Z            ╵  :is(--unread[data-v-272ea572])
+2026-10-06T04:37:56.3694062Z 
+2026-10-06T04:37:56.3695274Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3696396Z 
+2026-10-06T04:37:56.3696407Z 
+2026-10-06T04:37:56.3696854Z ▲ [WARNING] Cannot use type selector "__icon" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3697237Z 
+2026-10-06T04:37:56.3697319Z     <stdin>:1531:1:
+2026-10-06T04:37:56.3697608Z       1531 │ &__icon[data-v-272ea572] {
+2026-10-06T04:37:56.3697936Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3698262Z            ╵  :is(__icon[data-v-272ea572])
+2026-10-06T04:37:56.3698448Z 
+2026-10-06T04:37:56.3699648Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3700790Z 
+2026-10-06T04:37:56.3700795Z 
+2026-10-06T04:37:56.3701246Z ▲ [WARNING] Cannot use type selector "__body" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3701613Z 
+2026-10-06T04:37:56.3701702Z     <stdin>:1537:1:
+2026-10-06T04:37:56.3702019Z       1537 │ &__body[data-v-272ea572] {
+2026-10-06T04:37:56.3702603Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3703179Z            ╵  :is(__body[data-v-272ea572])
+2026-10-06T04:37:56.3703896Z 
+2026-10-06T04:37:56.3715094Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3716630Z 
+2026-10-06T04:37:56.3716637Z 
+2026-10-06T04:37:56.3717189Z ▲ [WARNING] Cannot use type selector "__row" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3717599Z 
+2026-10-06T04:37:56.3717698Z     <stdin>:1543:1:
+2026-10-06T04:37:56.3718208Z       1543 │ &__row[data-v-272ea572] {
+2026-10-06T04:37:56.3718560Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3718913Z            ╵  :is(__row[data-v-272ea572])
+2026-10-06T04:37:56.3719113Z 
+2026-10-06T04:37:56.3720537Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3721899Z 
+2026-10-06T04:37:56.3721905Z 
+2026-10-06T04:37:56.3722449Z ▲ [WARNING] Cannot use type selector "__item-title" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3722881Z 
+2026-10-06T04:37:56.3723065Z     <stdin>:1555:1:
+2026-10-06T04:37:56.3727254Z       1555 │ &__item-title[data-v-272ea572] {
+2026-10-06T04:37:56.3727995Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3728883Z            ╵  :is(__item-title[data-v-272ea572])
+2026-10-06T04:37:56.3729257Z 
+2026-10-06T04:37:56.3731582Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3733879Z 
+2026-10-06T04:37:56.3733890Z 
+2026-10-06T04:37:56.3734802Z ▲ [WARNING] Cannot use type selector "__badge" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3735551Z 
+2026-10-06T04:37:56.3735713Z     <stdin>:1560:1:
+2026-10-06T04:37:56.3736161Z       1560 │ &__badge {
+2026-10-06T04:37:56.3736605Z            │  ~~~~~~~
+2026-10-06T04:37:56.3737047Z            ╵  :is(__badge)
+2026-10-06T04:37:56.3737310Z 
+2026-10-06T04:37:56.3739615Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3741725Z 
+2026-10-06T04:37:56.3741733Z 
+2026-10-06T04:37:56.3742660Z ▲ [WARNING] Cannot use type selector "--paid" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3743379Z 
+2026-10-06T04:37:56.3743744Z     <stdin>:1569:1:
+2026-10-06T04:37:56.3744616Z       1569 │ &--paid[data-v-272ea572] { background: #d1fae5; color: #065f46;
+2026-10-06T04:37:56.3745449Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3746070Z            ╵  :is(--paid[data-v-272ea572])
+2026-10-06T04:37:56.3746409Z 
+2026-10-06T04:37:56.3748706Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3750814Z 
+2026-10-06T04:37:56.3750825Z 
+2026-10-06T04:37:56.3751750Z ▲ [WARNING] Cannot use type selector "--overdue" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3752513Z 
+2026-10-06T04:37:56.3767106Z     <stdin>:1571:1:
+2026-10-06T04:37:56.3768351Z       1571 │ &--overdue[data-v-272ea572] { background: #fee2e2; color: #991b1b;
+2026-10-06T04:37:56.3769212Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3770069Z            ╵  :is(--overdue[data-v-272ea572])
+2026-10-06T04:37:56.3770424Z 
+2026-10-06T04:37:56.3772736Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3775074Z 
+2026-10-06T04:37:56.3775084Z 
+2026-10-06T04:37:56.3776010Z ▲ [WARNING] Cannot use type selector "--due_soon" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3776955Z 
+2026-10-06T04:37:56.3777338Z     <stdin>:1573:1:
+2026-10-06T04:37:56.3778976Z       1573 │ &--due_soon[data-v-272ea572] { background: #fef3c7; color: #92400e;
+2026-10-06T04:37:56.3780452Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3781718Z            ╵  :is(--due_soon[data-v-272ea572])
+2026-10-06T04:37:56.3782306Z 
+2026-10-06T04:37:56.3785973Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3788284Z 
+2026-10-06T04:37:56.3788294Z 
+2026-10-06T04:37:56.3789223Z ▲ [WARNING] Cannot use type selector "--created" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3789951Z 
+2026-10-06T04:37:56.3790103Z     <stdin>:1575:1:
+2026-10-06T04:37:56.3790899Z       1575 │ &--created[data-v-272ea572] { background: #e8f4fd; color: #0077be;
+2026-10-06T04:37:56.3791698Z            │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3792345Z            ╵  :is(--created[data-v-272ea572])
+2026-10-06T04:37:56.3792698Z 
+2026-10-06T04:37:56.3795196Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3797342Z 
+2026-10-06T04:37:56.3797351Z 
+2026-10-06T04:37:56.3798249Z ▲ [WARNING] Cannot use type selector "__msg" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3798944Z 
+2026-10-06T04:37:56.3799109Z     <stdin>:1578:1:
+2026-10-06T04:37:56.3799667Z       1578 │ &__msg[data-v-272ea572] {
+2026-10-06T04:37:56.3800279Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3800885Z            ╵  :is(__msg[data-v-272ea572])
+2026-10-06T04:37:56.3801226Z 
+2026-10-06T04:37:56.3803730Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3805875Z 
+2026-10-06T04:37:56.3805885Z 
+2026-10-06T04:37:56.3806767Z ▲ [WARNING] Cannot use type selector "__date" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3807472Z 
+2026-10-06T04:37:56.3807637Z     <stdin>:1587:1:
+2026-10-06T04:37:56.3808165Z       1587 │ &__date[data-v-272ea572] {
+2026-10-06T04:37:56.3808763Z            │  ~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3809370Z            ╵  :is(__date[data-v-272ea572])
+2026-10-06T04:37:56.3809708Z 
+2026-10-06T04:37:56.3812240Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3814574Z 
+2026-10-06T04:37:56.3814774Z 
+2026-10-06T04:37:56.3815696Z ▲ [WARNING] Cannot use type selector "__dot" directly after nesting selector "&" [css-syntax-error]
+2026-10-06T04:37:56.3816413Z 
+2026-10-06T04:37:56.3816570Z     <stdin>:1592:1:
+2026-10-06T04:37:56.3817106Z       1592 │ &__dot[data-v-272ea572] {
+2026-10-06T04:37:56.3817702Z            │  ~~~~~~~~~~~~~~~~~~~~~~
+2026-10-06T04:37:56.3818318Z            ╵  :is(__dot[data-v-272ea572])
+2026-10-06T04:37:56.3818655Z 
+2026-10-06T04:37:56.3820974Z   CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+2026-10-06T04:37:56.3823220Z 
+2026-10-06T04:37:56.3823658Z [39m
+2026-10-06T04:37:56.6924087Z computing gzip size...
+2026-10-06T04:37:56.7200176Z [36m[vite-plugin-static-copy][39m [32mCopied 15 items.[39m
+2026-10-06T04:37:56.7358082Z [2m../../tmp/browser-app/[22m[2massets/[22m[32mmanifest-7n3jF0d_.webapp               [39m[1m[2m  0.76 kB[22m[1m[22m
+2026-10-06T04:37:56.7360546Z [2m../../tmp/browser-app/[22m[2massets/[22m[32mfavicon-7N5vP5FO.ico                   [39m[1m[2m  1.57 kB[22m[1m[22m
+2026-10-06T04:37:56.7362920Z [2m../../tmp/browser-app/[22m[32mindex.html                                    [39m[1m[2m  5.25 kB[22m[1m[22m[2m │ gzip:   1.94 kB[22m
+2026-10-06T04:37:56.7365661Z [2m../../tmp/browser-app/[22m[2massets/[22m[32mjhipster_family_member_3-Cf8AxSuS.svg  [39m[1m[2m 19.10 kB[22m[1m[22m[2m │ gzip:   7.23 kB[22m
+2026-10-06T04:37:56.7368257Z [2m../../tmp/browser-app/[22m[2massets/[22m[35madmin-portal-D1vpuyJI.css              [39m[1m[2m  1.12 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+2026-10-06T04:37:56.7370844Z [2m../../tmp/browser-app/[22m[2massets/[22m[35minvoice-payment-result-DRc0a0Jy.css    [39m[1m[2m  4.05 kB[22m[1m[22m[2m │ gzip:   1.10 kB[22m
+2026-10-06T04:37:56.7372351Z [33m
+2026-10-06T04:37:56.7373047Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-10-06T04:37:56.7374205Z - Using dynamic import() to code-split the application
+2026-10-06T04:37:56.7375707Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-10-06T04:37:56.7377426Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-10-06T04:37:56.7379379Z [2m../../tmp/browser-app/[22m[2massets/[22m[35mcentro-noticias-DmS2zb5d.css           [39m[1m[2m  4.35 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+2026-10-06T04:37:56.7414713Z [2m../../tmp/browser-app/[22m[2massets/[22m[35madmin-panel-B4kf0FsZ.css               [39m[1m[2m  6.23 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+2026-10-06T04:37:56.7424136Z [2m../../tmp/browser-app/[22m[2massets/[22m[35mpagos-BBb1LtcT.css                     [39m[1m[2m  7.91 kB[22m[1m[22m[2m │ gzip:   1.54 kB[22m
+2026-10-06T04:37:56.7426563Z [2m../../tmp/browser-app/[22m[2massets/[22m[35mlogin-7RfFdK3h.css                     [39m[1m[2m  8.21 kB[22m[1m[22m[2m │ gzip:   1.94 kB[22m
+2026-10-06T04:37:56.7429022Z [2m../../tmp/browser-app/[22m[2massets/[22m[35madmin-actividad-CkFyyufi.css           [39m[1m[2m  9.20 kB[22m[1m[22m[2m │ gzip:   1.61 kB[22m
+2026-10-06T04:37:56.7431389Z [2m../../tmp/browser-app/[22m[2massets/[22m[35mhome-CcrO8YDo.css                      [39m[1m[2m 11.54 kB[22m[1m[22m[2m │ gzip:   2.20 kB[22m
+2026-10-06T04:37:56.7434009Z [2m../../tmp/browser-app/[22m[2massets/[22m[35mpolitica-privacidad-BQov-A3C.css       [39m[1m[2m 11.63 kB[22m[1m[22m[2m │ gzip:   2.36 kB[22m
+2026-10-06T04:37:56.7436651Z [2m../../tmp/browser-app/[22m[2massets/[22m[35madmin-facturacion-BwsCgQ6K.css         [39m[1m[2m 11.94 kB[22m[1m[22m[2m │ gzip:   2.13 kB[22m
+2026-10-06T04:37:56.7439100Z [2m../../tmp/browser-app/[22m[2massets/[22m[35madmin-noticias-CN6zKAm2.css            [39m[1m[2m 12.14 kB[22m[1m[22m[2m │ gzip:   2.24 kB[22m
+2026-10-06T04:37:56.7441700Z [2m../../tmp/browser-app/[22m[2massets/[22m[35madmin-resumen-CaVK-rdb.css             [39m[1m[2m 15.64 kB[22m[1m[22m[2m │ gzip:   2.65 kB[22m
+2026-10-06T04:37:56.7444417Z [2m../../tmp/browser-app/[22m[2massets/[22m[35madmin-usuarios-C8IZViC4.css            [39m[1m[2m 24.28 kB[22m[1m[22m[2m │ gzip:   3.64 kB[22m
+2026-10-06T04:37:56.7446852Z [2m../../tmp/browser-app/[22m[2massets/[22m[35mportal-dashboard-CiwCRFpi.css          [39m[1m[2m 29.37 kB[22m[1m[22m[2m │ gzip:   4.05 kB[22m
+2026-10-06T04:37:56.7449215Z [2m../../tmp/browser-app/[22m[2massets/[22m[35mapp-OqjeRz0V.css                       [39m[1m[2m303.56 kB[22m[1m[22m[2m │ gzip:  42.69 kB[22m
+2026-10-06T04:37:56.7451514Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mconstants-DfqkunPD.js                  [39m[1m[2m  0.12 kB[22m[1m[22m[2m │ gzip:   0.12 kB[22m
+2026-10-06T04:37:56.7454020Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mdocs-BMXW8ilw.js                       [39m[1m[2m  0.36 kB[22m[1m[22m[2m │ gzip:   0.29 kB[22m
+2026-10-06T04:37:56.7456451Z [2m../../tmp/browser-app/[22m[2massets/[22m[36muser-management.service-CFPT0YIB.js    [39m[1m[2m  0.40 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+2026-10-06T04:37:56.7458916Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mvalidation-ChddbaqV.js                 [39m[1m[2m  0.43 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+2026-10-06T04:37:56.7461258Z [2m../../tmp/browser-app/[22m[2massets/[22m[36maddress.service-CdYYsBNB.js            [39m[1m[2m  0.66 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-06T04:37:56.7463813Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mmeter.service-rAVtMokg.js              [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-06T04:37:56.7466187Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mperson.service-C2CH_P3v.js             [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-06T04:37:56.7468572Z [2m../../tmp/browser-app/[22m[2massets/[22m[36minvoice.service-dDZaH8nf.js            [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+2026-10-06T04:37:56.7470974Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mdate-format-BM9H_D0X.js                [39m[1m[2m  0.69 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2026-10-06T04:37:56.7473364Z [2m../../tmp/browser-app/[22m[2massets/[22m[36madmin-portal-Csmv1LrG.js               [39m[1m[2m  0.70 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+2026-10-06T04:37:56.7475905Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mentities-DYc2JmRW.js                   [39m[1m[2m  0.71 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+2026-10-06T04:37:56.7478182Z [2m../../tmp/browser-app/[22m[2massets/[22m[36merror-DkYDr7M9.js                      [39m[1m[2m  1.14 kB[22m[1m[22m[2m │ gzip:   0.58 kB[22m
+2026-10-06T04:37:56.7480468Z [2m../../tmp/browser-app/[22m[2massets/[22m[36malert.service-Cf92d0p-.js              [39m[1m[2m  1.43 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+2026-10-06T04:37:56.7482816Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mactivate-DzT9ZT2B.js                   [39m[1m[2m  1.53 kB[22m[1m[22m[2m │ gzip:   0.82 kB[22m
+2026-10-06T04:37:56.7485408Z [2m../../tmp/browser-app/[22m[2massets/[22m[36maddress-details-DKs3AUX-.js            [39m[1m[2m  2.75 kB[22m[1m[22m[2m │ gzip:   1.09 kB[22m
+2026-10-06T04:37:56.7487767Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mmeter-details-CIQlL_yK.js              [39m[1m[2m  2.76 kB[22m[1m[22m[2m │ gzip:   1.11 kB[22m
+2026-10-06T04:37:56.7490284Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mdata-utils.service-B7RvJyCe.js         [39m[1m[2m  2.96 kB[22m[1m[22m[2m │ gzip:   1.51 kB[22m
+2026-10-06T04:37:56.7492875Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mreset-password-init-lHxlecyI.js        [39m[1m[2m  3.07 kB[22m[1m[22m[2m │ gzip:   1.17 kB[22m
+2026-10-06T04:37:56.7495686Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mperson-details-C5LPpeyN.js             [39m[1m[2m  3.22 kB[22m[1m[22m[2m │ gzip:   1.23 kB[22m
+2026-10-06T04:37:56.7498092Z [2m../../tmp/browser-app/[22m[2massets/[22m[36muser-management-view-D894ebWi.js       [39m[1m[2m  3.49 kB[22m[1m[22m[2m │ gzip:   1.26 kB[22m
+2026-10-06T04:37:56.7500478Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mcentro-noticias-DAmYkHXw.js            [39m[1m[2m  4.00 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-10-06T04:37:56.7502910Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mreset-password-finish-Bv5qEy5N.js      [39m[1m[2m  5.18 kB[22m[1m[22m[2m │ gzip:   1.63 kB[22m
+2026-10-06T04:37:56.7505571Z [2m../../tmp/browser-app/[22m[2massets/[22m[36minvoice-details-CvsQ8SGV.js            [39m[1m[2m  5.19 kB[22m[1m[22m[2m │ gzip:   1.97 kB[22m
+2026-10-06T04:37:56.7507939Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mchange-password-C7ZJkTNz.js            [39m[1m[2m  5.52 kB[22m[1m[22m[2m │ gzip:   1.50 kB[22m
+2026-10-06T04:37:56.7510260Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mlogin-Cv7OKeM6.js                      [39m[1m[2m  5.55 kB[22m[1m[22m[2m │ gzip:   2.27 kB[22m
+2026-10-06T04:37:56.7512578Z [2m../../tmp/browser-app/[22m[2massets/[22m[36madmin-actividad-Dwm2bxbu.js            [39m[1m[2m  5.59 kB[22m[1m[22m[2m │ gzip:   2.46 kB[22m
+2026-10-06T04:37:56.7515223Z [2m../../tmp/browser-app/[22m[2massets/[22m[36minvoice-payment-result-BIbbht5B.js     [39m[1m[2m  5.88 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+2026-10-06T04:37:56.7517617Z [2m../../tmp/browser-app/[22m[2massets/[22m[36maddress-X45SWWg0.js                    [39m[1m[2m  5.88 kB[22m[1m[22m[2m │ gzip:   2.01 kB[22m
+2026-10-06T04:37:56.7519923Z [2m../../tmp/browser-app/[22m[2massets/[22m[36maddress-update-BrsXc4cZ.js             [39m[1m[2m  6.49 kB[22m[1m[22m[2m │ gzip:   2.01 kB[22m
+2026-10-06T04:37:56.7522278Z [2m../../tmp/browser-app/[22m[2massets/[22m[36msettings-CFamjdRX.js                   [39m[1m[2m  6.82 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-10-06T04:37:56.7524812Z [2m../../tmp/browser-app/[22m[2massets/[22m[36madmin-resumen-CvX4g-47.js              [39m[1m[2m  6.92 kB[22m[1m[22m[2m │ gzip:   2.85 kB[22m
+2026-10-06T04:37:56.7527165Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mmeter-CU3wyuYe.js                      [39m[1m[2m  7.21 kB[22m[1m[22m[2m │ gzip:   2.62 kB[22m
+2026-10-06T04:37:56.7529412Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mhome-u-5kn9DS.js                       [39m[1m[2m  7.34 kB[22m[1m[22m[2m │ gzip:   2.79 kB[22m
+2026-10-06T04:37:56.7531705Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mperson-update-C4rnvXra.js              [39m[1m[2m  7.74 kB[22m[1m[22m[2m │ gzip:   2.52 kB[22m
+2026-10-06T04:37:56.7534254Z [2m../../tmp/browser-app/[22m[2massets/[22m[36madmin-noticias-C1WjHts3.js             [39m[1m[2m  8.06 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+2026-10-06T04:37:56.7536649Z [2m../../tmp/browser-app/[22m[2massets/[22m[36minvoice-CBdJRmfB.js                    [39m[1m[2m  8.13 kB[22m[1m[22m[2m │ gzip:   2.68 kB[22m
+2026-10-06T04:37:56.7538896Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mperson-BKp9iunw.js                     [39m[1m[2m  8.49 kB[22m[1m[22m[2m │ gzip:   2.78 kB[22m
+2026-10-06T04:37:56.7541205Z [2m../../tmp/browser-app/[22m[2massets/[22m[36muser-management-BYt1EWlF.js            [39m[1m[2m  8.90 kB[22m[1m[22m[2m │ gzip:   2.83 kB[22m
+2026-10-06T04:37:56.7543927Z [2m../../tmp/browser-app/[22m[2massets/[22m[36madmin-panel-DuTy1ljK.js                [39m[1m[2m  8.93 kB[22m[1m[22m[2m │ gzip:   2.71 kB[22m
+2026-10-06T04:37:56.7546010Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mpagos-CcjvyDOL.js                      [39m[1m[2m  8.94 kB[22m[1m[22m[2m │ gzip:   3.14 kB[22m
+2026-10-06T04:37:56.7548172Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mregister-4Irvif5g.js                   [39m[1m[2m  9.42 kB[22m[1m[22m[2m │ gzip:   2.28 kB[22m
+2026-10-06T04:37:56.7550259Z [2m../../tmp/browser-app/[22m[2massets/[22m[36muser-management-edit-CtiYiDfc.js       [39m[1m[2m  9.52 kB[22m[1m[22m[2m │ gzip:   2.87 kB[22m
+2026-10-06T04:37:56.7552398Z [2m../../tmp/browser-app/[22m[2massets/[22m[36madmin-facturacion-B6rE_r6c.js          [39m[1m[2m 10.38 kB[22m[1m[22m[2m │ gzip:   3.83 kB[22m
+2026-10-06T04:37:56.7554671Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mes-B7hO-gfJ.js                         [39m[1m[2m 14.09 kB[22m[1m[22m[2m │ gzip:   4.82 kB[22m
+2026-10-06T04:37:56.7556679Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mindex-CUgFMsj4.js                      [39m[1m[2m 15.88 kB[22m[1m[22m[2m │ gzip:   5.60 kB[22m
+2026-10-06T04:37:56.7558713Z [2m../../tmp/browser-app/[22m[2massets/[22m[36madmin-usuarios-Cs7vS94Q.js             [39m[1m[2m 21.66 kB[22m[1m[22m[2m │ gzip:   7.01 kB[22m
+2026-10-06T04:37:56.7560838Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mpolitica-privacidad-CoiUyVNi.js        [39m[1m[2m 30.80 kB[22m[1m[22m[2m │ gzip:   7.70 kB[22m
+2026-10-06T04:37:56.7562952Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mportal-dashboard-CHnwLraF.js           [39m[1m[2m 30.97 kB[22m[1m[22m[2m │ gzip:   9.61 kB[22m
+2026-10-06T04:37:56.7565186Z [2m../../tmp/browser-app/[22m[2massets/[22m[36mapp-dCojjDKp.js                        [39m[1m[33m937.21 kB[39m[22m[2m │ gzip: 306.06 kB[22m
+2026-10-06T04:37:56.7566289Z [32m✓ built in 8.44s[39m
+2026-10-06T04:37:56.8677039Z ##[group]Run node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false
+2026-10-06T04:37:56.8677970Z [36;1mnode node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false[0m
+2026-10-06T04:37:56.8741867Z shell: /usr/bin/bash -e {0}
+2026-10-06T04:37:56.8742121Z env:
+2026-10-06T04:37:56.8742308Z   BACKEND_ENV: test
+2026-10-06T04:37:56.8742559Z   WATSOLUTION_TEST_DATABASE: local-disposable
+2026-10-06T04:37:56.8743151Z   TEST_DATABASE_URL: ***127.0.0.1:55432/ws_integration
+2026-10-06T04:37:56.8743611Z   TEST_WEB_DIST: tmp/browser-app
+2026-10-06T04:37:56.8743890Z   TEST_TLS_KEY: tmp/browser-tls/key.pem
+2026-10-06T04:37:56.8744186Z   TEST_TLS_CERT: tmp/browser-tls/cert.pem
+2026-10-06T04:37:56.8744455Z ##[endgroup]
+2026-10-06T04:38:02.6033791Z [32m[Nest] 5179  - [39m10/06/2026, 4:38:02 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mActual process.env.BACKEND_ENV value: test[39m
+2026-10-06T04:38:02.6035992Z [32m[Nest] 5179  - [39m10/06/2026, 4:38:02 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mStandard allowed values are: dev, test or prod[39m
+2026-10-06T04:38:02.6038738Z [32m[Nest] 5179  - [39m10/06/2026, 4:38:02 AM [32m    LOG[39m [38;5;3m[Config] [39m[32mif you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file[39m
+2026-10-06T04:38:37.2956716Z FAIL server/integration/browser/session.browser.ts (39.913 s)
+2026-10-06T04:38:37.2958201Z   Chromium HTTPS sessions with PostgreSQL
+2026-10-06T04:38:37.2960862Z     ✓ stores a host-only HttpOnly secure cookie without exposing refresh to page JavaScript (317 ms)
+2026-10-06T04:38:37.2962305Z     ✓ renews after a reload using the browser-managed cookie and real session module (340 ms)
+2026-10-06T04:38:37.2963877Z     ✓ serializes two tabs with navigator.locks and keeps the rotated family active (314 ms)
+2026-10-06T04:38:37.2965256Z     ✓ clears the browser cookie and invalidates access in a second tab after server logout (368 ms)
+2026-10-06T04:38:37.2966631Z     ✓ logs in through the actual Vue UI and restores identity after a protected-page reload (832 ms)
+2026-10-06T04:38:37.2967464Z     ✕ removes protected content from both real UI tabs after logout and prevents reload recovery (31048 ms)
+2026-10-06T04:38:37.2968183Z 
+2026-10-06T04:38:37.2968792Z   ● Chromium HTTPS sessions with PostgreSQL › removes protected content from both real UI tabs after logout and prevents reload recovery
+2026-10-06T04:38:37.2969312Z 
+2026-10-06T04:38:37.2969479Z     page.waitForURL: Timeout 30000ms exceeded.
+2026-10-06T04:38:37.2969856Z     =========================== logs ===========================
+2026-10-06T04:38:37.2970248Z     waiting for navigation to "**/login" until "load"
+2026-10-06T04:38:37.2970667Z     ============================================================
+2026-10-06T04:38:37.2970881Z 
+2026-10-06T04:38:37.2971896Z     [0m [90m 194 |[39m     [36mconst[39m logout [33m=[39m first[33m.[39mwaitForResponse(r [33m=>[39m r[33m.[39murl()[33m.[39mendsWith([32m'/api/session/logout'[39m) [33m&&[39m r[33m.[39mstatus() [33m===[39m [35m201[39m)[33m;[39m
+2026-10-06T04:38:37.2973281Z      [90m 195 |[39m     [36mawait[39m first[33m.[39mlocator([32m'.logout-btn'[39m)[33m.[39mclick()[33m;[39m [36mawait[39m logout[33m;[39m
+2026-10-06T04:38:37.2974824Z     [31m[1m>[22m[39m[90m 196 |[39m     [36mawait[39m first[33m.[39mwaitForURL([32m'**/login'[39m)[33m;[39m [36mawait[39m second[33m.[39mwaitForURL([32m'**/login'[39m)[33m;[39m
+2026-10-06T04:38:37.2975724Z      [90m     |[39m                                                      [31m[1m^[22m[39m
+2026-10-06T04:38:37.2976567Z      [90m 197 |[39m     expect([36mawait[39m second[33m.[39mlocator([32m'.logs-card'[39m)[33m.[39mcount())[33m.[39mtoBe([35m0[39m)[33m;[39m
+2026-10-06T04:38:37.2978119Z      [90m 198 |[39m     expect(([36mawait[39m context[33m.[39mcookies())[33m.[39msome(c [33m=>[39m c[33m.[39mname [33m===[39m [32m'__Host-watsolution-refresh'[39m))[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+2026-10-06T04:38:37.2979507Z      [90m 199 |[39m     [36mawait[39m second[33m.[39mreload()[33m;[39m [36mawait[39m second[33m.[39mlocator([32m'#username'[39m)[33m.[39mwaitFor()[33m;[39m[0m
+2026-10-06T04:38:37.2980072Z 
+2026-10-06T04:38:37.2980339Z       at Object.<anonymous> (integration/browser/session.browser.ts:196:54)
+2026-10-06T04:38:37.2980645Z 
+2026-10-06T04:38:37.2982902Z Test Suites: 1 failed, 1 total
+2026-10-06T04:38:37.2983725Z Tests:       1 failed, 5 passed, 6 total
+2026-10-06T04:38:37.2984142Z Snapshots:   0 total
+2026-10-06T04:38:37.2984389Z Time:        40.135 s
+2026-10-06T04:38:37.2984618Z Ran all test suites.
+2026-10-06T04:38:37.4538903Z ##[error]Process completed with exit code 1.
+2026-10-06T04:38:37.4656618Z Post job cleanup.
+2026-10-06T04:38:37.5560938Z [command]/usr/bin/git version
+2026-10-06T04:38:37.5632309Z git version 2.55.0
+2026-10-06T04:38:37.5708223Z Temporarily overriding HOME='/home/runner/work/_temp/ee588543-e1d2-4ad2-aebd-1533f2831b87' before making global git config changes
+2026-10-06T04:38:37.5709879Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-06T04:38:37.5712416Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/watsolution_web/watsolution_web
+2026-10-06T04:38:37.5750171Z Removing SSH command configuration
+2026-10-06T04:38:37.5772664Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-06T04:38:37.5810396Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-06T04:38:37.6097341Z Removing HTTP extra header
+2026-10-06T04:38:37.6098279Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-06T04:38:37.6138065Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-06T04:38:37.6409355Z Removing includeIf entries pointing to credentials config files
+2026-10-06T04:38:37.6417280Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-06T04:38:37.6455958Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-06T04:38:37.6891987Z Print service container logs: f609baa403614895962ca0575d1e216b_postgres17_dfd526
+2026-10-06T04:38:37.6897045Z ##[command]/usr/bin/docker logs --details 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:38:37.7030005Z  The files belonging to this database system will be owned by user "postgres".
+2026-10-06T04:38:37.7031868Z  initdb: warning: enabling "trust" authentication for local connections
+2026-10-06T04:38:37.7033221Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-06T04:38:37.7034708Z  2026-10-06 04:35:23.979 UTC [1] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-10-06T04:38:37.7035495Z  2026-10-06 04:35:23.980 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-06T04:38:37.7036019Z  2026-10-06 04:35:23.980 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-06T04:38:37.7036541Z  2026-10-06 04:35:23.980 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-06T04:38:37.7037101Z  2026-10-06 04:35:23.983 UTC [64] LOG:  database system was shut down at 2026-10-06 04:35:23 UTC
+2026-10-06T04:38:37.7037614Z  2026-10-06 04:35:23.987 UTC [1] LOG:  database system is ready to accept connections
+2026-10-06T04:38:37.7038452Z  This user must also own the server process.
+2026-10-06T04:38:37.7044009Z  
+2026-10-06T04:38:37.7044782Z  The database cluster will be initialized with locale "en_US.utf8".
+2026-10-06T04:38:37.7045614Z  The default database encoding has accordingly been set to "UTF8".
+2026-10-06T04:38:37.7046359Z  The default text search configuration will be set to "english".
+2026-10-06T04:38:37.7046962Z  
+2026-10-06T04:38:37.7047298Z  Data page checksums are disabled.
+2026-10-06T04:38:37.7047673Z  
+2026-10-06T04:38:37.7048213Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+2026-10-06T04:38:37.7048861Z  creating subdirectories ... ok
+2026-10-06T04:38:37.7049382Z  selecting dynamic shared memory implementation ... posix
+2026-10-06T04:38:37.7049989Z  selecting default "max_connections" ... 100
+2026-10-06T04:38:37.7050521Z  selecting default "shared_buffers" ... 128MB
+2026-10-06T04:38:37.7051035Z  selecting default time zone ... Etc/UTC
+2026-10-06T04:38:37.7051709Z  creating configuration files ... ok
+2026-10-06T04:38:37.7052187Z  running bootstrap script ... ok
+2026-10-06T04:38:37.7052495Z  performing post-bootstrap initialization ... ok
+2026-10-06T04:38:37.7052838Z  syncing data to disk ... ok
+2026-10-06T04:38:37.7053064Z  
+2026-10-06T04:38:37.7053224Z  
+2026-10-06T04:38:37.7053681Z  Success. You can now start the database server using:
+2026-10-06T04:38:37.7054166Z  
+2026-10-06T04:38:37.7054407Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+2026-10-06T04:38:37.7054714Z  
+2026-10-06T04:38:37.7055385Z  waiting for server to start....2026-10-06 04:35:23.676 UTC [48] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-10-06T04:38:37.7056285Z  2026-10-06 04:35:23.676 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-06T04:38:37.7056853Z  2026-10-06 04:35:23.679 UTC [51] LOG:  database system was shut down at 2026-10-06 04:35:23 UTC
+2026-10-06T04:38:37.7057360Z  2026-10-06 04:35:23.682 UTC [48] LOG:  database system is ready to accept connections
+2026-10-06T04:38:37.7057727Z   done
+2026-10-06T04:38:37.7057906Z  server started
+2026-10-06T04:38:37.7058098Z  CREATE DATABASE
+2026-10-06T04:38:37.7058279Z  
+2026-10-06T04:38:37.7058434Z  
+2026-10-06T04:38:37.7058738Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+2026-10-06T04:38:37.7059452Z  
+2026-10-06T04:38:37.7059807Z  waiting for server to shut down...2026-10-06 04:35:23.859 UTC [48] LOG:  received fast shutdown request
+2026-10-06T04:38:37.7060512Z  .2026-10-06 04:35:23.860 UTC [48] LOG:  aborting any active transactions
+2026-10-06T04:38:37.7061093Z  2026-10-06 04:35:23.862 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+2026-10-06T04:38:37.7061621Z  2026-10-06 04:35:23.862 UTC [49] LOG:  shutting down
+2026-10-06T04:38:37.7061995Z  2026-10-06 04:35:23.862 UTC [49] LOG:  checkpoint starting: shutdown immediate
+2026-10-06T04:38:37.7063089Z  2026-10-06 04:35:23.878 UTC [49] LOG:  checkpoint complete: wrote 925 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.012 s, sync=0.004 s, total=0.016 s; sync files=301, longest=0.003 s, average=0.001 s; distance=4256 kB, estimate=4256 kB; lsn=0/19179A8, redo lsn=0/19179A8
+2026-10-06T04:38:37.7064435Z  2026-10-06 04:35:23.884 UTC [48] LOG:  database system is shut down
+2026-10-06T04:38:37.7064778Z   done
+2026-10-06T04:38:37.7064960Z  server stopped
+2026-10-06T04:38:37.7065145Z  
+2026-10-06T04:38:37.7065382Z  PostgreSQL init process complete; ready for start up.
+2026-10-06T04:38:37.7065684Z  
+2026-10-06T04:38:37.7071177Z Stop and remove container: f609baa403614895962ca0575d1e216b_postgres17_dfd526
+2026-10-06T04:38:37.7076082Z ##[command]/usr/bin/docker rm --force 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:38:37.8316485Z 1f13ce847f5bbf2eb4f9ace4b69946cbbe9ad7b7297bfb3da09a2cca5dd93d4b
+2026-10-06T04:38:37.8342846Z Remove container network: github_network_ede5692f7e5d43488960759f78cb07d1
+2026-10-06T04:38:37.8347618Z ##[command]/usr/bin/docker network rm github_network_ede5692f7e5d43488960759f78cb07d1
+2026-10-06T04:38:37.9425979Z github_network_ede5692f7e5d43488960759f78cb07d1
+2026-10-06T04:38:37.9505593Z Cleaning up orphan processes

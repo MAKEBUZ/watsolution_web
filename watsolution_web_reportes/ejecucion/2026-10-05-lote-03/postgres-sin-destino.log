@@ -1,0 +1,56 @@
+FAIL server/integration/session.integration.ts (10.122 s)
+  Session lifecycle on disposable PostgreSQL
+    × revokes and cannot renew the revoked refresh (1 ms)
+    × does not revoke another family by guessing its id (1 ms)
+    × serializes concurrent rotation and logout, leaving no live family
+
+  ● Session lifecycle on disposable PostgreSQL › revokes and cannot renew the revoked refresh
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at Object.<anonymous> (integration/session.integration.ts:13:37)
+
+  ● Session lifecycle on disposable PostgreSQL › does not revoke another family by guessing its id
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at Object.<anonymous> (integration/session.integration.ts:13:37)
+
+  ● Session lifecycle on disposable PostgreSQL › serializes concurrent rotation and logout, leaving no live family
+
+    Integration requires explicit local-disposable test mode
+
+      1 | export function integrationTarget(env: NodeJS.ProcessEnv = process.env) {
+      2 |   if (env.BACKEND_ENV !== 'test' || env.WATSOLUTION_TEST_DATABASE !== 'local-disposable') {
+    > 3 |     throw new Error('Integration requires explicit local-disposable test mode');
+        |           ^
+      4 |   }
+      5 |   let url: URL;
+      6 |   try { url = new URL(env.TEST_DATABASE_URL ?? ''); }
+
+      at integrationTarget (integration/target.ts:3:11)
+      at Object.<anonymous> (integration/session.integration.ts:13:37)
+
+Test Suites: 1 failed, 1 total
+Tests:       3 failed, 3 total
+Snapshots:   0 total
+Time:        10.388 s
+Ran all test suites.

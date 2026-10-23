@@ -1,3 +1,4 @@
+import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -10,6 +11,7 @@ import {
   Post as PostMethod,
   Put,
   Req,
+  ServiceUnavailableException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -41,7 +43,7 @@ export class InvoiceController {
   ) {}
 
   @Get('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -59,7 +61,8 @@ export class InvoiceController {
   }
 
   @Get('/by-person/:personId')
-  @Roles(RoleType.USER)
+  @UseGuards(RecordAccessGuard)
+  @Roles(RoleType.USER, RoleType.ADMIN)
   @ApiOperation({ summary: 'Get all invoices for a person' })
   @ApiResponse({ status: 200, description: 'Invoices for the person', type: InvoiceDTO })
   async getByPerson(@Param('personId') personId: number): Promise<InvoiceDTO[]> {
@@ -72,7 +75,8 @@ export class InvoiceController {
   }
 
   @Get('/download/:id')
-  @Roles(RoleType.USER)
+  @UseGuards(RecordAccessGuard)
+  @Roles(RoleType.USER, RoleType.ADMIN)
   @ApiOperation({ summary: 'Get presigned download URL for invoice PDF (generates on-demand if missing)' })
   @ApiResponse({ status: 200, description: 'Presigned URL' })
   async getDownloadUrl(@Param('id') id: number): Promise<{ url: string }> {
@@ -99,10 +103,13 @@ export class InvoiceController {
         });
         pdfKey = `facturacion/FAC-${invoice.id}.pdf`;
         await this.bucketService.uploadPdf(pdfKey, pdfBuffer);
-        await this.invoiceService.update({ ...invoice, pdfUrl: pdfKey });
       } catch (err) {
         this.logger.error(`On-demand PDF generation failed for invoice ${id}: ${err?.message ?? err}`);
-        throw new NotFoundException('PDF generation failed for this invoice');
+        throw new ServiceUnavailableException('PDF generation failed for this invoice');
+      }
+      const updated = await this.invoiceService.updatePdfKey(invoice.id, pdfKey);
+      if (!updated) {
+        throw new NotFoundException('Invoice not found');
       }
     }
 
@@ -111,7 +118,8 @@ export class InvoiceController {
   }
 
   @Get('/:id')
-  @Roles(RoleType.USER)
+  @UseGuards(RecordAccessGuard)
+  @Roles(RoleType.USER, RoleType.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'The found record',
@@ -122,7 +130,7 @@ export class InvoiceController {
   }
 
   @PostMethod('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Create invoice' })
   @ApiResponse({
     status: 201,
@@ -148,7 +156,7 @@ export class InvoiceController {
   }
 
   @PostMethod('/:id/generate-pdf')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Generate PDF for existing invoice and upload to S3' })
   @ApiResponse({ status: 200, description: 'Invoice PDF generated', type: InvoiceDTO })
   async generatePdf(@Req() req: Request, @Param('id') id: number): Promise<InvoiceDTO> {
@@ -183,7 +191,7 @@ export class InvoiceController {
     await this.bucketService.uploadPdf(key, pdfBuffer);
 
     // Persist pdfUrl
-    const updated = await this.invoiceService.update({ ...invoice, pdfUrl: key }, req.user?.login);
+    const updated = await this.invoiceService.updatePdfKey(invoice.id, key, req.user?.login);
     if (!updated) {
       throw new NotFoundException('Failed to update invoice with pdfUrl');
     }
@@ -191,7 +199,7 @@ export class InvoiceController {
   }
 
   @Put('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update invoice' })
   @ApiResponse({
     status: 200,
@@ -199,12 +207,13 @@ export class InvoiceController {
     type: InvoiceDTO,
   })
   async put(@Req() req: Request, @Body() invoiceDTO: InvoiceDTO): Promise<InvoiceDTO> {
+    const updated = await this.invoiceService.update(invoiceDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Invoice', invoiceDTO.id);
-    return await this.invoiceService.update(invoiceDTO, req.user?.login);
+    return updated;
   }
 
   @Put('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update invoice with id' })
   @ApiResponse({
     status: 200,
@@ -212,19 +221,20 @@ export class InvoiceController {
     type: InvoiceDTO,
   })
   async putId(@Req() req: Request, @Body() invoiceDTO: InvoiceDTO): Promise<InvoiceDTO> {
+    const updated = await this.invoiceService.update(invoiceDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Invoice', invoiceDTO.id);
-    return await this.invoiceService.update(invoiceDTO, req.user?.login);
+    return updated;
   }
 
   @Delete('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Delete invoice' })
   @ApiResponse({
     status: 204,
     description: 'The record has been successfully deleted.',
   })
   async deleteById(@Req() req: Request, @Param('id') id: number): Promise<void> {
+    await this.invoiceService.deleteById(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, 'Invoice', id);
-    return await this.invoiceService.deleteById(id);
   }
 }

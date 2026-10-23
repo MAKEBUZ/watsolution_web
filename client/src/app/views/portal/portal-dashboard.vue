@@ -4,6 +4,7 @@ import { Chart, registerables } from 'chart.js';
 import { useAccountStore } from '@/shared/config/store/account-store';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import WaterNetwork from '@/core/water/water-network.vue';
 import MisFacturas from './mis-facturas.vue';
 import MiConsumo from './mi-consumo.vue';
 import NotificationBell from '@/core/notifications/notification-bell.vue';
@@ -29,7 +30,7 @@ const navItems = [
   { id: 'facturas', label: 'Mis Facturas', icon: 'file-text' },
   { id: 'consumo', label: 'Mi Consumo', icon: 'droplet' },
   { id: 'notificaciones', label: 'Notificaciones', icon: 'bell' },
-  { id: 'tramites', label: 'Gestiones', icon: 'clipboard' },
+  { id: 'tramites', label: 'Trámites', icon: 'clipboard' },
   { id: 'soporte', label: 'Soporte', icon: 'message-square' },
 ];
 
@@ -88,20 +89,16 @@ const chartValues = ref<number[]>([]);
 const recentInvoices = ref<RecentInvoice[]>([]);
 
 const quickActions = [
-  { label: 'Consultar facturas', desc: 'Revisa saldos y descarga tus facturas', icon: 'file-invoice', section: 'facturas' },
-  { label: 'Revisar consumo', desc: 'Consulta tus lecturas registradas', icon: 'tint', section: 'consumo' },
-  { label: 'Ver notificaciones', desc: 'Revisa los movimientos de tu cuenta', icon: 'bell', section: 'notificaciones' },
-  { label: 'Consultar soporte', desc: 'Información de atención al suscriptor', icon: 'comment-alt', section: 'soporte' },
+  { label: 'Reportar Fuga', desc: 'Notifica una fuga en tu sector', icon: '💧' },
+  { label: 'Reclamaciones', desc: 'Haz una reclamación formal', icon: '📋' },
+  { label: 'Certificados', desc: 'Descarga certificados oficiales', icon: '📄' },
+  { label: 'Actualizar Datos', desc: 'Modifica tu información', icon: '👤' },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function fmtDate(d: any): string {
   if (!d) return '–';
-  return new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(d)) ? `${d}T12:00:00` : d).toLocaleDateString('es-CO', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  return new Date(d).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function fmtCurrency(n: number): string {
@@ -205,6 +202,7 @@ function renderChart() {
       ],
     },
     options: {
+      animation: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? false : undefined,
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
@@ -241,11 +239,12 @@ onUnmounted(() => {
         <button class="sidebar-brand__close" @click="router.push('/')" title="Ir al inicio">✕</button>
       </div>
 
-      <nav class="sidebar-nav">
+      <nav class="sidebar-nav" aria-label="Secciones de mi portal">
         <button
           v-for="item in navItems"
           :key="item.id"
           :class="['sidebar-nav__item', { active: activeSection === item.id }]"
+          :aria-current="activeSection === item.id ? 'page' : undefined"
           @click="activeSection = item.id"
         >
           <span class="sidebar-nav__icon">
@@ -349,33 +348,41 @@ onUnmounted(() => {
       <!-- Top bar -->
       <div class="portal-topbar">
         <div class="portal-topbar__left">
-          <p class="workspace-eyebrow">MI CUENTA / OFICINA VIRTUAL</p>
           <h1 class="portal-topbar__greeting">Hola, {{ userName }}</h1>
-          <p class="portal-topbar__sub">Consulta el estado de tu servicio y tus movimientos.</p>
+          <p class="portal-topbar__sub">Bienvenido a tu portal personal</p>
         </div>
         <div class="portal-topbar__right">
-          <router-link to="/pagos" class="workspace-primary">Pagar factura <span>↗</span></router-link>
           <NotificationBell />
           <div class="topbar-avatar">{{ userInitial }}</div>
         </div>
       </div>
 
-      <label class="portal-mobile-nav"
-        >Sección de mi cuenta
-        <select v-model="activeSection">
-          <option v-for="item in navItems" :key="item.id" :value="item.id">{{ item.label }}</option>
-        </select>
-      </label>
       <!-- Resumen section -->
       <div v-if="activeSection === 'resumen'" class="portal-content">
         <!-- Error banner -->
-        <div v-if="errorMsg" class="error-banner">{{ errorMsg }} <button class="link-btn" @click="loadDashboard">Reintentar</button></div>
+        <div v-if="errorMsg" class="error-banner" role="alert">
+          ⚠️ {{ errorMsg }}
+          <button type="button" class="link-btn" :disabled="loading" @click="loadDashboard">Reintentar</button>
+        </div>
 
+        <p v-if="loading" role="status">Cargando tu resumen de consumo y facturas…</p>
+        <section class="service-intro" aria-labelledby="service-intro-title">
+          <div class="service-intro__copy">
+            <p class="ws-eyebrow">TU CONEXIÓN CON EL AGUA</p>
+            <h2 id="service-intro-title">Un servicio cercano.<br /><em>Todo a tu alcance.</em></h2>
+            <p>Consulta tus facturas, conoce tu consumo y encuentra ayuda para cuidar tu servicio.</p>
+            <div class="portal-primary-actions">
+              <button class="btn btn--primary" @click="activeSection = 'facturas'">Consultar mis facturas</button>
+              <button class="btn btn--outline" @click="router.push('/pagos')">Ir a pagos</button>
+            </div>
+          </div>
+          <div class="service-intro__art"><WaterNetwork /></div>
+        </section>
         <!-- 3 KPI cards -->
         <div class="stat-cards stat-cards--3">
           <!-- Card 1: Factura Actual (latest invoice + status) -->
           <div class="stat-card">
-            <div class="stat-card__icon" style="background: #eaf1f3"><font-awesome-icon icon="file-invoice" style="font-size: 20px" /></div>
+            <div class="stat-card__icon" style="background: #e0f2fe">🧾</div>
             <div class="stat-card__info">
               <p class="stat-card__label">Factura Actual</p>
               <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
@@ -391,7 +398,7 @@ onUnmounted(() => {
 
           <!-- Card 2: Consumo (latest meter reading) -->
           <div class="stat-card">
-            <div class="stat-card__icon" style="background: #eaf3ef"><font-awesome-icon icon="tint" style="font-size: 20px" /></div>
+            <div class="stat-card__icon" style="background: #d1fae5">💧</div>
             <div class="stat-card__info">
               <p class="stat-card__label">Último Consumo</p>
               <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
@@ -403,9 +410,7 @@ onUnmounted(() => {
 
           <!-- Card 3: Estado Servicio -->
           <div class="stat-card">
-            <div class="stat-card__icon" :style="{ background: serviceIconBg }">
-              <font-awesome-icon icon="shield-alt" style="font-size: 20px" />
-            </div>
+            <div class="stat-card__icon" :style="{ background: serviceIconBg }">{{ serviceIcon }}</div>
             <div class="stat-card__info">
               <p class="stat-card__label">Estado Servicio</p>
               <p class="stat-card__value" :class="{ 'stat-card__value--loading': loading }">
@@ -422,9 +427,11 @@ onUnmounted(() => {
             <h3>Tendencia de Consumo</h3>
             <span class="chart-card__badge">Últimos 6 meses</span>
           </div>
-          <p v-if="!loading && !chartValues.length" class="invoice-empty">No hay lecturas de consumo disponibles.</p>
-          <div v-show="chartValues.length" class="chart-wrapper">
-            <canvas ref="lineChartRef"></canvas>
+          <div class="chart-wrapper">
+            <canvas ref="lineChartRef" role="img" aria-label="Tendencia de consumo en metros cúbicos"></canvas>
+            <p v-if="!loading && !errorMsg && chartLabels.length === 0" class="chart-empty">
+              Aún no hay lecturas para mostrar tu tendencia de consumo.
+            </p>
           </div>
           <button class="chart-card__link" @click="activeSection = 'consumo'">Ver análisis completo →</button>
         </div>
@@ -474,12 +481,12 @@ onUnmounted(() => {
           <!-- Trámites rápidos -->
           <div class="portal-card">
             <div class="portal-card__header">
-              <h3>Accesos rápidos</h3>
+              <h3>Trámites Rápidos</h3>
             </div>
             <div class="quick-list">
-              <button v-for="action in quickActions" :key="action.label" class="quick-item" @click="activeSection = action.section">
+              <button v-for="action in quickActions" :key="action.label" class="quick-item">
                 <div class="quick-item__left">
-                  <span class="quick-item__icon"><font-awesome-icon :icon="action.icon" /></span>
+                  <span class="quick-item__icon">{{ action.icon }}</span>
                   <div>
                     <p class="quick-item__label">{{ action.label }}</p>
                     <p class="quick-item__desc">{{ action.desc }}</p>
@@ -548,12 +555,12 @@ onUnmounted(() => {
       <div v-else-if="activeSection === 'tramites'" class="portal-content">
         <div class="portal-card full-width">
           <div class="portal-card__header">
-            <h3>Gestiones de mi cuenta</h3>
+            <h3>Trámites y Solicitudes</h3>
           </div>
           <div class="quick-list">
-            <button v-for="action in quickActions" :key="action.label" class="quick-item" @click="activeSection = action.section">
+            <button v-for="action in quickActions" :key="action.label" class="quick-item">
               <div class="quick-item__left">
-                <span class="quick-item__icon"><font-awesome-icon :icon="action.icon" /></span>
+                <span class="quick-item__icon">{{ action.icon }}</span>
                 <div>
                   <p class="quick-item__label">{{ action.label }}</p>
                   <p class="quick-item__desc">{{ action.desc }}</p>
@@ -707,6 +714,7 @@ onUnmounted(() => {
 .portal-main {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -1336,6 +1344,94 @@ onUnmounted(() => {
     background: #e67e22;
     flex-shrink: 0;
     margin-top: 6px;
+  }
+}
+
+.portal-layout {
+  background: #f1f6f7;
+}
+.portal-sidebar {
+  background: #123f50;
+}
+.portal-topbar {
+  border-bottom: 1px solid #d4e4e8;
+}
+.portal-topbar__greeting {
+  color: #123f50;
+  letter-spacing: -0.035em;
+}
+.portal-primary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card,
+.chart-card,
+.portal-card {
+  border: 1px solid #d4e4e8;
+  box-shadow: none;
+  border-radius: 18px;
+}
+.stat-card__value {
+  color: #123f50;
+  font-variant-numeric: tabular-nums;
+}
+.chart-wrapper {
+  position: relative;
+}
+.chart-empty {
+  position: absolute;
+  inset: 40% 20px auto;
+  text-align: center;
+  color: #536b76;
+}
+.notif-history__date,
+.portal-topbar__sub {
+  color: #586e78;
+}
+@media (max-width: 768px) {
+  .portal-layout {
+    flex-direction: column;
+  }
+  .portal-main {
+    width: 100%;
+  }
+  .portal-sidebar {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    position: static;
+  }
+  .sidebar-brand {
+    display: none;
+  }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+    gap: 4px;
+  }
+  .sidebar-nav__item {
+    width: auto;
+    min-height: 48px;
+    flex: 0 0 auto;
+    padding: 10px 14px;
+  }
+  .sidebar-nav__label {
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  .portal-content {
+    padding: 20px 16px;
+  }
+  .portal-topbar {
+    padding: 22px 16px;
+  }
+  .portal-primary-actions > * {
+    flex: 1 1 140px;
   }
 }
 </style>

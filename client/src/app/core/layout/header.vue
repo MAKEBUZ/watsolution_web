@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useAccountStore } from '@/shared/config/store/account-store';
@@ -14,10 +14,6 @@ const isScrolled = ref(false);
 
 const isAuthenticated = computed(() => !!accountStore.account);
 const isAdmin = computed(() => accountStore.account?.authorities?.includes('ROLE_ADMIN'));
-
-const isAdminOrPortal = computed(() => {
-  return route.path.startsWith('/admin') || route.path.startsWith('/portal') || route.path !== '/';
-});
 
 const isWhiteBackground = computed(() => {
   return isScrolled.value;
@@ -37,17 +33,32 @@ const toggleMenu = () => {
   }
 };
 
+const closeMenu = () => {
+  isMenuOpen.value = false;
+  document.body.style.overflow = '';
+};
+const onEscape = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && isMenuOpen.value) {
+    closeMenu();
+    document.querySelector<HTMLButtonElement>('.header__toggle')?.focus();
+  }
+};
+watch(() => route.fullPath, closeMenu);
+
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 10;
 };
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('keydown', onEscape);
   accountStore.initAccount();
 });
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('keydown', onEscape);
+  closeMenu();
 });
 
 const logout = () => {
@@ -60,7 +71,7 @@ const navLinks = [
   { name: 'Noticias', path: '/noticias' },
   { name: 'Portal Usuario', path: '/portal', requiresAuth: true },
   { name: 'Pagos', path: '/pagos', requiresAuth: true },
-  { name: 'Admin', path: '/admin', requiresAuth: true, requiresAdmin: true, nameOverride: 'admin-summary' }
+  { name: 'Admin', path: '/admin', requiresAuth: true, requiresAdmin: true, nameOverride: 'admin-summary' },
 ];
 </script>
 
@@ -79,10 +90,7 @@ const navLinks = [
         <ul class="header__nav-list">
           <template v-for="link in navLinks" :key="link.path">
             <li v-if="(!link.requiresAuth || isAuthenticated) && (!link.requiresAdmin || isAdmin)">
-              <router-link 
-                :to="link.nameOverride ? { name: link.nameOverride } : link.path" 
-                class="header__nav-link"
-              >
+              <router-link :to="link.nameOverride ? { name: link.nameOverride } : link.path" class="header__nav-link">
                 {{ link.name }}
               </router-link>
             </li>
@@ -91,24 +99,21 @@ const navLinks = [
 
         <div class="header__actions">
           <template v-if="!isAuthenticated">
-            <router-link to="/login" class="btn btn--primary">
-              Ingresar
-            </router-link>
+            <router-link to="/login" class="btn btn--primary"> Ingresar </router-link>
           </template>
 
           <template v-else>
             <NotificationBell />
-            <button @click="logout" class="btn btn--outline">
-              Cerrar Sesión
-            </button>
+            <button @click="logout" class="btn btn--outline">Cerrar Sesión</button>
           </template>
         </div>
       </nav>
 
-      <button 
-        class="header__toggle" 
-        @click="toggleMenu" 
-        aria-label="Abrir menú"
+      <button
+        class="header__toggle"
+        @click="toggleMenu"
+        :aria-label="isMenuOpen ? 'Cerrar menú' : 'Abrir menú'"
+        aria-controls="mobile-navigation"
         :aria-expanded="isMenuOpen"
       >
         <font-awesome-icon v-if="!isMenuOpen" icon="bars" size="lg" />
@@ -116,15 +121,11 @@ const navLinks = [
       </button>
 
       <Transition name="slide">
-        <nav v-if="isMenuOpen" class="header__nav header__nav--mobile">
+        <nav id="mobile-navigation" aria-label="Navegación principal" v-if="isMenuOpen" class="header__nav header__nav--mobile">
           <ul class="header__nav-list">
             <template v-for="link in navLinks" :key="link.path">
               <li v-if="(!link.requiresAuth || isAuthenticated) && (!link.requiresAdmin || isAdmin)">
-                <router-link 
-                  :to="link.nameOverride ? { name: link.nameOverride } : link.path" 
-                  class="header__nav-link"
-                  @click="toggleMenu"
-                >
+                <router-link :to="link.nameOverride ? { name: link.nameOverride } : link.path" class="header__nav-link" @click="toggleMenu">
                   {{ link.name }}
                 </router-link>
               </li>
@@ -133,18 +134,15 @@ const navLinks = [
 
           <div class="header__actions">
             <template v-if="!isAuthenticated">
-              <router-link 
-                to="/login" 
-                class="btn btn--primary"
-                @click="toggleMenu"
-              >
-                Ingresar
-              </router-link>
+              <router-link to="/login" class="btn btn--primary" @click="toggleMenu"> Ingresar </router-link>
             </template>
 
             <template v-else>
-              <button 
-                @click="logout(); toggleMenu()" 
+              <button
+                @click="
+                  logout();
+                  toggleMenu();
+                "
                 class="btn btn--outline"
               >
                 Cerrar Sesión
@@ -161,10 +159,6 @@ const navLinks = [
 @use 'sass:color';
 @use '../../../content/scss/variables' as *;
 @use '../../../content/scss/mixins' as *;
-
-
-
-
 
 .header {
   position: fixed;
@@ -360,5 +354,17 @@ const navLinks = [
 .slide-enter-from,
 .slide-leave-to {
   transform: translateY(-100%);
+}
+
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #d4e4e8;
+}
+.header__logo-text {
+  color: #123f50;
+}
+.header__toggle {
+  min-width: 44px;
+  min-height: 44px;
 }
 </style>

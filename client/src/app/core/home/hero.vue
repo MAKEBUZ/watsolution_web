@@ -23,7 +23,7 @@ import { ArrowRight } from 'lucide-vue-next'
       <div class="hero__text">
         <h1 class="hero__title">Gestión Inteligente de <span>Acueductos</span></h1>
         <p class="hero__description">
-          Optimiza la distribución, monitorea en tiempo real y garantiza la sostenibilidad hídrica con la plataforma PWA líder en el sector.
+          Prototipo académico para explorar la gestión de acueductos. La integración de sensores está pendiente.
         </p>
         <div class="hero__actions">
           <button class="btn btn--primary">Comenzar Ahora <ArrowRight :size="18" /></button>
@@ -38,6 +38,7 @@ import { ArrowRight } from 'lucide-vue-next'
             <div class="hero__card-dot"></div>
           </div>
           <div class="hero__card-body">
+            <p role="note">Demostración visual: valores ilustrativos, sin mediciones de sensores.</p>
             <div class="mockup-graph">
               <div class="mockup-bar" style="height: 60%"></div>
               <div class="mockup-bar" style="height: 80%"></div>
@@ -47,7 +48,7 @@ import { ArrowRight } from 'lucide-vue-next'
             </div>
             <div class="mockup-stats">
               <div class="mockup-stat">
-                <span class="mockup-label">Flujo Actual</span>
+                <span class="mockup-label">Flujo ilustrativo</span>
                 <span class="mockup-value">1,240 L/s</span>
               </div>
               <div class="mockup-stat">

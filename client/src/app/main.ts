@@ -18,6 +18,7 @@ import { useStore, useTranslationStore } from '@/store';
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
 import '../content/scss/main.scss';
+import '../content/scss/water-system.scss';
 import TranslationService from '@/locale/translation.service';
 import NoticiaService from '@/entities/noticia/noticia.service';
 import ReporteService from '@/entities/reporte/reporte.service';

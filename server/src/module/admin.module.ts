@@ -1,3 +1,4 @@
+import { BillingService } from '../service/billing.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
@@ -17,6 +18,6 @@ import { NotificationModule } from './notification.module';
 @Module({
   imports: [TypeOrmModule.forFeature([User, Invoice, Meter, Person, ActivityLog]), NotificationModule],
   controllers: [AdminController],
-  providers: [AdminStatsService, InvoiceService, MeterService, BucketService, InvoicePdfService, TankLevelGateway],
+  providers: [BillingService, AdminStatsService, InvoiceService, MeterService, BucketService, InvoicePdfService, TankLevelGateway],
 })
 export class AdminModule {}

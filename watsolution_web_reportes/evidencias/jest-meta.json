@@ -1,0 +1,16 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--config",
+    "server/package.json",
+    "--runInBand",
+    "--no-cache",
+    "--cacheDirectory",
+    "C:\\Users\\macab\\Desktop\\WATSOLUTION\\watsolution_web\\watsolution_web_reportes\\evidencias\\jest-cache",
+    "--coverage=false"
+  ],
+  "exitCode": 0,
+  "date": "2026-10-05",
+  "node": "v24.15.0"
+}

@@ -56,6 +56,21 @@ describe('Component Tests', () => {
     });
 
     describe('Mount', () => {
+      it('shows containment notice and removes generic write controls for existing rows', async () => {
+        meterServiceStub.retrieve.resolves({ headers: {}, data: [{ id: 123 }] });
+        const wrapper = shallowMount(Meter, { global: { ...mountOptions, stubs: {
+          ...mountOptions.stubs,
+          'router-link': { template: '<div><slot :navigate="() => {}" /></div>' },
+          'b-button': { template: '<button><slot /></button>' },
+        } } });
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.find('[data-cy="financial-containment-notice"]').text()).toContain('suspendidas');
+        expect(wrapper.find('[data-cy="entityDetailsButton"]').exists()).toBe(true);
+        for (const action of ['entityCreateButton', 'entityEditButton', 'entityDeleteButton']) {
+          expect(wrapper.find('[data-cy="' + action + '"]').exists()).toBe(false);
+        }
+      });
       it('Should call load all on init', async () => {
         // GIVEN
         meterServiceStub.retrieve.resolves({ headers: {}, data: [{ id: 123 }] });

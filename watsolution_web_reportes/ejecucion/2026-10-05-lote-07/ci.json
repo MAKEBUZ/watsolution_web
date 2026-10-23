@@ -1,0 +1,237 @@
+{
+  "total_count": 2,
+  "jobs": [
+    {
+      "id": 112091204915,
+      "run_id": 37408447605,
+      "workflow_name": "Security and regression checks",
+      "head_branch": "test/persisted-http-authentication",
+      "run_url": "https://api.github.com/repos/MAKEBUZ/watsolution_web/actions/runs/37408447605",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOSHG64s8AAAAaGSgNMw",
+      "head_sha": "b7a4fd093d9854801f1db6c6adcf57fb8310cf59",
+      "url": "https://api.github.com/repos/MAKEBUZ/watsolution_web/actions/jobs/112091204915",
+      "html_url": "https://github.com/MAKEBUZ/watsolution_web/actions/runs/37408447605/job/112091204915",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-06T03:19:38Z",
+      "started_at": "2026-10-06T03:19:40Z",
+      "completed_at": "2026-10-06T03:21:48Z",
+      "name": "validate",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-06T03:19:40Z",
+          "completed_at": "2026-10-06T03:19:42Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-06T03:19:42Z",
+          "completed_at": "2026-10-06T03:19:43Z"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-06T03:19:43Z",
+          "completed_at": "2026-10-06T03:19:47Z"
+        },
+        {
+          "name": "Run npm ci --ignore-scripts --no-fund",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-06T03:19:47Z",
+          "completed_at": "2026-10-06T03:21:19Z"
+        },
+        {
+          "name": "Run npm audit --omit=dev --audit-level=high",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-06T03:21:19Z",
+          "completed_at": "2026-10-06T03:21:20Z"
+        },
+        {
+          "name": "Run node node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-06T03:21:20Z",
+          "completed_at": "2026-10-06T03:21:22Z"
+        },
+        {
+          "name": "Run node node_modules/jest/bin/jest.js --config server/package.json --runInBand",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-06T03:21:22Z",
+          "completed_at": "2026-10-06T03:21:28Z"
+        },
+        {
+          "name": "Run node ../node_modules/vitest/vitest.mjs run",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-06T03:21:28Z",
+          "completed_at": "2026-10-06T03:21:38Z"
+        },
+        {
+          "name": "Run npm run vite-build -w client",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-06T03:21:38Z",
+          "completed_at": "2026-10-06T03:21:46Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-06T03:21:46Z",
+          "completed_at": "2026-10-06T03:21:46Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-06T03:21:46Z",
+          "completed_at": "2026-10-06T03:21:46Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-06T03:21:46Z",
+          "completed_at": "2026-10-06T03:21:46Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/MAKEBUZ/watsolution_web/check-runs/112091204915",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000000192,
+      "runner_name": "GitHub Actions 1000000192",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 112091205196,
+      "run_id": 37408447605,
+      "workflow_name": "Security and regression checks",
+      "head_branch": "test/persisted-http-authentication",
+      "run_url": "https://api.github.com/repos/MAKEBUZ/watsolution_web/actions/runs/37408447605",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOSHG64s8AAAAaGSgOTA",
+      "head_sha": "b7a4fd093d9854801f1db6c6adcf57fb8310cf59",
+      "url": "https://api.github.com/repos/MAKEBUZ/watsolution_web/actions/jobs/112091205196",
+      "html_url": "https://github.com/MAKEBUZ/watsolution_web/actions/runs/37408447605/job/112091205196",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-06T03:19:38Z",
+      "started_at": "2026-10-06T03:19:40Z",
+      "completed_at": "2026-10-06T03:21:45Z",
+      "name": "postgres-sessions",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-06T03:19:41Z",
+          "completed_at": "2026-10-06T03:19:42Z"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-06T03:19:42Z",
+          "completed_at": "2026-10-06T03:20:02Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-06T03:20:02Z",
+          "completed_at": "2026-10-06T03:20:03Z"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-06T03:20:03Z",
+          "completed_at": "2026-10-06T03:20:04Z"
+        },
+        {
+          "name": "Run npm ci --ignore-scripts --no-fund",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-06T03:20:04Z",
+          "completed_at": "2026-10-06T03:21:31Z"
+        },
+        {
+          "name": "Run node node_modules/jest/bin/jest.js --config server/integration/jest.config.json --runInBand --coverage=false",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-06T03:21:31Z",
+          "completed_at": "2026-10-06T03:21:39Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-06T03:21:39Z",
+          "completed_at": "2026-10-06T03:21:42Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-06T03:21:42Z",
+          "completed_at": "2026-10-06T03:21:42Z"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-06T03:21:42Z",
+          "completed_at": "2026-10-06T03:21:43Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-06T03:21:43Z",
+          "completed_at": "2026-10-06T03:21:43Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/MAKEBUZ/watsolution_web/check-runs/112091205196",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000000193,
+      "runner_name": "GitHub Actions 1000000193",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

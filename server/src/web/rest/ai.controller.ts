@@ -19,7 +19,7 @@ export class AiController {
     @Body() body: { message: string },
     @Request() req: any,
   ): Promise<{ reply: string }> {
-    return this.aiService.chat(req.user?.login ?? '', body.message);
+    return this.aiService.chat(req.user.id, body.message);
   }
 
   @Post('/admin/chat')

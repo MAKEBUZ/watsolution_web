@@ -44,9 +44,12 @@ export class UserDTO extends BaseDTO {
   @ApiProperty({ example: 'http://my-image-url', description: 'Image url', required: false })
   imageUrl?: string;
 
+  @Exclude()
   activationKey?: string;
 
+  @Exclude()
   resetKey?: string;
 
+  @Exclude()
   resetDate?: Date;
 }

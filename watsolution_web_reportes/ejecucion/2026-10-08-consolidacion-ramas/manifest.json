@@ -1,0 +1,30 @@
+[
+  {
+    "archivo": "estado-local-antes.txt",
+    "sha256": "2BC309329838DE254464158EDD82FF46D8B3CB0EB12626D3F82D03EEAD5F7C80"
+  },
+  {
+    "archivo": "estado-local-despues.txt",
+    "sha256": "2BC309329838DE254464158EDD82FF46D8B3CB0EB12626D3F82D03EEAD5F7C80"
+  },
+  {
+    "archivo": "ramas-antes.bundle",
+    "sha256": "BD765A9A337B04FD6FCAE163CCFB6E7D38CFC441B89381AFE67F7E6A191C3DD1"
+  },
+  {
+    "archivo": "ramas-antes.txt",
+    "sha256": "B2CE623679860C06859431B815E9484E784FDA5488E2FECC7657AE0A8A441247"
+  },
+  {
+    "archivo": "ramas-despues.txt",
+    "sha256": "8D140135D796A029B8F5EA6187EE3FA24831D9F7C9B7893F5212A7D188DC201F"
+  },
+  {
+    "archivo": "ramas-eliminadas.txt",
+    "sha256": "35E05B131EA36380FE68B7B1170FF64C0AF3B95A699B54807177E10D35FCCA5E"
+  },
+  {
+    "archivo": "ramas-finales-develop.txt",
+    "sha256": "95353BC561799DE3301C3B6C172AB8059750AFD029A627A5DF16D1E537EB278D"
+  }
+]

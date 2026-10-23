@@ -1,0 +1,13 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Users\\macab\\Desktop\\WATSOLUTION\\watsolution_web\\node_modules\\eslint\\bin\\eslint.js",
+    ".",
+    "--no-cache",
+    "--format",
+    "json"
+  ],
+  "exitCode": 1,
+  "date": "2026-10-05",
+  "node": "v24.15.0"
+}

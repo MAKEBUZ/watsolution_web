@@ -1,3 +1,4 @@
+import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -32,7 +33,7 @@ export class MeterController {
   constructor(private readonly meterService: MeterService) {}
 
   @Get('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -50,7 +51,8 @@ export class MeterController {
   }
 
   @Get('/by-person/:personId')
-  @Roles(RoleType.USER)
+  @UseGuards(RecordAccessGuard)
+  @Roles(RoleType.USER, RoleType.ADMIN)
   @ApiOperation({ summary: 'Get all meter readings for a person' })
   @ApiResponse({ status: 200, description: 'Meter readings for the person', type: MeterDTO })
   async getByPerson(@Param('personId') personId: number): Promise<MeterDTO[]> {
@@ -63,7 +65,8 @@ export class MeterController {
   }
 
   @Get('/:id')
-  @Roles(RoleType.USER)
+  @UseGuards(RecordAccessGuard)
+  @Roles(RoleType.USER, RoleType.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'The found record',
@@ -74,7 +77,7 @@ export class MeterController {
   }
 
   @PostMethod('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Create meter' })
   @ApiResponse({
     status: 201,
@@ -89,7 +92,7 @@ export class MeterController {
   }
 
   @Put('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update meter' })
   @ApiResponse({
     status: 200,
@@ -97,12 +100,13 @@ export class MeterController {
     type: MeterDTO,
   })
   async put(@Req() req: Request, @Body() meterDTO: MeterDTO): Promise<MeterDTO> {
+    const updated = await this.meterService.update(meterDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Meter', meterDTO.id);
-    return await this.meterService.update(meterDTO, req.user?.login);
+    return updated;
   }
 
   @Put('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update meter with id' })
   @ApiResponse({
     status: 200,
@@ -110,19 +114,20 @@ export class MeterController {
     type: MeterDTO,
   })
   async putId(@Req() req: Request, @Body() meterDTO: MeterDTO): Promise<MeterDTO> {
+    const updated = await this.meterService.update(meterDTO, req.user?.login);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Meter', meterDTO.id);
-    return await this.meterService.update(meterDTO, req.user?.login);
+    return updated;
   }
 
   @Delete('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Delete meter' })
   @ApiResponse({
     status: 204,
     description: 'The record has been successfully deleted.',
   })
   async deleteById(@Req() req: Request, @Param('id') id: number): Promise<void> {
+    await this.meterService.deleteById(id);
     HeaderUtil.addEntityDeletedHeaders(req.res, 'Meter', id);
-    return await this.meterService.deleteById(id);
   }
 }

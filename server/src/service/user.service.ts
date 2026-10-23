@@ -5,6 +5,7 @@ import { User } from '../domain/user.entity';
 import { transformPassword } from '../security';
 import { UserDTO } from './dto/user.dto';
 import { UserMapper } from './mapper/user.mapper';
+import { assertPassword } from '../security/password-policy';
 
 const relations = { authorities: true } as const;
 
@@ -40,6 +41,7 @@ export class UserService {
   async save(userDTO: UserDTO, creator?: string, updatePassword = false): Promise<UserDTO | undefined> {
     const user = this.convertInAuthorities(UserMapper.fromDTOtoEntity(userDTO));
     if (updatePassword) {
+      assertPassword(user.password, user.login);
       await transformPassword(user);
     }
     if (creator) {

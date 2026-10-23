@@ -1,0 +1,802 @@
+[
+  {
+    "method": "POST",
+    "route": "/api/register",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 33,
+    "handler": "registerAccount",
+    "guards": "",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request; @Body() userDTO: UserDTO & { password: string }"
+  },
+  {
+    "method": "GET",
+    "route": "/api/activate",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 44,
+    "handler": "activateAccount",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Param() key: string; @Res() res: Response"
+  },
+  {
+    "method": "GET",
+    "route": "/api/authenticate",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 57,
+    "handler": "isAuthenticated",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/account",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 70,
+    "handler": "getAccount",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "POST",
+    "route": "/api/account",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 84,
+    "handler": "saveAccount",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request; @Body() newUserInfo: UserDTO"
+  },
+  {
+    "method": "POST",
+    "route": "/api/account/change-password",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 99,
+    "handler": "changePassword",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request; @Body() passwordChange: PasswordChangeDTO"
+  },
+  {
+    "method": "POST",
+    "route": "/api/account/reset-password/init",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 114,
+    "handler": "requestPasswordReset",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request; @Body() email: string; @Res() res: Response"
+  },
+  {
+    "method": "POST",
+    "route": "/api/account/reset-password/finish",
+    "file": "server/src/web/rest/account.controller.ts",
+    "line": 127,
+    "handler": "finishPasswordReset",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request; @Body() keyAndPassword: string; @Res() res: Response"
+  },
+  {
+    "method": "GET",
+    "route": "/api/addresses",
+    "file": "server/src/web/rest/address.controller.ts",
+    "line": 34,
+    "handler": "getAll",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/addresses/:id",
+    "file": "server/src/web/rest/address.controller.ts",
+    "line": 52,
+    "handler": "getOne",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/addresses",
+    "file": "server/src/web/rest/address.controller.ts",
+    "line": 63,
+    "handler": "post",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() addressDTO: AddressDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/addresses",
+    "file": "server/src/web/rest/address.controller.ts",
+    "line": 78,
+    "handler": "put",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() addressDTO: AddressDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/addresses/:id",
+    "file": "server/src/web/rest/address.controller.ts",
+    "line": 91,
+    "handler": "putId",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() addressDTO: AddressDTO"
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/addresses/:id",
+    "file": "server/src/web/rest/address.controller.ts",
+    "line": 104,
+    "handler": "deleteById",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('id') id: number"
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/stats",
+    "file": "server/src/web/rest/admin.controller.ts",
+    "line": 57,
+    "handler": "getStats",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": ""
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/dashboard",
+    "file": "server/src/web/rest/admin.controller.ts",
+    "line": 65,
+    "handler": "getDashboardChartData",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": ""
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/activity",
+    "file": "server/src/web/rest/admin.controller.ts",
+    "line": 73,
+    "handler": "getActivity",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Query('limit') limit?: number"
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/users-with-status",
+    "file": "server/src/web/rest/admin.controller.ts",
+    "line": 81,
+    "handler": "getUsersWithStatus",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": ""
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/people/:personId/qr",
+    "file": "server/src/web/rest/admin.controller.ts",
+    "line": 89,
+    "handler": "getSubscriberQr",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Param('personId') personId: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/billing/generate",
+    "file": "server/src/web/rest/admin.controller.ts",
+    "line": 125,
+    "handler": "generateInvoice",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() dto: BillingFormDTO"
+  },
+  {
+    "method": "POST",
+    "route": "/api/ai/chat",
+    "file": "server/src/web/rest/ai.controller.ts",
+    "line": 13,
+    "handler": "chat",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER)",
+    "params": "@Body() body: { message: string }; @Request() req: any"
+  },
+  {
+    "method": "POST",
+    "route": "/api/ai/admin/chat",
+    "file": "server/src/web/rest/ai.controller.ts",
+    "line": 25,
+    "handler": "adminChat",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Body() body: { message: string }"
+  },
+  {
+    "method": "POST",
+    "route": "/api/ai/admin/seed-faqs",
+    "file": "server/src/web/rest/ai.controller.ts",
+    "line": 36,
+    "handler": "seedFaqs",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": ""
+  },
+  {
+    "method": "GET",
+    "route": "/api/bold/hash",
+    "file": "server/src/web/rest/bold.controller.ts",
+    "line": 17,
+    "handler": "getHash",
+    "guards": "UseGuards(AuthGuard, RolesGuard, RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER)",
+    "params": "@Query('invoiceId') invoiceId: string"
+  },
+  {
+    "method": "POST",
+    "route": "/api/bold/webhook",
+    "file": "server/src/web/rest/bold.controller.ts",
+    "line": 27,
+    "handler": "webhook",
+    "guards": "",
+    "roles": "sin rol específico",
+    "params": "@Body() body: any; @Headers('x-bold-signature') signature: string; @Req() req: RawBodyRequest<Request>"
+  },
+  {
+    "method": "GET",
+    "route": "/api/bold/result/:invoiceId",
+    "file": "server/src/web/rest/bold.controller.ts",
+    "line": 40,
+    "handler": "getResult",
+    "guards": "UseGuards(AuthGuard, RolesGuard, RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER)",
+    "params": "@Param('invoiceId') invoiceId: string; @Query('boldOrderId') boldOrderId: string"
+  },
+  {
+    "method": "GET",
+    "route": "/api/invoices",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 44,
+    "handler": "getAll",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/invoices/by-person/:personId",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 62,
+    "handler": "getByPerson",
+    "guards": "UseGuards(AuthGuard, RolesGuard); UseGuards(RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN)",
+    "params": "@Param('personId') personId: number"
+  },
+  {
+    "method": "GET",
+    "route": "/api/invoices/download/:id",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 76,
+    "handler": "getDownloadUrl",
+    "guards": "UseGuards(AuthGuard, RolesGuard); UseGuards(RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN)",
+    "params": "@Param('id') id: number"
+  },
+  {
+    "method": "GET",
+    "route": "/api/invoices/:id",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 116,
+    "handler": "getOne",
+    "guards": "UseGuards(AuthGuard, RolesGuard); UseGuards(RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN)",
+    "params": "@Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/invoices",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 128,
+    "handler": "post",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() invoiceDTO: InvoiceDTO"
+  },
+  {
+    "method": "POST",
+    "route": "/api/invoices/:id/generate-pdf",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 154,
+    "handler": "generatePdf",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('id') id: number"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/invoices",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 197,
+    "handler": "put",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() invoiceDTO: InvoiceDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/invoices/:id",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 210,
+    "handler": "putId",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() invoiceDTO: InvoiceDTO"
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/invoices/:id",
+    "file": "server/src/web/rest/invoice.controller.ts",
+    "line": 223,
+    "handler": "deleteById",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('id') id: number"
+  },
+  {
+    "method": "GET",
+    "route": "/management/info",
+    "file": "server/src/web/rest/management.controller.ts",
+    "line": 11,
+    "handler": "info",
+    "guards": "",
+    "roles": "sin rol específico",
+    "params": ""
+  },
+  {
+    "method": "GET",
+    "route": "/api/meters",
+    "file": "server/src/web/rest/meter.controller.ts",
+    "line": 35,
+    "handler": "getAll",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/meters/by-person/:personId",
+    "file": "server/src/web/rest/meter.controller.ts",
+    "line": 53,
+    "handler": "getByPerson",
+    "guards": "UseGuards(AuthGuard, RolesGuard); UseGuards(RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN)",
+    "params": "@Param('personId') personId: number"
+  },
+  {
+    "method": "GET",
+    "route": "/api/meters/:id",
+    "file": "server/src/web/rest/meter.controller.ts",
+    "line": 67,
+    "handler": "getOne",
+    "guards": "UseGuards(AuthGuard, RolesGuard); UseGuards(RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN)",
+    "params": "@Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/meters",
+    "file": "server/src/web/rest/meter.controller.ts",
+    "line": 79,
+    "handler": "post",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() meterDTO: MeterDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/meters",
+    "file": "server/src/web/rest/meter.controller.ts",
+    "line": 94,
+    "handler": "put",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() meterDTO: MeterDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/meters/:id",
+    "file": "server/src/web/rest/meter.controller.ts",
+    "line": 107,
+    "handler": "putId",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() meterDTO: MeterDTO"
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/meters/:id",
+    "file": "server/src/web/rest/meter.controller.ts",
+    "line": 120,
+    "handler": "deleteById",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/mobile/permit",
+    "file": "server/src/web/rest/mobile.controller.ts",
+    "line": 15,
+    "handler": "permit",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN, RoleType.OPERATOR)",
+    "params": "@Req() req: any; @Body() body: { installationId: string }"
+  },
+  {
+    "method": "GET",
+    "route": "/api/mobile/bootstrap",
+    "file": "server/src/web/rest/mobile.controller.ts",
+    "line": 18,
+    "handler": "bootstrap",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN, RoleType.OPERATOR)",
+    "params": "@Req() req: any; @Query('after') after?: string"
+  },
+  {
+    "method": "POST",
+    "route": "/api/mobile/sync/push",
+    "file": "server/src/web/rest/mobile.controller.ts",
+    "line": 21,
+    "handler": "capture",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN, RoleType.OPERATOR)",
+    "params": "@Req() req: any; @Body() command: unknown"
+  },
+  {
+    "method": "POST",
+    "route": "/api/mobile/assign",
+    "file": "server/src/web/rest/mobile.controller.ts",
+    "line": 24,
+    "handler": "assign",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Body() body: { personId: number; operatorId: number | null }"
+  },
+  {
+    "method": "GET",
+    "route": "/api/noticias",
+    "file": "server/src/web/rest/noticia.controller.ts",
+    "line": 34,
+    "handler": "getAll",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/noticias/:id",
+    "file": "server/src/web/rest/noticia.controller.ts",
+    "line": 48,
+    "handler": "getOne",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER)",
+    "params": "@Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/noticias",
+    "file": "server/src/web/rest/noticia.controller.ts",
+    "line": 55,
+    "handler": "post",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() noticiaDTO: NoticiaDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/noticias",
+    "file": "server/src/web/rest/noticia.controller.ts",
+    "line": 65,
+    "handler": "put",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() noticiaDTO: NoticiaDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/noticias/:id",
+    "file": "server/src/web/rest/noticia.controller.ts",
+    "line": 74,
+    "handler": "putId",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() noticiaDTO: NoticiaDTO"
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/noticias/:id",
+    "file": "server/src/web/rest/noticia.controller.ts",
+    "line": 83,
+    "handler": "deleteById",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('id') id: number"
+  },
+  {
+    "method": "GET",
+    "route": "/api/notifications",
+    "file": "server/src/web/rest/notification.controller.ts",
+    "line": 17,
+    "handler": "getMyNotifications",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)",
+    "params": "@Req() req: any"
+  },
+  {
+    "method": "PATCH",
+    "route": "/api/notifications/read-all",
+    "file": "server/src/web/rest/notification.controller.ts",
+    "line": 26,
+    "handler": "markAllRead",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)",
+    "params": "@Req() req: any"
+  },
+  {
+    "method": "GET",
+    "route": "/api/notifications/unread-count",
+    "file": "server/src/web/rest/notification.controller.ts",
+    "line": 35,
+    "handler": "unreadCount",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)",
+    "params": "@Req() req: any"
+  },
+  {
+    "method": "GET",
+    "route": "/api/people/me",
+    "file": "server/src/web/rest/person.controller.ts",
+    "line": 47,
+    "handler": "getMyPerson",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/people",
+    "file": "server/src/web/rest/person.controller.ts",
+    "line": 57,
+    "handler": "getAll",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/people/:id",
+    "file": "server/src/web/rest/person.controller.ts",
+    "line": 71,
+    "handler": "getOne",
+    "guards": "UseGuards(AuthGuard, RolesGuard); UseGuards(RecordAccessGuard)",
+    "roles": "Roles(RoleType.USER, RoleType.ADMIN)",
+    "params": "@Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/people",
+    "file": "server/src/web/rest/person.controller.ts",
+    "line": 79,
+    "handler": "post",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() dto: CreatePersonWithAccountDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/people",
+    "file": "server/src/web/rest/person.controller.ts",
+    "line": 141,
+    "handler": "put",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() personDTO: PersonDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/people/:id",
+    "file": "server/src/web/rest/person.controller.ts",
+    "line": 159,
+    "handler": "putId",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() personDTO: PersonDTO"
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/people/:id",
+    "file": "server/src/web/rest/person.controller.ts",
+    "line": 176,
+    "handler": "deleteById",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('id') id: number"
+  },
+  {
+    "method": "GET",
+    "route": "/api/portal/dashboard",
+    "file": "server/src/web/rest/portal.controller.ts",
+    "line": 19,
+    "handler": "getDashboard",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.USER)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/public/noticias",
+    "file": "server/src/web/rest/public-noticias.controller.ts",
+    "line": 15,
+    "handler": "getActiveNoticias",
+    "guards": "",
+    "roles": "sin rol específico",
+    "params": ""
+  },
+  {
+    "method": "GET",
+    "route": "/api/users",
+    "file": "server/src/web/rest/public.user.controller.ts",
+    "line": 19,
+    "handler": "getAllPublicUsers",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/authorities",
+    "file": "server/src/web/rest/public.user.controller.ts",
+    "line": 39,
+    "handler": "getAuthorities",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: any"
+  },
+  {
+    "method": "GET",
+    "route": "/api/reportes",
+    "file": "server/src/web/rest/reporte.controller.ts",
+    "line": 34,
+    "handler": "getAll",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "GET",
+    "route": "/api/reportes/:id",
+    "file": "server/src/web/rest/reporte.controller.ts",
+    "line": 48,
+    "handler": "getOne",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/reportes",
+    "file": "server/src/web/rest/reporte.controller.ts",
+    "line": 55,
+    "handler": "post",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() reporteDTO: ReporteDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/reportes/:id",
+    "file": "server/src/web/rest/reporte.controller.ts",
+    "line": 65,
+    "handler": "putId",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() reporteDTO: ReporteDTO"
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/reportes/:id",
+    "file": "server/src/web/rest/reporte.controller.ts",
+    "line": 74,
+    "handler": "deleteById",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('id') id: number"
+  },
+  {
+    "method": "POST",
+    "route": "/api/session/refresh",
+    "file": "server/src/web/rest/session.controller.ts",
+    "line": 12,
+    "handler": "refresh",
+    "guards": "",
+    "roles": "sin rol específico",
+    "params": "@Req() req: any; @Res({ passthrough: true }) res: Response; @Body() body: { refresh_token: string }"
+  },
+  {
+    "method": "POST",
+    "route": "/api/session/logout",
+    "file": "server/src/web/rest/session.controller.ts",
+    "line": 22,
+    "handler": "logout",
+    "guards": "UseGuards(AuthGuard)",
+    "roles": "sin rol específico",
+    "params": "@Req() req: any; @Res({ passthrough: true }) res: Response"
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/users",
+    "file": "server/src/web/rest/user.controller.ts",
+    "line": 43,
+    "handler": "getAllUsers",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request"
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/users",
+    "file": "server/src/web/rest/user.controller.ts",
+    "line": 62,
+    "handler": "createUser",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() userDTO: UserDTO"
+  },
+  {
+    "method": "PUT",
+    "route": "/api/admin/users",
+    "file": "server/src/web/rest/user.controller.ts",
+    "line": 78,
+    "handler": "updateUser",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Body() userDTO: UserDTO"
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/users/:login",
+    "file": "server/src/web/rest/user.controller.ts",
+    "line": 105,
+    "handler": "getUser",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Param('login') loginValue: string"
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/admin/users/:login",
+    "file": "server/src/web/rest/user.controller.ts",
+    "line": 117,
+    "handler": "deleteUser",
+    "guards": "UseGuards(AuthGuard, RolesGuard)",
+    "roles": "Roles(RoleType.ADMIN)",
+    "params": "@Req() req: Request; @Param('login') loginValue: string"
+  },
+  {
+    "method": "POST",
+    "route": "/api/authenticate",
+    "file": "server/src/web/rest/user.jwt.controller.ts",
+    "line": 17,
+    "handler": "authorize",
+    "guards": "",
+    "roles": "sin rol específico",
+    "params": "@Req() req: Request; @Body() user: UserLoginDTO; @Res() res: Response"
+  }
+]

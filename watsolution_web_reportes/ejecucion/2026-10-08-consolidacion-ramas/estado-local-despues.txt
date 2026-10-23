@@ -1,0 +1,10 @@
+D  .editorconfig
+D  CLAUDE.md
+ M package.json
+D  schema.jdl
+ M server/src/service/mobile.service.spec.ts
+ M server/src/service/mobile.service.ts
+ M server/src/web/rest/mobile.controller.ts
+?? server/src/web/rest/mobile.controller.spec.ts
+?? watsolution_web_planning/
+?? watsolution_web_reportes/

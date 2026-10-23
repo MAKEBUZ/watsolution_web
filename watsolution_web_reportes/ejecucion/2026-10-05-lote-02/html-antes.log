@@ -1,0 +1,70 @@
+
+ RUN  v3.0.9 C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src
+
+stderr | app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in settings title
+[Vue warn]: Component "i18n-t" has already been registered in target app.
+[Vue warn]: Component "I18nT" has already been registered in target app.
+[Vue warn]: Component "i18n-n" has already been registered in target app.
+[Vue warn]: Component "I18nN" has already been registered in target app.
+[Vue warn]: Component "i18n-d" has already been registered in target app.
+[Vue warn]: Component "I18nD" has already been registered in target app.
+[Vue warn]: Directive "t" has already been registered in target app.
+[intlify] Detected HTML in 'Ajustes del usuario [<strong>{ username }</strong>]' message. Recommend not using HTML messages to avoid XSS.
+
+stderr | app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in password title
+[Vue warn]: Component "i18n-t" has already been registered in target app.
+[Vue warn]: Component "I18nT" has already been registered in target app.
+[Vue warn]: Component "i18n-n" has already been registered in target app.
+[Vue warn]: Component "I18nN" has already been registered in target app.
+[Vue warn]: Component "i18n-d" has already been registered in target app.
+[Vue warn]: Component "I18nD" has already been registered in target app.
+[Vue warn]: Directive "t" has already been registered in target app.
+[intlify] Detected HTML in 'Contraseña de [<strong>{ username }</strong>]' message. Recommend not using HTML messages to avoid XSS.
+
+ ❯ app/account/account-html.spec.ts (2 tests | 2 failed) 43ms
+   × Account names are text (T-012 / WS-011) > does not create HTML elements in settings title 33ms
+     → expected 'Ajustes del usuario [Nombre & apellid…' to contain '<img src=x onerror="alert(1)"><strong…'
+   × Account names are text (T-012 / WS-011) > does not create HTML elements in password title 6ms
+     → expected 'Contraseña de [Nombre & apellido]' to contain '<img src=x onerror="alert(1)"><strong…'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in settings title
+AssertionError: expected 'Ajustes del usuario [Nombre & apellid…' to contain '<img src=x onerror="alert(1)"><strong…'
+
+Expected: "<img src=x onerror="alert(1)"><strong>Nombre & apellido</strong>"
+Received: "Ajustes del usuario [Nombre & apellido]"
+
+ ❯ app/account/account-html.spec.ts:23:26
+     21|     const wrapper = mount(component, { global: { plugins: [pinia, i18n…
+     22|     const title = wrapper.get('h2');
+     23|     expect(title.text()).toContain(username);
+       |                          ^
+     24|     expect(title.find('img').exists()).toBe(false);
+     25|     expect(title.find('[onerror]').exists()).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in password title
+AssertionError: expected 'Contraseña de [Nombre & apellido]' to contain '<img src=x onerror="alert(1)"><strong…'
+
+Expected: "<img src=x onerror="alert(1)"><strong>Nombre & apellido</strong>"
+Received: "Contraseña de [Nombre & apellido]"
+
+ ❯ app/account/account-html.spec.ts:23:26
+     21|     const wrapper = mount(component, { global: { plugins: [pinia, i18n…
+     22|     const title = wrapper.get('h2');
+     23|     expect(title.text()).toContain(username);
+       |                          ^
+     24|     expect(title.find('img').exists()).toBe(false);
+     25|     expect(title.find('[onerror]').exists()).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  02:15:20
+   Duration  1.35s (transform 150ms, setup 205ms, collect 200ms, tests 43ms, environment 396ms, prepare 263ms)
+
+SonarQube report written to C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\tmp\test-results\TESTS-results-vitest.xml

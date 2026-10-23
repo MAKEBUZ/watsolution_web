@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, inject, nextTick, type ComputedRef } from 'vue'
+import { ref, computed, inject, nextTick, watch, onBeforeUnmount, type ComputedRef } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useAccountStore } from '@/shared/config/store/account-store'
@@ -24,6 +24,26 @@ const welcomeMsg = computed<string>(() =>
 )
 
 const messages = ref<Msg[]>([])
+let generation = 0
+let pendingRequest: AbortController | undefined
+
+const resetConversation = () => {
+  generation++
+  pendingRequest?.abort()
+  pendingRequest = undefined
+  messages.value = []
+  input.value = ''
+  loading.value = false
+  open.value = false
+}
+
+watch(
+  () => JSON.stringify([authenticated?.value, accountStore.authenticated, accountStore.account?.id,
+    accountStore.account?.login, [...(accountStore.account?.authorities ?? [])].sort()]),
+  resetConversation,
+  { flush: 'sync' },
+)
+onBeforeUnmount(resetConversation)
 
 const hidden = computed(() =>
   !authenticated?.value || route.path.startsWith('/pagos'),
@@ -43,20 +63,28 @@ const scrollBottom = async () => {
 
 const send = async () => {
   const text = input.value.trim()
-  if (!text || loading.value) return
+  if (!text || loading.value || hidden.value) return
+  const started = generation
+  const controller = new AbortController()
+  pendingRequest = controller
+  const endpoint = isAdmin.value ? 'api/ai/admin/chat' : 'api/ai/chat'
+  loading.value = true
   input.value = ''
   messages.value.push({ role: 'user', text })
-  await scrollBottom()
-  loading.value = true
   try {
-    const endpoint = isAdmin.value ? 'api/ai/admin/chat' : 'api/ai/chat'
-    const { data } = await axios.post<{ reply: string }>(endpoint, { message: text })
+    await scrollBottom()
+    if (started !== generation) return
+    const { data } = await axios.post<{ reply: string }>(endpoint, { message: text }, { signal: controller.signal })
+    if (started !== generation) return
     messages.value.push({ role: 'bot', text: data.reply })
   } catch {
-    messages.value.push({ role: 'bot', text: 'Ocurrió un error. Intenta de nuevo.' })
+    if (started === generation) messages.value.push({ role: 'bot', text: 'Ocurrió un error. Intenta de nuevo.' })
   } finally {
-    loading.value = false
-    await scrollBottom()
+    if (started === generation) {
+      pendingRequest = undefined
+      loading.value = false
+      await scrollBottom()
+    }
   }
 }
 

@@ -1,0 +1,14 @@
+
+ RUN  v3.0.9 C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src
+
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ app/app-session.spec.ts (2 tests) 62ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:35:58
+   Duration  31.04s (transform 5.88s, setup 3.62s, collect 6.70s, tests 62ms, environment 15.91s, prepare 3.70s)
+
+SonarQube report written to C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\tmp\test-results\TESTS-results-vitest.xml

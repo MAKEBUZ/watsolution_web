@@ -1,0 +1,27 @@
+{
+  "fecha": "2026-10-05",
+  "commit_probado": "99597509c3a30695aaae28576b46aad1df2d8256",
+  "integracion_commit": "838db1db8dc1ca1b959d2b0b5d88a1dc11a28433",
+  "rama_fix_commit": "b1a1d49ceedb475545453a95d1706223f1f7b5a5",
+  "backend_local": {
+    "suites": 15,
+    "tests": 111,
+    "exit_code": 0
+  },
+  "frontend_local": {
+    "files": 40,
+    "tests": 200,
+    "exit_code": 0
+  },
+  "typescript_exit_code": 0,
+  "build_exit_code": 0,
+  "postgres_local_sin_destino_exit_code": 1,
+  "postgres_local_ejecutado": false,
+  "ci": {
+    "run_id": 37284911440,
+    "validate": "success",
+    "postgres_sessions": "success",
+    "postgres_casos": 13
+  },
+  "cierre_integral": false
+}

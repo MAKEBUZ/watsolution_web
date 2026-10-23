@@ -1,0 +1,8 @@
+# Los respaldos completos y artefactos generados permanecen locales.
+*.bundle
+/evidencias/build/
+/evidencias/jest-cache/
+/evidencias/npm-cache/
+/evidencias/vitest-cache/
+# Los logs de evidencia revisados sí forman parte de los reportes.
+!*.log

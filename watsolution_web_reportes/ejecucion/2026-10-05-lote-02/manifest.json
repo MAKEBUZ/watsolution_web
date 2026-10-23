@@ -1,0 +1,57 @@
+[
+  {
+    "archivo": "build-frontend.log",
+    "sha256": "2B8D9F4B326F21D184A3C2DD7BCF16703925FB94E7F82611FDEB8C03843B2D40",
+    "bytes": 20198
+  },
+  {
+    "archivo": "chat-antes.log",
+    "sha256": "70F8E0434FC82848D13A208C385192F13E6FA29CD57E09393B1CFDA454E1FE34",
+    "bytes": 7004
+  },
+  {
+    "archivo": "chat-despues.log",
+    "sha256": "2977B23F680218C9ADC621940C4AC848620AF5B85672D95405AC3432A8F7DB78",
+    "bytes": 643
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "1E3777634CC492608E52F4C23571ECBF4E24BAA2D1B05B5916D01356C0BDC21E",
+    "bytes": 14519
+  },
+  {
+    "archivo": "frontend.log",
+    "sha256": "1EBCA2E427B2FD34743616BD4BB244C98605DB5368568788B3AEBD0C8E76580A",
+    "bytes": 13358
+  },
+  {
+    "archivo": "html-antes.log",
+    "sha256": "C96D3779963DEFD8793354D0ED3F31A15FF14C4D0389785DEEBA40566FC7311B",
+    "bytes": 4275
+  },
+  {
+    "archivo": "html-despues.log",
+    "sha256": "DEA5B21FCE17D14DCB4D80F7D542B79D838FD2E5DCBBBC7CCEE989ADA57C8822",
+    "bytes": 1912
+  },
+  {
+    "archivo": "integracion-backend.log",
+    "sha256": "DB6E02ACF937FACC5BBF7FA275B692D8535E3C67561E1EB01BAA59EB4BEB5B52",
+    "bytes": 2636
+  },
+  {
+    "archivo": "integracion-frontend.log",
+    "sha256": "0BF35A8EC9370B458D0A65C052C1367DB1FD87D987B28480C84D6EF06E9AD52F",
+    "bytes": 14721
+  },
+  {
+    "archivo": "typescript.log",
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "bytes": 0
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "4C8BA333E50E932E0238451522E78C065986578695AF746C43ED3071092BDB83",
+    "bytes": 648
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "rows": 77,
+  "columns": 19,
+  "headers": [
+    "ID_Tarea",
+    "Titulo",
+    "Hallazgos_Relacionados",
+    "Categoria",
+    "Severidad_Max",
+    "Prioridad (P0-P3)",
+    "Fase",
+    "Descripcion",
+    "Pasos_de_Implementacion",
+    "Archivos_Afectados",
+    "Dependencias",
+    "Esfuerzo_Horas (rango)",
+    "Perfil_Requerido",
+    "Riesgo_de_Regresion (Bajo/Medio/Alto)",
+    "Criterio_de_Aceptacion",
+    "Como_Verificar",
+    "Rollback",
+    "Responsable_Sugerido",
+    "Estado (Pendiente)"
+  ],
+  "roundtripIdentical": true,
+  "formulas": 0,
+  "sourceFindings": 47
+}

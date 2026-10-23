@@ -1,3 +1,4 @@
+import { getAccessToken, setAccessToken, refreshAccessToken } from '@/shared/config/web-session';
 import { ref, watch } from 'vue';
 import axios from 'axios';
 import { defineStore, storeToRefs } from 'pinia';
@@ -17,10 +18,11 @@ export const useNotificationStore = defineStore('notifications', () => {
   const accountStore = useAccountStore();
   const notifications = ref<AppNotification[]>([]);
   const unreadCount = ref(0);
-  let eventSource: EventSource | null = null;
+  let poll: ReturnType<typeof setInterval> | undefined;
+  let generation = 0;
 
   function getToken(): string | null {
-    return localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
+    return getAccessToken();
   }
 
   function getLogin(): string | null {
@@ -31,7 +33,9 @@ export const useNotificationStore = defineStore('notifications', () => {
     const login = getLogin();
     if (!login) return;
     try {
-      const res = await axios.get<AppNotification[]>('api/notifications', { params: { login } });
+      const current = generation;
+      const res = await axios.get<AppNotification[]>('api/notifications');
+      if (current !== generation) return;
       notifications.value = res.data;
       unreadCount.value = res.data.filter(n => !n.read).length;
     } catch {}
@@ -41,39 +45,22 @@ export const useNotificationStore = defineStore('notifications', () => {
     const login = getLogin();
     if (!login) return;
     try {
-      await axios.patch('api/notifications/read-all', null, { params: { login } });
+      const current = generation;
+      await axios.patch('api/notifications/read-all');
+      if (current !== generation) return;
       notifications.value = notifications.value.map(n => ({ ...n, read: true }));
       unreadCount.value = 0;
     } catch {}
   }
 
   function connect() {
-    const token = getToken();
-    if (!token || eventSource) return;
-
-    eventSource = new EventSource(`/api/notifications/stream?token=${encodeURIComponent(token)}`);
-
-    eventSource.onmessage = (e) => {
-      try {
-        const notif: AppNotification = JSON.parse(e.data);
-        if (!notif?.id) return;
-        notifications.value = [{ ...notif, read: false }, ...notifications.value];
-        unreadCount.value = notifications.value.filter(n => !n.read).length;
-      } catch {}
-    };
-
-    eventSource.onerror = () => {
-      eventSource?.close();
-      eventSource = null;
-      setTimeout(() => {
-        if (getToken()) connect();
-      }, 5000);
-    };
+    clearInterval(poll);
+    poll = setInterval(() => { if (getToken()) void fetchAll(); }, 30000);
   }
 
   function disconnect() {
-    eventSource?.close();
-    eventSource = null;
+    generation++;
+    clearInterval(poll);
     notifications.value = [];
     unreadCount.value = 0;
   }

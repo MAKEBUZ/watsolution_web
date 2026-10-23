@@ -1,4 +1,4 @@
-import { Controller, Get, Header, MessageEvent, Patch, Query, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Header, MessageEvent, Patch, Req, Query, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Observable, interval, merge, map } from 'rxjs';
 import * as jwt from 'jsonwebtoken';
@@ -14,51 +14,31 @@ import { config } from '../../config';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @Sse('/stream')
-  @Header('X-Accel-Buffering', 'no')
-  @Header('Cache-Control', 'no-cache')
-  @Header('Connection', 'keep-alive')
-  @ApiOperation({ summary: 'SSE stream for real-time notifications (token via query param)' })
-  stream(@Query('token') token: string): Observable<MessageEvent> {
-    let userLogin = 'anonymous';
-    try {
-      const secret = Buffer.from(config['jhipster.security.authentication.jwt.base64-secret'], 'base64').toString('utf-8');
-      const decoded = jwt.verify(token, secret) as any;
-      userLogin = decoded.sub ?? decoded.login ?? decoded.username ?? 'anonymous';
-    } catch {
-      // invalid token — stream will receive nothing meaningful
-    }
-
-    const notifications$ = this.notificationService.subscribe(userLogin) as unknown as Observable<MessageEvent>;
-    const ping$ = interval(25000).pipe(map(() => ({ data: ':ping' } as unknown as MessageEvent)));
-    return merge(notifications$, ping$);
-  }
-
   @Get('/')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RoleType.USER)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get notifications for current user' })
-  async getMyNotifications(@Query('login') login: string): Promise<Notification[]> {
-    return this.notificationService.getForUser(login);
+  async getMyNotifications(@Req() req: any): Promise<Notification[]> {
+    return this.notificationService.getForUser(req.user.login);
   }
 
   @Patch('/read-all')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RoleType.USER)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Mark all notifications as read' })
-  async markAllRead(@Query('login') login: string): Promise<void> {
-    return this.notificationService.markAllRead(login);
+  async markAllRead(@Req() req: any): Promise<void> {
+    return this.notificationService.markAllRead(req.user.login);
   }
 
   @Get('/unread-count')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RoleType.USER)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get unread notification count' })
-  async unreadCount(@Query('login') login: string): Promise<{ count: number }> {
-    const count = await this.notificationService.countUnread(login);
+  async unreadCount(@Req() req: any): Promise<{ count: number }> {
+    const count = await this.notificationService.countUnread(req.user.login);
     return { count };
   }
 }

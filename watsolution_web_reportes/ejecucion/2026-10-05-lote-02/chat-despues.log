@@ -1,0 +1,14 @@
+
+ RUN  v3.0.9 C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src
+
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ app/core/chatbot/chatbot.spec.ts (6 tests) 68ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  02:13:25
+   Duration  1.41s (transform 162ms, setup 225ms, collect 177ms, tests 68ms, environment 403ms, prepare 284ms)
+
+SonarQube report written to C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\tmp\test-results\TESTS-results-vitest.xml

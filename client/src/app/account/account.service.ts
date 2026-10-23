@@ -1,3 +1,4 @@
+import { getAccessToken, getSessionGeneration } from '@/shared/config/web-session';
 import axios from 'axios';
 
 import { type AccountStore } from '@/store';
@@ -27,8 +28,10 @@ export default class AccountService {
   }
 
   public async retrieveAccount(): Promise<boolean> {
+    const generation = getSessionGeneration();
     try {
       const response = await axios.get<any>('api/account');
+      if (generation !== getSessionGeneration()) return false;
       if (response.status === 200 && response.data?.login) {
         const account = response.data;
         this.store.setAuthentication(account);
@@ -38,7 +41,7 @@ export default class AccountService {
       // Ignore error
     }
 
-    this.store.logout();
+    if (generation === getSessionGeneration()) this.store.logout();
     return false;
   }
 
@@ -46,7 +49,7 @@ export default class AccountService {
     if (this.store.logon) {
       return this.store.logon;
     }
-    const token = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
+    const token = getAccessToken();
     if (this.authenticated && this.userAuthorities && token) {
       return;
     }

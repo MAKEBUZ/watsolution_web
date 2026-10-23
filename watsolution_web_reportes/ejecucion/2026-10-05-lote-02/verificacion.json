@@ -1,0 +1,29 @@
+{
+  "fecha": "2026-10-05",
+  "rama": "integration/remediation-phase-1",
+  "commit": "a2cce0219710203db7c7df070d59660943c4558b",
+  "autor": "MAKEBUZ",
+  "tareas_total": 77,
+  "tareas_cerradas": 0,
+  "frontend": {
+    "exit_code": 0,
+    "tests": 191,
+    "archivos": 38
+  },
+  "backend": {
+    "exit_code": 0,
+    "tests": 63,
+    "suites": 11
+  },
+  "typescript": {
+    "exit_code": 0
+  },
+  "build": {
+    "exit_code": 0,
+    "destino": "tmp/build-remediation-20261005-lote02"
+  },
+  "postgres_real_verificado": false,
+  "staging_verificado": false,
+  "produccion_desplegada": false,
+  "ci_remoto_verificado": false
+}

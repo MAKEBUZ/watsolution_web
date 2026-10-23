@@ -3,6 +3,9 @@ import axios from 'axios';
 import { config } from '@vue/test-utils';
 import { createI18n } from 'vue-i18n';
 
+// Install before test modules create their own adapters; cover axios.create() too.
+axios.defaults.adapter = async () => { throw new Error('HTTP requests must be mocked in tests'); };
+
 beforeAll(() => {
   window.location.href = 'https://jhipster.tech/';
 

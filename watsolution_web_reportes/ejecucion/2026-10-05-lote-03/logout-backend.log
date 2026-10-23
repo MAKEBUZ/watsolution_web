@@ -1,0 +1,11 @@
+[Nest] 2976  - 05/10/2026, 2:25:47 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 2976  - 05/10/2026, 2:25:47 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 2976  - 05/10/2026, 2:25:47 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+PASS server/src/web/rest/session.controller.spec.ts (9.158 s)
+PASS server/src/service/session.service.spec.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       14 passed, 14 total
+Snapshots:   0 total
+Time:        9.649 s
+Ran all test suites within paths "server/src/web/rest/session.controller.spec.ts", "server/src/service/session.service.spec.ts".

@@ -72,18 +72,25 @@ const selectPerson = async (person: any) => {
   searchQuery.value = person.fullName
   showDropdown.value = false
   invoice.value.personId = person.id
-  // Auto-load last meter reading
+  invoice.value.meterId = null
+  invoice.value.previousReading = null
+  invoice.value.currentReading = 0
+  // Auto-load confirmed reading and baseline
   try {
     const res = await axios.get(`api/meters/by-person/${person.id}`)
     const meters: any[] = res.data ?? []
     if (meters.length > 0) {
-      invoice.value.currentReading = meters[0].currentReading ?? meters[0].reading ?? 0
+      invoice.value.currentReading = Number(meters[0].waterMeasure)
+      invoice.value.meterId = meters[0].id
+      invoice.value.previousReading = meters.length > 1 ? Number(meters[1].waterMeasure) : null
     }
   } catch { /* no meter yet */ }
 }
 
 const invoice = ref({
   personId: null as number | null,
+  meterId: null as number | null,
+  previousReading: null as number | null,
   currentReading: 0,
   ratePerM3: 2500,
   fixedCharge: 5000,
@@ -91,7 +98,7 @@ const invoice = ref({
   recharge: 0
 })
 
-const consumption = computed(() => invoice.value.currentReading)
+const consumption = computed(() => invoice.value.previousReading === null ? 0 : invoice.value.currentReading - invoice.value.previousReading)
 const subtotal = computed(() => consumption.value * invoice.value.ratePerM3 + invoice.value.fixedCharge)
 const discount = computed(() => subtotal.value * invoice.value.subsidy)
 const total = computed(() => subtotal.value - discount.value + invoice.value.recharge)
@@ -101,8 +108,8 @@ const saveError = ref('')
 const savedInvoice = ref<any>(null)
 
 const handleSave = async () => {
-  if (!invoice.value.personId) {
-    saveError.value = 'Selecciona un usuario antes de generar la factura.'
+  if (!invoice.value.personId || !invoice.value.meterId || invoice.value.previousReading === null) {
+    saveError.value = 'Selecciona una lectura confirmada con lectura anterior; la lectura inicial no se factura automáticamente.'
     return
   }
   saveError.value = ''
@@ -110,7 +117,8 @@ const handleSave = async () => {
   try {
     const res = await axios.post('api/admin/billing/generate', {
       personId: invoice.value.personId,
-      prevReading: 0,
+      meterId: invoice.value.meterId,
+      prevReading: invoice.value.previousReading,
       currentReading: invoice.value.currentReading,
       rate: invoice.value.ratePerM3,
       fixedCharge: invoice.value.fixedCharge,
@@ -138,7 +146,7 @@ const resetForm = () => {
   savedInvoice.value = null
   selectedPerson.value = null
   searchQuery.value = ''
-  invoice.value = { personId: null, currentReading: 0, ratePerM3: 2500, fixedCharge: 5000, subsidy: 0.15, recharge: 0 }
+  invoice.value = { personId: null, meterId: null, previousReading: null, currentReading: 0, ratePerM3: 2500, fixedCharge: 5000, subsidy: 0.15, recharge: 0 }
 }
 </script>
 
@@ -262,7 +270,7 @@ const resetForm = () => {
 
                 <div class="form-group full-width">
                   <label>Lectura Actual (m³)</label>
-                  <input type="number" v-model="invoice.currentReading" min="0">
+                  <input type="number" v-model="invoice.currentReading" min="0" readonly>
                 </div>
 
                 <div class="form-group">

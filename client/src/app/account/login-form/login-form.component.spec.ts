@@ -1,3 +1,4 @@
+import { getAccessToken } from '@/shared/config/web-session';
 import { vitest } from 'vitest';
 import { type MountingOptions, shallowMount } from '@vue/test-utils';
 import axios from 'axios';
@@ -82,7 +83,7 @@ describe('LoginForm Component', () => {
     expect(loginForm.authenticationError).toBeTruthy();
   });
 
-  it('should store token if authentication is OK', async () => {
+  it('should keep token only in memory if authentication is OK', async () => {
     // GIVEN
     loginForm.login = 'login';
     loginForm.password = 'pwd';
@@ -104,10 +105,11 @@ describe('LoginForm Component', () => {
     ).toBeTruthy();
 
     expect(loginForm.authenticationError).toBeFalsy();
-    expect(localStorage.getItem('jhi-authenticationToken')).toEqual(jwtSecret);
+    expect(getAccessToken()).toEqual(jwtSecret);
+    expect(localStorage.getItem('jhi-authenticationToken')).toBeNull();
   });
 
-  it('should store token if authentication is OK in session', async () => {
+  it('should keep token only in memory if authentication is OK in session', async () => {
     // GIVEN
     loginForm.login = 'login';
     loginForm.password = 'pwd';
@@ -129,6 +131,7 @@ describe('LoginForm Component', () => {
     ).toBeTruthy();
 
     expect(loginForm.authenticationError).toBeFalsy();
-    expect(sessionStorage.getItem('jhi-authenticationToken')).toEqual(jwtSecret);
+    expect(getAccessToken()).toEqual(jwtSecret);
+    expect(sessionStorage.getItem('jhi-authenticationToken')).toBeNull();
   });
 });

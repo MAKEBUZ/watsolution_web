@@ -1,0 +1,13 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+    "audit",
+    "--json",
+    "--omit=dev",
+    "--ignore-scripts"
+  ],
+  "exitCode": 1,
+  "date": "2026-10-05",
+  "node": "v24.15.0"
+}

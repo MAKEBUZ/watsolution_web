@@ -21,6 +21,6 @@ export class PortalController {
   @ApiOperation({ summary: 'Get portal dashboard data for logged in user' })
   @ApiResponse({ status: 200, description: 'Portal data', type: PortalDataDTO })
   async getDashboard(@Req() req: Request): Promise<PortalDataDTO> {
-    return await this.portalService.getPortalData(req.user?.login);
+    return await this.portalService.getPortalData(req.user?.id);
   }
 }

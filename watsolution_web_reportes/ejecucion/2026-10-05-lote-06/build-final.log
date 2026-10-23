@@ -1,0 +1,269 @@
+vite v6.2.4 building for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+../node_modules/bootstrap-vue/esm/index.js (23:19): A comment
+
+"/*#__PURE__*/"
+
+in "../node_modules/bootstrap-vue/esm/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2626 modules transformed.
+rendering chunks...
+warnings when minifying css:
+▲ [WARNING] Cannot use type selector "__title" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1468:1:
+      1468 │ &__title[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__title[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__sub" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1474:1:
+      1474 │ &__sub[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__sub[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__empty" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1479:1:
+      1479 │ &__empty[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__empty[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__list" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1495:1:
+      1495 │ &__list[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__list[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__item" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1508:1:
+      1508 │ &__item {
+           │  ~~~~~~
+           ╵  :is(__item)
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--unread" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1528:1:
+      1528 │ &--unread[data-v-fae2b458] { background: #fff8f0;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--unread[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__icon" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1531:1:
+      1531 │ &__icon[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__icon[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__body" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1537:1:
+      1537 │ &__body[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__body[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__row" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1543:1:
+      1543 │ &__row[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__row[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__item-title" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1555:1:
+      1555 │ &__item-title[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__item-title[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__badge" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1560:1:
+      1560 │ &__badge {
+           │  ~~~~~~~
+           ╵  :is(__badge)
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--paid" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1569:1:
+      1569 │ &--paid[data-v-fae2b458] { background: #d1fae5; color: #065f46;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--paid[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--overdue" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1571:1:
+      1571 │ &--overdue[data-v-fae2b458] { background: #fee2e2; color: #991b1b;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--overdue[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--due_soon" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1573:1:
+      1573 │ &--due_soon[data-v-fae2b458] { background: #fef3c7; color: #92400e;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--due_soon[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "--created" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1575:1:
+      1575 │ &--created[data-v-fae2b458] { background: #e8f4fd; color: #0077be;
+           │  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(--created[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__msg" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1578:1:
+      1578 │ &__msg[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__msg[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__date" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1587:1:
+      1587 │ &__date[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__date[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+▲ [WARNING] Cannot use type selector "__dot" directly after nesting selector "&" [css-syntax-error]
+
+    <stdin>:1592:1:
+      1592 │ &__dot[data-v-fae2b458] {
+           │  ~~~~~~~~~~~~~~~~~~~~~~
+           ╵  :is(__dot[data-v-fae2b458])
+
+  CSS nesting syntax does not allow the "&" selector to come before a type selector. You can wrap this selector in ":is(...)" as a workaround. This restriction exists to avoid problems with SASS nesting, where the same syntax means something very different that has no equivalent in real CSS (appending a suffix to the parent selector).
+
+
+computing gzip size...
+[vite-plugin-static-copy] Copied 15 items.
+../tmp/build-remediation-20261005-lote06-final/assets/manifest-DSrSUXYs.webapp                 0.79 kB
+../tmp/build-remediation-20261005-lote06-final/assets/favicon-7N5vP5FO.ico                     1.57 kB
+../tmp/build-remediation-20261005-lote06-final/index.html                                      5.37 kB │ gzip:   1.94 kB
+../tmp/build-remediation-20261005-lote06-final/assets/jhipster_family_member_3-Cf8AxSuS.svg   19.10 kB │ gzip:   7.23 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-portal-_rXFQvl3.css                1.12 kB │ gzip:   0.42 kB
+../tmp/build-remediation-20261005-lote06-final/assets/invoice-payment-result-DJYJ-VAy.css      4.05 kB │ gzip:   1.10 kB
+../tmp/build-remediation-20261005-lote06-final/assets/centro-noticias-CqAjVD9S.css             4.35 kB │ gzip:   1.19 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-panel-ByyKtRCc.css                 6.23 kB │ gzip:   1.27 kB
+../tmp/build-remediation-20261005-lote06-final/assets/pagos-TozssXmJ.css                       7.91 kB │ gzip:   1.54 kB
+../tmp/build-remediation-20261005-lote06-final/assets/login-7RfFdK3h.css                       8.21 kB │ gzip:   1.94 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-actividad-CkFyyufi.css             9.20 kB │ gzip:   1.61 kB
+../tmp/build-remediation-20261005-lote06-final/assets/home-CRR3-390.css                       11.54 kB │ gzip:   2.20 kB
+../tmp/build-remediation-20261005-lote06-final/assets/politica-privacidad-C5eYAaq6.css        11.63 kB │ gzip:   2.36 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-facturacion-BwsCgQ6K.css          11.94 kB │ gzip:   2.13 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-noticias-D2eDvJx-.css             12.14 kB │ gzip:   2.24 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-resumen-CaVK-rdb.css              15.64 kB │ gzip:   2.65 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-usuarios-7JT2_HhP.css             24.28 kB │ gzip:   3.64 kB
+../tmp/build-remediation-20261005-lote06-final/assets/portal-dashboard-B21MXjzC.css           29.37 kB │ gzip:   4.05 kB
+../tmp/build-remediation-20261005-lote06-final/assets/app-Ca_bIhMp.css                       303.56 kB │ gzip:  42.70 kB
+../tmp/build-remediation-20261005-lote06-final/assets/constants-DfqkunPD.js                    0.12 kB │ gzip:   0.12 kB
+../tmp/build-remediation-20261005-lote06-final/assets/docs-DYOLOXD0.js                         0.36 kB │ gzip:   0.29 kB
+../tmp/build-remediation-20261005-lote06-final/assets/user-management.service-BdozLPfo.js      0.40 kB │ gzip:   0.22 kB
+../tmp/build-remediation-20261005-lote06-final/assets/validation-Bv8-_TEX.js                   0.43 kB │ gzip:   0.21 kB
+../tmp/build-remediation-20261005-lote06-final/assets/address.service-jKflW8iD.js              0.66 kB │ gzip:   0.26 kB
+../tmp/build-remediation-20261005-lote06-final/assets/meter.service-Cm0zrgZA.js                0.68 kB │ gzip:   0.25 kB
+../tmp/build-remediation-20261005-lote06-final/assets/person.service-BTjwxIWf.js               0.68 kB │ gzip:   0.25 kB
+../tmp/build-remediation-20261005-lote06-final/assets/invoice.service-CsKSjelh.js              0.68 kB │ gzip:   0.25 kB
+../tmp/build-remediation-20261005-lote06-final/assets/date-format-DyAa3j8l.js                  0.69 kB │ gzip:   0.39 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-portal-6sY8ZKt0.js                 0.70 kB │ gzip:   0.46 kB
+../tmp/build-remediation-20261005-lote06-final/assets/entities-DHL0Ddc6.js                     0.71 kB │ gzip:   0.42 kB
+../tmp/build-remediation-20261005-lote06-final/assets/error-BkuFGNHt.js                        1.14 kB │ gzip:   0.58 kB
+../tmp/build-remediation-20261005-lote06-final/assets/alert.service-C3Nr6u1q.js                1.43 kB │ gzip:   0.70 kB
+../tmp/build-remediation-20261005-lote06-final/assets/activate-B6kIt-p8.js                     1.53 kB │ gzip:   0.82 kB
+../tmp/build-remediation-20261005-lote06-final/assets/address-details-DJguWYOS.js              2.75 kB │ gzip:   1.09 kB
+../tmp/build-remediation-20261005-lote06-final/assets/meter-details-CxYcd0LT.js                2.76 kB │ gzip:   1.11 kB
+../tmp/build-remediation-20261005-lote06-final/assets/data-utils.service-BLKIYM65.js           2.96 kB │ gzip:   1.51 kB
+../tmp/build-remediation-20261005-lote06-final/assets/reset-password-init-B3pBcL6E.js          3.07 kB │ gzip:   1.17 kB
+../tmp/build-remediation-20261005-lote06-final/assets/person-details-BxeADnkI.js               3.22 kB │ gzip:   1.23 kB
+../tmp/build-remediation-20261005-lote06-final/assets/user-management-view-zsMlwps4.js         3.49 kB │ gzip:   1.26 kB
+../tmp/build-remediation-20261005-lote06-final/assets/centro-noticias-CvW0bGGf.js              4.00 kB │ gzip:   1.87 kB
+../tmp/build-remediation-20261005-lote06-final/assets/reset-password-finish-C40tD_4Z.js        5.18 kB │ gzip:   1.64 kB
+../tmp/build-remediation-20261005-lote06-final/assets/invoice-details-dPwRWwPU.js              5.19 kB │ gzip:   1.97 kB
+../tmp/build-remediation-20261005-lote06-final/assets/change-password-HpsmFEzd.js              5.52 kB │ gzip:   1.50 kB
+../tmp/build-remediation-20261005-lote06-final/assets/login-DZ0JRz6P.js                        5.55 kB │ gzip:   2.27 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-actividad-BEcvXaUZ.js              5.59 kB │ gzip:   2.46 kB
+../tmp/build-remediation-20261005-lote06-final/assets/invoice-payment-result-CK9veRFS.js       5.88 kB │ gzip:   2.00 kB
+../tmp/build-remediation-20261005-lote06-final/assets/address-m4L_ztgj.js                      5.88 kB │ gzip:   2.01 kB
+../tmp/build-remediation-20261005-lote06-final/assets/address-update-CUrWIeZF.js               6.49 kB │ gzip:   2.01 kB
+../tmp/build-remediation-20261005-lote06-final/assets/settings-DygfPWWa.js                     6.82 kB │ gzip:   1.87 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-resumen-DyrLCh8L.js                6.92 kB │ gzip:   2.85 kB
+../tmp/build-remediation-20261005-lote06-final/assets/meter-CRcgPGR6.js                        7.21 kB │ gzip:   2.62 kB
+../tmp/build-remediation-20261005-lote06-final/assets/home-DpGJcc_3.js                         7.34 kB │ gzip:   2.79 kB
+../tmp/build-remediation-20261005-lote06-final/assets/person-update-Tu3KTpuz.js                7.74 kB │ gzip:   2.52 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-noticias-DjD2ck3T.js               8.06 kB │ gzip:   3.17 kB
+../tmp/build-remediation-20261005-lote06-final/assets/invoice-CiDxvA2_.js                      8.13 kB │ gzip:   2.68 kB
+../tmp/build-remediation-20261005-lote06-final/assets/person-CkcHRLY-.js                       8.49 kB │ gzip:   2.78 kB
+../tmp/build-remediation-20261005-lote06-final/assets/user-management-BnUvXD3t.js              8.90 kB │ gzip:   2.83 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-panel-DCGmfm4I.js                  8.93 kB │ gzip:   2.71 kB
+../tmp/build-remediation-20261005-lote06-final/assets/pagos-CQVaJOMW.js                        8.94 kB │ gzip:   3.14 kB
+../tmp/build-remediation-20261005-lote06-final/assets/register-WbrbaTki.js                     9.42 kB │ gzip:   2.28 kB
+../tmp/build-remediation-20261005-lote06-final/assets/user-management-edit-ag90uiAF.js         9.52 kB │ gzip:   2.87 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-facturacion-DnpaHPBE.js           10.38 kB │ gzip:   3.83 kB
+../tmp/build-remediation-20261005-lote06-final/assets/es-B7hO-gfJ.js                          14.09 kB │ gzip:   4.82 kB
+../tmp/build-remediation-20261005-lote06-final/assets/index-BYtsRzDT.js                       15.88 kB │ gzip:   5.60 kB
+../tmp/build-remediation-20261005-lote06-final/assets/admin-usuarios-DIiqdYIH.js              21.66 kB │ gzip:   7.01 kB
+../tmp/build-remediation-20261005-lote06-final/assets/politica-privacidad-bFYjBj4W.js         30.80 kB │ gzip:   7.70 kB
+../tmp/build-remediation-20261005-lote06-final/assets/portal-dashboard-baj9v7kx.js            30.97 kB │ gzip:   9.61 kB
+../tmp/build-remediation-20261005-lote06-final/assets/app-CCD93bDQ.js                        937.21 kB │ gzip: 306.08 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 12.87s

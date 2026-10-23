@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vite/bin/vite.js",
+    "build",
+    "--config",
+    "C:\\Users\\macab\\Desktop\\WATSOLUTION\\watsolution_web\\watsolution_web_reportes\\evidencias\\vite-audit.mjs",
+    "--configLoader",
+    "native"
+  ],
+  "exitCode": 0,
+  "date": "2026-10-05",
+  "node": "v24.15.0"
+}

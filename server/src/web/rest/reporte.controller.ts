@@ -32,7 +32,7 @@ export class ReporteController {
   constructor(private readonly reporteService: ReporteService) {}
 
   @Get('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiResponse({ status: 200, description: 'List all reportes', type: ReporteDTO })
   async getAll(@Req() req: Request): Promise<ReporteDTO[]> {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC');
@@ -46,14 +46,14 @@ export class ReporteController {
   }
 
   @Get('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiResponse({ status: 200, description: 'The found record', type: ReporteDTO })
   async getOne(@Param('id') id: number): Promise<ReporteDTO> {
     return await this.reporteService.findById(id);
   }
 
   @PostMethod('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Create reporte' })
   @ApiResponse({ status: 201, description: 'Created.', type: ReporteDTO })
   async post(@Req() req: Request, @Body() reporteDTO: ReporteDTO): Promise<ReporteDTO> {

@@ -1,0 +1,350 @@
+FAIL server/src/service/financial-crud.spec.ts (5.997 s)
+  Financial CRUD containment (T-011)
+    × blocks PENDING invoice save before accessing persistence (3 ms)
+    × blocks PENDING invoice update before accessing persistence (1 ms)
+    × blocks PENDING invoice deleteById before accessing persistence
+    × blocks PENDING meter save before accessing persistence (1 ms)
+    × blocks PENDING meter update before accessing persistence (1 ms)
+    × blocks PENDING meter deleteById before accessing persistence
+    × blocks PENDING_WITH_ORDER invoice save before accessing persistence
+    × blocks PENDING_WITH_ORDER invoice update before accessing persistence
+    × blocks PENDING_WITH_ORDER invoice deleteById before accessing persistence
+    × blocks PENDING_WITH_ORDER meter save before accessing persistence
+    × blocks PENDING_WITH_ORDER meter update before accessing persistence
+    × blocks PENDING_WITH_ORDER meter deleteById before accessing persistence
+    × blocks PAID invoice save before accessing persistence
+    × blocks PAID invoice update before accessing persistence
+    × blocks PAID invoice deleteById before accessing persistence
+    × blocks PAID meter save before accessing persistence
+    × blocks PAID meter update before accessing persistence (1 ms)
+    × blocks PAID meter deleteById before accessing persistence
+
+  ● Financial CRUD containment (T-011) › blocks PENDING invoice save before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"additionalCharges": undefined, "amountDue": 1, "boldOrderId": null, "boldTransactionId": undefined, "consumptionM3": undefined, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "dueDate": undefined, "fixedCharge": undefined, "id": 1, "issueDate": undefined, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "meter": undefined, "pdfUrl": undefined, "person": undefined, "ratePerM3": undefined, "status": "PENDING", "subsidyPercent": undefined, "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING invoice update before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"additionalCharges": undefined, "amountDue": 1, "boldOrderId": null, "boldTransactionId": undefined, "consumptionM3": undefined, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "dueDate": undefined, "fixedCharge": undefined, "id": 1, "issueDate": undefined, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "meter": undefined, "pdfUrl": undefined, "person": undefined, "ratePerM3": undefined, "status": "PENDING", "subsidyPercent": undefined, "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING invoice deleteById before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: undefined
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING meter save before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"address": undefined, "amountDue": 1, "boldOrderId": null, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "id": 1, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "observation": undefined, "person": undefined, "readingDate": undefined, "status": "PENDING", "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING meter update before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"address": undefined, "amountDue": 1, "boldOrderId": null, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "id": 1, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "observation": undefined, "person": undefined, "readingDate": undefined, "status": "PENDING", "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING meter deleteById before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: undefined
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING_WITH_ORDER invoice save before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"additionalCharges": undefined, "amountDue": 1, "boldOrderId": "active-order", "boldTransactionId": undefined, "consumptionM3": undefined, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "dueDate": undefined, "fixedCharge": undefined, "id": 1, "issueDate": undefined, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "meter": undefined, "pdfUrl": undefined, "person": undefined, "ratePerM3": undefined, "status": "PENDING", "subsidyPercent": undefined, "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING_WITH_ORDER invoice update before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"additionalCharges": undefined, "amountDue": 1, "boldOrderId": "active-order", "boldTransactionId": undefined, "consumptionM3": undefined, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "dueDate": undefined, "fixedCharge": undefined, "id": 1, "issueDate": undefined, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "meter": undefined, "pdfUrl": undefined, "person": undefined, "ratePerM3": undefined, "status": "PENDING", "subsidyPercent": undefined, "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING_WITH_ORDER invoice deleteById before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: undefined
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING_WITH_ORDER meter save before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"address": undefined, "amountDue": 1, "boldOrderId": "active-order", "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "id": 1, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "observation": undefined, "person": undefined, "readingDate": undefined, "status": "PENDING", "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING_WITH_ORDER meter update before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"address": undefined, "amountDue": 1, "boldOrderId": "active-order", "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "id": 1, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "observation": undefined, "person": undefined, "readingDate": undefined, "status": "PENDING", "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PENDING_WITH_ORDER meter deleteById before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: undefined
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PAID invoice save before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"additionalCharges": undefined, "amountDue": 1, "boldOrderId": null, "boldTransactionId": undefined, "consumptionM3": undefined, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "dueDate": undefined, "fixedCharge": undefined, "id": 1, "issueDate": undefined, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "meter": undefined, "pdfUrl": undefined, "person": undefined, "ratePerM3": undefined, "status": "PAID", "subsidyPercent": undefined, "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PAID invoice update before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"additionalCharges": undefined, "amountDue": 1, "boldOrderId": null, "boldTransactionId": undefined, "consumptionM3": undefined, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "dueDate": undefined, "fixedCharge": undefined, "id": 1, "issueDate": undefined, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "meter": undefined, "pdfUrl": undefined, "person": undefined, "ratePerM3": undefined, "status": "PAID", "subsidyPercent": undefined, "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PAID invoice deleteById before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: undefined
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PAID meter save before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"address": undefined, "amountDue": 1, "boldOrderId": null, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "id": 1, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "observation": undefined, "person": undefined, "readingDate": undefined, "status": "PAID", "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PAID meter update before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"address": undefined, "amountDue": 1, "boldOrderId": null, "createdAt": undefined, "createdBy": undefined, "createdDate": undefined, "id": 1, "lastModifiedBy": undefined, "lastModifiedDate": undefined, "observation": undefined, "person": undefined, "readingDate": undefined, "status": "PAID", "waterMeasure": 1}
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+  ● Financial CRUD containment (T-011) › blocks PAID meter deleteById before accessing persistence
+
+    expect(received).rejects.toBeInstanceOf()
+
+    Received promise resolved instead of rejected
+    Resolved to value: undefined
+
+      13 |     const input = operation === 'deleteById' ? 1 : { id: 1, status: state === 'PAID' ? 'PAID' : 'PENDING',
+      14 |       boldOrderId: state === 'PENDING_WITH_ORDER' ? 'active-order' : null, amountDue: 1, waterMeasure: 1 };
+    > 15 |     await expect(service[operation](input)).rejects.toBeInstanceOf(ConflictException);
+         |           ^
+      16 |     for (const method of Object.values(repo)) expect(method).not.toHaveBeenCalled();
+      17 |   });
+      18 | });
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/financial-crud.spec.ts:15:11
+
+Test Suites: 1 failed, 1 total
+Tests:       18 failed, 18 total
+Snapshots:   0 total
+Time:        6.229 s
+Ran all test suites within paths "server/src/service/financial-crud.spec.ts".

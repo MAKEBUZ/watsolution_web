@@ -1,0 +1,245 @@
+
+ RUN  v3.0.9 C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src
+
+ ✓ app/shared/alert/alert.service.spec.ts (6 tests) 12ms
+9:59:24 p.m. [vite] (client) warning: <span> cannot be child of <table>, according to HTML specifications. This can cause hydration errors or potentially disrupt future functionality.
+85 |            </tr>
+86 |          </tbody>
+87 |          <span ref="infiniteScrollEl"></span>
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+88 |        </table>
+89 |      </div>
+  Plugin: vite:vue
+  File: C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src/app/entities/meter/meter.vue
+9:59:24 p.m. [vite] (client) warning: <span> cannot be child of <table>, according to HTML specifications. This can cause hydration errors or potentially disrupt future functionality.
+108|            </tr>
+109|          </tbody>
+110|          <span ref="infiniteScrollEl"></span>
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+111|        </table>
+112|      </div>
+  Plugin: vite:vue
+  File: C:/Users/macab/Desktop/WATSOLUTION/watsolution_web/client/src/app/entities/person/person.vue
+ ✓ app/entities/address/address.service.spec.ts (12 tests) 20ms
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ app/entities/meter/meter.service.spec.ts (12 tests) 26ms
+ ✓ app/entities/person/person.service.spec.ts (12 tests) 26ms
+ ✓ app/entities/invoice/invoice.service.spec.ts (12 tests) 24ms
+ ✓ app/entities/address/address-update.component.spec.ts (4 tests) 160ms
+ ✓ app/account/register/register.component.spec.ts (6 tests) 230ms
+ ✓ app/admin/user-management/user-management-edit.component.spec.ts (4 tests) 222ms
+ ✓ app/entities/meter/meter.component.spec.ts (7 tests) 223ms
+ ✓ app/entities/person/person-update.component.spec.ts (6 tests) 250ms
+ ✓ app/entities/person/person.component.spec.ts (6 tests) 296ms
+ ✓ app/entities/invoice/invoice.component.spec.ts (8 tests) 320ms
+ ✓ app/core/chatbot/chatbot.spec.ts (7 tests) 383ms
+ ✓ app/entities/meter/meter-update.component.spec.ts (6 tests) 345ms
+ ✓ app/entities/invoice/invoice-update.component.spec.ts (6 tests) 438ms
+ ✓ app/account/account.service.spec.ts (7 tests) 42ms
+ ✓ app/shared/data/data-utils.service.spec.ts (14 tests) 18ms
+ ✓ app/account/login-form/login-form.component.spec.ts (3 tests) 56ms
+ ✓ app/shared/config/store/logout.spec.ts (5 tests) 28ms
+ ✓ app/admin/user-management/user-management.component.spec.ts (4 tests) 96ms
+ ✓ app/entities/address/address.component.spec.ts (2 tests) 71ms
+ ✓ app/core/error/error.component.spec.ts (4 tests) 58ms
+ ✓ app/entities/address/address-details.component.spec.ts (2 tests) 86ms
+ ✓ app/account/change-password/change-password.component.spec.ts (3 tests) 116ms
+ ✓ app/account/settings/settings.component.spec.ts (5 tests) 156ms
+ ✓ app/entities/meter/meter-details.component.spec.ts (2 tests) 83ms
+ ✓ app/views/admin/operational-data.spec.ts (3 tests) 300ms
+ ✓ app/entities/person/person-details.component.spec.ts (2 tests) 85ms
+ ✓ app/entities/invoice/invoice-details.component.spec.ts (2 tests) 143ms
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should not have user data set
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should not have user data set
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+ ✓ app/admin/user-management/user-management-view.component.spec.ts (1 test) 83ms
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should have user data set after authentication
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should have user data set after authentication
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should have user data set after authentication
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should have profile info set after info retrieved
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should have profile info set after info retrieved
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should use login service
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should use login service
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should use account service
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should use account service
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should use account service
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > logout should clear credentials
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > logout should clear credentials
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > logout should clear credentials
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should determine active route
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should determine active route
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should determine active route
+[Vue Router warn]: No match found for location with path "/toto"
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should call translationService when changing language
+[Vue Router warn]: No match found for location with path "/toto"
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should call translationService when changing language
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should check for correct language
+[Vue Router warn]: No match found for location with path "/toto"
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+stderr | app/core/jhi-navbar/jhi-navbar.component.spec.ts > JhiNavbar > should check for correct language
+[Vue warn]: Failed to resolve component: b-dropdown-divider
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement. 
+  at <JhiNavbar ref="VTU_COMPONENT" > 
+  at <VTUROOT>
+
+ ✓ app/core/jhi-navbar/jhi-navbar.component.spec.ts (9 tests) 478ms
+ ✓ app/account/activate/activate.component.spec.ts (2 tests) 44ms
+ ✓ app/shared/config/axios-interceptor.spec.ts (4 tests) 89ms
+ ✓ app/account/reset-password/finish/reset-password-finish.component.spec.ts (2 tests) 51ms
+stderr | app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in settings title
+[Vue warn]: Component "i18n-t" has already been registered in target app.
+[Vue warn]: Component "I18nT" has already been registered in target app.
+[Vue warn]: Component "i18n-n" has already been registered in target app.
+[Vue warn]: Component "I18nN" has already been registered in target app.
+[Vue warn]: Component "i18n-d" has already been registered in target app.
+[Vue warn]: Component "I18nD" has already been registered in target app.
+[Vue warn]: Directive "t" has already been registered in target app.
+
+stderr | app/account/account-html.spec.ts > Account names are text (T-012 / WS-011) > does not create HTML elements in password title
+[Vue warn]: Component "i18n-t" has already been registered in target app.
+[Vue warn]: Component "I18nT" has already been registered in target app.
+[Vue warn]: Component "i18n-n" has already been registered in target app.
+[Vue warn]: Component "I18nN" has already been registered in target app.
+[Vue warn]: Component "i18n-d" has already been registered in target app.
+[Vue warn]: Component "I18nD" has already been registered in target app.
+[Vue warn]: Directive "t" has already been registered in target app.
+
+ ✓ app/account/account-html.spec.ts (2 tests) 71ms
+ ✓ app/shared/config/web-session.spec.ts (2 tests) 15ms
+ ✓ app/shared/sort/sorts.spec.ts (1 test) 9ms
+ ✓ app/core/ribbon/ribbon.component.spec.ts (3 tests) 40ms
+ ✓ app/app-session.spec.ts (2 tests) 50ms
+ ✓ app/core/home/home.component.spec.ts (1 test) 53ms
+ ✓ app/account/reset-password/init/reset-password-init.component.spec.ts (2 tests) 48ms
+
+ Test Files  41 passed (41)
+      Tests  203 passed (203)
+   Start at  21:59:08
+   Duration  24.24s (transform 17.96s, setup 59.58s, collect 45.92s, tests 5.35s, environment 155.03s, prepare 58.55s)
+
+SonarQube report written to C:\Users\macab\Desktop\WATSOLUTION\watsolution_web\tmp\test-results\TESTS-results-vitest.xml

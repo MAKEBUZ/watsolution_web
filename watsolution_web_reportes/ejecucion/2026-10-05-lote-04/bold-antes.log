@@ -1,0 +1,161 @@
+FAIL server/src/service/bold-order.spec.ts (5.149 s)
+  Atomic checkout reference (T-009)
+    × returns one stable order and signature to twenty simultaneous requests (5 ms)
+    × reuses an existing reference without rewriting it (2 ms)
+    × reads payment status inside the transaction
+    × does not create an order for invalid amount 0 (1 ms)
+    × does not create an order for invalid amount -1
+    × does not create an order for invalid amount NaN
+    × does not create an order for invalid amount Infinity
+    √ fails without payment configuration before modifying an invoice (3 ms)
+    × does not return an order if commit fails
+
+  ● Atomic checkout reference (T-009) › returns one stable order and signature to twenty simultaneous requests
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 20
+
+      27 |     const f = fixture();
+      28 |     const results = await Promise.all(Array.from({ length: 20 }, () => f.service.getHashForInvoice(1)));
+    > 29 |     expect(new Set(results.map(result => result.boldOrderId)).size).toBe(1);
+         |                                                                     ^
+      30 |     expect(new Set(results.map(result => result.hash)).size).toBe(1);
+      31 |     expect(f.locked.update).toHaveBeenCalledTimes(1);
+      32 |     expect(f.locked.findOne).toHaveBeenCalledWith({ where: { id: 1 }, lock: { mode: 'pessimistic_write' } });
+
+      at Object.<anonymous> (src/service/bold-order.spec.ts:29:69)
+
+  ● Atomic checkout reference (T-009) › reuses an existing reference without rewriting it
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 1
+
+    1: 1, {"boldOrderId": "existing"}
+
+      37 |     const f = fixture(); f.row.boldOrderId = 'existing';
+      38 |     expect((await f.service.getHashForInvoice(1)).boldOrderId).toBe('existing');
+    > 39 |     expect(f.locked.update).not.toHaveBeenCalled();
+         |                                 ^
+      40 |   });
+      41 |   it('reads payment status inside the transaction', async () => {
+      42 |     const f = fixture(); f.locked.findOne.mockResolvedValue({ ...f.row, status: InvoiceStatus.PAID });
+
+      at Object.<anonymous> (src/service/bold-order.spec.ts:39:33)
+
+  ● Atomic checkout reference (T-009) › reads payment status inside the transaction
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"amount": 123.45, "apiKey": "synthetic-public", "boldOrderId": "INV-1-bfcca3b5-c517-4c12-90df-04245289e089", "hash": "054a53a6f586b37e27bde9e07a49c2cafee2ccc2e6d30fce9aa55eea64576175"}
+
+      41 |   it('reads payment status inside the transaction', async () => {
+      42 |     const f = fixture(); f.locked.findOne.mockResolvedValue({ ...f.row, status: InvoiceStatus.PAID });
+    > 43 |     await expect(f.service.getHashForInvoice(1)).rejects.toThrow('Invoice is not payable');
+         |           ^
+      44 |     expect(f.locked.update).not.toHaveBeenCalled();
+      45 |   });
+      46 |   it.each([0, -1, NaN, Infinity])('does not create an order for invalid amount %s', async amount => {
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at Object.<anonymous> (src/service/bold-order.spec.ts:43:11)
+
+  ● Atomic checkout reference (T-009) › does not create an order for invalid amount 0
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"amount": 0, "apiKey": "synthetic-public", "boldOrderId": "INV-1-3106b21f-98e1-4c78-8952-d3f19554c19f", "hash": "78940285aa46e8f72be71e0f2087765c4a95a54cb9c0403babf2b003691fd1cb"}
+
+      46 |   it.each([0, -1, NaN, Infinity])('does not create an order for invalid amount %s', async amount => {
+      47 |     const f = fixture(); f.row.amountDue = amount;
+    > 48 |     await expect(f.service.getHashForInvoice(1)).rejects.toThrow(); expect(f.locked.update).not.toHaveBeenCalled();
+         |           ^
+      49 |   });
+      50 |   it('fails without payment configuration before modifying an invoice', async () => {
+      51 |     const f = fixture(); delete process.env.BOLD_SECRET_KEY;
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/bold-order.spec.ts:48:11
+
+  ● Atomic checkout reference (T-009) › does not create an order for invalid amount -1
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"amount": -1, "apiKey": "synthetic-public", "boldOrderId": "INV-1-bc2006e5-4527-46c0-a5cb-c7a401787bec", "hash": "438af03245c4c5ec0e86bcea447a08e13406b445dd94b0551c4f2a8d3013fdd9"}
+
+      46 |   it.each([0, -1, NaN, Infinity])('does not create an order for invalid amount %s', async amount => {
+      47 |     const f = fixture(); f.row.amountDue = amount;
+    > 48 |     await expect(f.service.getHashForInvoice(1)).rejects.toThrow(); expect(f.locked.update).not.toHaveBeenCalled();
+         |           ^
+      49 |   });
+      50 |   it('fails without payment configuration before modifying an invoice', async () => {
+      51 |     const f = fixture(); delete process.env.BOLD_SECRET_KEY;
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/bold-order.spec.ts:48:11
+
+  ● Atomic checkout reference (T-009) › does not create an order for invalid amount NaN
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"amount": NaN, "apiKey": "synthetic-public", "boldOrderId": "INV-1-72571f1a-3c81-4e6a-bf0c-5ae3baf6bd16", "hash": "9a0324ec434953b5da6d87b8ad945e3a0e67ed3a894147a9a8f090e5b12eb8c6"}
+
+      46 |   it.each([0, -1, NaN, Infinity])('does not create an order for invalid amount %s', async amount => {
+      47 |     const f = fixture(); f.row.amountDue = amount;
+    > 48 |     await expect(f.service.getHashForInvoice(1)).rejects.toThrow(); expect(f.locked.update).not.toHaveBeenCalled();
+         |           ^
+      49 |   });
+      50 |   it('fails without payment configuration before modifying an invoice', async () => {
+      51 |     const f = fixture(); delete process.env.BOLD_SECRET_KEY;
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/bold-order.spec.ts:48:11
+
+  ● Atomic checkout reference (T-009) › does not create an order for invalid amount Infinity
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"amount": Infinity, "apiKey": "synthetic-public", "boldOrderId": "INV-1-a8a42e66-5750-4f50-a275-72a9e9bc2d7b", "hash": "798e1cdbeaa04aaa47f7ebd3e81a9eb7a5db8266ef54809e441f4af0783e4f0d"}
+
+      46 |   it.each([0, -1, NaN, Infinity])('does not create an order for invalid amount %s', async amount => {
+      47 |     const f = fixture(); f.row.amountDue = amount;
+    > 48 |     await expect(f.service.getHashForInvoice(1)).rejects.toThrow(); expect(f.locked.update).not.toHaveBeenCalled();
+         |           ^
+      49 |   });
+      50 |   it('fails without payment configuration before modifying an invoice', async () => {
+      51 |     const f = fixture(); delete process.env.BOLD_SECRET_KEY;
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at src/service/bold-order.spec.ts:48:11
+
+  ● Atomic checkout reference (T-009) › does not return an order if commit fails
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"amount": 123.45, "apiKey": "synthetic-public", "boldOrderId": "INV-1-f917b1d6-ea4f-4f3d-9e10-84cb64c4f965", "hash": "050f60102237596ec89b2c6d2a95823712bf9f740ae498145714507d72e1b9be"}
+
+      55 |   it('does not return an order if commit fails', async () => {
+      56 |     const f = fixture(); f.repo.manager.transaction.mockRejectedValue(new Error('synthetic commit failure'));
+    > 57 |     await expect(f.service.getHashForInvoice(1)).rejects.toThrow('synthetic commit failure');
+         |           ^
+      58 |   });
+      59 | });
+      60 |
+
+      at expect (../node_modules/expect/build/index.js:113:15)
+      at Object.<anonymous> (src/service/bold-order.spec.ts:57:11)
+
+Test Suites: 1 failed, 1 total
+Tests:       8 failed, 1 passed, 9 total
+Snapshots:   0 total
+Time:        5.389 s
+Ran all test suites within paths "server/src/service/bold-order.spec.ts".

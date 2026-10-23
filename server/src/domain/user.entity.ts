@@ -33,9 +33,12 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   imageUrl?: string;
   @Column({ nullable: true })
+  @Exclude()
   activationKey?: string;
   @Column({ nullable: true })
+  @Exclude()
   resetKey?: string;
   @Column({ nullable: true })
+  @Exclude()
   resetDate?: Date;
 }

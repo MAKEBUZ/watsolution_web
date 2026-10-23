@@ -1,0 +1,34 @@
+{
+  "lintserver": {
+    "files": 150,
+    "errors": 4469,
+    "warnings": 15,
+    "byRule": {
+      "prettier/prettier": 4432,
+      "parse": 15,
+      "@typescript-eslint/no-unused-vars": 18,
+      "@typescript-eslint/require-await": 16,
+      "@typescript-eslint/no-unsafe-enum-comparison": 1,
+      "no-empty": 1,
+      "@typescript-eslint/no-unnecessary-type-assertion": 1
+    }
+  },
+  "lintclient": {
+    "files": 201,
+    "errors": 23122,
+    "warnings": 56,
+    "byRule": {
+      "prettier/prettier": 23116,
+      "vue/no-v-html": 16,
+      "vue/order-in-components": 3,
+      "vue/attribute-hyphenation": 2,
+      "no-empty": 2,
+      "vue/first-attribute-linebreak": 3,
+      "no-unused-vars": 3,
+      "vue/component-definition-name-casing": 26,
+      "vue/require-default-prop": 5,
+      "@typescript-eslint/consistent-type-imports": 1,
+      "vue/block-order": 1
+    }
+  }
+}

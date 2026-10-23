@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-10-05T06:01:15.424Z",
+  "root": "C:\\Users\\macab\\Desktop\\WATSOLUTION\\watsolution_web",
+  "reportFolder": "C:\\Users\\macab\\Desktop\\WATSOLUTION\\watsolution_web\\watsolution_web_reportes",
+  "originalFilesHashed": 455,
+  "missingOriginalFiles": [],
+  "changedOriginalFiles": [],
+  "newFilesOutsideReports": [],
+  "gitStatusUnchangedOutsideReports": true,
+  "requiredFiles": 19,
+  "missingRequiredFiles": [],
+  "coverage": {
+    "revisado": 354,
+    "parcial": 101,
+    "no revisado": 0
+  },
+  "coverageEntries": 455,
+  "unclassifiedCoverage": [],
+  "invalidEvidence": [],
+  "malformedFences": [],
+  "allFindingsExactlyOnce": true,
+  "reportFilesScannedForKnownHistoricalSecrets": 261,
+  "knownHistoricalSecretMatches": [],
+  "limitations": "Integridad SHA-256 sobre los 455 archivos del inventario fuente; dependencias, metadatos Git y builds preexistentes excluidos de la comparación por hash. Git se compara adicionalmente. No se afirma verificación byte a byte de carpetas excluidas ni de validez de secretos.",
+  "passed": true
+}

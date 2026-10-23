@@ -1,0 +1,472 @@
+[
+  {
+    "ID": "WS-001",
+    "categoría": "Seguridad",
+    "severidad": "Alta",
+    "archivo": "server/src/service/portal.service.ts",
+    "línea": "25",
+    "descripción": "El portal confunde el login con el propietario y permite cruzar cuentas. El controlador pasa req.user.login (portal.controller.ts:24), pero person.userId contiene el ID convertido a texto (person.controller.ts:127). Una cuenta activada con login numérico igual al ID de otra cuenta puede obtener su perfil y facturas. La alternativa por email también es ambigua. No se probó acceso a datos reales.",
+    "recomendación": "Pasar exclusivamente req.user.id y buscar por una relación de propietario inequívoca. Retirar alternativas por login/email, migrar vínculos ambiguos con revisión humana y probar dos cuentas activas con IDs y logins distintos.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-002",
+    "categoría": "Backend / pagos",
+    "severidad": "Alta",
+    "archivo": "server/src/web/rest/invoice.controller.ts",
+    "línea": "101",
+    "descripción": "Generar el PDF puede deshacer un pago concurrente. La descarga permitida al propietario carga una factura PENDING, espera PDF/S3 y guarda la copia completa. Si el webhook confirma PAID durante la espera, InvoiceService.update vuelve a guardar PENDING y puede borrar la referencia de pago de una instantánea antigua.",
+    "recomendación": "Actualizar únicamente pdfUrl con UPDATE por ID, sin guardar el objeto leído; separar estado financiero de metadatos. Añadir prueba de concurrencia sobre PostgreSQL para PDF y webhook.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-003",
+    "categoría": "Seguridad",
+    "severidad": "Alta",
+    "archivo": "watsolution_web_reportes/evidencias/secretos-historicos-validacion.json",
+    "línea": "1",
+    "descripción": "Credenciales de base de datos y clave JWT permanecen en Git. Un blob histórico de server/.env incluye URLs con contraseña y POSTGRES_PASSWORD literales. Otro contiene un secreto JWT base64 literal de 128 bytes decodificados. Borrar el archivo actual no elimina el historial. Su vigencia y acceso al repositorio remoto no se verificaron.",
+    "recomendación": "Rotar credenciales históricas de PostgreSQL y claves de firma que pudieran seguir en uso; revisar sesiones y accesos; después coordinar saneamiento del historial y escaneo preventivo. No reutilizar los valores expuestos.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-004",
+    "categoría": "Backend / cuentas",
+    "severidad": "Alta",
+    "archivo": "server/src/web/rest/person.controller.ts",
+    "línea": "96",
+    "descripción": "Las altas quedan sin un flujo funcional para obtener acceso. El alta administrativa crea cuenta inactiva con contraseña aleatoria desconocida. Activación y recuperación lanzan 500 (account.controller.ts:53–54,123–137), y recuperación exige sesión. Activar desde administración no entrega una contraseña; la UI todavía dice que el teléfono será la contraseña (admin-usuarios.vue:516).",
+    "recomendación": "Implementar invitación/activación verificadas con token de uso único, expiración, envío y establecimiento de contraseña; recuperación pública con respuesta neutra, límites y revocación. Alinear textos y retirar rutas de éxito ficticio.",
+    "esfuerzo": "Alto"
+  },
+  {
+    "ID": "WS-005",
+    "categoría": "Backend / pagos",
+    "severidad": "Alta",
+    "archivo": "server/src/service/bold.service.ts",
+    "línea": "36",
+    "descripción": "Dos aperturas simultáneas pueden perder la referencia de un pago. Dos solicitudes leen boldOrderId vacío y generan referencias distintas. La última actualización gana; un webhook de la primera referencia ya no encuentra factura y retorna sin conciliar (líneas 60–61), aun cuando el cliente haya pagado.",
+    "recomendación": "Crear/reutilizar la referencia dentro de una transacción con bloqueo, o mediante asignación condicional atómica; persistir intentos de pago y tratar referencias desconocidas con conciliación y alerta.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-006",
+    "categoría": "Seguridad / privacidad",
+    "severidad": "Alta",
+    "archivo": "client/src/app/core/chatbot/chatbot.vue",
+    "línea": "26",
+    "descripción": "El historial del chatbot sobrevive al cambio de usuario. App monta ChatBot permanentemente (app.vue:8). El logout solo lo oculta mediante hidden; messages no se limpia ni se vincula a la identidad. En el mismo navegador, la siguiente cuenta puede ver cédulas y resúmenes consultados por la anterior. Una respuesta en vuelo también puede agregarse tras el cambio.",
+    "recomendación": "Vaciar mensajes, entrada y estado al cambiar ID de sesión; cancelar solicitudes o descartar respuestas de otra generación. Desmontar el componente al salir y probar admin → logout → usuario en la misma SPA.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-007",
+    "categoría": "Seguridad / sesiones",
+    "severidad": "Alta",
+    "archivo": "client/src/app/shared/config/store/account-store.ts",
+    "línea": "37",
+    "descripción": "Salir con el JWT vencido no revoca la cookie de renovación. El logout usa una instancia axios sin renovación y descarta el error. El backend exige AuthGuard antes de revocar y borrar cookie (session.controller.ts:22–26). Tras 15 minutos de inactividad el JWT puede expirar: el usuario ve salida, pero la cookie HttpOnly de siete días sigue válida y puede restaurar la cuenta al recargar.",
+    "recomendación": "Permitir cerrar la sesión identificada por refresh con verificación de origen, borrar siempre la cookie y revocar la familia; esperar confirmación o explicar un fallo de revocación. Probar JWT vencido, red fallida y varias pestañas.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-008",
+    "categoría": "Backend / integridad",
+    "severidad": "Alta",
+    "archivo": "server/src/service/invoice.service.ts",
+    "línea": "84",
+    "descripción": "El CRUD de facturas y lecturas evita las reglas del flujo canónico. Las rutas ADMIN de creación/edición guardan importes, estado, relaciones y referencias recibidos. No usan calculateBill ni impiden cambios a facturas pagadas. Las lecturas se editan sin comprobar su secuencia. Un error de administración o integración puede romper saldos y trazabilidad; no es una escalada de un usuario ordinario.",
+    "recomendación": "Unificar escritura en servicios de dominio: generar desde lectura confirmada, bloquear importes y referencias tras iniciar pago, registrar pagos manuales con motivo y soporte, y realizar correcciones mediante eventos auditables.",
+    "esfuerzo": "Alto"
+  },
+  {
+    "ID": "WS-009",
+    "categoría": "Seguridad",
+    "severidad": "Alta",
+    "archivo": "server/src/migrations/1570200490072-SeedUsersRoles.ts",
+    "línea": "37",
+    "descripción": "La migración histórica siembra cuentas activas con contraseñas fijas. La semilla contiene cuentas privilegiadas activadas y contraseñas literales conocidas en el repositorio. Producción no ejecuta migrationsRun automáticamente actualmente; no se verificó que estas cuentas existan en la BD desplegada. El riesgo aparece si se usó o se reutiliza esa semilla.",
+    "recomendación": "Excluir cuentas de ejemplo de entornos reales y provisionar el administrador por canal seguro. Consultar en un entorno autorizado si existen cuentas sembradas, desactivarlas y rotarlas si procede.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-010",
+    "categoría": "Backend / validación",
+    "severidad": "Media",
+    "archivo": "server/src/service/dto/invoice.dto.ts",
+    "línea": "24",
+    "descripción": "Los DTO del CRUD no validan tipos, rangos ni estados. IsNotEmpty acepta números negativos, cadenas no vacías y fechas inválidas. La tubería global carece de whitelist/forbidNonWhitelisted y los mappers copian todas las propiedades. Las rutas protegidas siguen expuestas a datos corruptos enviados por clientes autorizados.",
+    "recomendación": "Usar DTO separados para alta y edición con IsNumber, Min, IsEnum, IsDateString, longitudes y validación anidada; activar whitelist y rechazo de extras tras adaptar contratos; mapear campos explícitos.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-011",
+    "categoría": "Seguridad",
+    "severidad": "Media",
+    "archivo": "client/src/app/account/settings/settings.vue",
+    "línea": "4",
+    "descripción": "El nombre de usuario llega sin escape a v-html. La traducción inserta username en HTML y la configuración i18n no activa escape de parámetros. El login solo exige ser cadena en UserDTO. Se confirmó que la traducción conserva etiquetas. El alcance demostrado es la propia cuenta; no se demostró ejecución contra otra víctima.",
+    "recomendación": "Reemplazar v-html por interpolación de texto o componentes i18n; limitar formato de login en servidor y escapar parámetros. Añadir prueba que muestre literalmente una cadena con etiquetas.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-012",
+    "categoría": "Seguridad",
+    "severidad": "Media",
+    "archivo": "server/src/main.ts",
+    "línea": "31",
+    "descripción": "La protección HTTP difiere entre Nest y el frontend Nginx. Nest define tres cabeceras, pero no CSP, HSTS ni Permissions-Policy. El Nginx del cliente no añade esas protecciones al HTML. Una inyección tiene menos barreras y la configuración local no garantiza políticas consistentes. Cabeceras del proveedor desplegado: No verificadas.",
+    "recomendación": "Definir políticas en el punto que entrega HTML y API: CSP compatible con Bold, bloqueo de framing, no-sniff y política de permisos; activar HSTS solo tras confirmar HTTPS integral. Validar cabeceras en staging.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-013",
+    "categoría": "Seguridad / disponibilidad",
+    "severidad": "Media",
+    "archivo": "server/src/security/login-rate-limit.service.ts",
+    "línea": "15",
+    "descripción": "Registro sin límites y limitación de login solo por nombre. El límite agrega por nombre normalizado, no por origen. Rotar nombres evita el límite global; POST /register no consume esta cuota y realiza bcrypt/escrituras. Además comparePassword usa compareSync (password-util.ts:8–9), bloqueando el hilo durante verificación. No se midió capacidad ni límites del proxy externo.",
+    "recomendación": "Combinar límites por cuenta, origen y capacidad; aplicar límites al registro y a tareas costosas. Usar compare asíncrono y métricas de latencia/rechazos, sin permitir bloqueo indefinido de cuentas.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-014",
+    "categoría": "Base de datos",
+    "severidad": "Alta",
+    "archivo": "server/src/migrations/1570200270081-CreateTables.ts",
+    "línea": "4",
+    "descripción": "Migraciones históricas sincronizan el esquema y no permiten reversión. La migración ejecuta synchronize y puede confirmar una transacción abierta; otra repite el patrón. Ejecutarlas manualmente sobre una BD existente puede modificar el esquema sin un cambio explícito revisable. La migración SecureMobile separada es más prudente y no se ejecutó ninguna migración en esta auditoría.",
+    "recomendación": "Sustituir synchronize histórico por una línea base controlada y migraciones SQL explícitas; comprobar restauración y ejecutar en staging antes de producción. Documentar cuál runner es válido para cada versión.",
+    "esfuerzo": "Alto"
+  },
+  {
+    "ID": "WS-015",
+    "categoría": "Base de datos",
+    "severidad": "Media",
+    "archivo": "server/src/domain/person.entity.ts",
+    "línea": "40",
+    "descripción": "Los vínculos de identidad son columnas sin integridad referencial. user_id es texto libre y assigned_operator_id un entero sin relación/FK declarada. Sesiones y operaciones también guardan IDs sin FK en su migración. Borrar una cuenta puede dejar suscriptores, sesiones o asignaciones huérfanos; el código alterna interpretaciones de identidad.",
+    "recomendación": "Normalizar la relación Person–User, resolver duplicados y añadir FK e índices mediante migración explícita. Definir reglas de borrado/retención de datos financieros y de sesiones.",
+    "esfuerzo": "Alto"
+  },
+  {
+    "ID": "WS-016",
+    "categoría": "Base de datos",
+    "severidad": "Media",
+    "archivo": "server/src/domain/invoice.entity.ts",
+    "línea": "50",
+    "descripción": "Faltan restricciones e índices para facturación y acceso habitual. No se declara unicidad de meter por factura ni de referencias de pago; tampoco índices compuestos para historial por persona/fecha. El bloqueo de BillingService evita duplicados solo dentro de ese flujo. La migración de sesiones omite el índice userId declarado en la entidad, con synchronize deshabilitado en producción.",
+    "recomendación": "Definir unicidad según reglas de negocio y crear índices para invoice(personId,issue_date), meter(personId,reading_date,id) y auth_session(userId); medir EXPLAIN en datos representativos antes de ajustar.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-017",
+    "categoría": "Backend / transacciones",
+    "severidad": "Media",
+    "archivo": "server/src/web/rest/person.controller.ts",
+    "línea": "131",
+    "descripción": "El alta compuesta deja una cuenta huérfana si falla la persona. Dirección, cuenta y persona se guardan por separado. Si falla el último paso, se elimina la dirección pero no la cuenta; reintentar con el mismo correo falla y obliga a intervención. La eliminación compensatoria también oculta errores.",
+    "recomendación": "Usar una transacción común para las tres escrituras y restricciones de unicidad; devolver conflictos de negocio controlados. Probar documento duplicado y fallo tras crear cuenta.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-018",
+    "categoría": "Backend / métricas",
+    "severidad": "Media",
+    "archivo": "server/src/service/admin-stats.service.ts",
+    "línea": "39",
+    "descripción": "Los tableros suman lecturas acumuladas como consumo. Facturación calcula diferencia entre lecturas (billing.service.ts:32–38), pero el tablero suma water_measure. Lecturas 100 y 110 producen 210 en vez de consumo 10. PortalService también usa la última lectura y sumas mensuales. Recaudo se agrupa por fecha de emisión, no de pago, y puede atribuir cobros al mes equivocado.",
+    "recomendación": "Definir métricas con negocio; agregar diferencias o consumos facturados, y guardar fecha/evento de pago para recaudo. Añadir ejemplos con lecturas acumulativas y facturas pagadas en otro mes.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-019",
+    "categoría": "Observabilidad / notificaciones",
+    "severidad": "Media",
+    "archivo": "server/src/service/billing.service.ts",
+    "línea": "38",
+    "descripción": "El flujo principal de facturación omite aviso y registro de actividad. El servicio canónico guarda directamente la factura y no emite notificación de creación ni actividad. Esos efectos están en InvoiceService.save, que este flujo no llama. La UI administrativa usa el flujo canónico, por lo que el comportamiento cambia según endpoint.",
+    "recomendación": "Crear evento de factura emitida dentro de la transacción y entregarlo mediante outbox; reutilizar el mismo flujo para toda emisión, con prueba de creación y entrega.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-020",
+    "categoría": "Observabilidad / tareas",
+    "severidad": "Media",
+    "archivo": "server/src/service/notification.service.ts",
+    "línea": "69",
+    "descripción": "El cron puede duplicar avisos entre réplicas y perderlos en una caída. Cada proceso ejecuta el cron sin clave idempotente ni coordinación. Una réplica adicional duplica avisos; un día sin ejecución omite vencimientos porque solo busca ventanas exactas. La zona horaria depende del host.",
+    "recomendación": "Persistir eventos únicos por factura/tipo/fecha, coordinar trabajadores, recuperar ventanas no procesadas y fijar America/Bogota donde corresponda.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-021",
+    "categoría": "Backend / contratos",
+    "severidad": "Media",
+    "archivo": "server/src/web/rest/invoice.controller.ts",
+    "línea": "218",
+    "descripción": "PUT con ID en la URL modifica el ID del cuerpo. El método no lee ni compara el parámetro de URL. Un cliente puede apuntar a /invoices/1 y modificar otra factura cuyo ID lleve el cuerpo, o insertar si falta. Patrón equivalente en personas, direcciones, medidores, noticias y reportes. Las rutas son ADMIN.",
+    "recomendación": "Usar ParseIntPipe y hacer del ID de ruta la autoridad; rechazar discrepancias, comprobar existencia y devolver 404/409 adecuados. Separar create de update.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-022",
+    "categoría": "Rendimiento / API",
+    "severidad": "Media",
+    "archivo": "server/src/domain/base/pagination.entity.ts",
+    "línea": "38",
+    "descripción": "Listados admiten tamaños arbitrarios y rutas costosas no paginan. Se aceptan tamaños negativos o enormes y ordenaciones sin lista de campos permitidos. getUsersWithStatus carga todos los usuarios y hace consultas por cada uno; mobile.bootstrap realiza hasta 100 consultas secuenciales adicionales por página. Noticias públicas retorna todas las activas.",
+    "recomendación": "Acotar size/page y sort; paginar usuarios y noticias; sustituir consultas N+1 por joins o consultas agregadas con índices. Añadir presupuestos de consultas y límites medidos.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-023",
+    "categoría": "Backend / contratos",
+    "severidad": "Baja",
+    "archivo": "server/src/client/header-util.ts",
+    "línea": "41",
+    "descripción": "Los enlaces de paginación confunden registros con páginas. Con 21 registros y size=20, last apunta a page=20 en lugar de page=1. next puede aparecer después de la última página válida.",
+    "recomendación": "Calcular totalPages=Math.ceil(total/size), usar max(0,totalPages-1) y emitir next solo si queda otra página.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-024",
+    "categoría": "Frontend / UX",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/admin/admin-facturacion.vue",
+    "línea": "52",
+    "descripción": "La búsqueda de suscriptores solo filtra la primera página. Se descargan los primeros 20 suscriptores y se filtran en memoria. Un suscriptor posterior no aparece aunque exista. Usuarios limita a 200 y noticias a la página por defecto sin navegación completa.",
+    "recomendación": "Implementar búsqueda y paginación en servidor, propagar total/cursor y mostrar estado vacío diferente de error. Cancelar solicitudes viejas para evitar sobrescritura de resultados.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-025",
+    "categoría": "Frontend / datos operativos",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/admin/admin-actividad.vue",
+    "línea": "44",
+    "descripción": "Actividad y telemetría muestran datos simulados como reales. La vista activa contiene una lista fija de pagos, nombres y tiempos. El gateway de tanque genera Math.random (tank-level.gateway.ts:40–50) mientras el tablero dice En vivo (admin-resumen.vue:333). Puede inducir decisiones operativas sin una fuente real.",
+    "recomendación": "Conectar actividad a la API existente; separar demo y producción y etiquetar claramente cualquier simulación. Integrar telemetría autenticada y mostrar antigüedad/calidad del dato.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-026",
+    "categoría": "Rendimiento",
+    "severidad": "Baja",
+    "archivo": "client/src/app/views/admin/admin-facturacion.vue",
+    "línea": "40",
+    "descripción": "Vistas mantienen listeners y gráficos tras desmontarse. Facturación, usuarios, noticias y actividad añaden resize sin retirarlo. MiConsumo crea Chart sin destruirlo al desmontar. Navegar repetidamente puede acumular trabajo y referencias.",
+    "recomendación": "Registrar efectos en onMounted y retirarlos en onUnmounted; destruir Chart y cancelar solicitudes. Probar entrar/salir repetidamente con contador de listeners.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-027",
+    "categoría": "Frontend / autorización",
+    "severidad": "Media",
+    "archivo": "client/src/app/router/entities.ts",
+    "línea": "28",
+    "descripción": "La matriz de roles de la UI no coincide con la API. Las vistas CRUD permiten ROLE_USER, pero listas y mutaciones backend exigen ADMIN. Un administrador con solo ROLE_ADMIN tampoco pasa algunas lecturas de noticias y Bold que piden exclusivamente USER. No hay jerarquía implícita de roles en RolesGuard.",
+    "recomendación": "Publicar matriz de permisos única y alinear rutas, menús y API; incluir explícitamente roles permitidos por operación y probar cuentas con solo USER, ADMIN y OPERATOR.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-028",
+    "categoría": "Accesibilidad",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/admin/admin-usuarios.vue",
+    "línea": "495",
+    "descripción": "Los campos administrativos carecen de asociación con su etiqueta. Los label no tienen for y los inputs no están anidados en ellos ni tienen ID/aria-labelledby. La relación visual no está expresada semánticamente; afecta lectores de pantalla y selección por voz.",
+    "recomendación": "Asignar ID único y for, conectar ayuda/errores con aria-describedby, y comprobar nombres accesibles con tecnologías asistivas.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-029",
+    "categoría": "Accesibilidad",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/admin/admin-usuarios.vue",
+    "línea": "480",
+    "descripción": "Los modales personalizados no gestionan semántica ni foco. El modal usa div sin role=dialog/aria-modal ni nombre accesible, no mueve o devuelve foco y no contiene navegación por tabulación; cerrar depende de clic. Los botones solo con icono también requieren nombre.",
+    "recomendación": "Usar componente modal accesible o implementar semántica, foco inicial, Escape, contención y retorno de foco; probar apertura/cierre solo con teclado.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-030",
+    "categoría": "Accesibilidad",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/portal/portal-dashboard.vue",
+    "línea": "320",
+    "descripción": "Los gráficos carecen de alternativa textual equivalente. Canvas no ofrece nombre/descripción ni una tabla con la serie mensual equivalente. Un lector de pantalla no obtiene la tendencia representada.",
+    "recomendación": "Añadir nombre y resumen accesibles y tabla de los mismos datos; no depender únicamente del color para estados y series.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-031",
+    "categoría": "SEO / distribución",
+    "severidad": "Baja",
+    "archivo": "client/vite.config.mts",
+    "línea": "30",
+    "descripción": "robots.txt y manifest.webapp no llegan al build. El build usa src como raíz pero copia recursos públicos desde server/dist/static/public; los archivos robots.txt y manifest.webapp están en client/src y no se importan/copian. La compilación auditada no los contiene, aunque index.html referencia el manifest.",
+    "recomendación": "Definir publicDir estable o copia explícita de robots, manifest e iconos; verificar URLs contra el artefacto generado y no solo contra el árbol fuente.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-032",
+    "categoría": "SEO / metadatos",
+    "severidad": "Baja",
+    "archivo": "client/src/index.html",
+    "línea": "6",
+    "descripción": "Metadatos públicos conservan valores de plantilla. Título y descripción genéricos; no se define canonical, Open Graph, sitemap ni datos estructurados en el inventario. La SPA no actualiza metadatos por noticia/ruta. El fallback Nginx sirve index para rutas desconocidas: posible soft-404, sin medición de rastreo.",
+    "recomendación": "Definir metadatos reales por ruta pública y canonical; generar sitemap y decidir prerenderizado según necesidades. Mantener contenido privado fuera de indexación sin confundir robots con control de acceso.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-033",
+    "categoría": "Rendimiento",
+    "severidad": "Media",
+    "archivo": "client/src/app/main.ts",
+    "línea": "24",
+    "descripción": "El JavaScript inicial supera 900 kB minificado. El build genera app de 924.882 bytes (301.616 gzip) y CSS de 303.485 bytes (42.673 gzip). Vue compat, BootstrapVue y Chart se cargan globalmente. Puede ralentizar móviles; no se midieron LCP, INP o CLS ni se atribuye una puntuación Lighthouse.",
+    "recomendación": "Medir ruta crítica en móvil y dividir gráficos/administración; reducir convivencia de frameworks y CSS. Configurar caché de assets con hash y compresión verificadas en proxy/CDN.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-034",
+    "categoría": "Dependencias",
+    "severidad": "Media",
+    "archivo": "package-lock.json",
+    "línea": "1",
+    "descripción": "El lock conserva componentes marcados como no mantenidos. El propio lock marca Bootstrap 4.6.2, Vue 2.7.16 transitivo y otras dependencias como deprecated. No se concluye que cada una sea explotable. La auditoría vigente de CVE no se completó porque la consulta a npm fue rechazada.",
+    "recomendación": "Planificar migración desde BootstrapVue/compat y revisar cadenas transitivas; autorizar un escaneo actualizado y priorizar vulnerabilidades realmente alcanzables, separando runtime y desarrollo.",
+    "esfuerzo": "Alto"
+  },
+  {
+    "ID": "WS-035",
+    "categoría": "Licencias",
+    "severidad": "Baja",
+    "archivo": "server/package.json",
+    "línea": "2",
+    "descripción": "Licencias del producto inconsistentes y atribuciones sin consolidar. Servidor declara MIT, raíz y cliente UNLICENSED; no aparece archivo LICENSE del producto en inventario. El lock incluye LGPL-3.0-only en herramienta de desarrollo, CC-BY y entradas sin licencia declarada. Eso no demuestra incompatibilidad comercial por sí solo.",
+    "recomendación": "Definir la licencia propia; recopilar textos de licencias y avisos de dependencias distribuidas, distinguiendo herramientas y enlaces de workspace. Revisar obligaciones según forma de distribución con asesoría competente.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-036",
+    "categoría": "DevOps",
+    "severidad": "Media",
+    "archivo": "Dockerfile",
+    "línea": "11",
+    "descripción": "Las imágenes Docker no reproducen el lock ni unifican Node. La raíz excluye package-lock.json del contexto (.dockerignore:2) y usa npm install. Las imágenes separadas tampoco usan el lock raíz. El servidor usa Node 20 y el proyecto exige Node >=22.14 en raíz/cliente, mientras CI usa 24; el resultado validado no representa necesariamente el contenedor. No hay USER no privilegiado explícito.",
+    "recomendación": "Construir desde lock con npm ci y contexto de workspaces coherente; unificar runtime soportado, imágenes fijadas y usuario sin privilegios; comprobar build/test del contenedor final en CI.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-037",
+    "categoría": "DevOps / proxy",
+    "severidad": "Media",
+    "archivo": "client/nginx.conf",
+    "línea": "6",
+    "descripción": "El Nginx del cliente no reenvía Socket.IO. El dashboard conecta /tank con ruta de transporte /socket.io en el origen del cliente. Nginx solo reenvía /api, /management y /v3; /socket.io cae en el fallback SPA sin Upgrade. El despliegue separado pierde telemetría aunque funcione en desarrollo.",
+    "recomendación": "Añadir proxy Socket.IO con Upgrade/Connection y timeouts adecuados o configurar un origen WebSocket explícito; probar handshake y reconexión en la topología Railway real.",
+    "esfuerzo": "Bajo"
+  },
+  {
+    "ID": "WS-038",
+    "categoría": "DevOps / configuración",
+    "severidad": "Media",
+    "archivo": "docker/app.yml",
+    "línea": "3",
+    "descripción": "docker/app.yml no aporta la configuración mínima de arranque. Solo pasa BACKEND_ENV=prod; el código requiere JWT_SECRET_BASE64 y DATABASE_URL, y las sesiones web requieren WEB_ORIGINS. Compose no importa automáticamente todas las variables del host al contenedor. El PostgreSQL auxiliar usa trust y carece de volumen explícito; está declarado para desarrollo.",
+    "recomendación": "Documentar variables requeridas y pasarlas explícitamente por mecanismos de secretos; diferenciar compose local de producción, persistencia y autenticación. Añadir comprobación de configuración al inicio y smoke test.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-039",
+    "categoría": "Privacidad / documentación",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/politica/politica-privacidad.vue",
+    "línea": "350",
+    "descripción": "La política publicada describe controles y proveedores distintos al código. Declara pagos futuros simulados y ausencia de transferencias internacionales, pero el flujo activo integra Bold. También equipara bcrypt con AES-256 (928), promete cinco intentos donde hay diez/minuto y sesiones stateless aunque se consultan en BD. Contratos, regiones, backups y capacitación No verificados.",
+    "recomendación": "Reconciliar política con inventario real y evidencia operativa, incluir Bold y recursos de terceros, y evitar asegurar residencia, cifrado o backups sin verificación. Validar el texto con el responsable de datos.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-040",
+    "categoría": "Privacidad",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/login/login.vue",
+    "línea": "168",
+    "descripción": "La aceptación de privacidad no queda registrada en el flujo web. privacyAccepted habilita un botón, pero POST authenticate no envía ni persiste versión/fecha/finalidad de aceptación. La política dice conservar autorización; el registro público tampoco incluye prueba. Una casilla local no permite acreditar autorización consultable después. Los formularios físicos mencionados en la política no fueron suministrados.",
+    "recomendación": "Definir con el responsable la base jurídica por finalidad y conservar prueba cuando aplique (versión, titular, instante y canal); incluir flujo de revocación y atención. Separar autenticación de tratamientos opcionales.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-041",
+    "categoría": "Privacidad / retención",
+    "severidad": "Media",
+    "archivo": "server/src/service/session.service.ts",
+    "línea": "18",
+    "descripción": "Las sesiones expiradas no se eliminan como promete la política. validate solo comprueba expiración y revoke marca estado; no existe purga de auth_session en el código revisado. usedRefreshHashes puede acumular hasta 1.000 elementos por sesión. La política promete eliminación al expirar (politica-privacidad.vue:389); tareas externas No verificadas.",
+    "recomendación": "Implementar retención y purga verificables de sesiones, operaciones y datos personales conforme a finalidad/legalidad; registrar ejecución sin secretos y corregir la promesa pública si la retención es distinta.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-042",
+    "categoría": "Observabilidad",
+    "severidad": "Media",
+    "archivo": "docker/prometheus/prometheus.yml",
+    "línea": "27",
+    "descripción": "La configuración Prometheus apunta a una ruta no implementada. El inventario de rutas solo contiene management/info; no management/prometheus ni health de dependencias. info devuelve dev fijo (management.controller.ts:20). El healthcheck Docker es TCP, no verifica BD. No hay evidencia local de métricas/alertas efectivas.",
+    "recomendación": "Implementar readiness/liveness separados, métricas autenticadas o internas y scraping real; correlacionar solicitudes y registrar duración/resultado. Definir alertas para pagos sin conciliar, DB y cron.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-043",
+    "categoría": "Pruebas",
+    "severidad": "Media",
+    "archivo": "server/e2e/account.e2e-spec.ts",
+    "línea": "49",
+    "descripción": "Los tests aprobados no cubren los flujos completos de producción. Los E2E existentes sustituyen guardas y algunas pruebas esperan 500 de funciones incompletas. No se ejecutan en CI. Usan AppModule con perfil SQLite que sincroniza/migra y contiene SQL PostgreSQL. Las 224 pruebas unitarias aprobadas no certifican aislamiento HTTP, cookies, PostgreSQL ni webhooks reales.",
+    "recomendación": "Añadir integración aislada PostgreSQL y E2E de alta/activación, permisos entre cuentas, refresh/logout, pagos/PDF y roles; ejecutarlos en CI con servicios desechables y sin secretos reales.",
+    "esfuerzo": "Alto"
+  },
+  {
+    "ID": "WS-044",
+    "categoría": "Calidad",
+    "severidad": "Media",
+    "archivo": "watsolution_web_reportes/evidencias/lint-resumen.json",
+    "línea": "1",
+    "descripción": "Lint falla y el pipeline no lo exige. Ejecución correcta desde cada workspace: servidor 4.469 errores/15 advertencias; cliente 23.122 errores/56 advertencias. Predomina formato/CRLF; no equivalen a igual número de defectos funcionales. La CI ejecuta tsc backend, tests y Vite, pero no lint ni comprobación de tipos Vue.",
+    "recomendación": "Normalizar formato en una tarea separada, resolver errores semánticos y habilitar lint y vue-tsc --noEmit en CI. Mantener controles sin autofix durante auditorías.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-045",
+    "categoría": "Documentación",
+    "severidad": "Baja",
+    "archivo": "README.md",
+    "línea": "35",
+    "descripción": "Los README y contratos describen un arranque obsoleto. README recomienda secreto por defecto, expiraciones de 24h/30d y comandos inexistentes como start:app/mvnw. server/README dice que migra automáticamente, pero producción lo desactiva. Falta guía operativa comprobada para invitaciones, variables, respaldo, restauración y conciliación.",
+    "recomendación": "Escribir guía en español con variables sin valores, topologías admitidas, preparación/migración explícita, pruebas, rotación, rollback y RPO/RTO acordados; mantener contrato OpenAPI acorde al código.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-046",
+    "categoría": "Arquitectura",
+    "severidad": "Baja",
+    "archivo": "client/src/app/views/pagos/pagos.component.ts",
+    "línea": "33",
+    "descripción": "Coexisten implementaciones de vistas que ya no se usan. Vistas activas usan script setup inline, mientras archivos .component.ts mantienen otra implementación: pagos simulado, facturación sin meterId y dashboards de ejemplo. El router importa .vue, no esas alternativas. Confunde mantenimiento y puede dar falsa confianza al probar código no montado.",
+    "recomendación": "Identificar referencias con el grafo de imports, retirar código obsoleto en un cambio aparte y extraer layouts/composables comunes. Asegurar que pruebas importen componentes montados por el router.",
+    "esfuerzo": "Medio"
+  },
+  {
+    "ID": "WS-047",
+    "categoría": "Frontend / fechas",
+    "severidad": "Media",
+    "archivo": "client/src/app/views/portal/mis-facturas.vue",
+    "línea": "17",
+    "descripción": "Fechas sin zona se interpretan como instantes y adelantan mora. Una fecha YYYY-MM-DD se interpreta en UTC; en America/Bogota puede mostrarse el día anterior. Comparar contra Date.now también declara vencida la factura al inicio UTC del día de vencimiento, si el negocio permite pagar durante ese día.",
+    "recomendación": "Tratar fechas de calendario sin conversión UTC y definir hora/zona de vencimiento con negocio; usar el mismo criterio en frontend/backend y probar límites de medianoche.",
+    "esfuerzo": "Medio"
+  }
+]

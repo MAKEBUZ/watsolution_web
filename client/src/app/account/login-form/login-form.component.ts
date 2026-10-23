@@ -1,3 +1,4 @@
+import { setAccessToken } from '@/shared/config/web-session';
 import axios from 'axios';
 import { type Ref, defineComponent, inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -33,10 +34,10 @@ export default defineComponent({
         }
         if (jwt) {
           if (rememberMe.value) {
-            localStorage.setItem('jhi-authenticationToken', jwt);
+            setAccessToken(jwt);
             sessionStorage.removeItem('jhi-authenticationToken');
           } else {
-            sessionStorage.setItem('jhi-authenticationToken', jwt);
+            setAccessToken(jwt);
             localStorage.removeItem('jhi-authenticationToken');
           }
         }

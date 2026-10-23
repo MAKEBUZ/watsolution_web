@@ -1,0 +1,83 @@
+name: Security and regression checks
+on:
+  pull_request:
+  push:
+permissions:
+  contents: read
+jobs:
+  postgres-sessions:
+    runs-on: ubuntu-24.04
+    # Allow cold browser/OS downloads without consuming the test execution budget.
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: ws_integration
+          POSTGRES_USER: ws_test
+          POSTGRES_PASSWORD: ws_test_only
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U ws_test -d ws_integration"
+          --health-interval 2s --health-timeout 3s --health-retries 20
+    env:
+      BACKEND_ENV: test
+      WATSOLUTION_TEST_DATABASE: local-disposable
+      TEST_DATABASE_URL: postgresql://ws_test:ws_test_only@127.0.0.1:55432/ws_integration
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-fund
+      - run: node node_modules/jest/bin/jest.js --config server/integration/jest.config.json --runInBand --coverage=false
+      - name: Install headless Chromium and system dependencies
+        timeout-minutes: 15
+        run: npx --no-install playwright install --with-deps --only-shell chromium
+      - name: Generate disposable loopback TLS certificate
+        run: |
+          mkdir -p tmp/browser-tls
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 -keyout tmp/browser-tls/key.pem -out tmp/browser-tls/cert.pem -subj '/CN=127.0.0.1' -addext 'subjectAltName=IP:127.0.0.1'
+      - name: Build real UI for HTTPS browser tests
+        working-directory: client
+        run: node ../node_modules/vite/bin/vite.js build --outDir "$GITHUB_WORKSPACE/tmp/browser-app"
+      - name: Chromium HTTPS session regression
+        env:
+          TEST_WEB_DIST: tmp/browser-app
+          TEST_TLS_KEY: tmp/browser-tls/key.pem
+          TEST_TLS_CERT: tmp/browser-tls/cert.pem
+        run: node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false
+      - name: Install Nginx for isolated proxy tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+          nginx -v
+      - name: Chromium sessions through Nginx HTTPS
+        env:
+          TEST_NGINX: '1'
+          TEST_WEB_DIST: tmp/browser-app
+          TEST_TLS_KEY: tmp/browser-tls/key.pem
+          TEST_TLS_CERT: tmp/browser-tls/cert.pem
+        run: node node_modules/jest/bin/jest.js --config server/integration/browser/jest.config.json --runInBand --coverage=false
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-fund
+      - run: npm audit --omit=dev --audit-level=high
+      - run: node node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit
+      - run: node node_modules/jest/bin/jest.js --config server/package.json --runInBand
+      - run: node ../node_modules/vitest/vitest.mjs run
+        working-directory: client
+      - run: npm run vite-build -w client

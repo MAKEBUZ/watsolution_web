@@ -1,0 +1,20 @@
+{
+  "fecha": "2026-10-05",
+  "commit_probado": "79f0e8d2720aa69c894117a1dde294bf296454d5",
+  "integracion_commit": "bc0189d08dcee3539dfb86057f185dd8a335ba93",
+  "rama_pruebas_commit": "48b34b1a9595164769ee0642a299d3bc537d6d92",
+  "postgres_local_sin_destino_exit_code": 1,
+  "postgres_local_ejecutado": false,
+  "ci": {
+    "run_id": 37410088785,
+    "validate": "success",
+    "postgres_sessions": "success",
+    "backend_tests": 112,
+    "frontend_tests": 203,
+    "postgres_casos": 27,
+    "http_postgres_casos": 19,
+    "casos_web_nuevos": 8
+  },
+  "navegador_https_verificado": false,
+  "cierre_integral": false
+}

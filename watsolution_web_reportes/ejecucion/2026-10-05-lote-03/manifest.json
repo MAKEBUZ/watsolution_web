@@ -1,0 +1,57 @@
+[
+  {
+    "archivo": "backend-final.log",
+    "sha256": "BC7996873F752EE0A66C4E1CC42EEF11B96AD2FDEDFA1CB44D2471464E41BC98",
+    "bytes": 3126
+  },
+  {
+    "archivo": "backend.log",
+    "sha256": "49237EC805DACD6DD454B94FE28893B9646FDD1987119A1368FE6F93AFEED51E",
+    "bytes": 3075
+  },
+  {
+    "archivo": "build.log",
+    "sha256": "E432B29B431264E8E0068704FE6284661A80A900C0963AD88108C3269B055656",
+    "bytes": 20197
+  },
+  {
+    "archivo": "ci.json",
+    "sha256": "38B04760E8675A940987E988A7354DE6B8B5A73294EB9D004FE49542CA8F51DC",
+    "bytes": 3877
+  },
+  {
+    "archivo": "estado-tareas.json",
+    "sha256": "226227173D59ECCCF39629B13DACD8C600D9CEB511CFBB8E45DADAB4DB8D7018",
+    "bytes": 14702
+  },
+  {
+    "archivo": "frontend-final.log",
+    "sha256": "178475F38EFACE5CF26CC47E3AB5A674A0F08EAA2113E9D875C92D32F02BC85F",
+    "bytes": 14828
+  },
+  {
+    "archivo": "frontend.log",
+    "sha256": "D704B1DC0FFF8635E0FDCAEDE2A2DD4D5F47FE2ADAE87BB879E9A87863F7EE4D",
+    "bytes": 14826
+  },
+  {
+    "archivo": "logout-backend.log",
+    "sha256": "2ACF2F47F685FECE80F4605C52391F2238A9B2C7D76099C1C687D4A2F5F65990",
+    "bytes": 739
+  },
+  {
+    "archivo": "logout-frontend.log",
+    "sha256": "5AC6339DCEDBCF94E86E78C8B6ADF1FF6AE94E772D0CF9DDCF3D6EF6C5298375",
+    "bytes": 1501
+  },
+  {
+    "archivo": "postgres-sin-destino.log",
+    "sha256": "A477CB10C2083A36CD7DD207586583CBFBE96563E1C03F7E247D238D6EFBBC6A",
+    "bytes": 2587
+  },
+  {
+    "archivo": "verificacion.json",
+    "sha256": "C8D02C73912C1D02E20DB6FF840FC58EE39FB53AC50FEBC1993B71449B48E4FE",
+    "bytes": 688
+  }
+]

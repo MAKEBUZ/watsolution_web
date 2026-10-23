@@ -1,0 +1,39 @@
+PASS server/src/service/financial-crud.spec.ts (25.603 s)
+PASS server/src/service/bold-order.spec.ts
+[Nest] 47952  - 05/10/2026, 3:37:26 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 47952  - 05/10/2026, 3:37:26 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 47952  - 05/10/2026, 3:37:26 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+PASS server/src/web/rest/session.controller.spec.ts
+PASS server/src/service/invoice-pdf-isolation.spec.ts
+[Nest] 47952  - 05/10/2026, 3:37:29 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 47952  - 05/10/2026, 3:37:29 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 47952  - 05/10/2026, 3:37:29 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [PortalService] Portal data loaded: invoices=0, consumption=0, status=ACTIVO
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [PortalService] Portal data loaded: invoices=0, consumption=0, status=ACTIVO
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [PortalService] Portal data loaded: invoices=0, consumption=0, status=ACTIVO
+PASS server/src/service/portal.service.spec.ts
+PASS server/src/security/security-baseline.spec.ts
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 47952  - 05/10/2026, 3:37:30 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+[Nest] 47952  - 05/10/2026, 3:37:31 a. m.     LOG [Config] Actual process.env.BACKEND_ENV value: test
+[Nest] 47952  - 05/10/2026, 3:37:31 a. m.     LOG [Config] Standard allowed values are: dev, test or prod
+[Nest] 47952  - 05/10/2026, 3:37:31 a. m.     LOG [Config] if you run with a non standard BACKEND_ENV value, remember to add your application-{process.env.BACKEND_ENV}.yml file
+PASS server/src/security/passport.jwt.strategy.spec.ts
+PASS server/src/service/privacy.spec.ts
+PASS server/src/service/bold.service.spec.ts
+PASS server/src/service/session.service.spec.ts
+PASS server/src/service/mobile.service.spec.ts
+PASS server/src/service/billing.service.spec.ts
+PASS server/test/admin/management.controller.spec.ts
+PASS server/src/security/postgres-target.spec.ts
+PASS server/src/domain/base/pagination.entity.spec.ts
+
+Test Suites: 15 passed, 15 total
+Tests:       111 passed, 111 total
+Snapshots:   0 total
+Time:        38.783 s
+Ran all test suites.
