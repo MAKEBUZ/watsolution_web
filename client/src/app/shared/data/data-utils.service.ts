@@ -23,6 +23,10 @@ const useDataUtils = () => ({
    * Method to open file
    */
   openFile(contentType, data) {
+    // Blob documents inherit this origin. Do not render HTML, SVG or other active content.
+    const safeTypes = ['application/pdf', 'text/plain', 'image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+    const type = String(contentType).split(';')[0].trim().toLowerCase();
+    if (!safeTypes.includes(type)) throw new Error('This file type cannot be previewed safely');
     const byteCharacters = atob(data);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
@@ -30,13 +34,12 @@ const useDataUtils = () => ({
     }
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], {
-      type: contentType,
+      type,
     });
     const objectURL = URL.createObjectURL(blob);
-    const win = window.open(objectURL);
-    if (win) {
-      win.onload = () => URL.revokeObjectURL(objectURL);
-    }
+    window.open(objectURL, '_blank', 'noopener,noreferrer');
+    // noopener intentionally provides no window handle; allow the viewer time to load.
+    setTimeout(() => URL.revokeObjectURL(objectURL), 60000);
   },
 
   /**
@@ -117,10 +120,12 @@ const useDataUtils = () => ({
       type: contentType,
     });
     const tempLink = document.createElement('a');
-    tempLink.href = window.URL.createObjectURL(blob);
+    const objectURL = window.URL.createObjectURL(blob);
+    tempLink.href = objectURL;
     tempLink.download = fileName;
-    tempLink.target = '_blank';
+    tempLink.rel = 'noopener noreferrer';
     tempLink.click();
+    setTimeout(() => URL.revokeObjectURL(objectURL), 60000);
   },
 
   /**

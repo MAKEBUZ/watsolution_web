@@ -70,7 +70,7 @@ const loadNoticias = async () => {
     const res = await axios.get('api/noticias')
     news.value = res.data
   } catch (e) {
-    console.error('Error loading noticias:', e)
+    console.error('Error loading noticias')
   }
 }
 
@@ -86,7 +86,7 @@ const saveNoticia = async () => {
     isModalOpen.value = false
     await loadNoticias()
   } catch (e) {
-    console.error('Error saving noticia:', e)
+    console.error('Error saving noticia')
   } finally {
     saving.value = false
   }
@@ -98,7 +98,7 @@ const toggleStatus = async (item: INoticia) => {
     await axios.put(`api/noticias/${item.id}`, { ...item, status: newStatus })
     await loadNoticias()
   } catch (e) {
-    console.error('Error updating noticia:', e)
+    console.error('Error updating noticia')
   }
 }
 
@@ -108,7 +108,7 @@ const deleteNews = async (id: number | undefined) => {
     await axios.delete(`api/noticias/${id}`)
     await loadNoticias()
   } catch (e) {
-    console.error('Error deleting noticia:', e)
+    console.error('Error deleting noticia')
   }
 }
 

@@ -10,7 +10,7 @@ ENV CYPRESS_INSTALL_BINARY=0
 
 COPY . .
 
-RUN npm install
+RUN npm ci
 RUN npm run --workspace server build
 RUN npm run --workspace client build
 RUN npm cache clean --force

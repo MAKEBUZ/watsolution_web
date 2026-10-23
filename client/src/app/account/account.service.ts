@@ -41,7 +41,7 @@ export default class AccountService {
       // Ignore error
     }
 
-    if (generation === getSessionGeneration()) this.store.logout();
+    if (generation === getSessionGeneration()) this.store.clearLocalSession();
     return false;
   }
 

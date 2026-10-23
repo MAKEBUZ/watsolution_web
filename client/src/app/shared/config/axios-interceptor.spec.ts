@@ -17,6 +17,22 @@ describe('Axios security boundaries', () => {
     const result = onRequestSuccess({ url: 'api/authenticate' });
     expect(result.headers['X-Session-Transport']).toBe('web'); expect(result.withCredentials).toBe(true); expect(result.headers.Authorization).toBeUndefined();
   });
+  it.each(['https://attacker.example/collect', '//attacker.example/collect', '///attacker.example/collect',
+    '\\\\attacker.example/collect', 'javascript:alert(1)', 'data:text/html,test'])('rejects credential exfiltration to %s', url => {
+    setAccessToken('test-access');
+    expect(() => onRequestSuccess({ url })).toThrow('application origin');
+  });
+  it('rejects cross-origin baseURL overrides', () => {
+    setAccessToken('test-access');
+    expect(() => onRequestSuccess({ url: '/api/account', baseURL: 'https://attacker.example' })).toThrow();
+  });
+  it('normalizes same-origin URLs before attaching credentials', () => {
+    setAccessToken('test-access');
+    const result = onRequestSuccess({ url: window.location.origin + '/api/account?view=full' });
+    expect(result.url).toBe('/api/account?view=full');
+    expect(result.baseURL).toBeUndefined();
+    expect(result.headers.Authorization).toBe('Bearer test-access');
+  });
   it('keeps the session on 403', async () => {
     const unauthenticated = vi.fn(); setupAxiosInterceptors(unauthenticated, vi.fn()); mock.onGet().reply(403);
     await expect(axios.get('api/people')).rejects.toThrow(); expect(unauthenticated).not.toHaveBeenCalled();

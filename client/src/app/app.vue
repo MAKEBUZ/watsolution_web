@@ -6,16 +6,19 @@
       'ws-entity-route': /^\/(forbidden|not-found|register|person|address|meter|invoice|account|admin\/user-management)/.test(route.path),
     }"
   >
-    <div v-if="accountStore.logoutStatus === 'pending'" role="status" class="logout-feedback alert alert-info">
-      Cerrando la sesión en el servidor…
-    </div>
-    <div v-if="accountStore.logoutStatus === 'failed'" role="alert" class="logout-feedback alert alert-warning">
-      Se ocultaron tus datos, pero no pudimos confirmar el cierre en el servidor. Comprueba tu conexión y vuelve a intentarlo.
-      <button type="button" class="btn btn-warning" @click="accountStore.logout()">Reintentar cierre de sesión</button>
-    </div>
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <Header v-if="!isAdminRoute" />
     <main id="main-content" tabindex="-1" :class="['main-content', { 'no-header': isAdminRoute }]">
+      <div v-if="accountStore.logoutStatus === 'pending'" role="status" class="logout-feedback alert alert-info">
+        Cerrando la sesión en el servidor… Tus datos ya no se muestran en este navegador.
+      </div>
+      <div v-if="accountStore.logoutStatus === 'failed'" role="alert" class="logout-feedback alert alert-warning">
+        <span>No pudimos confirmar el cierre en el servidor. Tus datos ya no se muestran aquí. Puedes reintentarlo o volver a iniciar sesión.</span>
+        <div class="logout-feedback__actions">
+          <button type="button" class="btn btn-warning" @click="accountStore.logout()">Reintentar cierre de sesión</button>
+          <router-link v-if="route.path !== '/login'" to="/login" class="btn btn-outline-dark">Ir a iniciar sesión</router-link>
+        </div>
+      </div>
       <AdminMobileNav v-if="isAdminRoute && accountStore.authenticated" />
       <router-view v-if="!requiresAuthentication || accountStore.authenticated"></router-view>
     </main>
@@ -74,12 +77,17 @@ export default defineComponent({
 
 <style>
 .logout-feedback {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10001;
-  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+.logout-feedback__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-inline-start: auto;
 }
 #app {
   min-height: 100vh;

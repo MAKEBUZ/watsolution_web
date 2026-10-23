@@ -1,9 +1,9 @@
-import { setAccessToken, refreshAccessToken, getSessionGeneration, logoutStorageKey } from '@/shared/config/web-session';
+import { getAccessToken, setAccessToken, refreshAccessToken, getSessionGeneration, logoutStorageKey, sessionRequestTimeout } from '@/shared/config/web-session';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
 export interface AccountStateStorable {
-  logon: boolean;
+  logon: Promise<unknown> | null;
   userIdentity: null | any;
   authenticated: boolean;
   profilesLoaded: boolean;
@@ -60,7 +60,7 @@ export const useAccountStore = defineStore('main', {
       this.logoutStatus = 'pending';
       try {
         const response = await axios.create().post(`${SERVER_API_URL}api/session/logout`, {}, {
-          withCredentials: true, headers: { 'X-Session-Transport': 'web' },
+          withCredentials: true, timeout: sessionRequestTimeout, headers: { 'X-Session-Transport': 'web' },
         });
         if (response.data?.revoked !== true) throw new Error('Logout was not confirmed');
         if (generation === getSessionGeneration() && localStorage.getItem(logoutStorageKey) === marker) {
@@ -83,8 +83,21 @@ export const useAccountStore = defineStore('main', {
       this.ribbonOnProfiles = ribbon;
     },
     async initAccount() {
+      if (this.authenticated || localStorage.getItem(logoutStorageKey)) return;
+      if (this.logon) { await this.logon; return; }
       const generation = getSessionGeneration();
-      try { await refreshAccessToken(); await this.loadAccountAction(); } catch { if (generation === getSessionGeneration()) this.logout(); }
+      const restoring = (async () => {
+        try {
+          if (!getAccessToken()) await refreshAccessToken();
+          if (generation === getSessionGeneration()) await this.loadAccountAction();
+        } catch {
+          // An anonymous visitor, expired cookie or network failure is not an explicit logout.
+          if (generation === getSessionGeneration() && (getAccessToken() || this.authenticated)) this.clearLocalSession();
+        }
+      })();
+      this.authenticate(restoring);
+      try { await restoring; }
+      finally { if (this.logon === restoring) this.authenticate(null); }
     },
     async loadAccountAction() {
       const generation = getSessionGeneration();
@@ -95,7 +108,7 @@ export const useAccountStore = defineStore('main', {
           this.setAuthentication(response.data);
         }
       } catch (error) {
-        if (generation === getSessionGeneration()) this.logout();
+        if (generation === getSessionGeneration()) this.clearLocalSession();
       }
     },
   },

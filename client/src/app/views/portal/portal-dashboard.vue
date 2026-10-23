@@ -173,7 +173,7 @@ async function loadDashboard() {
   } catch (err: any) {
     const msg = err?.response?.data?.message ?? err?.message ?? 'Error al cargar datos';
     errorMsg.value = msg;
-    console.error('Portal dashboard error:', err);
+    console.error('Portal dashboard request failed');
   } finally {
     loading.value = false;
   }
