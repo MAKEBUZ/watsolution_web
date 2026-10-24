@@ -149,7 +149,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll));
               <div class="pp-info-card__icon">🌐</div>
               <div>
                 <div class="pp-info-card__label">Plataforma</div>
-                <div class="pp-info-card__val">WatSolution — watsolution.3-142-23-99.sslip.io</div>
+                <div class="pp-info-card__val">WatSolution — watsolution.online</div>
               </div>
             </div>
           </div>
@@ -430,7 +430,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll));
                 <tr><td>Comunicación de cambios</td><td>Notificación por WhatsApp y publicación en el portal web</td></tr>
                 <tr><td>Plazo de comunicación</td><td>10 días hábiles de antelación antes de que los cambios entren en vigencia</td></tr>
                 <tr><td>Versión actual</td><td>Versión 1.0 — Mayo 2026</td></tr>
-                <tr><td>Acceso al documento</td><td>watsolution.3-142-23-99.sslip.io/politica-privacidad</td></tr>
+                <tr><td>Acceso al documento</td><td>watsolution.online/politica-privacidad</td></tr>
               </tbody>
             </table>
           </div>
