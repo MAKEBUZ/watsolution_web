@@ -1,4 +1,5 @@
 import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
+import { matchingId } from '../../security/entity-input';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -33,7 +34,7 @@ export class NoticiaController {
   constructor(private readonly noticiaService: NoticiaService) {}
 
   @Get('/')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({ status: 200, description: 'List all noticias', type: NoticiaDTO })
   async getAll(@Req() req: Request): Promise<NoticiaDTO[]> {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.noticia);
@@ -47,7 +48,7 @@ export class NoticiaController {
   }
 
   @Get('/:id')
-  @Roles(RoleType.USER)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({ status: 200, description: 'The found record', type: NoticiaDTO })
   async getOne(@Param('id') id: number): Promise<NoticiaDTO> {
     return await this.noticiaService.findById(id);
@@ -76,7 +77,8 @@ export class NoticiaController {
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update noticia with id' })
   @ApiResponse({ status: 200, description: 'Updated.', type: NoticiaDTO })
-  async putId(@Req() req: Request, @Body() noticiaDTO: NoticiaDTO): Promise<NoticiaDTO> {
+  async putId(@Req() req: Request, @Body() noticiaDTO: NoticiaDTO, @Param('id') id: string): Promise<NoticiaDTO> {
+    noticiaDTO.id = matchingId(noticiaDTO, id);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Noticia', noticiaDTO.id);
     return await this.noticiaService.update(noticiaDTO, req.user?.login);
   }

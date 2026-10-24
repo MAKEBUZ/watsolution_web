@@ -5,11 +5,14 @@
         <h1 v-text="t$('reset.request.title')"></h1>
 
         <div class="alert alert-warning" v-if="!success">
-          <p v-text="t$('reset.request.messages.info')"></p>
+          <p>
+            Solicita al administrador un enlace privado de recuperación después de verificar tu identidad. Por ahora no hay envío automático
+            de correos.
+          </p>
         </div>
 
         <div class="alert alert-success" v-if="success">
-          <p v-text="t$('reset.request.messages.success')"></p>
+          <p>Contacta al administrador para obtener el enlace privado. No se ha enviado un correo automático.</p>
         </div>
 
         <form v-if="!success" name="form" @submit.prevent="requestReset()">

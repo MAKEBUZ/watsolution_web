@@ -12,6 +12,8 @@ export default defineComponent({
     const authenticationError: Ref<boolean> = ref(false);
     const login: Ref<string> = ref(null);
     const password: Ref<string> = ref(null);
+    const code = ref('');
+    const securityCodeRequired = ref(false);
     const rememberMe: Ref<boolean> = ref(false);
     const route = useRoute();
     const router = useRouter();
@@ -22,7 +24,12 @@ export default defineComponent({
     const loginService = inject<LoginService>('loginService');
 
     const doLogin = async () => {
-      const data = { username: login.value, password: password.value, rememberMe: rememberMe.value };
+      const data = {
+        username: login.value,
+        password: password.value,
+        rememberMe: rememberMe.value,
+        ...(code.value.trim() ? { code: code.value.trim() } : {}),
+      };
       try {
         const result = await axios.post('api/authenticate', data);
         const bearerToken = result.headers.authorization;
@@ -43,19 +50,26 @@ export default defineComponent({
         }
 
         authenticationError.value = false;
+        securityCodeRequired.value = false;
+        password.value = '';
+        code.value = '';
         loginService.hideLogin();
         await accountService.retrieveAccount();
         if (route.path === '/forbidden') {
           previousState();
         }
-      } catch (_error) {
+      } catch (_error: any) {
         authenticationError.value = true;
+        securityCodeRequired.value = _error?.response?.data?.code === 'MFA_REQUIRED';
+        code.value = '';
       }
     };
     return {
       authenticationError,
       login,
       password,
+      code,
+      securityCodeRequired,
       rememberMe,
       accountService,
       doLogin,

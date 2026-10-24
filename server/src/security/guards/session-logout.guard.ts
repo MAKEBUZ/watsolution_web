@@ -10,6 +10,9 @@ export class SessionLogoutGuard extends AuthGuard {
       requireWebOrigin(request);
       return true;
     }
+    // Possession is checked by revokeByRefresh, including already-rotated tokens.
+    // This permits logout after the access token expires, without cookie authority.
+    if (typeof request.body?.refresh_token === 'string' && request.body.refresh_token.length <= 256) return true;
     return super.canActivate(context);
   }
 }

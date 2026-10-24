@@ -19,10 +19,12 @@ describe('Session logout HTTP contract', () => {
   beforeAll(async () => {
     process.env.WEB_ORIGINS = 'https://app.example.test';
     const module = await Test.createTestingModule({
-      imports: [PassportModule], controllers: [SessionController],
+      imports: [PassportModule],
+      controllers: [SessionController],
       providers: [JwtStrategy, { provide: SessionService, useValue: sessions }, { provide: AuthService, useValue: auth }],
     }).compile();
-    app = module.createNestApplication(); await app.init();
+    app = module.createNestApplication();
+    await app.init();
   });
   beforeEach(() => jest.clearAllMocks());
   afterAll(async () => {
@@ -32,9 +34,13 @@ describe('Session logout HTTP contract', () => {
   });
   it('allows trusted web logout with expired JWT and clears the secure cookie', async () => {
     const expired = jwt.sign({ id: 2 }, { expiresIn: -1 });
-    const response = await request(app.getHttpServer()).post('/api/session/logout')
-      .set('X-Session-Transport', 'web').set('Origin', 'https://app.example.test')
-      .set('Authorization', `Bearer ${expired}`).set('Cookie', `${refreshCookie}=synthetic-refresh`).expect(201);
+    const response = await request(app.getHttpServer())
+      .post('/api/session/logout')
+      .set('X-Session-Transport', 'web')
+      .set('Origin', 'https://app.example.test')
+      .set('Authorization', `Bearer ${expired}`)
+      .set('Cookie', `${refreshCookie}=synthetic-refresh`)
+      .expect(201);
     expect(sessions.revokeByRefresh).toHaveBeenCalledWith('synthetic-refresh');
     expect(sessions.revoke).not.toHaveBeenCalled();
     expect(response.headers['set-cookie'][0]).toMatch(/HttpOnly; Secure; SameSite=Strict/);
@@ -54,5 +60,16 @@ describe('Session logout HTTP contract', () => {
     const token = jwt.sign({ id: 2 }, { expiresIn: '1m' });
     await request(app.getHttpServer()).post('/api/session/logout').set('Authorization', `Bearer ${token}`).expect(201);
     expect(sessions.revoke).toHaveBeenCalledWith('mobile-session', 2);
+  });
+  it('uses refresh possession for mobile logout after access expiry, without accepting cookie-only requests', async () => {
+    const expired = jwt.sign({ id: 2 }, { expiresIn: -1 });
+    await request(app.getHttpServer())
+      .post('/api/session/logout')
+      .set('Authorization', `Bearer ${expired}`)
+      .send({ refresh_token: 'opaque-refresh' })
+      .expect(201);
+    expect(sessions.revokeByRefresh).toHaveBeenCalledWith('opaque-refresh');
+    expect(sessions.revoke).not.toHaveBeenCalled();
+    await request(app.getHttpServer()).post('/api/session/logout').set('Cookie', `${refreshCookie}=opaque-refresh`).expect(401);
   });
 });

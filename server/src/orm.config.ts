@@ -1,4 +1,7 @@
 import { AuthSession } from './domain/auth-session.entity';
+import { AccountMfa } from './domain/account-mfa.entity';
+import { BillingTariff } from './domain/billing-tariff.entity';
+import { FieldSecurity1792796400000 } from './migrations/1792796400000-FieldSecurity';
 import { MobileOperation } from './domain/mobile-operation.entity';
 import { SecureMobile1791158400000 } from './migrations/1791158400000-SecureMobile';
 import { Logger } from '@nestjs/common';
@@ -80,6 +83,8 @@ function ormConfig(): TypeOrmModuleOptions {
     migrationsRun: backendEnv === 'test',
     entities: [
       AuthSession,
+      AccountMfa,
+      BillingTariff,
       MobileOperation,
       User,
       Authority,
@@ -102,6 +107,7 @@ function ormConfig(): TypeOrmModuleOptions {
       AddDocumentEmbeddings1749000000001,
       AddNotifications1749100000000,
       SecureMobile1791158400000,
+      FieldSecurity1792796400000,
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
     autoLoadEntities: true,

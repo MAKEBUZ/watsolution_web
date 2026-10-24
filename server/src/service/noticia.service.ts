@@ -5,6 +5,7 @@ import { Noticia } from '../domain/noticia.entity';
 import { NoticiaStatus } from '../domain/enumeration/noticia-status';
 import { NoticiaDTO } from '../service/dto/noticia.dto';
 import { NoticiaMapper } from '../service/mapper/noticia.mapper';
+import { matchingId } from '../security/entity-input';
 
 @Injectable()
 export class NoticiaService {
@@ -41,6 +42,7 @@ export class NoticiaService {
   }
 
   async save(noticiaDTO: NoticiaDTO, creator?: string): Promise<NoticiaDTO | undefined> {
+    if (noticiaDTO.id != null) throw new HttpException('A new record cannot specify an ID', HttpStatus.BAD_REQUEST);
     const entity = NoticiaMapper.fromDTOtoEntity(noticiaDTO);
     if (creator) {
       if (!entity.createdBy) {
@@ -53,6 +55,8 @@ export class NoticiaService {
   }
 
   async update(noticiaDTO: NoticiaDTO, updater?: string): Promise<NoticiaDTO | undefined> {
+    if (!(await this.noticiaRepository.existsBy({ id: matchingId(noticiaDTO) })))
+      throw new HttpException('Record not found', HttpStatus.NOT_FOUND);
     const entity = NoticiaMapper.fromDTOtoEntity(noticiaDTO);
     if (updater) {
       entity.lastModifiedBy = updater;

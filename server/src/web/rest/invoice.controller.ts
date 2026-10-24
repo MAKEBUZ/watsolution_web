@@ -44,7 +44,7 @@ export class InvoiceController {
   ) {}
 
   @Get('/')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -53,6 +53,7 @@ export class InvoiceController {
   async getAll(@Req() req: Request): Promise<InvoiceDTO[]> {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.invoice);
     const [results, count] = await this.invoiceService.findAndCount({
+      where: (req.user.authorities.includes(RoleType.ADMIN) ? {} : { person: { assignedOperatorId: req.user.id } }) as any,
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
       order: pageRequest.sort.asOrder(),
@@ -63,7 +64,7 @@ export class InvoiceController {
 
   @Get('/by-person/:personId')
   @UseGuards(RecordAccessGuard)
-  @Roles(RoleType.USER, RoleType.ADMIN)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiOperation({ summary: 'Get all invoices for a person' })
   @ApiResponse({ status: 200, description: 'Invoices for the person', type: InvoiceDTO })
   async getByPerson(@Param('personId') personId: number): Promise<InvoiceDTO[]> {
@@ -77,7 +78,7 @@ export class InvoiceController {
 
   @Get('/download/:id')
   @UseGuards(RecordAccessGuard)
-  @Roles(RoleType.USER, RoleType.ADMIN)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiOperation({ summary: 'Get presigned download URL for invoice PDF (generates on-demand if missing)' })
   @ApiResponse({ status: 200, description: 'Presigned URL' })
   async getDownloadUrl(@Param('id') id: number): Promise<{ url: string }> {
@@ -120,7 +121,7 @@ export class InvoiceController {
 
   @Get('/:id')
   @UseGuards(RecordAccessGuard)
-  @Roles(RoleType.USER, RoleType.ADMIN)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({
     status: 200,
     description: 'The found record',
@@ -149,7 +150,13 @@ export class InvoiceController {
       if (login) {
         const year = new Date(created.issueDate).getFullYear();
         const num = `FAC-${year}-${String(created.id).padStart(3, '0')}`;
-        await this.notificationService.send(login, 'invoice.created', 'Nueva factura generada', `Se generó la factura ${num} por $${Number(created.amountDue).toLocaleString('es-CO')} COP. Fecha límite: ${new Date(created.dueDate).toLocaleDateString('es-CO')}.`, created.id);
+        await this.notificationService.send(
+          login,
+          'invoice.created',
+          'Nueva factura generada',
+          `Se generó la factura ${num} por $${Number(created.amountDue).toLocaleString('es-CO')} COP. Fecha límite: ${new Date(created.dueDate).toLocaleDateString('es-CO')}.`,
+          created.id,
+        );
       }
     } catch {}
 

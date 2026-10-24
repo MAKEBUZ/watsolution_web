@@ -3,14 +3,21 @@
     <!-- Brand -->
     <router-link class="navbar-brand d-flex align-items-center" to="/">
       <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
-        <path d="M16 4C16 4 6 14 6 20C6 25.5228 10.4772 30 16 30C21.5228 30 26 25.5228 26 20C26 14 16 4Z" fill="#38bdf8"/>
-        <path d="M16 10C16 10 10 17 10 21C10 24.3137 12.6863 27 16 27C19.3137 27 22 24.3137 22 21C22 17 16 10Z" fill="#bae6fd"/>
+        <path d="M16 4C16 4 6 14 6 20C6 25.5228 10.4772 30 16 30C21.5228 30 26 25.5228 26 20C26 14 16 4Z" fill="#38bdf8" />
+        <path d="M16 10C16 10 10 17 10 21C10 24.3137 12.6863 27 16 27C19.3137 27 22 24.3137 22 21C22 17 16 10Z" fill="#bae6fd" />
       </svg>
       <span class="brand-text"><strong>Wat</strong>Solution</span>
     </router-link>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#wat-nav-collapse"
-      aria-controls="wat-nav-collapse" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#wat-nav-collapse"
+      aria-controls="wat-nav-collapse"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -51,9 +58,8 @@
             <b-dropdown-item to="/account/settings" active-class="active">
               <font-awesome-icon icon="wrench" /> Configuración
             </b-dropdown-item>
-            <b-dropdown-item to="/account/password" active-class="active">
-              <font-awesome-icon icon="lock" /> Contraseña
-            </b-dropdown-item>
+            <b-dropdown-item to="/account/password" active-class="active"> <font-awesome-icon icon="lock" /> Contraseña </b-dropdown-item>
+            <b-dropdown-item to="/account/security" active-class="active">Seguridad y segundo factor</b-dropdown-item>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item @click="logout()" id="logout" active-class="active">
               <font-awesome-icon icon="sign-out-alt" /> Cerrar Sesión

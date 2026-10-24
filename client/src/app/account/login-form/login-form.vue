@@ -2,6 +2,9 @@
   <div class="modal-body">
     <div class="row justify-content-center">
       <div class="col-md-8">
+        <b-alert :model-value="securityCodeRequired" variant="warning"
+          >Introduce el código de tu autenticador o un código de recuperación.</b-alert
+        >
         <b-alert
           :model-value="true"
           data-cy="loginError"
@@ -34,6 +37,9 @@
               data-cy="password"
             >
             </b-form-input>
+          </b-form-group>
+          <b-form-group label="Código de seguridad (si activaste la verificación en dos pasos)" label-for="securityCode">
+            <b-form-input id="securityCode" v-model="code" autocomplete="one-time-code" maxlength="64" />
           </b-form-group>
           <b-form-checkbox id="rememberMe" name="rememberMe" v-model="rememberMe">
             <span v-text="t$('login.form.rememberme')"></span>

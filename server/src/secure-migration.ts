@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { SecureMobile1791158400000 } from './migrations/1791158400000-SecureMobile';
+import { FieldSecurity1792796400000 } from './migrations/1792796400000-FieldSecurity';
 import { migrationFailure } from './security/migration-diagnostics';
 
 let stage = 'configuration';
@@ -17,7 +18,7 @@ async function main() {
     synchronize: false,
     migrationsRun: false,
     logging: false,
-    migrations: [SecureMobile1791158400000],
+    migrations: [SecureMobile1791158400000, FieldSecurity1792796400000],
     migrationsTableName: 'watsolution_security_migrations',
     ssl: process.env.MIGRATION_TLS === 'required' ? { rejectUnauthorized: true } : undefined,
   });

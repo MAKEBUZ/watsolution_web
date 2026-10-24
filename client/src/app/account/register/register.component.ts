@@ -28,14 +28,14 @@ export default defineComponent({
         },
         password: {
           required,
-          minLength: minLength(4),
-          maxLength: maxLength(254),
+          minLength: minLength(12),
+          maxLength: maxLength(72),
         },
       },
       confirmPassword: {
         required,
-        minLength: minLength(4),
-        maxLength: maxLength(50),
+        minLength: minLength(12),
+        maxLength: maxLength(72),
         sameAsPassword: sameAs(this.registerAccount.password),
       },
     };

@@ -1,5 +1,6 @@
 import { User } from '../../domain/user.entity';
 import { UserDTO } from '../dto/user.dto';
+import { pickFields } from '../../security/entity-input';
 
 /**
  * An User mapper object.
@@ -10,10 +11,24 @@ export class UserMapper {
       return;
     }
     const user = new User();
-    const fields = Object.getOwnPropertyNames(userDTO);
-    fields.forEach(field => {
-      user[field] = userDTO[field];
-    });
+    Object.assign(
+      user,
+      pickFields(userDTO, [
+        'id',
+        'login',
+        'firstName',
+        'lastName',
+        'email',
+        'activated',
+        'langKey',
+        'authorities',
+        'password',
+        'imageUrl',
+        'activationKey',
+        'resetKey',
+        'resetDate',
+      ]),
+    );
     return user;
   }
 

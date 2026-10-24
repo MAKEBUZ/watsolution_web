@@ -34,7 +34,7 @@ export class MeterController {
   constructor(private readonly meterService: MeterService) {}
 
   @Get('/')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({
     status: 200,
     description: 'List all records',
@@ -43,6 +43,7 @@ export class MeterController {
   async getAll(@Req() req: Request): Promise<MeterDTO[]> {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.meter);
     const [results, count] = await this.meterService.findAndCount({
+      where: (req.user.authorities.includes(RoleType.ADMIN) ? {} : { person: { assignedOperatorId: req.user.id } }) as any,
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
       order: pageRequest.sort.asOrder(),
@@ -53,7 +54,7 @@ export class MeterController {
 
   @Get('/by-person/:personId')
   @UseGuards(RecordAccessGuard)
-  @Roles(RoleType.USER, RoleType.ADMIN)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiOperation({ summary: 'Get all meter readings for a person' })
   @ApiResponse({ status: 200, description: 'Meter readings for the person', type: MeterDTO })
   async getByPerson(@Param('personId') personId: number): Promise<MeterDTO[]> {
@@ -67,7 +68,7 @@ export class MeterController {
 
   @Get('/:id')
   @UseGuards(RecordAccessGuard)
-  @Roles(RoleType.USER, RoleType.ADMIN)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({
     status: 200,
     description: 'The found record',

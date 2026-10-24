@@ -1,5 +1,4 @@
 import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
-import { randomBytes } from 'crypto';
 import { RecordAccessGuard } from '../../security/guards/record-access.guard';
 import {
   Body,
@@ -29,7 +28,7 @@ import { AuthGuard, RoleType, Roles, RolesGuard } from '../../security';
 import { HeaderUtil } from '../../client/header-util';
 import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
-import { PersonStatus } from '../../domain/enumeration/person-status';
+import { matchingId } from '../../security/entity-input';
 
 @Controller('api/people')
 @UseGuards(AuthGuard, RolesGuard)
@@ -46,7 +45,7 @@ export class PersonController {
   ) {}
 
   @Get('/me')
-  @Roles(RoleType.USER, RoleType.ADMIN)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiOperation({ summary: 'Get person linked to the current authenticated user' })
   @ApiResponse({ status: 200, description: 'Person record for the logged-in user', type: PersonDTO })
   async getMyPerson(@Req() req: Request): Promise<PersonDTO | undefined> {
@@ -56,11 +55,12 @@ export class PersonController {
   }
 
   @Get('/')
-  @Roles(RoleType.ADMIN)
+  @Roles(RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({ status: 200, description: 'List all records', type: PersonDTO })
   async getAll(@Req() req: Request): Promise<PersonDTO[]> {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.person);
     const [results, count] = await this.personService.findAndCount({
+      where: (req.user.authorities.includes(RoleType.ADMIN) ? {} : { assignedOperatorId: req.user.id }) as any,
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
       order: pageRequest.sort.asOrder(),
@@ -71,7 +71,7 @@ export class PersonController {
 
   @Get('/:id')
   @UseGuards(RecordAccessGuard)
-  @Roles(RoleType.USER, RoleType.ADMIN)
+  @Roles(RoleType.USER, RoleType.ADMIN, RoleType.OPERATOR)
   @ApiResponse({ status: 200, description: 'The found record', type: PersonDTO })
   async getOne(@Param('id') id: number): Promise<PersonDTO> {
     return await this.personService.findById(id);
@@ -83,57 +83,7 @@ export class PersonController {
   @ApiResponse({ status: 201, description: 'Record created successfully', type: PersonDTO })
   @ApiResponse({ status: 400, description: 'Email or document already in use' })
   async post(@Req() req: Request, @Body() dto: CreatePersonWithAccountDTO): Promise<PersonDTO> {
-    // 1. Create address
-    const savedAddress = await this.addressService.save(
-      {
-        neighborhood: dto.neighborhood,
-        street: dto.street,
-        houseNumber: dto.houseNumber,
-        city: dto.city,
-      },
-      req.user?.login,
-    );
-
-    // Account is inactive until a separate verified activation flow. Never use the phone as a password.
-    let savedUser: any;
-    try {
-      savedUser = await this.authService.registerNewUser({
-        login: dto.email,
-        email: dto.email,
-        password: randomBytes(48).toString('base64url'),
-        firstName: dto.fullName,
-        activated: false,
-        authorities: ['ROLE_USER'],
-      } as any);
-    } catch (err) {
-      // Clean up address if user creation fails
-      await this.addressService.deleteById(savedAddress.id).catch(() => {});
-      throw new HttpException(err.message ?? 'Could not create auth user', err.status ?? HttpStatus.BAD_REQUEST);
-    }
-
-    // 3. Create person linked to address and user
-    let created: PersonDTO;
-    try {
-      created = await this.personService.save(
-        {
-          fullName: dto.fullName,
-          documentNumber: dto.documentNumber,
-          phone: dto.phone,
-          email: dto.email,
-          subscriberNumber: dto.subscriberNumber,
-          stratum: dto.stratum ?? 1,
-          status: PersonStatus.ACTIVE,
-          createdAt: new Date(),
-          address: savedAddress,
-          userId: String(savedUser.id),
-        },
-        req.user?.login,
-      );
-    } catch (err) {
-      // Clean up on failure
-      await this.addressService.deleteById(savedAddress.id).catch(() => {});
-      throw new HttpException(err.message ?? 'Could not create person', err.status ?? HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    const created = await this.personService.createWithAccount(dto, req.user.login);
 
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Person', created.id);
     return created;
@@ -145,6 +95,7 @@ export class PersonController {
   @ApiOperation({ summary: 'Update person (and address if provided)' })
   @ApiResponse({ status: 200, description: 'Record updated successfully', type: PersonDTO })
   async put(@Req() req: Request, @Body() personDTO: PersonDTO): Promise<PersonDTO> {
+    matchingId(personDTO);
     // If address data is embedded, persist it first so the FK is correct
     if (personDTO.address?.id) {
       await this.addressService.update(personDTO.address, req.user?.login);
@@ -162,7 +113,8 @@ export class PersonController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Update person by id' })
   @ApiResponse({ status: 200, description: 'Record updated successfully', type: PersonDTO })
-  async putId(@Req() req: Request, @Body() personDTO: PersonDTO): Promise<PersonDTO> {
+  async putId(@Req() req: Request, @Body() personDTO: PersonDTO, @Param('id') id: string): Promise<PersonDTO> {
+    personDTO.id = matchingId(personDTO, id);
     if (personDTO.address?.id) {
       await this.addressService.update(personDTO.address, req.user?.login);
     } else if (personDTO.address && !personDTO.address.id) {

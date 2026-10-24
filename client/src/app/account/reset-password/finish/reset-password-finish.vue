@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="container py-2">
+      <label for="recovery-mfa">Código de seguridad, si activaste el segundo factor</label
+      ><input id="recovery-mfa" v-model="resetAccount.code" class="form-control" autocomplete="one-time-code" maxlength="64" />
+    </div>
     <div class="row justify-content-center">
       <div class="col-md-8">
         <h1 v-text="t$('reset.request.title')"></h1>
@@ -34,8 +38,8 @@
                 :placeholder="t$('global.form[\'newpassword.placeholder\']')"
                 :class="{ valid: !v$.resetAccount.newPassword.$invalid, invalid: v$.resetAccount.newPassword.$invalid }"
                 v-model="v$.resetAccount.newPassword.$model"
-                minlength="4"
-                maxlength="50"
+                minlength="12"
+                maxlength="72"
                 required
                 data-cy="resetPassword"
               />
@@ -67,8 +71,8 @@
                 :class="{ valid: !v$.resetAccount.confirmPassword.$invalid, invalid: v$.resetAccount.confirmPassword.$invalid }"
                 :placeholder="t$('global.form[\'confirmpassword.placeholder\']')"
                 v-model="v$.resetAccount.confirmPassword.$model"
-                minlength="4"
-                maxlength="50"
+                minlength="12"
+                maxlength="72"
                 required
                 data-cy="confirmResetPassword"
               />

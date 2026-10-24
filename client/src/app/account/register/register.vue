@@ -4,7 +4,7 @@
       <div class="col-md-8 toastify-container">
         <h1 v-text="t$('register.title')" id="register-title" data-cy="registerTitle"></h1>
 
-        <div class="alert alert-success" role="alert" v-if="success" v-html="t$('register.messages.success')"></div>
+        <div class="alert alert-success" role="alert" v-if="success">Solicitud recibida. Contacta al administrador para verificar tu identidad y recibir el enlace de activación.</div>
 
         <div class="alert alert-danger" role="alert" v-if="error" v-html="t$('register.messages.error.fail')"></div>
 
@@ -103,8 +103,8 @@
               name="password"
               :class="{ valid: !v$.registerAccount.password.$invalid, invalid: v$.registerAccount.password.$invalid }"
               v-model="v$.registerAccount.password.$model"
-              minlength="4"
-              maxlength="50"
+              minlength="12"
+              maxlength="72"
               required
               :placeholder="t$('global.form[\'newpassword.placeholder\']')"
               data-cy="firstPassword"
@@ -136,8 +136,8 @@
               name="confirmPasswordInput"
               :class="{ valid: !v$.confirmPassword.$invalid, invalid: v$.confirmPassword.$invalid }"
               v-model="v$.confirmPassword.$model"
-              minlength="4"
-              maxlength="50"
+              minlength="12"
+              maxlength="72"
               required
               :placeholder="t$('global.form[\'confirmpassword.placeholder\']')"
               data-cy="secondPassword"

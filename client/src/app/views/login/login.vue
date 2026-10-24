@@ -11,6 +11,7 @@ const store = useAccountStore();
 
 const username = ref('');
 const password = ref('');
+const securityCode = ref('');
 const rememberMe = ref(false);
 const showPassword = ref(false);
 const authenticationError = ref('');
@@ -27,6 +28,7 @@ const handleLogin = async () => {
       username: username.value.trim(),
       password: password.value,
       rememberMe: rememberMe.value,
+      ...(securityCode.value.trim() ? { code: securityCode.value.trim() } : {}),
     });
 
     const bearerToken = result.headers.authorization;
@@ -60,7 +62,10 @@ const handleLogin = async () => {
     if (loadingAccount) {
       authenticationError.value = 'No se pudo cargar tu cuenta. Inténtalo nuevamente.';
     } else if (status === 401) {
-      authenticationError.value = 'Usuario o contraseña incorrectos, o cuenta sin activar. Usa tu nombre de usuario.';
+      authenticationError.value =
+        axios.isAxiosError(error) && error.response?.data?.code === 'MFA_REQUIRED'
+          ? 'Introduce un código vigente del autenticador o un código de recuperación sin usar.'
+          : 'Usuario o contraseña incorrectos, o cuenta sin activar. Usa tu nombre de usuario.';
     } else if (status === 403) {
       authenticationError.value = 'El servidor no permite iniciar sesión desde esta web. Contacta al administrador.';
     } else if (status === 429) {
@@ -100,6 +105,17 @@ const togglePasswordVisibility = () => {
         <div v-if="authenticationError" class="auth-error" role="alert">{{ authenticationError }}</div>
 
         <form class="auth-form" :aria-busy="submitting" @submit.prevent="handleLogin">
+          <div class="auth-field">
+            <label class="auth-label" for="security-code">Código de seguridad, si activaste el segundo factor</label>
+            <input
+              id="security-code"
+              v-model="securityCode"
+              class="auth-input__control"
+              type="text"
+              autocomplete="one-time-code"
+              maxlength="64"
+            />
+          </div>
           <div class="auth-field">
             <label class="auth-label" for="username">Nombre de usuario</label>
 

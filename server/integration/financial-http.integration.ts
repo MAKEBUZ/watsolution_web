@@ -1,3 +1,5 @@
+import { MfaService } from '../src/security/mfa.service';
+import { FieldBillingService } from '../src/service/field-billing.service';
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
@@ -47,10 +49,16 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   const originalOrigins = process.env.WEB_ORIGINS;
   const webOrigin = 'https://app.example.test';
   const password = randomBytes(24).toString('base64url');
-  const login = async (username: string) => (await request(app.getHttpServer()).post('/api/authenticate').send({ username, password }).expect(200)).body;
-  const seed = async (name: string, role = 'ROLE_USER', activated = true) => fixture.db.getRepository(User).save({
-    login: name, email: name + '@example.invalid', activated, password: await encodePassword(password), authorities: [{ name: role }],
-  });
+  const login = async (username: string) =>
+    (await request(app.getHttpServer()).post('/api/authenticate').send({ username, password }).expect(200)).body;
+  const seed = async (name: string, role = 'ROLE_USER', activated = true) =>
+    fixture.db.getRepository(User).save({
+      login: name,
+      email: name + '@example.invalid',
+      activated,
+      password: await encodePassword(password),
+      authorities: [{ name: role }],
+    });
   beforeAll(async () => {
     process.env.WEB_ORIGINS = webOrigin;
     fixture = await createBillingFixture();
@@ -59,27 +67,52 @@ describe('Financial routes with real guards and PostgreSQL', () => {
     const notices = { send: jest.fn() };
     const users = db.getRepository(User);
     const sessions = new SessionService(db);
-    const jwt = new JwtService({ secret: jwtSettings.secret, signOptions: { issuer: jwtSettings.issuer, audience: jwtSettings.audience, expiresIn: '5m' } });
-    const auth = new AuthService(jwt, sessions, new LoginRateLimitService(db), db.getRepository(Authority), new UserService(users));
+    const jwt = new JwtService({
+      secret: jwtSettings.secret,
+      signOptions: { issuer: jwtSettings.issuer, audience: jwtSettings.audience, expiresIn: '5m' },
+    });
+    const auth = new AuthService(
+      jwt,
+      sessions,
+      new LoginRateLimitService(db),
+      db.getRepository(Authority),
+      new UserService(users),
+      new MfaService(db, new LoginRateLimitService(db)),
+    );
     await db.getRepository(Authority).save([{ name: 'ROLE_ADMIN' }, { name: 'ROLE_USER' }]);
-    await seed('admin', 'ROLE_ADMIN'); await seed('subscriber');
-    const module = await Test.createTestingModule({ imports: [PassportModule],
+    await seed('admin', 'ROLE_ADMIN');
+    await seed('subscriber');
+    const module = await Test.createTestingModule({
+      imports: [PassportModule],
       controllers: [InvoiceController, MeterController, AdminController, MobileController, UserJWTController, SessionController],
-      providers: [JwtStrategy, { provide: SessionService, useValue: sessions }, { provide: AuthService, useValue: auth }, { provide: DataSource, useValue: db },
+      providers: [
+        JwtStrategy,
+        { provide: SessionService, useValue: sessions },
+        { provide: AuthService, useValue: auth },
+        { provide: DataSource, useValue: db },
         { provide: InvoiceService, useValue: new InvoiceService(db.getRepository(Invoice), logs, users, notices as any) },
         { provide: MeterService, useValue: new MeterService(db.getRepository(Meter), logs) },
-        { provide: BillingService, useValue: new BillingService(db) }, { provide: MobileService, useValue: new MobileService(db) },
-        { provide: getRepositoryToken(ActivityLog), useValue: logs }, { provide: getRepositoryToken(Person), useValue: db.getRepository(Person) },
-        { provide: NotificationService, useValue: notices }, { provide: AdminStatsService, useValue: {} },
-        { provide: InvoicePdfService, useValue: {} }, { provide: BucketService, useValue: {} }],
+        { provide: BillingService, useValue: new BillingService(db) },
+        { provide: MobileService, useValue: new MobileService(db) },
+        { provide: FieldBillingService, useValue: new FieldBillingService(db, new MobileService(db)) },
+        { provide: getRepositoryToken(ActivityLog), useValue: logs },
+        { provide: getRepositoryToken(Person), useValue: db.getRepository(Person) },
+        { provide: NotificationService, useValue: notices },
+        { provide: AdminStatsService, useValue: {} },
+        { provide: InvoicePdfService, useValue: {} },
+        { provide: BucketService, useValue: {} },
+      ],
     }).compile();
-    app = module.createNestApplication(); await app.init();
+    app = module.createNestApplication();
+    await app.init();
     adminToken = (await login('admin')).id_token;
     userToken = (await login('subscriber')).id_token;
   });
   afterAll(async () => {
-    try { if (app) await app.close(); if (fixture) await fixture.close(); }
-    finally {
+    try {
+      if (app) await app.close();
+      if (fixture) await fixture.close();
+    } finally {
       if (originalOrigins === undefined) delete process.env.WEB_ORIGINS;
       else process.env.WEB_ORIGINS = originalOrigins;
     }
@@ -103,34 +136,59 @@ describe('Financial routes with real guards and PostgreSQL', () => {
 
   it('treats a SQL login payload as a literal and never authenticates it', async () => {
     const count = await fixture.db.getRepository(User).count();
-    await request(app.getHttpServer()).post('/api/authenticate')
-      .send({ username: "' OR 1=1 --", password: 'synthetic-invalid-password' }).expect(401);
-    await request(app.getHttpServer()).post('/api/authenticate')
-      .send({ username: { login: 'admin' }, password: 'synthetic-invalid-password' }).expect(400);
+    await request(app.getHttpServer())
+      .post('/api/authenticate')
+      .send({ username: "' OR 1=1 --", password: 'synthetic-invalid-password' })
+      .expect(401);
+    await request(app.getHttpServer())
+      .post('/api/authenticate')
+      .send({ username: { login: 'admin' }, password: 'synthetic-invalid-password' })
+      .expect(400);
     expect(await fixture.db.getRepository(User).count()).toBe(count);
   });
 
   it.each(['PENDING', 'ACTIVE_ORDER', 'PAID'])('denies every generic write with ADMIN for %s and leaves rows unchanged', async state => {
-    const people = fixture.db.getRepository(Person), meters = fixture.db.getRepository(Meter), invoices = fixture.db.getRepository(Invoice);
+    const people = fixture.db.getRepository(Person),
+      meters = fixture.db.getRepository(Meter),
+      invoices = fixture.db.getRepository(Invoice);
     const person = await people.save({ fullName: 'Synthetic', documentNumber: randomUUID(), status: PersonStatus.ACTIVE });
     const meter = await meters.save({ person, readingDate: '2020-01-01', waterMeasure: 10 });
-    const invoice = await invoices.save({ person, meter, issueDate: '2020-01-01', dueDate: '2020-02-01', consumptionM3: 10,
-      amountDue: 25, status: state === 'PAID' ? InvoiceStatus.PAID : InvoiceStatus.PENDING,
-      boldOrderId: state === 'PENDING' ? null : 'active-order', boldTransactionId: state === 'PAID' ? 'confirmed-payment' : null });
-    const before = { invoice: await invoices.findOneBy({ id: invoice.id }), meter: await meters.findOneBy({ id: meter.id }),
-      invoiceCount: await invoices.count(), meterCount: await meters.count(), logs: await fixture.db.getRepository(ActivityLog).count() };
+    const invoice = await invoices.save({
+      person,
+      meter,
+      issueDate: '2020-01-01',
+      dueDate: '2020-02-01',
+      consumptionM3: 10,
+      amountDue: 25,
+      status: state === 'PAID' ? InvoiceStatus.PAID : InvoiceStatus.PENDING,
+      boldOrderId: state === 'PENDING' ? null : 'active-order',
+      boldTransactionId: state === 'PAID' ? 'confirmed-payment' : null,
+    });
+    const before = {
+      invoice: await invoices.findOneBy({ id: invoice.id }),
+      meter: await meters.findOneBy({ id: meter.id }),
+      invoiceCount: await invoices.count(),
+      meterCount: await meters.count(),
+      logs: await fixture.db.getRepository(ActivityLog).count(),
+    };
     for (const [entity, id, body] of [
       ['invoices', invoice.id, { ...invoice, amountDue: 1, status: 'PENDING', boldOrderId: 'tampered', person: { id: 999 } }],
       ['meters', meter.id, { ...meter, waterMeasure: 0, person: { id: 999 } }],
     ] as const) {
-      for (const [method, path] of [['post', `/api/${entity}`], ['put', `/api/${entity}`], ['put', `/api/${entity}/${id}`], ['delete', `/api/${entity}/${id}`]]) {
+      for (const [method, path] of [
+        ['post', `/api/${entity}`],
+        ['put', `/api/${entity}`],
+        ['put', `/api/${entity}/${id}`],
+        ['delete', `/api/${entity}/${id}`],
+      ]) {
         const response = await call(method, path).send(body).expect(409);
         expect(response.body.message).toContain('suspendida');
       }
     }
     expect(await invoices.findOneBy({ id: invoice.id })).toEqual(before.invoice);
     expect(await meters.findOneBy({ id: meter.id })).toEqual(before.meter);
-    expect(await invoices.count()).toBe(before.invoiceCount); expect(await meters.count()).toBe(before.meterCount);
+    expect(await invoices.count()).toBe(before.invoiceCount);
+    expect(await meters.count()).toBe(before.meterCount);
     expect(await fixture.db.getRepository(ActivityLog).count()).toBe(before.logs);
     await call('get', `/api/invoices/${invoice.id}`).expect(200);
     await call('get', `/api/meters/${meter.id}`).expect(200);
@@ -142,11 +200,21 @@ describe('Financial routes with real guards and PostgreSQL', () => {
     }
   });
   it('keeps confirmed mobile capture and canonical billing available and idempotent', async () => {
-    const person = await fixture.db.getRepository(Person).save({ fullName: 'Canonical', documentNumber: randomUUID(), status: PersonStatus.ACTIVE });
-    const first = await call('post', '/api/mobile/sync/push').send({ operationId: randomUUID(), personId: person.id,
-      previousMeterId: null, readingDate: '2020-01-01', waterMeasure: 100 }).expect(201);
-    const second = await call('post', '/api/mobile/sync/push').send({ operationId: randomUUID(), personId: person.id,
-      previousMeterId: first.body.meterId, readingDate: '2020-02-01', waterMeasure: 110 }).expect(201);
+    const person = await fixture.db
+      .getRepository(Person)
+      .save({ fullName: 'Canonical', documentNumber: randomUUID(), status: PersonStatus.ACTIVE });
+    const first = await call('post', '/api/mobile/sync/push')
+      .send({ operationId: randomUUID(), personId: person.id, previousMeterId: null, readingDate: '2020-01-01', waterMeasure: 100 })
+      .expect(201);
+    const second = await call('post', '/api/mobile/sync/push')
+      .send({
+        operationId: randomUUID(),
+        personId: person.id,
+        previousMeterId: first.body.meterId,
+        readingDate: '2020-02-01',
+        waterMeasure: 110,
+      })
+      .expect(201);
     const dto = { meterId: second.body.meterId, personId: person.id, rate: 2, fixedCharge: 5, subsidy: 0, surcharges: 0 };
     const generated = await call('post', '/api/admin/billing/generate').send(dto).expect(201);
     expect(Number(generated.body.amountDue)).toBe(25);
@@ -159,19 +227,41 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   it('rejects wrong passwords and disabled accounts without creating sessions', async () => {
     await seed('disabled', 'ROLE_USER', false);
     const before = await fixture.db.getRepository(AuthSession).count();
-    for (const credentials of [{ username: 'subscriber', password: 'wrong-password' }, { username: 'disabled', password }]) {
+    for (const credentials of [
+      { username: 'subscriber', password: 'wrong-password' },
+      { username: 'disabled', password },
+    ]) {
       await request(app.getHttpServer()).post('/api/authenticate').send(credentials).expect(401);
     }
     expect(await fixture.db.getRepository(AuthSession).count()).toBe(before);
   });
 
   it('scopes invoice and meter reads to the persisted owner', async () => {
-    const owner = await seed('owner'); await seed('outsider');
-    const person = await fixture.db.getRepository(Person).save({ fullName: 'Owner', documentNumber: randomUUID(), status: PersonStatus.ACTIVE, userId: String(owner.id) });
+    const owner = await seed('owner');
+    await seed('outsider');
+    const person = await fixture.db
+      .getRepository(Person)
+      .save({ fullName: 'Owner', documentNumber: randomUUID(), status: PersonStatus.ACTIVE, userId: String(owner.id) });
     const meter = await fixture.db.getRepository(Meter).save({ person, readingDate: '2020-01-01', waterMeasure: 10 });
-    const invoice = await fixture.db.getRepository(Invoice).save({ person, meter, issueDate: '2020-01-01', dueDate: '2020-02-01', consumptionM3: 10, amountDue: 25, status: InvoiceStatus.PENDING });
-    const own = await login('owner'), other = await login('outsider');
-    for (const path of [`/api/invoices/${invoice.id}`, `/api/meters/${meter.id}`, `/api/invoices/by-person/${person.id}`, `/api/meters/by-person/${person.id}`]) {
+    const invoice = await fixture.db
+      .getRepository(Invoice)
+      .save({
+        person,
+        meter,
+        issueDate: '2020-01-01',
+        dueDate: '2020-02-01',
+        consumptionM3: 10,
+        amountDue: 25,
+        status: InvoiceStatus.PENDING,
+      });
+    const own = await login('owner'),
+      other = await login('outsider');
+    for (const path of [
+      `/api/invoices/${invoice.id}`,
+      `/api/meters/${meter.id}`,
+      `/api/invoices/by-person/${person.id}`,
+      `/api/meters/by-person/${person.id}`,
+    ]) {
       await call('get', path, own.id_token).expect(200);
       await call('get', path, other.id_token).expect(403);
     }
@@ -188,7 +278,8 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   });
 
   it('revokes persisted access and refresh through HTTP logout', async () => {
-    const user = await seed('logout-admin', 'ROLE_ADMIN'); const tokens = await login(user.login);
+    const user = await seed('logout-admin', 'ROLE_ADMIN');
+    const tokens = await login(user.login);
     await call('post', '/api/session/logout', tokens.id_token).expect(201);
     await call('get', '/api/invoices', tokens.id_token).expect(401);
     await call('post', '/api/session/refresh', '').send({ refresh_token: tokens.refresh_token }).expect(401);
@@ -198,7 +289,8 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   });
 
   it('rotates refresh and revokes the family on proven replay through HTTP', async () => {
-    await seed('refresh-admin', 'ROLE_ADMIN'); const original = await login('refresh-admin');
+    await seed('refresh-admin', 'ROLE_ADMIN');
+    const original = await login('refresh-admin');
     const renewed = await call('post', '/api/session/refresh', '').send({ refresh_token: original.refresh_token }).expect(201);
     expect(renewed.body.refresh_token).not.toBe(original.refresh_token);
     await call('get', '/api/invoices', renewed.body.id_token).expect(200);
@@ -238,8 +330,10 @@ describe('Financial routes with real guards and PostgreSQL', () => {
 
   it('issues and rotates a host-only secure refresh cookie without exposing it in JSON', async () => {
     await seed('web-admin', 'ROLE_ADMIN');
-    const first = await webLogin('web-admin'); assertCookie(first);
-    const second = await web('/api/session/refresh', cookieOf(first)).send({}).expect(201); assertCookie(second);
+    const first = await webLogin('web-admin');
+    assertCookie(first);
+    const second = await web('/api/session/refresh', cookieOf(first)).send({}).expect(201);
+    assertCookie(second);
     expect(cookieOf(second)).not.toBe(cookieOf(first));
     await call('get', '/api/invoices', second.body.id_token).expect(200);
     const id = cookieOf(first).split('=')[1].split('.')[0];
@@ -250,7 +344,8 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   });
 
   it.each(['https://evil.example.test', ''])('rejects web requests from origin %s before mutating session state', async origin => {
-    const name = 'origin-' + randomUUID(); await seed(name);
+    const name = 'origin-' + randomUUID();
+    await seed(name);
     const first = await webLogin(name);
     const before = await fixture.db.getRepository(AuthSession).find({ order: { id: 'ASC' } });
     for (const path of ['/api/authenticate', '/api/session/refresh', '/api/session/logout']) {
@@ -273,11 +368,14 @@ describe('Financial routes with real guards and PostgreSQL', () => {
 
   it('logs out with expired access, clears the cookie and revokes only its persisted family', async () => {
     const user = await seed('web-logout', 'ROLE_ADMIN');
-    const first = await webLogin(user.login), other = await webLogin(user.login);
+    const first = await webLogin(user.login),
+      other = await webLogin(user.login);
     const id = cookieOf(first).split('=')[1].split('.')[0];
     const jwt = new JwtService({ secret: jwtSettings.secret, signOptions: { issuer: jwtSettings.issuer, audience: jwtSettings.audience } });
     const expired = jwt.sign({ id: user.id, sid: id }, { expiresIn: -1 });
-    const response = await web('/api/session/logout', cookieOf(first)).set('Authorization', 'Bearer ' + expired).expect(201);
+    const response = await web('/api/session/logout', cookieOf(first))
+      .set('Authorization', 'Bearer ' + expired)
+      .expect(201);
     assertCookie(response);
     expect(response.headers['set-cookie'][0]).toContain('Expires=Thu, 01 Jan 1970');
     await call('get', '/api/invoices', first.body.id_token).expect(401);
@@ -288,7 +386,8 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   });
 
   it('does not revoke a web session using a forged refresh with its known family id', async () => {
-    await seed('web-forged', 'ROLE_ADMIN'); const first = await webLogin('web-forged');
+    await seed('web-forged', 'ROLE_ADMIN');
+    const first = await webLogin('web-forged');
     const id = cookieOf(first).split('=')[1].split('.')[0];
     await web('/api/session/logout', refreshCookie + '=' + id + '.' + randomBytes(48).toString('base64url')).expect(201);
     await call('get', '/api/invoices', first.body.id_token).expect(200);
@@ -296,8 +395,12 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   });
 
   it('serializes concurrent web refresh requests and revokes a proven replay family', async () => {
-    await seed('web-race', 'ROLE_ADMIN'); const first = await webLogin('web-race');
-    const results = await Promise.all([web('/api/session/refresh', cookieOf(first)).send({}), web('/api/session/refresh', cookieOf(first)).send({})]);
+    await seed('web-race', 'ROLE_ADMIN');
+    const first = await webLogin('web-race');
+    const results = await Promise.all([
+      web('/api/session/refresh', cookieOf(first)).send({}),
+      web('/api/session/refresh', cookieOf(first)).send({}),
+    ]);
     expect(results.map(r => r.status).sort()).toEqual([201, 401]);
     const rotated = results.find(r => r.status === 201)!;
     await call('get', '/api/invoices', rotated.body.id_token).expect(401);
@@ -305,10 +408,10 @@ describe('Financial routes with real guards and PostgreSQL', () => {
   });
 
   it('denies web refresh after account deactivation and persists revocation', async () => {
-    const user = await seed('web-disabled'); const first = await webLogin(user.login);
+    const user = await seed('web-disabled');
+    const first = await webLogin(user.login);
     await fixture.db.getRepository(User).update(user.id, { activated: false });
     await web('/api/session/refresh', cookieOf(first)).send({}).expect(401);
     expect((await fixture.db.getRepository(AuthSession).findOneBy({ userId: user.id })).revoked).toBe(true);
   });
-
 });

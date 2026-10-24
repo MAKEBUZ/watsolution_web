@@ -1,3 +1,5 @@
+import { MfaService } from '../src/security/mfa.service';
+import { FieldSecurity1792796400000 } from '../src/migrations/1792796400000-FieldSecurity';
 import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { createBillingFixture } from './billing-fixture';
@@ -41,6 +43,7 @@ describe('Security migration on an existing application database', () => {
         await runner.startTransaction();
         try {
           await migration.up(runner);
+          await new FieldSecurity1792796400000().up(runner);
           await runner.commitTransaction();
         } catch (error) {
           await runner.rollbackTransaction();
@@ -61,6 +64,7 @@ describe('Security migration on an existing application database', () => {
         limiter,
         db.getRepository(Authority),
         new UserService(users),
+        new MfaService(db, limiter),
       );
       const login = await auth.login({ username: user.login, password });
       expect(typeof login.id_token).toBe('string');

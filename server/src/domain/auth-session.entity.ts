@@ -8,4 +8,5 @@ export class AuthSession {
   @Column({ type: 'text', default: '[]' }) usedRefreshHashes: string;
   @Column() expiresAt: Date;
   @Column({ default: false }) revoked: boolean;
+  @Column({ default: false }) mfaVerified: boolean;
 }

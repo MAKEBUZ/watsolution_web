@@ -60,6 +60,17 @@ describe('LoginForm Component', () => {
     loginForm = wrapper.vm;
   });
 
+  it('passes the second factor and clears it after a rejected attempt', async () => {
+    loginForm.login = 'login';
+    loginForm.password = 'pwd';
+    loginForm.code = '123456';
+    axiosStub.post.rejects({ response: { data: { code: 'MFA_REQUIRED' } } });
+    await loginForm.doLogin();
+    expect(axiosStub.post.firstCall.args[1].code).toBe('123456');
+    expect(loginForm.securityCodeRequired).toBe(true);
+    expect(loginForm.code).toBe('');
+  });
+
   it('should not store token if authentication is KO', async () => {
     // GIVEN
     loginForm.login = 'login';

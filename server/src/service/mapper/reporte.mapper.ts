@@ -1,5 +1,6 @@
 import { Reporte } from '../../domain/reporte.entity';
 import { ReporteDTO } from '../dto/reporte.dto';
+import { matchingId, pickFields } from '../../security/entity-input';
 
 export class ReporteMapper {
   static fromDTOtoEntity(entityDTO: ReporteDTO): Reporte {
@@ -7,10 +8,8 @@ export class ReporteMapper {
       return;
     }
     const entity = new Reporte();
-    const fields = Object.getOwnPropertyNames(entityDTO);
-    fields.forEach(field => {
-      entity[field] = entityDTO[field];
-    });
+    Object.assign(entity, pickFields(entityDTO, ['id', 'type', 'description', 'status', 'createdAt']));
+    if (entityDTO.person) entity.person = { id: matchingId(entityDTO.person) } as any;
     return entity;
   }
 

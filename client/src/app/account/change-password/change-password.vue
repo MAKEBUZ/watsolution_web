@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p class="container"><router-link to="/account/security">Configurar segundo factor de autenticación</router-link></p>
     <div class="row justify-content-center">
       <div class="col-md-8 toastify-container">
         <h2 v-if="username" id="password-title">
@@ -43,8 +44,8 @@
               :placeholder="t$('global.form[\'newpassword.placeholder\']')"
               :class="{ valid: !v$.resetPassword.newPassword.$invalid, invalid: v$.resetPassword.newPassword.$invalid }"
               v-model="v$.resetPassword.newPassword.$model"
-              minlength="4"
-              maxlength="50"
+              minlength="12"
+              maxlength="72"
               required
               data-cy="newPassword"
             />
@@ -76,8 +77,8 @@
               :class="{ valid: !v$.resetPassword.confirmPassword.$invalid, invalid: v$.resetPassword.confirmPassword.$invalid }"
               :placeholder="t$('global.form[\'confirmpassword.placeholder\']')"
               v-model="v$.resetPassword.confirmPassword.$model"
-              minlength="4"
-              maxlength="50"
+              minlength="12"
+              maxlength="72"
               required
               data-cy="confirmPassword"
             />

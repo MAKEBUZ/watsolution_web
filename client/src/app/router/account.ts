@@ -9,6 +9,12 @@ const Settings = () => import('@/account/settings/settings.vue');
 
 export default [
   {
+    path: '/account/security',
+    name: 'AccountSecurity',
+    component: () => import('@/account/security/security.vue'),
+    meta: { authorities: [Authority.USER, Authority.ADMIN, 'ROLE_OPERATOR'] },
+  },
+  {
     path: '/register',
     name: 'Register',
     component: Register,

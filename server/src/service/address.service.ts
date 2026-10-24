@@ -4,6 +4,7 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Address } from '../domain/address.entity';
 import { AddressDTO } from '../service/dto/address.dto';
 import { AddressMapper } from '../service/mapper/address.mapper';
+import { matchingId } from '../security/entity-input';
 
 @Injectable()
 export class AddressService {
@@ -46,6 +47,8 @@ export class AddressService {
   }
 
   async update(addressDTO: AddressDTO, updater?: string): Promise<AddressDTO | undefined> {
+    const id = matchingId(addressDTO);
+    if (!(await this.addressRepository.existsBy({ id }))) throw new HttpException('Record not found', HttpStatus.NOT_FOUND);
     const entity = AddressMapper.fromDTOtoEntity(addressDTO);
     if (updater) {
       entity.lastModifiedBy = updater;

@@ -14,8 +14,8 @@ export default defineComponent({
         },
         newPassword: {
           required,
-          minLength: minLength(4),
-          maxLength: maxLength(254),
+          minLength: minLength(12),
+          maxLength: maxLength(72),
         },
         confirmPassword: {
           sameAsPassword: sameAs(this.resetPassword.newPassword),
