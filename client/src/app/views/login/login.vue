@@ -107,14 +107,17 @@ const togglePasswordVisibility = () => {
         <form class="auth-form" :aria-busy="submitting" @submit.prevent="handleLogin">
           <div class="auth-field">
             <label class="auth-label" for="security-code">Código de seguridad, si activaste el segundo factor</label>
-            <input
-              id="security-code"
-              v-model="securityCode"
-              class="auth-input__control"
-              type="text"
-              autocomplete="one-time-code"
-              maxlength="64"
-            />
+            <div class="auth-input">
+              <input
+                id="security-code"
+                v-model="securityCode"
+                class="auth-input__control"
+                type="text"
+                autocomplete="one-time-code"
+                maxlength="64"
+                placeholder="Código del autenticador o de recuperación"
+              />
+            </div>
           </div>
           <div class="auth-field">
             <label class="auth-label" for="username">Nombre de usuario</label>
