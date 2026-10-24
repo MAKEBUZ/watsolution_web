@@ -15,7 +15,8 @@ export default tseslint.config(
       },
     },
   },
-  { ignores: ['../server/dist/static/', 'tmp/'] },
+  // Keep the vendored, MIT-licensed mapcn component in its upstream format.
+  { ignores: ['../server/dist/static/', 'tmp/', 'src/app/components/mapcn/map.tsx'] },
   js.configs.recommended,
   ...tseslint.configs.recommended.map(config =>
     config.name === 'typescript-eslint/base' ? config : { ...config, files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'] },

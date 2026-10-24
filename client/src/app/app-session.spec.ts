@@ -5,7 +5,7 @@ import App from './app.vue';
 import { useAccountStore } from '@/shared/config/store/account-store';
 import { logoutStorageKey } from '@/shared/config/web-session';
 
-const { route, replace } = vi.hoisted(() => ({ route: { path: '/', name: 'Home', matched: [] as any[] }, replace: vi.fn().mockResolvedValue(undefined) }));
+const { route, replace } = vi.hoisted(() => ({ route: { path: '/', name: 'Home', query: {}, matched: [] as any[] }, replace: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('vue-router', () => ({ useRoute: () => route, useRouter: () => ({ replace }) }));
 describe('Logout feedback and cross-tab events', () => {
   beforeEach(() => { localStorage.clear(); route.path = '/'; route.matched = []; replace.mockClear(); setActivePinia(createPinia()); });

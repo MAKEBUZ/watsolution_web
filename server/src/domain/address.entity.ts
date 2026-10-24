@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base/base.entity';
 
@@ -22,10 +21,10 @@ export class Address extends BaseEntity {
   @Column({ name: 'city' })
   city: string;
 
-  @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 2, nullable: true })
+  @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 7, nullable: true })
   latitude?: number;
 
-  @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 2, nullable: true })
+  @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7, nullable: true })
   longitude?: number;
 
   // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

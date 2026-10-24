@@ -1,3 +1,7 @@
+import { RoutesController } from '../web/rest/routes.controller';
+import { RoutesService } from '../service/routes.service';
+import { Testimonial } from '../domain/testimonial.entity';
+import { TestimonialController, PublicTestimonialController } from '../web/rest/testimonial.controller';
 import { BillingService } from '../service/billing.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,8 +20,17 @@ import { TankLevelGateway } from '../web/rest/tank-level.gateway';
 import { NotificationModule } from './notification.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Invoice, Meter, Person, ActivityLog]), NotificationModule],
-  controllers: [AdminController],
-  providers: [BillingService, AdminStatsService, InvoiceService, MeterService, BucketService, InvoicePdfService, TankLevelGateway],
+  imports: [TypeOrmModule.forFeature([User, Invoice, Meter, Person, ActivityLog, Testimonial]), NotificationModule],
+  controllers: [RoutesController, AdminController, TestimonialController, PublicTestimonialController],
+  providers: [
+    RoutesService,
+    BillingService,
+    AdminStatsService,
+    InvoiceService,
+    MeterService,
+    BucketService,
+    InvoicePdfService,
+    TankLevelGateway,
+  ],
 })
 export class AdminModule {}

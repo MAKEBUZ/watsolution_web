@@ -7,8 +7,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
   Logger,
   Param,
   Post as PostMethod,
@@ -29,6 +27,7 @@ import { HeaderUtil } from '../../client/header-util';
 import { Request } from '../../client/request';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { matchingId } from '../../security/entity-input';
+import { ILike } from 'typeorm';
 
 @Controller('api/people')
 @UseGuards(AuthGuard, RolesGuard)
@@ -50,7 +49,7 @@ export class PersonController {
   @ApiResponse({ status: 200, description: 'Person record for the logged-in user', type: PersonDTO })
   async getMyPerson(@Req() req: Request): Promise<PersonDTO | undefined> {
     return await this.personService.findByFields({
-      where: { userId: String((req.user as any).id) } as any,
+      where: { userId: String((req.user as any).id) },
     });
   }
 
@@ -59,8 +58,15 @@ export class PersonController {
   @ApiResponse({ status: 200, description: 'List all records', type: PersonDTO })
   async getAll(@Req() req: Request): Promise<PersonDTO[]> {
     const pageRequest: PageRequest = new PageRequest(req.query.page, req.query.size, req.query.sort ?? 'id,ASC', allowedSortFields.person);
+    const scope: any = req.user.authorities.includes(RoleType.ADMIN) ? {} : { assignedOperatorId: req.user.id };
+    if (typeof req.query.status === 'string' && ['ACTIVE', 'INACTIVE'].includes(req.query.status)) scope.status = req.query.status;
+    const query = (typeof req.query.search === 'string' ? req.query.search : '').trim().slice(0, 100);
+    const pattern = `%${query.replace(/[\\%_]/g, '\\$&')}%`;
+    const where = query
+      ? ['fullName', 'email', 'documentNumber', 'subscriberNumber', 'phone'].map(field => ({ ...scope, [field]: ILike(pattern) }))
+      : scope;
     const [results, count] = await this.personService.findAndCount({
-      where: (req.user.authorities.includes(RoleType.ADMIN) ? {} : { assignedOperatorId: req.user.id }) as any,
+      where,
       skip: +pageRequest.page * pageRequest.size,
       take: +pageRequest.size,
       order: pageRequest.sort.asOrder(),

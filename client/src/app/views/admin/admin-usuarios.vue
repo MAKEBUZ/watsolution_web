@@ -1,147 +1,183 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
-import { useAccountStore } from '@/shared/config/store/account-store'
-import PersonService from '@/entities/person/person.service'
-import type { IPerson } from '@/shared/model/person.model'
-import type { IAddress } from '@/shared/model/address.model'
-import type { IMeter } from '@/shared/model/meter.model'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import Pagination from '@/shared/pagination.vue';
+import axios from 'axios';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import PersonService from '@/entities/person/person.service';
+import type { IPerson } from '@/shared/model/person.model';
+import type { IAddress } from '@/shared/model/address.model';
+import type { IMeter } from '@/shared/model/meter.model';
 
 interface FormState extends IPerson {
-  address?: IAddress
+  address?: IAddress;
 }
 
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
-const personService = new PersonService()
+const router = useRouter();
+const route = useRoute();
+const accountStore = useAccountStore();
+const personService = new PersonService();
 
-const isSidebarOpen = ref(window.innerWidth > 1024)
-const isMobile = ref(window.innerWidth <= 1024)
+const isSidebarOpen = ref(window.innerWidth > 1024);
+const isMobile = ref(window.innerWidth <= 1024);
 
 const menuItems = [
   { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
   { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
   { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
-  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
+  { name: 'Facturación en punto físico', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
   { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-]
+  { name: 'Pruebas de WhatsApp', routeName: 'AdminWhatsapp', icon: 'comment-alt' },
+  { name: 'Testimonios', routeName: 'AdminTestimonios', icon: 'quote-left' },
+  { name: 'Mapa y recorridos', routeName: 'AdminRecorridos', icon: 'map-marker-alt' },
+  { name: 'Notificaciones', routeName: 'Notificaciones', icon: 'bell' },
+  { name: 'Portal de usuarios', routeName: 'PortalDashboard', icon: 'home' },
+];
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/login')
-}
+  accountStore.logout();
+  router.push('/login');
+};
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
+  isMobile.value = window.innerWidth <= 1024;
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   } else {
-    isSidebarOpen.value = true
+    isSidebarOpen.value = true;
   }
-}
+};
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('resize', handleResize)
-  handleResize()
+  window.addEventListener('resize', handleResize);
+  handleResize();
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
-const persons = ref<IPerson[]>([])
-const isLoading = ref(false)
-const searchQuery = ref('')
-const statusFilter = ref('todos')
+const page = ref(0);
+const size = 12;
+const total = ref(0);
+const loadError = ref('');
+let requestId = 0;
+let searchTimer: ReturnType<typeof setTimeout>;
+function changePage(value: number) {
+  page.value = value;
+  loadPersons();
+}
+const persons = ref<IPerson[]>([]);
+const isLoading = ref(false);
+const searchQuery = ref('');
+const statusFilter = ref('todos');
 
 // ── Modal create/edit ─────────────────────────────────────────────────────────
-const showModal = ref(false)
-const isEditing = ref(false)
-const saving = ref(false)
-const saveError = ref('')
-const formData = ref<FormState>({})
+const showModal = ref(false);
+const isEditing = ref(false);
+const saving = ref(false);
+const saveError = ref('');
+const formData = ref<FormState>({});
 
 // ── Delete confirmation ───────────────────────────────────────────────────────
-const showDeleteConfirm = ref(false)
-const deleting = ref(false)
-const personToDelete = ref<IPerson | null>(null)
+const showDeleteConfirm = ref(false);
+const deleting = ref(false);
+const personToDelete = ref<IPerson | null>(null);
 
 // ── Load ──────────────────────────────────────────────────────────────────────
 const loadPersons = async () => {
-  isLoading.value = true
+  const id = ++requestId;
+  isLoading.value = true;
+  loadError.value = '';
   try {
-    const res = await personService.retrieve({ page: 0, size: 200, sort: 'id,asc' })
-    persons.value = res.data
+    const res = await axios.get('api/people', {
+      params: {
+        page: page.value,
+        size,
+        sort: 'id,asc',
+        search: searchQuery.value.trim(),
+        status: statusFilter.value === 'activo' ? 'ACTIVE' : statusFilter.value === 'inactivo' ? 'INACTIVE' : undefined,
+      },
+    });
+    if (id !== requestId) return;
+    persons.value = res.data;
+    total.value = Number(res.headers['x-total-count'] ?? res.data.length);
+    if (page.value > 0 && page.value * size >= total.value) {
+      page.value--;
+      await loadPersons();
+    }
+  } catch {
+    if (id === requestId) {
+      persons.value = [];
+      loadError.value = 'No se pudieron cargar los usuarios. Intenta nuevamente.';
+    }
   } finally {
-    isLoading.value = false
+    if (id === requestId) isLoading.value = false;
   }
-}
+};
 
-onMounted(loadPersons)
+onMounted(loadPersons);
 
 // ── Filtered list ─────────────────────────────────────────────────────────────
-const filteredPersons = computed(() =>
-  persons.value.filter(p => {
-    const matchesSearch =
-      !searchQuery.value ||
-      (p.fullName ?? '').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      (p.email ?? '').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      (p.documentNumber ?? '').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      String(p.id ?? '').includes(searchQuery.value)
-    const matchesStatus =
-      statusFilter.value === 'todos' ||
-      (statusFilter.value === 'activo' && p.status === 'ACTIVE') ||
-      (statusFilter.value === 'inactivo' && p.status === 'INACTIVE')
-    return matchesSearch && matchesStatus
-  })
-)
+const filteredPersons = computed(() => persons.value);
+watch([searchQuery, statusFilter], () => {
+  ++requestId;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    page.value = 0;
+    loadPersons();
+  }, 300);
+});
+onUnmounted(() => {
+  ++requestId;
+  clearTimeout(searchTimer);
+  window.removeEventListener('resize', handleResize);
+});
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const getStatusClass = (status?: string | null) => {
-  if (status === 'ACTIVE') return 'status--active'
-  return 'status--suspended'
-}
+  if (status === 'ACTIVE') return 'status--active';
+  return 'status--suspended';
+};
 
 const getStatusLabel = (status?: string | null) => {
-  if (status === 'ACTIVE') return 'Activo'
-  return 'Inactivo'
-}
+  if (status === 'ACTIVE') return 'Activo';
+  return 'Inactivo';
+};
 
 const formatDate = (date?: Date | string | null) => {
-  if (!date) return '-'
-  return new Date(date as string).toLocaleDateString('es-CO')
-}
+  if (!date) return '-';
+  return new Date(date as string).toLocaleDateString('es-CO');
+};
 
 // ── CRUD ──────────────────────────────────────────────────────────────────────
 const openCreate = () => {
-  isEditing.value = false
-  saveError.value = ''
-  formData.value = { status: 'ACTIVE', stratum: 1, address: {} }
-  showModal.value = true
-}
+  isEditing.value = false;
+  saveError.value = '';
+  formData.value = { status: 'ACTIVE', stratum: 1, address: {} };
+  showModal.value = true;
+};
 
 const openEdit = (person: IPerson) => {
-  isEditing.value = true
-  saveError.value = ''
-  formData.value = { ...person, address: { ...(person.address ?? {}) } }
-  showModal.value = true
-}
+  isEditing.value = true;
+  saveError.value = '';
+  formData.value = { ...person, address: { ...(person.address ?? {}) } };
+  showModal.value = true;
+};
 
 const closeModal = () => {
-  showModal.value = false
-  saveError.value = ''
-}
+  showModal.value = false;
+  saveError.value = '';
+};
 
 const saveForm = async () => {
-  saving.value = true
-  saveError.value = ''
+  saving.value = true;
+  saveError.value = '';
   try {
     if (isEditing.value) {
       // PUT - PersonDTO con dirección anidada
-      await personService.update(formData.value as IPerson)
+      await personService.update(formData.value as IPerson);
     } else {
       // POST - DTO plano que incluye campos de dirección
       await axios.post('api/people', {
@@ -155,187 +191,184 @@ const saveForm = async () => {
         street: formData.value.address?.street,
         houseNumber: formData.value.address?.houseNumber,
         city: formData.value.address?.city,
-      })
+      });
     }
-    await loadPersons()
-    closeModal()
+    await loadPersons();
+    closeModal();
   } catch (err: any) {
-    saveError.value = err?.response?.data?.message ?? 'Error al guardar. Verifique los datos.'
+    saveError.value = err?.response?.data?.message ?? 'Error al guardar. Verifique los datos.';
   } finally {
-    saving.value = false
+    saving.value = false;
   }
-}
+};
 
 // ── Drawer historial de mediciones / facturas ─────────────────────────────────
-const drawerOpen = ref(false)
-const drawerPerson = ref<IPerson | null>(null)
+const drawerOpen = ref(false);
+const drawerPerson = ref<IPerson | null>(null);
 
-const meters = ref<IMeter[]>([])
-const loadingMeters = ref(false)
+const meters = ref<IMeter[]>([]);
+const loadingMeters = ref(false);
 
-const drawerInvoices = ref<any[]>([])
-const loadingInvoices = ref(false)
-const updatingInvoiceId = ref<number | null>(null)
+const drawerInvoices = ref<any[]>([]);
+const loadingInvoices = ref(false);
+const updatingInvoiceId = ref<number | null>(null);
 
 const openDrawer = async (person: IPerson) => {
-  drawerPerson.value = person
-  drawerOpen.value = true
-  loadMeterData(person)
-  loadInvoiceData(person)
-}
+  drawerPerson.value = person;
+  drawerOpen.value = true;
+  loadMeterData(person);
+  loadInvoiceData(person);
+};
 
 const loadMeterData = async (person: IPerson) => {
-  loadingMeters.value = true
-  meters.value = []
+  loadingMeters.value = true;
+  meters.value = [];
   try {
-    const res = await axios.get(`api/meters/by-person/${person.id}`)
-    meters.value = res.data
+    const res = await axios.get(`api/meters/by-person/${person.id}`);
+    meters.value = res.data;
   } finally {
-    loadingMeters.value = false
+    loadingMeters.value = false;
   }
-}
+};
 
 const loadInvoiceData = async (person: IPerson) => {
-  loadingInvoices.value = true
-  drawerInvoices.value = []
+  loadingInvoices.value = true;
+  drawerInvoices.value = [];
   try {
-    const res = await axios.get(`api/invoices/by-person/${person.id}`)
-    drawerInvoices.value = (res.data ?? []).sort(
-      (a: any, b: any) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime(),
-    )
+    const res = await axios.get(`api/invoices/by-person/${person.id}`);
+    drawerInvoices.value = (res.data ?? []).sort((a: any, b: any) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime());
   } finally {
-    loadingInvoices.value = false
+    loadingInvoices.value = false;
   }
-}
+};
 
 const invoiceEffectiveStatus = (inv: any): string => {
-  if (inv.status === 'PAID') return 'PAID'
-  if (inv.status === 'CANCELLED') return 'CANCELLED'
+  if (inv.status === 'PAID') return 'PAID';
+  if (inv.status === 'CANCELLED') return 'CANCELLED';
   if (inv.status === 'PENDING') {
-    return new Date(inv.dueDate) < new Date() ? 'OVERDUE' : 'PENDING'
+    return new Date(inv.dueDate) < new Date() ? 'OVERDUE' : 'PENDING';
   }
-  return 'PENDING'
-}
+  return 'PENDING';
+};
 
 const invoiceStatusLabel: Record<string, string> = {
-  PAID: 'Pagado', PENDING: 'Pendiente', OVERDUE: 'En Mora', CANCELLED: 'Cancelado',
-}
+  PAID: 'Pagado',
+  PENDING: 'Pendiente',
+  OVERDUE: 'En Mora',
+  CANCELLED: 'Cancelado',
+};
 const invoiceStatusColor: Record<string, { color: string; bg: string }> = {
-  PAID:      { color: '#065f46', bg: '#d1fae5' },
-  PENDING:   { color: '#92400e', bg: '#fef3c7' },
-  OVERDUE:   { color: '#991b1b', bg: '#fee2e2' },
+  PAID: { color: '#065f46', bg: '#d1fae5' },
+  PENDING: { color: '#92400e', bg: '#fef3c7' },
+  OVERDUE: { color: '#991b1b', bg: '#fee2e2' },
   CANCELLED: { color: '#374151', bg: '#f3f4f6' },
-}
+};
 
 const markAsPaid = async (inv: any) => {
-  if (inv.status === 'PAID') return
-  updatingInvoiceId.value = inv.id
+  if (inv.status === 'PAID') return;
+  updatingInvoiceId.value = inv.id;
   try {
-    await axios.put(`api/invoices/${inv.id}`, { ...inv, status: 'PAID' })
-    const idx = drawerInvoices.value.findIndex((i: any) => i.id === inv.id)
-    if (idx !== -1) drawerInvoices.value[idx] = { ...drawerInvoices.value[idx], status: 'PAID' }
+    await axios.put(`api/invoices/${inv.id}`, { ...inv, status: 'PAID' });
+    const idx = drawerInvoices.value.findIndex((i: any) => i.id === inv.id);
+    if (idx !== -1) drawerInvoices.value[idx] = { ...drawerInvoices.value[idx], status: 'PAID' };
   } catch {
-    alert('No se pudo actualizar el estado de la factura.')
+    alert('No se pudo actualizar el estado de la factura.');
   } finally {
-    updatingInvoiceId.value = null
+    updatingInvoiceId.value = null;
   }
-}
+};
 
 const fmtAmt = (amount: any) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(amount ?? 0))
+  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(amount ?? 0));
 
 const invNum = (inv: any) => {
-  const y = inv.issueDate ? new Date(inv.issueDate).getFullYear() : new Date().getFullYear()
-  return `FAC-${y}-${String(inv.id ?? 0).padStart(3, '0')}`
-}
+  const y = inv.issueDate ? new Date(inv.issueDate).getFullYear() : new Date().getFullYear();
+  return `FAC-${y}-${String(inv.id ?? 0).padStart(3, '0')}`;
+};
 
 const closeDrawer = () => {
-  drawerOpen.value = false
-  drawerPerson.value = null
-  meters.value = []
-  drawerInvoices.value = []
-}
+  drawerOpen.value = false;
+  drawerPerson.value = null;
+  meters.value = [];
+  drawerInvoices.value = [];
+};
 
 const formatAddress = (person: IPerson) => {
-  const a = person.address
-  if (!a) return '-'
-  const parts = [a.street, a.houseNumber, a.neighborhood, a.city].filter(Boolean)
-  return parts.join(', ') || '-'
-}
+  const a = person.address;
+  if (!a) return '-';
+  const parts = [a.street, a.houseNumber, a.neighborhood, a.city].filter(Boolean);
+  return parts.join(', ') || '-';
+};
 
 const confirmDelete = (person: IPerson) => {
-  personToDelete.value = person
-  showDeleteConfirm.value = true
-}
+  personToDelete.value = person;
+  showDeleteConfirm.value = true;
+};
 
 const cancelDelete = () => {
-  showDeleteConfirm.value = false
-  personToDelete.value = null
-}
+  showDeleteConfirm.value = false;
+  personToDelete.value = null;
+};
 
 const executeDelete = async () => {
-  if (!personToDelete.value?.id) return
-  deleting.value = true
+  if (!personToDelete.value?.id) return;
+  deleting.value = true;
   try {
-    await personService.delete(personToDelete.value.id)
-    await loadPersons()
-    cancelDelete()
+    await personService.delete(personToDelete.value.id);
+    await loadPersons();
+    cancelDelete();
   } finally {
-    deleting.value = false
+    deleting.value = false;
   }
-}
+};
 
 // ── QR Modal ─────────────────────────────────────────────────────────────────
-const showQrModal = ref(false)
-const qrPerson = ref<IPerson | null>(null)
-const qrDataUrl = ref<string>('')
-const qrFilename = ref<string>('')
-const generatingQr = ref(false)
-const qrError = ref('')
+const showQrModal = ref(false);
+const qrPerson = ref<IPerson | null>(null);
+const qrDataUrl = ref<string>('');
+const qrFilename = ref<string>('');
+const generatingQr = ref(false);
+const qrError = ref('');
 
 const openQrModal = async (person: IPerson) => {
-  qrPerson.value = person
-  showQrModal.value = true
-  generatingQr.value = true
-  qrDataUrl.value = ''
-  qrFilename.value = ''
-  qrError.value = ''
+  qrPerson.value = person;
+  showQrModal.value = true;
+  generatingQr.value = true;
+  qrDataUrl.value = '';
+  qrFilename.value = '';
+  qrError.value = '';
   try {
-    const res = await axios.get<{ url: string; filename: string }>(`api/admin/people/${person.id}/qr`)
-    qrDataUrl.value = res.data.url
-    qrFilename.value = res.data.filename
+    const res = await axios.get<{ url: string; filename: string }>(`api/admin/people/${person.id}/qr`);
+    qrDataUrl.value = res.data.url;
+    qrFilename.value = res.data.filename;
   } catch (err: any) {
-    qrError.value = err?.response?.data?.message ?? 'Error al generar el QR.'
+    qrError.value = err?.response?.data?.message ?? 'Error al generar el QR.';
   } finally {
-    generatingQr.value = false
+    generatingQr.value = false;
   }
-}
+};
 
 const closeQrModal = () => {
-  showQrModal.value = false
-  qrPerson.value = null
-  qrDataUrl.value = ''
-  qrFilename.value = ''
-  qrError.value = ''
-}
+  showQrModal.value = false;
+  qrPerson.value = null;
+  qrDataUrl.value = '';
+  qrFilename.value = '';
+  qrError.value = '';
+};
 
 const downloadQr = () => {
-  if (!qrDataUrl.value) return
-  const link = document.createElement('a')
-  link.href = qrDataUrl.value
-  link.download = qrFilename.value || 'QR-WatSolution.png'
-  link.target = '_blank'
-  link.click()
-}
+  if (!qrDataUrl.value) return;
+  const link = document.createElement('a');
+  link.href = qrDataUrl.value;
+  link.download = qrFilename.value || 'QR-WatSolution.png';
+  link.target = '_blank';
+  link.click();
+};
 </script>
 
 <template>
   <div class="admin-layout">
-    <div
-      v-if="isMobile && isSidebarOpen"
-      class="sidebar-overlay"
-      @click="toggleSidebar"
-    ></div>
+    <div v-if="isMobile && isSidebarOpen" class="sidebar-overlay" @click="toggleSidebar"></div>
 
     <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
       <div class="sidebar-header">
@@ -352,7 +385,7 @@ const downloadQr = () => {
           :key="item.routeName"
           :to="{ name: item.routeName }"
           class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
+          :class="{ active: route.name === item.routeName }"
         >
           <div class="nav-icon-container">
             <font-awesome-icon :icon="item.icon" :size="22" />
@@ -364,7 +397,9 @@ const downloadQr = () => {
 
       <div class="sidebar-footer">
         <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="avatar">
+            {{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}
+          </div>
           <div class="info" v-if="isSidebarOpen || isMobile">
             <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
             <span class="role">Administrador Principal</span>
@@ -398,7 +433,7 @@ const downloadQr = () => {
           <div class="mgmt-controls">
             <div class="search-box">
               <font-awesome-icon class="search-icon" icon="search" :size="18" />
-              <input type="text" v-model="searchQuery" placeholder="Buscar por nombre, ID o email...">
+              <input type="text" v-model="searchQuery" placeholder="Nombre, documento, suscriptor, teléfono o correo" />
             </div>
 
             <div class="filter-group">
@@ -413,6 +448,7 @@ const downloadQr = () => {
             </div>
           </div>
 
+          <p v-if="loadError" role="alert">{{ loadError }} <button @click="loadPersons">Reintentar</button></p>
           <div class="table-card">
             <div v-if="isLoading" class="table-loading">Cargando usuarios...</div>
             <table v-else class="user-table">
@@ -456,9 +492,29 @@ const downloadQr = () => {
                       <font-awesome-icon icon="tachometer-alt" :size="15" />
                     </button>
                     <button class="btn-icon btn-icon--qr" title="Generar QR para app móvil" @click="openQrModal(person)">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/>
-                        <path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <rect x="3" y="3" width="5" height="5" />
+                        <rect x="16" y="3" width="5" height="5" />
+                        <rect x="3" y="16" width="5" height="5" />
+                        <path d="M21 16h-3a2 2 0 0 0-2 2v3" />
+                        <path d="M21 21v.01" />
+                        <path d="M12 7v3a2 2 0 0 1-2 2H7" />
+                        <path d="M3 12h.01" />
+                        <path d="M12 3h.01" />
+                        <path d="M12 16v.01" />
+                        <path d="M16 12h1" />
+                        <path d="M21 12v.01" />
+                        <path d="M12 21v-1" />
                       </svg>
                     </button>
                     <button class="btn-icon" title="Editar" @click="openEdit(person)">
@@ -471,6 +527,7 @@ const downloadQr = () => {
                 </tr>
               </tbody>
             </table>
+            <Pagination :page="page" :size="size" :total="total" :busy="isLoading" @change="changePage" />
           </div>
         </div>
       </div>
@@ -649,7 +706,8 @@ const downloadQr = () => {
                         color: invoiceStatusColor[invoiceEffectiveStatus(inv)]?.color,
                         background: invoiceStatusColor[invoiceEffectiveStatus(inv)]?.bg,
                       }"
-                    >{{ invoiceStatusLabel[invoiceEffectiveStatus(inv)] }}</span>
+                      >{{ invoiceStatusLabel[invoiceEffectiveStatus(inv)] }}</span
+                    >
                   </div>
                   <span class="inv-item__amount">{{ fmtAmt(inv.amountDue) }}</span>
                 </div>
@@ -676,12 +734,7 @@ const downloadQr = () => {
                     :disabled="updatingInvoiceId === inv.id"
                     @click="markAsPaid(inv)"
                   >
-                    <font-awesome-icon
-                      v-if="updatingInvoiceId === inv.id"
-                      icon="spinner"
-                      spin
-                      :size="12"
-                    />
+                    <font-awesome-icon v-if="updatingInvoiceId === inv.id" icon="spinner" spin :size="12" />
                     <font-awesome-icon v-else icon="check-circle" :size="12" />
                     {{ updatingInvoiceId === inv.id ? 'Guardando...' : 'Marcar como Pagada' }}
                   </button>
@@ -725,7 +778,19 @@ const downloadQr = () => {
             <img v-else-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="qr-image" referrerpolicy="no-referrer" />
           </div>
           <div class="qr-hint">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
             <span>Escanea con la app móvil para cargar los datos del suscriptor. Solo ingresas la lectura del medidor.</span>
           </div>
         </div>
@@ -749,7 +814,10 @@ const downloadQr = () => {
           </button>
         </div>
         <div class="modal-body">
-          <p>¿Estás seguro de que deseas eliminar a <strong>{{ personToDelete?.fullName }}</strong>? Esta acción no se puede deshacer.</p>
+          <p>
+            ¿Estás seguro de que deseas eliminar a <strong>{{ personToDelete?.fullName }}</strong
+            >? Esta acción no se puede deshacer.
+          </p>
         </div>
         <div class="modal-footer">
           <button class="btn btn--secondary" @click="cancelDelete" :disabled="deleting">Cancelar</button>
@@ -805,9 +873,23 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
-    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+    .logo-text,
+    .nav-item span,
+    .chevron,
+    .logout-btn span,
+    .home-btn span {
+      display: none;
+    }
+    .nav-item,
+    .logout-btn,
+    .home-btn {
+      justify-content: center;
+      padding: 1rem;
+    }
+    .sidebar-header {
+      justify-content: center;
+      padding: $spacing-md 0;
+    }
   }
 
   &.is-mobile {
@@ -842,7 +924,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    strong { color: $color-secondary; }
+    strong {
+      color: $color-secondary;
+    }
   }
 
   .toggle-btn {
@@ -896,7 +980,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: white;
     background: rgba(255, 255, 255, 0.05);
   }
@@ -907,7 +992,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     background: rgba($color-primary, 0.1);
   }
 
-  .chevron { margin-left: auto; opacity: 0.5; }
+  .chevron {
+    margin-left: auto;
+    opacity: 0.5;
+  }
 }
 
 .sidebar-footer {
@@ -928,7 +1016,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   white-space: nowrap;
   margin-bottom: 4px;
-  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+  }
 }
 
 .logout-btn {
@@ -943,7 +1034,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .admin-main {
@@ -983,8 +1076,17 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -1008,8 +1110,14 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  h1 { font-size: 1.5rem; color: $color-text; }
-  p { color: $color-text-muted; font-size: 0.9rem; }
+  h1 {
+    font-size: 1.5rem;
+    color: $color-text;
+  }
+  p {
+    color: $color-text-muted;
+    font-size: 0.9rem;
+  }
 }
 
 .mgmt-controls {
@@ -1021,7 +1129,13 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex: 1;
     min-width: 300px;
     position: relative;
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: $color-text-muted; }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $color-text-muted;
+    }
     input {
       width: 100%;
       padding: 0 12px 0 2.5rem;
@@ -1100,8 +1214,14 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 .user-info {
   display: flex;
   flex-direction: column;
-  .user-name { font-weight: 600; color: $color-text; }
-  .user-email { font-size: 0.85rem; color: $color-text-muted; }
+  .user-name {
+    font-weight: 600;
+    color: $color-text;
+  }
+  .user-email {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+  }
 }
 
 .role-badge {
@@ -1122,9 +1242,18 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 700;
   text-transform: uppercase;
 
-  &.status--active { background: #dcfce7; color: #166534; }
-  &.status--debtor { background: #fee2e2; color: #991b1b; }
-  &.status--suspended { background: #fef3c7; color: #92400e; }
+  &.status--active {
+    background: #dcfce7;
+    color: #166534;
+  }
+  &.status--debtor {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  &.status--suspended {
+    background: #fef3c7;
+    color: #92400e;
+  }
 }
 
 .actions-cell {
@@ -1145,8 +1274,15 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   color: $color-text-muted;
   transition: all 0.2s;
 
-  &:hover { background: #f1f5f9; color: $color-primary; }
-  &--danger:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+  &:hover {
+    background: #f1f5f9;
+    color: $color-primary;
+  }
+  &--danger:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fca5a5;
+  }
 }
 
 .btn {
@@ -1164,22 +1300,31 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   &--primary {
     background: $color-primary;
     color: white;
-    &:hover:not(:disabled) { background: darken($color-primary, 10%); }
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+    }
   }
 
   &--secondary {
     background: #f1f5f9;
     color: $color-text;
-    &:hover:not(:disabled) { background: #e2e8f0; }
+    &:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
   }
 
   &--danger {
     background: #ef4444;
     color: white;
-    &:hover:not(:disabled) { background: #dc2626; }
+    &:hover:not(:disabled) {
+      background: #dc2626;
+    }
   }
 
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
@@ -1205,7 +1350,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
   overflow: hidden;
 
-  &--sm { width: min(420px, 100%); }
+  &--sm {
+    width: min(420px, 100%);
+  }
 }
 
 .modal-header {
@@ -1215,7 +1362,12 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: $spacing-md $spacing-lg;
   border-bottom: 1px solid #f1f5f9;
 
-  h2 { font-size: 1.1rem; color: $color-text; font-weight: 700; margin: 0; }
+  h2 {
+    font-size: 1.1rem;
+    color: $color-text;
+    font-weight: 700;
+    margin: 0;
+  }
 }
 
 .modal-close {
@@ -1229,7 +1381,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  &:hover { background: #f1f5f9; }
+  &:hover {
+    background: #f1f5f9;
+  }
 }
 
 .modal-body {
@@ -1237,7 +1391,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   flex: 1;
 
-  p { color: $color-text; line-height: 1.6; }
+  p {
+    color: $color-text;
+    line-height: 1.6;
+  }
 }
 
 .modal-footer {
@@ -1253,7 +1410,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   gap: $spacing-md;
   margin-bottom: $spacing-md;
 
-  @media (max-width: 520px) { flex-direction: column; }
+  @media (max-width: 520px) {
+    flex-direction: column;
+  }
 }
 
 .form-field {
@@ -1296,7 +1455,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding-bottom: 6px;
   border-bottom: 1px solid #e2e8f0;
 
-  & + .form-row { margin-top: 0; }
+  & + .form-row {
+    margin-top: 0;
+  }
 }
 
 .form-hint {
@@ -1428,7 +1589,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   color: #0369a1;
   width: 100%;
 
-  svg { flex-shrink: 0; margin-top: 1px; }
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
 }
 
 // ── Drawer ────────────────────────────────────────────────────────────────────
@@ -1510,7 +1674,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   background: #fafcff;
   transition: box-shadow 0.15s;
 
-  &:hover { box-shadow: 0 2px 8px rgba(0, 119, 190, 0.1); }
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 119, 190, 0.1);
+  }
 }
 
 .meter-icon-col {
@@ -1585,7 +1751,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid #e2e8f0;
   margin-bottom: $spacing-sm;
 
-  &--mt { margin-top: $spacing-lg; }
+  &--mt {
+    margin-top: $spacing-lg;
+  }
 }
 
 .drawer-tab__count {
@@ -1621,7 +1789,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   background: white;
   transition: box-shadow 0.15s;
 
-  &:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
 
   &--mora {
     border-left: 3px solid #ef4444;
@@ -1733,7 +1903,17 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
 // ── Drawer transition ─────────────────────────────────────────────────────────
 .drawer-enter-active,
-.drawer-leave-active { transition: opacity 0.25s ease; .drawer { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); } }
+.drawer-leave-active {
+  transition: opacity 0.25s ease;
+  .drawer {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
 .drawer-enter-from,
-.drawer-leave-to { opacity: 0; .drawer { transform: translateX(100%); } }
+.drawer-leave-to {
+  opacity: 0;
+  .drawer {
+    transform: translateX(100%);
+  }
+}
 </style>

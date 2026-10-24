@@ -18,7 +18,6 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
 
-    const previousState = () => router.go(-1);
 
     const accountService = inject<AccountService>('accountService');
     const loginService = inject<LoginService>('loginService');
@@ -56,7 +55,7 @@ export default defineComponent({
         loginService.hideLogin();
         await accountService.retrieveAccount();
         if (route.path === '/forbidden') {
-          previousState();
+          await router.replace('/');
         }
       } catch (_error: any) {
         authenticationError.value = true;

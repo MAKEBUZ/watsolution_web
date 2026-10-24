@@ -1,506 +1,572 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-import axios from 'axios'
-import { useRouter, useRoute } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
-
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
-
-const isSidebarOpen = ref(window.innerWidth > 1024)
-const isMobile = ref(window.innerWidth <= 1024)
-
-const menuItems = [
-  { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
-  { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
-  { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
-  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
-  { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-]
-
-const handleLogout = () => {
-  accountStore.logout()
-  router.push('/login')
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import {
+  RefreshCw,
+  Activity,
+  CreditCard,
+  Droplets,
+  Newspaper,
+  ClipboardList,
+  Clock3,
+  AlertCircle,
+  Inbox,
+  UserRound,
+} from 'lucide-vue-next';
+import axios from 'axios';
+import AdminShell from '@/core/layout/admin-shell.vue';
+import Pagination from '@/shared/pagination.vue';
+interface ActivityRecord {
+  id: number;
+  personName?: string;
+  action: string;
+  description: string;
+  reference?: string;
+  amount?: number | string;
+  createdAt?: string;
 }
-
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
-
-const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
-  if (isMobile.value) {
-    isSidebarOpen.value = false
-  } else {
-    isSidebarOpen.value = true
+const page = ref(0),
+  total = ref(0),
+  logs = ref<ActivityRecord[]>([]),
+  loading = ref(true),
+  loadError = ref(false),
+  checkedAt = ref('');
+const size = 10;
+let generation = 0;
+const pageCount = computed(() => Math.max(1, Math.ceil(total.value / size)));
+const kinds: Record<string, { label: string; icon: any; tone: string }> = {
+  PAGO_FACTURA: { label: 'Pago registrado', icon: CreditCard, tone: 'green' },
+  LECTURA_CONTADOR: { label: 'Lectura de medidor', icon: Droplets, tone: 'blue' },
+  NUEVA_NOTICIA: { label: 'Noticia publicada', icon: Newspaper, tone: 'amber' },
+  NUEVO_REPORTE: { label: 'Nuevo reporte', icon: ClipboardList, tone: 'purple' },
+};
+const kind = (action: string) => kinds[action] || { label: 'Actividad del sistema', icon: Activity, tone: 'neutral' };
+async function loadActivity(target = page.value) {
+  const current = ++generation;
+  loading.value = true;
+  loadError.value = false;
+  logs.value = [];
+  try {
+    const { data } = await axios.get('api/admin/activity-page', { params: { page: target, size } });
+    if (current !== generation) return;
+    if (
+      !Array.isArray(data.items) ||
+      !Number.isSafeInteger(data.total) ||
+      data.total < 0 ||
+      data.items.some(row => !row || !Number.isSafeInteger(row.id) || typeof row.action !== 'string' || typeof row.description !== 'string')
+    )
+      throw new Error('Invalid activity response');
+    const lastPage = Math.max(0, Math.ceil(data.total / size) - 1);
+    if (target > lastPage) {
+      await loadActivity(lastPage);
+      return;
+    }
+    logs.value = data.items;
+    total.value = data.total;
+    page.value = target;
+    checkedAt.value = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Bogota' });
+  } catch {
+    if (current === generation) loadError.value = true;
+  } finally {
+    if (current === generation) loading.value = false;
   }
 }
-
-interface ActivityRecord {
-  id: number; personName?: string; action: string; description: string;
-  reference?: string; amount?: number | string; createdAt?: string;
+function changePage(value: number) {
+  if (!loading.value) void loadActivity(value);
 }
-const logs = ref<ActivityRecord[]>([])
-const loading = ref(true)
-const loadError = ref(false)
-const checkedAt = ref('')
-async function loadActivity() {
-  loading.value = true
-  loadError.value = false
-  logs.value = []
-  try {
-    const { data } = await axios.get('api/admin/activity', { params: { limit: 50 } })
-    if (!Array.isArray(data) || data.some(row => !row || !Number.isSafeInteger(row.id) || typeof row.action !== 'string' || typeof row.description !== 'string')) throw new Error('Invalid activity response')
-    logs.value = data
-    checkedAt.value = new Date().toLocaleString('es-CO')
-  } catch { loadError.value = true }
-  finally { loading.value = false }
-}
-function formatDate(value?: string) {
-  return value && !Number.isNaN(Date.parse(value)) ? new Date(value).toLocaleString('es-CO') : 'Fecha no disponible'
+function formatDate(value?: string, time = false) {
+  if (!value || Number.isNaN(Date.parse(value))) return 'Fecha no disponible';
+  return new Intl.DateTimeFormat(
+    'es-CO',
+    time
+      ? { hour: '2-digit', minute: '2-digit', timeZone: 'America/Bogota' }
+      : { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Bogota' },
+  ).format(new Date(value));
 }
 function formatAmount(value: number | string) {
-  return Number.isFinite(Number(value)) ? Number(value).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) : 'Importe no disponible'
+  return Number.isFinite(Number(value))
+    ? Number(value).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })
+    : 'Importe no disponible';
 }
-onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  handleResize()
-  loadActivity()
-})
-onUnmounted(() => window.removeEventListener('resize', handleResize))
-
-const getLogIcon = (type: string) => {
-  switch (type) {
-    case 'PAGO_FACTURA': return 'credit-card'
-    case 'LECTURA_CONTADOR': return 'tint'
-    case 'NUEVA_NOTICIA': return 'newspaper'
-    case 'user': return 'user-plus'
-    default: return 'clock'
-  }
-}
-
-const getLogColor = (type: string) => {
-  switch (type) {
-    case 'PAGO_FACTURA': return '#10b981'
-    case 'LECTURA_CONTADOR': return '#3b82f6'
-    case 'NUEVA_NOTICIA': return '#f59e0b'
-    case 'user': return '#8b5cf6'
-    default: return '#94a3b8'
-  }
-}
+onMounted(() => loadActivity());
+onUnmounted(() => {
+  generation++;
+});
 </script>
-
 <template>
-  <div class="admin-layout">
-    <div
-      v-if="isMobile && isSidebarOpen"
-      class="sidebar-overlay"
-      @click="toggleSidebar"
-    ></div>
-
-    <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
-      <div class="sidebar-header">
-        <span class="logo-text" v-if="isSidebarOpen || !isMobile">Wat<strong>Solution</strong></span>
-        <button class="toggle-btn" @click="toggleSidebar">
-          <font-awesome-icon v-if="!isSidebarOpen" icon="bars" :size="20" />
-          <font-awesome-icon v-else icon="times" :size="20" />
+  <AdminShell>
+    <section class="activity-page">
+      <header class="activity-header">
+        <div>
+          <p class="eyebrow">ADMINISTRACIÓN · HISTORIAL</p>
+          <h1>Actividad reciente</h1>
+          <p class="intro">Los movimientos de tu acueducto, en un solo lugar.</p>
+        </div>
+        <button class="refresh-button" type="button" :disabled="loading" @click="loadActivity()">
+          <RefreshCw :size="17" :class="{ spinning: loading }" aria-hidden="true" /><span>{{
+            loading ? 'Actualizando…' : 'Actualizar actividad'
+          }}</span>
         </button>
+      </header>
+      <div class="activity-summary">
+        <div class="summary-icon"><Activity :size="23" aria-hidden="true" /></div>
+        <div>
+          <span class="summary-label">Historial de movimientos</span
+          ><strong>{{ loading || loadError ? '—' : total.toLocaleString('es-CO') }} <span>registros</span></strong>
+        </div>
+        <p v-if="checkedAt && !loading && !loadError" class="checked"><span class="status-dot"></span>Actualizado a las {{ checkedAt }}</p>
       </div>
-
-      <nav class="sidebar-nav">
-        <router-link
-          v-for="item in menuItems"
-          :key="item.routeName"
-          :to="{ name: item.routeName }"
-          class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
-        >
-          <div class="nav-icon-container">
-            <font-awesome-icon :icon="item.icon" :size="22" />
+      <section class="logs-card" aria-label="Listado de actividad reciente" :aria-busy="loading">
+        <header class="list-heading">
+          <div>
+            <h2>Últimos movimientos</h2>
+            <p>Pagos, lecturas, noticias y novedades del servicio.</p>
           </div>
-          <span v-if="isSidebarOpen || isMobile">{{ item.name }}</span>
-          <font-awesome-icon v-if="isSidebarOpen && !isMobile" class="chevron" icon="chevron-right" :size="14" />
-        </router-link>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
-          <div class="info" v-if="isSidebarOpen || isMobile">
-            <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
-            <span class="role">Administrador Principal</span>
+          <span v-if="!loadError" class="page-badge">Página {{ page + 1 }} de {{ pageCount }}</span>
+        </header>
+        <div v-if="loading" class="loading-state" role="status">
+          <span class="sr-only">Consultando actividad…</span>
+          <div v-for="n in 5" :key="n" class="skeleton-row" aria-hidden="true">
+            <i></i>
+            <div><span></span><span></span></div>
           </div>
         </div>
-        <button class="home-btn" @click="router.push({ name: 'Home' })">
-          <font-awesome-icon icon="home" :size="20" />
-          <span v-if="isSidebarOpen || isMobile">Volver al Inicio</span>
-        </button>
-        <button class="logout-btn" @click="handleLogout">
-          <font-awesome-icon icon="sign-out-alt" :size="20" />
-          <span v-if="isSidebarOpen || isMobile">Cerrar Sesión</span>
-        </button>
-      </div>
-    </aside>
-
-    <main class="admin-main">
-      <div class="admin-content-view">
-        <div class="activity-page">
-          <header class="activity-header">
-            <div>
-              <h1>Actividad Reciente</h1>
-              <p>Registros de eventos del sistema y acciones de usuarios.</p>
-            </div>
-          </header>
-
-          <section class="logs-card" aria-label="Listado de actividad reciente">
-            <p v-if="loading" role="status">Consultando actividad…</p>
-            <p v-else-if="loadError" role="alert">Sin datos verificados: no se pudo consultar la actividad.</p>
-            <p v-else-if="!logs.length" role="status">No hay actividad registrada.</p>
-            <p v-if="checkedAt && !loading && !loadError">Fuente: registros de la aplicación. Consulta: {{ checkedAt }}.</p>
-            <button type="button" :disabled="loading" @click="loadActivity">Actualizar actividad</button>
-            <div class="logs-container">
-              <div v-for="log in logs" :key="log.id" class="log-entry">
-                <div class="log-icon" :style="{ color: getLogColor(log.action), backgroundColor: getLogColor(log.action) + '15' }">
-                  <font-awesome-icon :icon="getLogIcon(log.action)" :size="18" />
-                </div>
-                <div class="log-info">
-                  <div class="log-header">
-                    <strong>{{ log.personName || 'Sin persona asociada' }}</strong>
-                    <span class="log-time">{{ formatDate(log.createdAt) }}</span>
-                  </div>
-                  <p class="log-action">{{ log.action.replaceAll('_', ' ') }}</p>
-                  <div class="log-meta">
-                    <span class="log-details">{{ log.description }} · {{ log.reference || 'Sin referencia' }}</span>
-                    <div v-if="log.amount != null" class="log-amount-wrapper">
-                      <span class="log-amount">{{ formatAmount(log.amount) }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+        <div v-else-if="loadError" class="empty-state" role="alert">
+          <AlertCircle :size="32" aria-hidden="true" />
+          <h3>No pudimos cargar la actividad</h3>
+          <p>Sin datos verificados. Revisa la conexión y pulsa «Actualizar actividad» para intentarlo de nuevo.</p>
         </div>
-      </div>
-    </main>
-  </div>
+        <div v-else-if="!logs.length" class="empty-state" role="status">
+          <Inbox :size="36" aria-hidden="true" />
+          <h3>No hay actividad registrada</h3>
+          <p>Los próximos movimientos del servicio aparecerán aquí.</p>
+        </div>
+        <ol v-else class="logs-container">
+          <li v-for="log in logs" :key="log.id" class="log-entry">
+            <div :class="['log-icon', kind(log.action).tone]"><component :is="kind(log.action).icon" :size="21" aria-hidden="true" /></div>
+            <div class="log-body">
+              <span :class="['event-label', kind(log.action).tone]">{{ kind(log.action).label }}</span>
+              <h3>{{ log.description }}</h3>
+              <p class="log-meta">
+                <span v-if="log.personName"><UserRound :size="13" aria-hidden="true" />{{ log.personName }}</span
+                ><span v-if="log.reference">Ref. {{ log.reference }}</span>
+              </p>
+            </div>
+            <div class="log-details">
+              <strong v-if="log.amount != null" class="log-amount">{{ formatAmount(log.amount) }}</strong
+              ><time :datetime="log.createdAt"
+                ><span>{{ formatDate(log.createdAt) }}</span
+                ><span><Clock3 :size="12" aria-hidden="true" />{{ formatDate(log.createdAt, true) }}</span></time
+              >
+            </div>
+          </li>
+        </ol>
+        <Pagination v-if="!loadError && total > 0" :page="page" :size="size" :total="total" :busy="loading" @change="changePage" />
+      </section>
+      <p v-if="checkedAt && !loading && !loadError" class="source-note">Fuente: registros de la aplicación · Hora de Colombia.</p>
+    </section>
+  </AdminShell>
 </template>
-
-<style lang="scss" scoped>
-$spacing-xs: 8px;
-$spacing-sm: 12px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
-$color-primary: #0077be;
-$color-secondary: #00ced1;
-$color-text: #2c3e50;
-$color-text-muted: #64748b;
-$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f8fafc;
-  position: relative;
-}
-
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1500;
-  backdrop-filter: blur(2px);
-}
-
-.admin-sidebar {
-  width: 260px;
-  background: #1e293b;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  z-index: 100;
-  min-height: 0;
-
-  &.is-closed {
-    width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
-    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
-  }
-
-  &.is-mobile {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100vh;
-    width: 280px;
-    transform: translateX(0);
-    z-index: 2000;
-
-    &.is-closed {
-      transform: translateX(-100%);
-      width: 280px;
-    }
-  }
-}
-
-.sidebar-header {
-  padding: $spacing-sm $spacing-md;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  min-height: 70px;
-
-  .logo-text {
-    font-size: 1.15rem;
-    color: #94a3b8;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    strong { color: $color-secondary; }
-  }
-
-  .toggle-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-    margin-left: $spacing-xs;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.05);
-    }
-  }
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: $spacing-md 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  overflow-x: hidden;
-  min-height: 0;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.75rem $spacing-md;
-  color: #94a3b8;
-  text-decoration: none;
-  transition: all 0.2s;
-  white-space: nowrap;
-
-  .nav-icon-container {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  &:hover, &.active {
-    color: white;
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  &.active {
-    border-left: 4px solid $color-primary;
-    color: white;
-    background: rgba($color-primary, 0.1);
-  }
-
-  .chevron { margin-left: auto; opacity: 0.5; }
-}
-
-.sidebar-footer {
-  padding: $spacing-md;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.home-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.75rem;
-  background: none;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  border-radius: 8px;
-  white-space: nowrap;
-  margin-bottom: 4px;
-  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
-}
-
-.logout-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.75rem;
-  background: none;
-  border: none;
-  color: #f87171;
-  cursor: pointer;
-  border-radius: 8px;
-  white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
-}
-
-.admin-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
-  min-width: 0;
-  background-color: #f8fafc;
-  min-height: 0;
-}
-
-.sidebar-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.75rem;
-  margin-bottom: $spacing-sm;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    background: $color-primary;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-  }
-
-  .info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
-  }
-}
-
-.admin-content-view {
-  flex: 1;
-  padding: $spacing-lg;
-  padding-bottom: $spacing-xl * 2;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  overflow-x: hidden;
-}
-
+<style scoped>
 .activity-page {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 36px;
+  color: #173e43;
 }
-
 .activity-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-
-  h1 { font-size: 1.6rem; font-weight: 800; color: $color-text; margin-bottom: 4px; }
-  p { color: $color-text-muted; font-size: 0.95rem; }
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
 }
-
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  font-weight: 700;
+  color: #597772;
+  margin: 0 0 12px;
+}
+h1 {
+  font-size: 34px;
+  letter-spacing: -1.2px;
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+.intro {
+  color: #627772;
+  margin: 0;
+  font-size: 15px;
+}
+.refresh-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #1b6455;
+  background: #1b6455;
+  color: #fff;
+  padding: 13px 18px;
+  border-radius: 11px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  white-space: nowrap;
+  box-shadow: 0 3px 8px #173e4310;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+}
+.refresh-button:hover:not(:disabled) {
+  background: #124b40;
+  box-shadow: 0 5px 14px #173e4320;
+}
+.refresh-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.activity-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 26px;
+  border: 1px solid #d9e5df;
+  background: #eaf2ec;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+.summary-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #d4e7d8;
+  color: #25654e;
+  flex-shrink: 0;
+}
+.summary-label {
+  display: block;
+  font-size: 12px;
+  color: #526d63;
+  margin-bottom: 4px;
+}
+.activity-summary strong {
+  font-size: 26px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.activity-summary strong span {
+  font-size: 14px;
+  font-weight: 400;
+  color: #526d63;
+}
+.checked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 0 auto;
+  font-size: 12px;
+  color: #526d63;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #438563;
+}
 .logs-card {
-  background: white;
-  padding: $spacing-xl;
-  border-radius: 24px;
-  box-shadow: $shadow-sm;
+  background: #fff;
+  border: 1px solid #dce5df;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 7px 28px #173e4304;
 }
-
+.list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px;
+  border-bottom: 1px solid #e7ede8;
+}
+.list-heading h2 {
+  font-size: 19px;
+  font-weight: 650;
+  margin: 0 0 7px;
+}
+.list-heading p {
+  font-size: 13px;
+  color: #74837b;
+  margin: 0;
+}
+.page-badge {
+  font-size: 12px;
+  white-space: nowrap;
+  color: #597067;
+  background: #f2f6f2;
+  border: 1px solid #e2e9e1;
+  border-radius: 7px;
+  padding: 7px 10px;
+}
 .logs-container {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.log-entry {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 18px;
+  padding: 24px 28px;
+  border-bottom: 1px solid #edf1ec;
+  align-items: start;
+}
+.log-entry:last-child {
+  border-bottom: 0;
+}
+.log-entry:hover {
+  background: #fbfcf9;
+}
+.log-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+}
+.green {
+  color: #287356;
+  background: #eaf5ee;
+}
+.blue {
+  color: #327b97;
+  background: #eaf3f7;
+}
+.amber {
+  color: #986a23;
+  background: #fbf3e3;
+}
+.purple {
+  color: #7765a3;
+  background: #f0edf7;
+}
+.neutral {
+  color: #5e7470;
+  background: #edf2ef;
+}
+.event-label {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.log-body h3 {
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 550;
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+  color: #254941;
+}
+.log-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+  margin: 0;
+  font-size: 12px;
+  color: #75837b;
+}
+.log-meta span {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+.log-details {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
-}
-
-.log-entry {
-  display: flex;
+  align-items: flex-end;
   gap: 12px;
-  position: relative;
-  padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
-
-  &:last-child { border-bottom: 0; }
-
+  min-width: 120px;
+}
+.log-amount {
+  font-size: 17px;
+  color: #215c47;
+  font-variant-numeric: tabular-nums;
+}
+.log-details time {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+  font-size: 12px;
+  color: #6d7f75;
+}
+.log-details time span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #93a096;
+}
+.source-note {
+  font-size: 11px;
+  color: #7a8d81;
+  margin: 16px 4px;
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 65px 24px;
+  color: #6e8678;
+  gap: 15px;
+}
+.empty-state h3 {
+  font-size: 18px;
+  margin: 0;
+  color: #345547;
+}
+.empty-state p {
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 430px;
+  margin: 0;
+}
+.loading-state {
+  padding: 6px 28px;
+}
+.skeleton-row {
+  display: flex;
+  gap: 18px;
+  padding: 24px 0;
+  border-bottom: 1px solid #edf1ec;
+}
+.skeleton-row i {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #eff3ef;
+}
+.skeleton-row div {
+  flex: 1;
+}
+.skeleton-row span {
+  display: block;
+  height: 12px;
+  background: #eff3ef;
+  border-radius: 5px;
+  margin: 6px 0 14px;
+  width: 70%;
+}
+.skeleton-row span:last-child {
+  width: 40%;
+  height: 9px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+:deep(.ws-pagination) {
+  padding: 20px 28px;
+}
+:deep(.ws-pagination div) {
+  flex-wrap: wrap;
+}
+:focus-visible {
+  outline: 3px solid #6ba68c;
+  outline-offset: 4px;
+}
+.spinning {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinning {
+    animation: none;
+  }
+}
+@media (max-width: 700px) {
+  .activity-page {
+    padding: 25px 16px;
+  }
+  .activity-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+  h1 {
+    font-size: 29px;
+  }
+  .refresh-button {
+    min-height: 44px;
+  }
+  .activity-summary {
+    padding: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .checked {
+    width: 100%;
+    margin: 4px 0 0;
+  }
+  .list-heading {
+    padding: 20px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .log-entry {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 12px;
+    padding: 22px 20px;
+  }
   .log-icon {
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
   }
-
-  .log-info {
-    flex: 1;
-    min-width: 0;
-
-    .log-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 2px;
-      strong { font-size: 0.9rem; color: $color-text; }
-      .log-time { font-size: 0.75rem; color: $color-text-muted; white-space: nowrap; }
-    }
-
-    .log-action { font-size: 0.85rem; color: $color-text; margin-bottom: 4px; }
-
-    .log-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      .log-details { font-size: 0.8rem; color: $color-text-muted; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-      .log-amount-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        .log-amount { font-size: 0.85rem; font-weight: 700; color: #10b981; white-space: nowrap; }
-        .payment-check { color: #10b981; flex-shrink: 0; }
-      }
-    }
+  .log-details {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .log-details time {
+    align-items: flex-start;
+  }
+  .log-amount {
+    font-size: 16px;
+  }
+  :deep(.ws-pagination) {
+    padding: 18px 20px;
+  }
+  :deep(.ws-pagination div) {
+    gap: 8px;
+  }
+  :deep(.ws-pagination label) {
+    font-size: 12px;
+  }
+  :deep(.ws-pagination button),
+  :deep(.ws-pagination select) {
+    padding: 8px;
+  }
+  .source-note {
+    line-height: 1.6;
   }
 }
 </style>

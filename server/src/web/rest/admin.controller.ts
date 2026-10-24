@@ -86,6 +86,16 @@ export class AdminController {
     return await this.adminStatsService.getUsersWithStatus();
   }
 
+  @Get('/activity-page')
+  @Roles(RoleType.ADMIN)
+  async activityPage(@Query('page') page = '0', @Query('size') size = '10') {
+    const p = Number(page),
+      s = Number(size);
+    if (!Number.isSafeInteger(p) || p < 0 || !Number.isSafeInteger(s) || s < 1 || s > 100)
+      throw new BadRequestException('Invalid pagination');
+    return this.adminStatsService.getActivityPage(p, s);
+  }
+
   @Get('/people/:personId/qr')
   @Roles(RoleType.ADMIN)
   @Header('Cache-Control', 'no-store')

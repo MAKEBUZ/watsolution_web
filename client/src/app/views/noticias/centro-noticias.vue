@@ -1,54 +1,53 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
-import type { INoticia } from '@/shared/model/noticia.model'
+import { ref, computed, onMounted } from 'vue';
+import { Newspaper, LoaderCircle, Wrench, Building2, TriangleAlert, ArrowUpRight } from 'lucide-vue-next';
+import axios from 'axios';
+import { formatNewsDate as formatDate } from '@/shared/news-date';
+import type { INoticia } from '@/shared/model/noticia.model';
 
-const noticias = ref<INoticia[]>([])
-const searchQuery = ref('')
-const selectedCategory = ref('')
-const isFetching = ref(false)
+const noticias = ref<INoticia[]>([]);
+const searchQuery = ref('');
+const selectedCategory = ref('');
+const isFetching = ref(false);
 
 const categories = [
   { label: 'Operativo', value: 'OPERATIVO' },
   { label: 'Institucional', value: 'INSTITUCIONAL' },
   { label: 'Urgente', value: 'URGENTE' },
-]
+];
 
 onMounted(async () => {
-  isFetching.value = true
+  isFetching.value = true;
   try {
-    const res = await axios.get('api/public/noticias')
-    noticias.value = res.data ?? []
+    const res = await axios.get('api/public/noticias');
+    noticias.value = res.data ?? [];
   } catch {
-    noticias.value = []
+    noticias.value = [];
   } finally {
-    isFetching.value = false
+    isFetching.value = false;
   }
-})
+});
 
 const filtered = computed(() =>
-  noticias.value.filter(n =>
-    (!searchQuery.value || (n.title ?? '').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      (n.summary ?? '').toLowerCase().includes(searchQuery.value.toLowerCase())) &&
-    (!selectedCategory.value || n.category === selectedCategory.value),
+  noticias.value.filter(
+    n =>
+      (!searchQuery.value ||
+        (n.title ?? '').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        (n.summary ?? '').toLowerCase().includes(searchQuery.value.toLowerCase())) &&
+      (!selectedCategory.value || n.category === selectedCategory.value),
   ),
-)
+);
 
 const categoryLabel = (cat?: string | null) => {
-  const map: Record<string, string> = { OPERATIVO: 'Operativo', INSTITUCIONAL: 'Institucional', URGENTE: 'Urgente' }
-  return map[cat ?? ''] ?? (cat ?? '')
-}
+  const map: Record<string, string> = { OPERATIVO: 'Operativo', INSTITUCIONAL: 'Institucional', URGENTE: 'Urgente' };
+  return map[cat ?? ''] ?? cat ?? '';
+};
 
 const categoryColor = (cat?: string | null) => {
-  if (cat === 'URGENTE') return '#ef4444'
-  if (cat === 'OPERATIVO') return '#f59e0b'
-  return '#0077be'
-}
-
-const formatDate = (date?: Date | null) => {
-  if (!date) return ''
-  return new Date(date).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })
-}
+  if (cat === 'URGENTE') return '#ef4444';
+  if (cat === 'OPERATIVO') return '#f59e0b';
+  return '#0077be';
+};
 </script>
 
 <template>
@@ -68,24 +67,38 @@ const formatDate = (date?: Date | null) => {
         <div class="cn-filter-card">
           <h3>Búsqueda</h3>
           <div class="cn-search">
-            <svg class="cn-search__icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
-            <input v-model="searchQuery" type="text" placeholder="Buscar noticias...">
+            <svg
+              class="cn-search__icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+              />
+            </svg>
+            <input v-model="searchQuery" type="text" placeholder="Buscar noticias..." />
           </div>
         </div>
 
         <div class="cn-filter-card">
           <h3>Categorías</h3>
           <div class="cn-categories">
-            <button
-              :class="['cn-cat-btn', { active: selectedCategory === '' }]"
-              @click="selectedCategory = ''"
-            >Todas</button>
+            <button :class="['cn-cat-btn', { active: selectedCategory === '' }]" @click="selectedCategory = ''">Todas</button>
             <button
               v-for="cat in categories"
               :key="cat.value"
               :class="['cn-cat-btn', { active: selectedCategory === cat.value }]"
               @click="selectedCategory = cat.value"
-            >{{ cat.label }}</button>
+            >
+              {{ cat.label }}
+            </button>
           </div>
         </div>
       </aside>
@@ -93,36 +106,65 @@ const formatDate = (date?: Date | null) => {
       <!-- News grid -->
       <main class="cn-grid">
         <div v-if="isFetching" class="cn-empty">
-          <div class="cn-empty__icon">🔄</div>
+          <LoaderCircle class="cn-empty__icon" :size="36" />
           <p>Cargando noticias...</p>
         </div>
 
         <div v-else-if="filtered.length === 0" class="cn-empty">
-          <div class="cn-empty__icon">📰</div>
+          <Newspaper class="cn-empty__icon" :size="36" />
           <p class="cn-empty__title">Sin noticias disponibles</p>
           <p class="cn-empty__sub">
-            {{ searchQuery || selectedCategory ? 'No hay noticias que coincidan con tu búsqueda.' : 'Por el momento no hay noticias publicadas. Vuelve pronto.' }}
+            {{
+              searchQuery || selectedCategory
+                ? 'No hay noticias que coincidan con tu búsqueda.'
+                : 'Por el momento no hay noticias publicadas. Vuelve pronto.'
+            }}
           </p>
-          <button v-if="searchQuery || selectedCategory" class="cn-empty__reset" @click="searchQuery = ''; selectedCategory = ''">
+          <button
+            v-if="searchQuery || selectedCategory"
+            class="cn-empty__reset"
+            @click="
+              searchQuery = '';
+              selectedCategory = '';
+            "
+          >
             Ver todas las noticias
           </button>
         </div>
 
         <article v-for="item in filtered" :key="item.id" class="cn-card">
-          <div class="cn-card__img">
-            <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.title" loading="lazy">
-            <div v-else class="cn-card__placeholder"></div>
+          <router-link :to="'/noticias/' + item.id" class="cn-card__img" :aria-label="'Leer: ' + item.title">
+            <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.title" loading="lazy" />
+            <div v-else class="cn-card__placeholder">
+              <component
+                :is="item.category === 'URGENTE' ? TriangleAlert : item.category === 'OPERATIVO' ? Wrench : Building2"
+                :size="48"
+              />
+            </div>
             <span class="cn-card__badge" :style="{ background: categoryColor(item.category) }">
               {{ categoryLabel(item.category) }}
             </span>
-          </div>
+          </router-link>
           <div class="cn-card__body">
             <p class="cn-card__date">
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
+                />
+              </svg>
               {{ formatDate(item.publishDate) }}
             </p>
-            <h2 class="cn-card__title">{{ item.title }}</h2>
-            <p class="cn-card__excerpt">{{ (item.summary || item.content || '').substring(0, 130) }}{{ (item.summary || item.content || '').length > 130 ? '...' : '' }}</p>
+            <h2 class="cn-card__title">
+              <router-link :to="'/noticias/' + item.id">{{ item.title }}</router-link>
+            </h2>
+            <p class="cn-card__excerpt">
+              {{ (item.summary || item.content || '').substring(0, 130)
+              }}{{ (item.summary || item.content || '').length > 130 ? '...' : '' }}
+            </p>
+            <router-link class="news-read" :to="'/noticias/' + item.id">Leer noticia <ArrowUpRight :size="16" /></router-link>
           </div>
         </article>
       </main>
@@ -131,6 +173,27 @@ const formatDate = (date?: Date | null) => {
 </template>
 
 <style scoped>
+.cn-card__placeholder {
+  display: grid;
+  place-items: center;
+  background: #e1eee8;
+  color: #176b61;
+}
+.news-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-weight: 600;
+  color: #176b61;
+}
+.cn-card__title a {
+  color: inherit;
+  text-decoration: none;
+}
+.cn-card:focus-within {
+  outline: 2px solid #176b61;
+}
 .cn-page {
   background: #f8fafc;
   min-height: 100vh;
@@ -152,7 +215,7 @@ const formatDate = (date?: Date | null) => {
 
 .cn-hero__sub {
   font-size: 1rem;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
 }
 
@@ -181,7 +244,7 @@ const formatDate = (date?: Date | null) => {
   background: #ffffff;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .cn-filter-card h3 {
@@ -306,13 +369,15 @@ const formatDate = (date?: Date | null) => {
   background: #ffffff;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .cn-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .cn-card__img {

@@ -10,8 +10,13 @@ const links = [
   ['Resumen', '/admin/resumen'],
   ['Actividad', '/admin/actividad'],
   ['Usuarios', '/admin/usuarios'],
-  ['Facturación', '/admin/facturacion'],
+  ['Facturación en punto físico', '/admin/facturacion'],
   ['Noticias', '/admin/noticias'],
+  ['Pruebas de WhatsApp', '/admin/whatsapp'],
+  ['Testimonios', '/admin/testimonios'],
+  ['Mapa y recorridos', '/admin/recorridos'],
+  ['Notificaciones', '/notificaciones'],
+  ['Portal de usuarios', '/portal'],
 ];
 function close() {
   if (menu.value) menu.value.open = false;

@@ -36,10 +36,11 @@ export class AdminStatsService {
       .andWhere('i.issue_date >= :from', { from: firstDayOfMonth })
       .getRawOne();
 
-    const consumptionResult = await this.meterRepository
+    const consumptionResult = await this.invoiceRepository
       .createQueryBuilder('m')
-      .select('SUM(m.water_measure)', 'total')
-      .where('m.reading_date >= :from', { from: firstDayOfMonth })
+      .select('SUM(m.consumptionM3)', 'total')
+      .where('m.issue_date >= :from', { from: firstDayOfMonth })
+      .andWhere('m.status != :cancelled', { cancelled: InvoiceStatus.CANCELLED })
       .getRawOne();
 
     return {
@@ -61,11 +62,12 @@ export class AdminStatsService {
       const to = new Date(d.getFullYear(), d.getMonth() + 1, 1);
       const label = MONTH_NAMES[d.getMonth()];
 
-      const consumptionResult = await this.meterRepository
+      const consumptionResult = await this.invoiceRepository
         .createQueryBuilder('m')
-        .select('SUM(m.water_measure)', 'total')
-        .where('m.reading_date >= :from', { from })
-        .andWhere('m.reading_date < :to', { to })
+        .select('SUM(m.consumptionM3)', 'total')
+        .where('m.issue_date >= :from', { from })
+        .andWhere('m.status != :cancelled', { cancelled: InvoiceStatus.CANCELLED })
+        .andWhere('m.issue_date < :to', { to })
         .getRawOne();
 
       const revenueResult = await this.invoiceRepository
@@ -85,10 +87,19 @@ export class AdminStatsService {
 
   async getActivityLog(limit = 10): Promise<ActivityLogDTO[]> {
     const results = await this.activityLogRepository.find({
-      order: { createdAt: 'DESC' } as any,
+      order: { createdAt: 'DESC' },
       take: limit,
     });
     return results.map(a => ActivityLogMapper.fromEntityToDTO(a));
+  }
+
+  async getActivityPage(page = 0, size = 10) {
+    const [rows, total] = await this.activityLogRepository.findAndCount({
+      order: { createdAt: 'DESC', id: 'DESC' },
+      skip: page * size,
+      take: size,
+    });
+    return { items: rows.map(a => ActivityLogMapper.fromEntityToDTO(a)), total, page, size };
   }
 
   async getUsersWithStatus(): Promise<UserWithStatusDTO[]> {

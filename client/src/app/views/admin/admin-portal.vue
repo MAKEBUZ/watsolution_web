@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
+import { useRouter } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
 
-const router = useRouter()
-const accountStore = useAccountStore()
+const router = useRouter();
+const accountStore = useAccountStore();
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/')
-}
+  accountStore.logout();
+  router.push('/');
+};
 </script>
 
 <template>
@@ -17,12 +17,8 @@ const handleLogout = () => {
       <h1>Portal de Usuario</h1>
       <p>Bienvenido, {{ accountStore.account?.firstName || 'Usuario' }}</p>
       <div class="portal-actions">
-        <button class="portal-btn" @click="router.push('/portal')">
-          Ir al Dashboard
-        </button>
-        <button class="portal-btn logout" @click="handleLogout">
-          Cerrar Sesión
-        </button>
+        <button class="portal-btn" @click="router.push('/portal')">Ir al Dashboard</button>
+        <button class="portal-btn logout" @click="handleLogout">Cerrar Sesión</button>
       </div>
     </div>
   </div>

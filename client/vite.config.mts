@@ -8,10 +8,9 @@ const isStandalone = process.env.STANDALONE === 'true';
 
 // eslint-disable-next-line prefer-const
 let config = defineConfig({
-  plugins: [
-    vue(),
-    swaggerAssets(),
-  ],
+  esbuild: { jsx: 'automatic', jsxImportSource: 'react' },
+  worker: { format: 'es' },
+  plugins: [vue(), swaggerAssets()],
   root: fileURLToPath(new URL('./src/', import.meta.url)),
   publicDir: isStandalone ? false : fileURLToPath(new URL('./../server/dist/static/public', import.meta.url)),
   cacheDir: isStandalone
@@ -25,6 +24,8 @@ let config = defineConfig({
     rollupOptions: {
       input: {
         app: fileURLToPath(new URL('./src/index.html', import.meta.url)),
+        terms: fileURLToPath(new URL('./src/condiciones-del-servicio/index.html', import.meta.url)),
+        whatsapp: fileURLToPath(new URL('./src/whatsapp/index.html', import.meta.url)),
       },
     },
   },
@@ -46,18 +47,15 @@ let config = defineConfig({
       '/api/notifications/stream': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        configure: (proxy) => {
-          proxy.on('proxyRes', (proxyRes) => {
+        configure: proxy => {
+          proxy.on('proxyRes', proxyRes => {
             proxyRes.headers['x-accel-buffering'] = 'no';
             proxyRes.headers['cache-control'] = 'no-cache';
           });
         },
       },
       ...Object.fromEntries(
-        ['/api', '/management', '/v3/api-docs'].map(res => [
-          res,
-          { target: 'http://localhost:8080', changeOrigin: true },
-        ]),
+        ['/api', '/management', '/v3/api-docs'].map(res => [res, { target: 'http://localhost:8080', changeOrigin: true }]),
       ),
       '/tank': {
         target: 'http://localhost:8080',

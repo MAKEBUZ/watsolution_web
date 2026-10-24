@@ -18,6 +18,25 @@ const lineChartRef = ref<HTMLCanvasElement | null>(null);
 const activeSection = ref('resumen');
 let lineChart: Chart | null = null;
 
+const isAdmin = computed(() => accountStore.account?.authorities?.includes('ROLE_ADMIN'));
+const selectedSubscriber = ref<any>(null),
+  subscriberSearch = ref(''),
+  subscribers = ref<any[]>([]);
+async function searchSubscribers() {
+  try {
+    subscribers.value = (
+      await axios.get('api/people', { params: { search: subscriberSearch.value, size: 20, page: 0, sort: 'fullName,asc' } })
+    ).data;
+  } catch {
+    errorMsg.value = 'No se pudieron buscar los suscriptores.';
+  }
+}
+async function selectSubscriber(person: any) {
+  selectedSubscriber.value = person;
+  subscribers.value = [];
+  activeSection.value = 'resumen';
+  await loadDashboard();
+}
 const userName = computed(() => {
   const acc = accountStore.account;
   if (!acc) return 'Usuario';
@@ -66,6 +85,7 @@ interface RecentInvoice {
 
 const loading = ref(true);
 const errorMsg = ref('');
+let dashboardGeneration = 0;
 
 // Card 1 — Factura Actual
 const invoiceAmount = ref('–');
@@ -113,10 +133,18 @@ function invoiceStatusInfo(status: string): { label: string; cls: string } {
 
 // ── Load data ─────────────────────────────────────────────────────────────────
 async function loadDashboard() {
+  const generation = ++dashboardGeneration;
+  if (isAdmin.value && !selectedSubscriber.value) {
+    loading.value = false;
+    return;
+  }
   loading.value = true;
   errorMsg.value = '';
   try {
-    const { data } = await axios.get('api/portal/dashboard');
+    const { data } = await axios.get(
+      isAdmin.value && selectedSubscriber.value ? 'api/portal/subscribers/' + selectedSubscriber.value.id : 'api/portal/dashboard',
+    );
+    if (generation !== dashboardGeneration) return;
 
     // Card 1 — last invoice (any status)
     if (data.currentInvoice) {
@@ -171,11 +199,12 @@ async function loadDashboard() {
     await nextTick();
     renderChart();
   } catch (err: any) {
+    if (generation !== dashboardGeneration) return;
     const msg = err?.response?.data?.message ?? err?.message ?? 'Error al cargar datos';
     errorMsg.value = msg;
     console.error('Portal dashboard request failed');
   } finally {
-    loading.value = false;
+    if (generation === dashboardGeneration) loading.value = false;
   }
 }
 
@@ -226,12 +255,13 @@ onMounted(() => {
   loadDashboard();
 });
 onUnmounted(() => {
+  ++dashboardGeneration;
   lineChart?.destroy();
 });
 </script>
 
 <template>
-  <div class="portal-layout">
+  <div class="portal-layout" :class="{ 'admin-preview': isAdmin }">
     <!-- Sidebar -->
     <aside class="portal-sidebar">
       <div class="sidebar-brand">
@@ -245,7 +275,7 @@ onUnmounted(() => {
           :key="item.id"
           :class="['sidebar-nav__item', { active: activeSection === item.id }]"
           :aria-current="activeSection === item.id ? 'page' : undefined"
-          @click="activeSection = item.id"
+          @click="item.id === 'notificaciones' ? router.push('/notificaciones') : (activeSection = item.id)"
         >
           <span class="sidebar-nav__icon">
             <svg
@@ -341,6 +371,14 @@ onUnmounted(() => {
           <span class="sidebar-nav__label">{{ item.label }}</span>
         </button>
       </nav>
+      <div v-if="isAdmin" class="portal-admin-return">
+        <router-link to="/admin/resumen" aria-label="Volver al panel de administración">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="m10 6-6 6 6 6M4 12h16" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span><strong>Volver al panel</strong><small>Administración</small></span>
+        </router-link>
+      </div>
     </aside>
 
     <!-- Main content -->
@@ -357,8 +395,26 @@ onUnmounted(() => {
         </div>
       </div>
 
+      <section v-if="isAdmin" class="admin-subscriber-picker">
+        <span class="admin-view-label">VISTA DE ADMINISTRADOR</span>
+        <h2>Consultar portal de un suscriptor</h2>
+        <form @submit.prevent="searchSubscribers">
+          <input
+            v-model="subscriberSearch"
+            aria-label="Buscar suscriptor"
+            placeholder="Nombre, documento, correo o número de suscriptor"
+          /><button>Buscar</button>
+        </form>
+        <p v-if="selectedSubscriber">
+          Consultando: <strong>{{ selectedSubscriber.fullName }}</strong>
+        </p>
+        <button v-for="p in subscribers" :key="p.id" @click="selectSubscriber(p)">
+          {{ p.fullName }} · {{ p.documentNumber }} · {{ p.subscriberNumber }}
+        </button>
+        <p v-if="!selectedSubscriber">Selecciona un suscriptor para revisar sus facturas y consumo.</p>
+      </section>
       <!-- Resumen section -->
-      <div v-if="activeSection === 'resumen'" class="portal-content">
+      <div v-if="activeSection === 'resumen' && (!isAdmin || selectedSubscriber)" class="portal-content">
         <!-- Error banner -->
         <div v-if="errorMsg" class="error-banner" role="alert">
           ⚠️ {{ errorMsg }}
@@ -503,7 +559,7 @@ onUnmounted(() => {
 
       <!-- Mis Facturas section -->
       <div v-else-if="activeSection === 'facturas'" class="portal-content">
-        <MisFacturas />
+        <MisFacturas v-if="!isAdmin || selectedSubscriber" :key="selectedSubscriber?.id" :person-id="selectedSubscriber?.id" />
       </div>
 
       <!-- Notificaciones section -->
@@ -548,7 +604,7 @@ onUnmounted(() => {
 
       <!-- Mi Consumo section -->
       <div v-else-if="activeSection === 'consumo'" class="portal-content">
-        <MiConsumo />
+        <MiConsumo v-if="!isAdmin || selectedSubscriber" :key="selectedSubscriber?.id" :person-id="selectedSubscriber?.id" />
       </div>
 
       <!-- Trámites section -->
@@ -579,6 +635,7 @@ onUnmounted(() => {
         <div class="portal-card full-width soporte-card">
           <div class="soporte-icon">💬</div>
           <h3>Centro de Soporte</h3>
+          <a href="/whatsapp/">Vincular WhatsApp y gestionar avisos de facturas</a>
           <p>¿Tienes algún problema con tu servicio? Contáctanos y te ayudaremos lo antes posible.</p>
           <div class="soporte-options">
             <div class="soporte-option">
@@ -1433,5 +1490,111 @@ onUnmounted(() => {
   .portal-primary-actions > * {
     flex: 1 1 140px;
   }
+}
+</style>
+
+<style scoped>
+.portal-admin-return {
+  margin-top: auto;
+  padding: 24px 14px 0;
+  position: sticky;
+  bottom: 0;
+  background: inherit;
+}
+.portal-admin-return a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 13px;
+  color: #fff;
+  background: #ffffff12;
+  border: 1px solid #ffffff45;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.portal-admin-return a:hover {
+  background: #ffffff24;
+}
+.portal-admin-return a:focus-visible {
+  outline: 3px solid #9ed1bb;
+  outline-offset: 3px;
+}
+.portal-admin-return svg {
+  flex-shrink: 0;
+}
+.portal-admin-return span {
+  display: grid;
+  gap: 3px;
+}
+.portal-admin-return strong {
+  font-size: 13px;
+}
+.portal-admin-return small {
+  font-size: 11px;
+  opacity: 0.7;
+}
+.admin-view-label {
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.6px;
+  color: #597d6c;
+}
+@media (max-width: 768px) {
+  .portal-admin-return {
+    position: fixed;
+    z-index: 90;
+    left: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    margin: 0;
+    padding: 0;
+    background: #173f43;
+    border-radius: 12px;
+    box-shadow: 0 6px 22px #173f4330;
+  }
+  .portal-admin-return a {
+    padding: 12px 16px;
+  }
+  .portal-admin-return small {
+    display: none;
+  }
+  .admin-preview {
+    padding-bottom: 82px;
+  }
+}
+.admin-subscriber-picker {
+  margin: 24px;
+  padding: 24px;
+  background: #f0f7f2;
+  border: 1px solid #c9ded0;
+  border-radius: 14px;
+  color: #143e43;
+}
+.admin-subscriber-picker h2 {
+  font-size: 20px;
+  margin: 16px 0;
+}
+.admin-subscriber-picker form {
+  display: flex;
+  gap: 8px;
+}
+.admin-subscriber-picker input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #bad1c3;
+  border-radius: 8px;
+  padding: 12px;
+}
+.admin-subscriber-picker button {
+  background: white;
+  border: 1px solid #bad1c3;
+  border-radius: 8px;
+  color: #176b61;
+  padding: 10px;
+  margin: 4px;
+}
+.admin-subscriber-picker p {
+  font-size: 13px;
+  margin-top: 14px;
 }
 </style>

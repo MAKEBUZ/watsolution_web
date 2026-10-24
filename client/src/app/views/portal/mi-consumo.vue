@@ -1,127 +1,123 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
-import { Chart, registerables } from 'chart.js'
-import axios from 'axios'
-import type { IInvoice } from '@/shared/model/invoice.model'
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { Chart, registerables } from 'chart.js';
+import axios from 'axios';
+import type { IInvoice } from '@/shared/model/invoice.model';
 
-Chart.register(...registerables)
+Chart.register(...registerables);
 
 // ─── State ───────────────────────────────────────────────────────────────────
-const invoices = ref<IInvoice[]>([])
-const readings = ref<any[]>([])
-const loading = ref(false)
-const error = ref('')
+const props = defineProps<{ personId?: number }>();
+const invoices = ref<IInvoice[]>([]);
+const readings = ref<any[]>([]);
+const loading = ref(false);
+const error = ref('');
 
-const periodFilter = ref<'3m' | '6m' | '12m' | 'all'>('12m')
-const yearFilter = ref<number | null>(null)
+const periodFilter = ref<'3m' | '6m' | '12m' | 'all'>('12m');
+const yearFilter = ref<number | null>(null);
 
-const chartRef = ref<HTMLCanvasElement | null>(null)
-let chartInstance: Chart | null = null
+const chartRef = ref<HTMLCanvasElement | null>(null);
+let chartInstance: Chart | null = null;
 
 // ─── Load data ────────────────────────────────────────────────────────────────
 onMounted(async () => {
-  loading.value = true
-  error.value = ''
+  loading.value = true;
+  error.value = '';
   try {
-    const personRes = await axios.get('api/people/me')
-    const personId = personRes.data?.id
+    const personRes = props.personId ? { data: { id: props.personId } } : await axios.get('api/people/me');
+    const personId = personRes.data?.id;
     if (!personId) {
-      error.value = 'No tienes un perfil de suscriptor vinculado. Contacta al administrador.'
-      return
+      error.value = 'No tienes un perfil de suscriptor vinculado. Contacta al administrador.';
+      return;
     }
     const [invRes, mtrRes] = await Promise.all([
       axios.get(`api/invoices/by-person/${personId}`),
       axios.get(`api/meters/by-person/${personId}`),
-    ])
+    ]);
     invoices.value = (invRes.data ?? []).sort(
-      (a: IInvoice, b: IInvoice) =>
-        new Date(a.issueDate as any).getTime() - new Date(b.issueDate as any).getTime(),
-    )
-    readings.value = (mtrRes.data ?? []).sort(
-      (a: any, b: any) => new Date(b.readingDate).getTime() - new Date(a.readingDate).getTime(),
-    )
+      (a: IInvoice, b: IInvoice) => new Date(a.issueDate as any).getTime() - new Date(b.issueDate as any).getTime(),
+    );
+    readings.value = (mtrRes.data ?? []).sort((a: any, b: any) => new Date(b.readingDate).getTime() - new Date(a.readingDate).getTime());
   } catch {
-    error.value = 'No se pudo cargar el consumo. Intenta de nuevo más tarde.'
+    error.value = 'No se pudo cargar el consumo. Intenta de nuevo más tarde.';
   } finally {
-    loading.value = false
-    await nextTick()
-    renderChart()
+    loading.value = false;
+    await nextTick();
+    renderChart();
   }
-})
+});
 
 // ─── Available years ──────────────────────────────────────────────────────────
 const availableYears = computed<number[]>(() => {
-  const years = new Set<number>()
+  const years = new Set<number>();
   invoices.value.forEach(inv => {
-    if (inv.issueDate) years.add(new Date(inv.issueDate as any).getFullYear())
-  })
-  return Array.from(years).sort((a, b) => b - a)
-})
+    if (inv.issueDate) years.add(new Date(inv.issueDate as any).getFullYear());
+  });
+  return Array.from(years).sort((a, b) => b - a);
+});
 
 // ─── Filtered invoices ────────────────────────────────────────────────────────
 const filteredInvoices = computed<IInvoice[]>(() => {
-  let list = [...invoices.value]
+  let list = [...invoices.value];
 
   if (yearFilter.value !== null) {
-    list = list.filter(inv => new Date(inv.issueDate as any).getFullYear() === yearFilter.value)
+    list = list.filter(inv => new Date(inv.issueDate as any).getFullYear() === yearFilter.value);
   } else {
-    const now = new Date()
-    const cutoffMonths: Record<string, number> = { '3m': 3, '6m': 6, '12m': 12 }
-    const months = cutoffMonths[periodFilter.value]
+    const now = new Date();
+    const cutoffMonths: Record<string, number> = { '3m': 3, '6m': 6, '12m': 12 };
+    const months = cutoffMonths[periodFilter.value];
     if (months) {
-      const cutoff = new Date(now.getFullYear(), now.getMonth() - months, 1)
-      list = list.filter(inv => new Date(inv.issueDate as any) >= cutoff)
+      const cutoff = new Date(now.getFullYear(), now.getMonth() - months, 1);
+      list = list.filter(inv => new Date(inv.issueDate as any) >= cutoff);
     }
   }
 
-  return list.sort(
-    (a, b) => new Date(a.issueDate as any).getTime() - new Date(b.issueDate as any).getTime(),
-  )
-})
+  return list.sort((a, b) => new Date(a.issueDate as any).getTime() - new Date(b.issueDate as any).getTime());
+});
 
 // ─── Stats cards ──────────────────────────────────────────────────────────────
 const stats = computed(() => {
-  const vals = filteredInvoices.value.map(i => Number(i.consumptionM3 ?? 0))
-  if (vals.length === 0) return { avg: 0, last: 0, max: 0, min: 0 }
+  const vals = filteredInvoices.value.map(i => Number(i.consumptionM3 ?? 0));
+  if (vals.length === 0) return { avg: 0, last: 0, max: 0, min: 0 };
   return {
     avg: vals.reduce((s, v) => s + v, 0) / vals.length,
     last: vals[vals.length - 1],
     max: Math.max(...vals),
     min: Math.min(...vals),
-  }
-})
+  };
+});
 
 const consumptionLevel = computed(() => {
-  const { last, avg } = stats.value
-  if (avg === 0) return null
-  const ratio = last / avg
-  if (ratio < 0.8) return { label: 'Bajo', color: '#10b981', bg: '#d1fae5', tip: 'Excelente ahorro respecto a tu promedio.' }
-  if (ratio <= 1.2) return { label: 'Normal', color: '#0077be', bg: '#dbeafe', tip: 'Consumo dentro del rango habitual.' }
-  if (ratio <= 1.5) return { label: 'Alto', color: '#f59e0b', bg: '#fef3c7', tip: 'Consumo por encima de tu promedio.' }
-  return { label: 'Muy Alto', color: '#dc2626', bg: '#fee2e2', tip: 'Consumo notablemente elevado. Revisa fugas.' }
-})
+  const { last, avg } = stats.value;
+  if (avg === 0) return null;
+  const ratio = last / avg;
+  if (ratio < 0.8) return { label: 'Bajo', color: '#10b981', bg: '#d1fae5', tip: 'Excelente ahorro respecto a tu promedio.' };
+  if (ratio <= 1.2) return { label: 'Normal', color: '#0077be', bg: '#dbeafe', tip: 'Consumo dentro del rango habitual.' };
+  if (ratio <= 1.5) return { label: 'Alto', color: '#f59e0b', bg: '#fef3c7', tip: 'Consumo por encima de tu promedio.' };
+  return { label: 'Muy Alto', color: '#dc2626', bg: '#fee2e2', tip: 'Consumo notablemente elevado. Revisa fugas.' };
+});
 
 const barPercent = computed(() => {
-  const { last, max } = stats.value
-  if (!max) return 0
-  return Math.min(100, Math.round((last / max) * 100))
-})
+  const { last, max } = stats.value;
+  if (!max) return 0;
+  return Math.min(100, Math.round((last / max) * 100));
+});
 
 // ─── Chart ────────────────────────────────────────────────────────────────────
 function renderChart() {
-  if (!chartRef.value) return
+  if (!chartRef.value) return;
   if (chartInstance) {
-    chartInstance.destroy()
-    chartInstance = null
+    chartInstance.destroy();
+    chartInstance = null;
   }
 
   const labels = filteredInvoices.value.map(inv => {
-    const d = new Date(inv.issueDate as any)
-    return d.toLocaleDateString('es-CO', { month: 'short', year: '2-digit' })
-  })
-  const data = filteredInvoices.value.map(inv => Number(inv.consumptionM3 ?? 0))
+    const d = new Date(inv.issueDate as any);
+    return d.toLocaleDateString('es-CO', { month: 'short', year: '2-digit' });
+  });
+  const data = filteredInvoices.value.map(inv => Number(inv.consumptionM3 ?? 0));
 
-  if (labels.length === 0) return
+  if (labels.length === 0) return;
 
   chartInstance = new Chart(chartRef.value, {
     type: 'line',
@@ -132,12 +128,12 @@ function renderChart() {
           label: 'Consumo (m³)',
           data,
           borderColor: '#0077be',
-          backgroundColor: (ctx) => {
-            const canvas = ctx.chart.ctx
-            const gradient = canvas.createLinearGradient(0, 0, 0, 280)
-            gradient.addColorStop(0, 'rgba(0,119,190,0.25)')
-            gradient.addColorStop(1, 'rgba(0,119,190,0)')
-            return gradient
+          backgroundColor: ctx => {
+            const canvas = ctx.chart.ctx;
+            const gradient = canvas.createLinearGradient(0, 0, 0, 280);
+            gradient.addColorStop(0, 'rgba(0,119,190,0.25)');
+            gradient.addColorStop(1, 'rgba(0,119,190,0)');
+            return gradient;
           },
           tension: 0.4,
           fill: true,
@@ -150,7 +146,9 @@ function renderChart() {
         {
           label: 'Promedio',
           data: Array(labels.length).fill(
-            Math.round((filteredInvoices.value.reduce((s, i) => s + Number(i.consumptionM3 ?? 0), 0) / (filteredInvoices.value.length || 1)) * 10) / 10,
+            Math.round(
+              (filteredInvoices.value.reduce((s, i) => s + Number(i.consumptionM3 ?? 0), 0) / (filteredInvoices.value.length || 1)) * 10,
+            ) / 10,
           ),
           borderColor: 'rgba(100,116,139,0.5)',
           borderDash: [6, 4],
@@ -192,28 +190,28 @@ function renderChart() {
         },
       },
     },
-  })
+  });
 }
 
 watch(filteredInvoices, async () => {
-  await nextTick()
-  renderChart()
-})
+  await nextTick();
+  renderChart();
+});
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const formatDate = (date: any) => {
-  if (!date) return '—'
-  return new Date(date).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
-}
+  if (!date) return '—';
+  return new Date(date).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
 const setFilter = (f: '3m' | '6m' | '12m' | 'all') => {
-  yearFilter.value = null
-  periodFilter.value = f
-}
+  yearFilter.value = null;
+  periodFilter.value = f;
+};
 
 const setYear = (y: number) => {
-  yearFilter.value = y
-}
+  yearFilter.value = y;
+};
 </script>
 
 <template>
@@ -238,23 +236,27 @@ const setYear = (y: number) => {
           <span class="mc-filters__label">Período:</span>
           <div class="mc-period-btns">
             <button
-              v-for="opt in [{ k: '3m', l: '3 meses' }, { k: '6m', l: '6 meses' }, { k: '12m', l: '1 año' }, { k: 'all', l: 'Todo' }]"
+              v-for="opt in [
+                { k: '3m', l: '3 meses' },
+                { k: '6m', l: '6 meses' },
+                { k: '12m', l: '1 año' },
+                { k: 'all', l: 'Todo' },
+              ]"
               :key="opt.k"
               :class="['mc-period-btn', { active: yearFilter === null && periodFilter === opt.k }]"
               @click="setFilter(opt.k as any)"
-            >{{ opt.l }}</button>
+            >
+              {{ opt.l }}
+            </button>
           </div>
         </div>
 
         <div v-if="availableYears.length > 0" class="mc-filters__right">
           <span class="mc-filters__label">Año:</span>
           <div class="mc-year-btns">
-            <button
-              v-for="y in availableYears"
-              :key="y"
-              :class="['mc-period-btn', { active: yearFilter === y }]"
-              @click="setYear(y)"
-            >{{ y }}</button>
+            <button v-for="y in availableYears" :key="y" :class="['mc-period-btn', { active: yearFilter === y }]" @click="setYear(y)">
+              {{ y }}
+            </button>
           </div>
         </div>
       </div>
@@ -301,18 +303,14 @@ const setYear = (y: number) => {
             <p class="mc-level-card__title">Nivel de Consumo Actual</p>
             <p class="mc-level-card__sub">Basado en tu último período vs. tu promedio histórico</p>
           </div>
-          <span
-            class="mc-level-badge"
-            :style="{ color: consumptionLevel.color, background: consumptionLevel.bg }"
-          >{{ consumptionLevel.label }}</span>
+          <span class="mc-level-badge" :style="{ color: consumptionLevel.color, background: consumptionLevel.bg }">{{
+            consumptionLevel.label
+          }}</span>
         </div>
 
         <div class="mc-level-bar-wrap">
           <div class="mc-level-bar">
-            <div
-              class="mc-level-bar__fill"
-              :style="{ width: barPercent + '%', background: consumptionLevel.color }"
-            ></div>
+            <div class="mc-level-bar__fill" :style="{ width: barPercent + '%', background: consumptionLevel.color }"></div>
           </div>
           <span class="mc-level-bar__pct">{{ barPercent }}%</span>
         </div>
@@ -325,7 +323,14 @@ const setYear = (y: number) => {
         </div>
 
         <p class="mc-level-tip">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
           {{ consumptionLevel.tip }}
         </p>
       </div>
@@ -335,9 +340,7 @@ const setYear = (y: number) => {
         <div class="mc-chart-card__header">
           <div>
             <h3>Tendencia de Consumo</h3>
-            <p class="mc-chart-card__sub">
-              {{ filteredInvoices.length }} períodos — consumo en m³ por facturación
-            </p>
+            <p class="mc-chart-card__sub">{{ filteredInvoices.length }} períodos — consumo en m³ por facturación</p>
           </div>
         </div>
 
@@ -423,9 +426,22 @@ const setYear = (y: number) => {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.mc-error__icon { font-size: 3rem; margin-bottom: 16px; }
-.mc-error h3 { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin: 0 0 8px; }
-.mc-error p { color: #64748b; font-size: 0.9rem; max-width: 400px; margin: 0 auto; }
+.mc-error__icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+.mc-error h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+.mc-error p {
+  color: #64748b;
+  font-size: 0.9rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
 
 /* Filters */
 .mc-filters {
@@ -473,7 +489,10 @@ const setYear = (y: number) => {
   transition: all 0.18s;
 }
 
-.mc-period-btn:hover { border-color: #0077be; color: #0077be; }
+.mc-period-btn:hover {
+  border-color: #0077be;
+  color: #0077be;
+}
 .mc-period-btn.active {
   background: #0077be;
   border-color: #0077be;
@@ -488,8 +507,16 @@ const setYear = (y: number) => {
   gap: 14px;
 }
 
-@media (max-width: 900px) { .mc-stat-cards { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .mc-stat-cards { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .mc-stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .mc-stat-cards {
+    grid-template-columns: 1fr;
+  }
+}
 
 .mc-stat-card {
   background: white;
@@ -502,10 +529,18 @@ const setYear = (y: number) => {
   border-left: 4px solid transparent;
 }
 
-.mc-stat-card--last  { border-left-color: #0077be; }
-.mc-stat-card--avg   { border-left-color: #8b5cf6; }
-.mc-stat-card--max   { border-left-color: #ef4444; }
-.mc-stat-card--min   { border-left-color: #10b981; }
+.mc-stat-card--last {
+  border-left-color: #0077be;
+}
+.mc-stat-card--avg {
+  border-left-color: #8b5cf6;
+}
+.mc-stat-card--max {
+  border-left-color: #ef4444;
+}
+.mc-stat-card--min {
+  border-left-color: #10b981;
+}
 
 .mc-stat-card__icon {
   font-size: 1.6rem;
@@ -614,10 +649,22 @@ const setYear = (y: number) => {
   border-radius: 99px;
 }
 
-.zone--green  { background: #d1fae5; color: #065f46; }
-.zone--blue   { background: #dbeafe; color: #1e40af; }
-.zone--orange { background: #fef3c7; color: #92400e; }
-.zone--red    { background: #fee2e2; color: #991b1b; }
+.zone--green {
+  background: #d1fae5;
+  color: #065f46;
+}
+.zone--blue {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.zone--orange {
+  background: #fef3c7;
+  color: #92400e;
+}
+.zone--red {
+  background: #fee2e2;
+  color: #991b1b;
+}
 
 .mc-level-tip {
   display: flex;
@@ -741,8 +788,12 @@ const setYear = (y: number) => {
   color: #1e293b;
 }
 
-.mc-readings-table tbody tr:last-child td { border-bottom: none; }
-.mc-readings-table tbody tr:hover { background: #f8fafc; }
+.mc-readings-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.mc-readings-table tbody tr:hover {
+  background: #f8fafc;
+}
 
 .mc-reading-val {
   font-weight: 700;
@@ -758,5 +809,9 @@ const setYear = (y: number) => {
 }
 
 /* Animation */
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 </style>

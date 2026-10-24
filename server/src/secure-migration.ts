@@ -1,3 +1,5 @@
+import { WhatsappAccounts1792819200000 } from './migrations/1792819200000-WhatsappAccounts';
+import { AdminExperience1792882800000 } from './migrations/1792882800000-AdminExperience';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { SecureMobile1791158400000 } from './migrations/1791158400000-SecureMobile';
@@ -18,7 +20,7 @@ async function main() {
     synchronize: false,
     migrationsRun: false,
     logging: false,
-    migrations: [SecureMobile1791158400000, FieldSecurity1792796400000],
+    migrations: [SecureMobile1791158400000, FieldSecurity1792796400000, AdminExperience1792882800000, WhatsappAccounts1792819200000],
     migrationsTableName: 'watsolution_security_migrations',
     ssl: process.env.MIGRATION_TLS === 'required' ? { rejectUnauthorized: true } : undefined,
   });
