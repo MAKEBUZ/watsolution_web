@@ -291,3 +291,8 @@
     background: white;
   }
 }
+
+/* Shared admin navigation accommodates the complete administration menu. */
+.ws-interface .admin-sidebar .nav-item { white-space: normal; }
+.ws-interface .admin-sidebar .nav-item > span { line-height: 1.35; }
+.ws-interface .admin-sidebar .sidebar-nav { overflow-y: auto; min-height: 0; }

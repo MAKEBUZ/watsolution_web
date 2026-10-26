@@ -25,7 +25,8 @@ export class RecordAccessGuard implements CanActivate {
     } else if (req.route.path.startsWith('/api/meters')) {
       person = (await this.db.getRepository(Meter).findOne({ where: { id }, relations: { person: true } }))?.person;
     }
-    if (!person || person.userId !== String(req.user.id)) throw new ForbiddenException();
+    const operator = req.user.authorities?.includes('ROLE_OPERATOR') && person?.assignedOperatorId === req.user.id;
+    if (!person || (!operator && person.userId !== String(req.user.id))) throw new ForbiddenException();
     return true;
   }
 }

@@ -6,12 +6,23 @@ import { AuthSession } from '../domain/auth-session.entity';
 @Injectable()
 export class SessionService {
   constructor(private readonly db: DataSource) {}
-  private hash(token: string) { return createHash('sha256').update(token).digest('hex'); }
+  private hash(token: string) {
+    return createHash('sha256').update(token).digest('hex');
+  }
 
-  async create(userId: number) {
+  async create(userId: number, mfaVerified = false) {
     const id = randomUUID();
     const refreshToken = `${id}.${randomBytes(48).toString('base64url')}`;
-    await this.db.getRepository(AuthSession).save({ id, userId, refreshHash: this.hash(refreshToken), expiresAt: new Date(Date.now() + 7 * 86400000), revoked: false });
+    await this.db
+      .getRepository(AuthSession)
+      .save({
+        id,
+        userId,
+        refreshHash: this.hash(refreshToken),
+        expiresAt: new Date(Date.now() + 7 * 86400000),
+        revoked: false,
+        mfaVerified,
+      });
     return { id, refreshToken };
   }
 
@@ -22,7 +33,8 @@ export class SessionService {
   }
 
   async rotate(token: string) {
-    if (typeof token !== 'string' || token.length > 256 || !/^[0-9a-f-]{36}\.[A-Za-z0-9_-]{64}$/.test(token)) throw new UnauthorizedException();
+    if (typeof token !== 'string' || token.length > 256 || !/^[0-9a-f-]{36}\.[A-Za-z0-9_-]{64}$/.test(token))
+      throw new UnauthorizedException();
     const id = token.split('.')[0];
     const replacement = `${id}.${randomBytes(48).toString('base64url')}`;
     const result = await this.db.transaction(async manager => {
@@ -33,10 +45,17 @@ export class SessionService {
       const used: string[] = JSON.parse(session.usedRefreshHashes || '[]');
       if (session.refreshHash !== supplied) {
         // Only a proven replay may revoke a family. Knowing a session ID is insufficient.
-        if (used.includes(supplied)) { session.revoked = true; await repo.save(session); }
+        if (used.includes(supplied)) {
+          session.revoked = true;
+          await repo.save(session);
+        }
         return null;
       }
-      if (used.length >= 1000) { session.revoked = true; await repo.save(session); return null; }
+      if (used.length >= 1000) {
+        session.revoked = true;
+        await repo.save(session);
+        return null;
+      }
       used.push(supplied);
       session.usedRefreshHashes = JSON.stringify(used);
       session.refreshHash = this.hash(replacement);
@@ -62,6 +81,10 @@ export class SessionService {
     });
   }
 
-  async revoke(id: string, userId: number) { await this.db.getRepository(AuthSession).update({ id, userId }, { revoked: true }); }
-  async revokeAll(userId: number) { await this.db.getRepository(AuthSession).update({ userId }, { revoked: true }); }
+  async revoke(id: string, userId: number) {
+    await this.db.getRepository(AuthSession).update({ id, userId }, { revoked: true });
+  }
+  async revokeAll(userId: number) {
+    await this.db.getRepository(AuthSession).update({ userId }, { revoked: true });
+  }
 }

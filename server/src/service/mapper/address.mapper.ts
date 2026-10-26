@@ -1,5 +1,6 @@
 import { Address } from '../../domain/address.entity';
 import { AddressDTO } from '../dto/address.dto';
+import { pickFields } from '../../security/entity-input';
 
 /**
  * A Address mapper object.
@@ -10,10 +11,7 @@ export class AddressMapper {
       return;
     }
     const entity = new Address();
-    const fields = Object.getOwnPropertyNames(entityDTO);
-    fields.forEach(field => {
-      entity[field] = entityDTO[field];
-    });
+    Object.assign(entity, pickFields(entityDTO, ['id', 'neighborhood', 'street', 'houseNumber', 'city', 'latitude', 'longitude']));
     return entity;
   }
 

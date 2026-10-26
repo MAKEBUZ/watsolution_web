@@ -1,4 +1,5 @@
 import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
+import { matchingId } from '../../security/entity-input';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -67,7 +68,8 @@ export class ReporteController {
   @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Update reporte' })
   @ApiResponse({ status: 200, description: 'Updated.', type: ReporteDTO })
-  async putId(@Req() req: Request, @Body() reporteDTO: ReporteDTO): Promise<ReporteDTO> {
+  async putId(@Req() req: Request, @Body() reporteDTO: ReporteDTO, @Param('id') id: string): Promise<ReporteDTO> {
+    reporteDTO.id = matchingId(reporteDTO, id);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Reporte', reporteDTO.id);
     return await this.reporteService.update(reporteDTO, req.user?.login);
   }

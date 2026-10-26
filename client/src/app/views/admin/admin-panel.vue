@@ -1,53 +1,59 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import { ref, onMounted, onUnmounted } from 'vue';
 
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
-const isSidebarOpen = ref(true)
-const isMobile = ref(false)
+const router = useRouter();
+const route = useRoute();
+const accountStore = useAccountStore();
+const isSidebarOpen = ref(true);
+const isMobile = ref(false);
 
 const menuItems = [
-  { name: 'Resumen', routeName: 'admin-summary', icon: 'tachometer-alt' },
-  { name: 'Usuarios', routeName: 'admin-users', icon: 'users' },
-  { name: 'Facturación', routeName: 'admin-billing', icon: 'file-invoice-dollar' },
-  { name: 'Noticias', routeName: 'admin-news', icon: 'newspaper' },
-]
+  { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
+  { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
+  { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
+  { name: 'Facturación en punto físico', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
+  { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
+  { name: 'Pruebas de WhatsApp', routeName: 'AdminWhatsapp', icon: 'comment-alt' },
+  { name: 'Testimonios', routeName: 'AdminTestimonios', icon: 'quote-left' },
+  { name: 'Mapa y recorridos', routeName: 'AdminRecorridos', icon: 'map-marker-alt' },
+  { name: 'Notificaciones', routeName: 'Notificaciones', icon: 'bell' },
+  { name: 'Portal de usuarios', routeName: 'PortalDashboard', icon: 'home' },
+];
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/')
-}
+  accountStore.logout();
+  router.push('/');
+};
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
+  isMobile.value = window.innerWidth <= 1024;
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   } else {
-    isSidebarOpen.value = true
+    isSidebarOpen.value = true;
   }
-}
+};
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  handleResize()
-})
+  window.addEventListener('resize', handleResize);
+  handleResize();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
+  window.removeEventListener('resize', handleResize);
+});
 
 const closeSidebarOnMobile = () => {
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   }
-}
+};
 </script>
 
 <template>
@@ -64,12 +70,12 @@ const closeSidebarOnMobile = () => {
       </div>
 
       <nav class="sidebar-nav">
-        <router-link 
-          v-for="item in menuItems" 
-          :key="item.routeName" 
+        <router-link
+          v-for="item in menuItems"
+          :key="item.routeName"
           :to="{ name: item.routeName }"
           class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
+          :class="{ active: route.name === item.routeName }"
           @click="closeSidebarOnMobile"
         >
           <div class="nav-icon-container">
@@ -82,7 +88,9 @@ const closeSidebarOnMobile = () => {
 
       <div class="sidebar-footer">
         <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="avatar">
+            {{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}
+          </div>
           <div class="info" v-if="isSidebarOpen || isMobile">
             <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
             <span class="role">Administrador Principal</span>
@@ -141,9 +149,23 @@ const closeSidebarOnMobile = () => {
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
-    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+    .logo-text,
+    .nav-item span,
+    .chevron,
+    .logout-btn span,
+    .home-btn span {
+      display: none;
+    }
+    .nav-item,
+    .logout-btn,
+    .home-btn {
+      justify-content: center;
+      padding: 1rem;
+    }
+    .sidebar-header {
+      justify-content: center;
+      padding: $spacing-md 0;
+    }
   }
 
   &.is-mobile {
@@ -154,10 +176,10 @@ const closeSidebarOnMobile = () => {
     width: 280px;
     transform: translateX(0);
     z-index: 2000;
-    
+
     &.is-closed {
       transform: translateX(-100%);
-      width: 280px; 
+      width: 280px;
     }
   }
 }
@@ -170,21 +192,23 @@ const closeSidebarOnMobile = () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   min-height: 70px;
 
-  .logo-text { 
-    font-size: 1.15rem; 
+  .logo-text {
+    font-size: 1.15rem;
     color: $color-primary-light;
     font-weight: 700;
     letter-spacing: -0.5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    strong { color: $color-secondary; }
+    strong {
+      color: $color-secondary;
+    }
   }
 
-  .toggle-btn { 
-    background: rgba(255, 255, 255, 0.1); 
-    border: none; 
-    color: white; 
+  .toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -196,7 +220,10 @@ const closeSidebarOnMobile = () => {
     flex-shrink: 0;
     margin-left: $spacing-xs;
 
-    &:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
   }
 }
 
@@ -229,7 +256,8 @@ const closeSidebarOnMobile = () => {
     flex-shrink: 0;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: white;
     background: rgba(255, 255, 255, 0.05);
   }
@@ -240,7 +268,10 @@ const closeSidebarOnMobile = () => {
     background: rgba($color-primary, 0.1);
   }
 
-  .chevron { margin-left: auto; opacity: 0.5; }
+  .chevron {
+    margin-left: auto;
+    opacity: 0.5;
+  }
 }
 
 .sidebar-footer {
@@ -261,7 +292,10 @@ const closeSidebarOnMobile = () => {
   border-radius: 8px;
   white-space: nowrap;
   margin-bottom: 4px;
-  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+  }
 }
 
 .logout-btn {
@@ -276,7 +310,9 @@ const closeSidebarOnMobile = () => {
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .admin-main {
@@ -316,8 +352,17 @@ const closeSidebarOnMobile = () => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 

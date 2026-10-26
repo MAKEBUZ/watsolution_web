@@ -8,15 +8,23 @@ import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import { config } from './config';
 import { configureHttpSecurity } from './security/http-security';
+import { configureAuthTraffic } from './security/auth-traffic';
+import { LoginRateLimitService } from './security/login-rate-limit.service';
 const logger: Logger = new Logger('Main');
 const port = process.env.PORT || process.env.NODE_SERVER_PORT || config.get('server.port');
 
-
 async function bootstrap(): Promise<void> {
-
-
-
-  const appOptions = { rawBody: true, cors: { origin: (process.env.WEB_ORIGINS ?? '').split(',').map(v => v.trim()).filter(Boolean), credentials: true, exposedHeaders: ['Authorization'] } };
+  const appOptions = {
+    rawBody: true,
+    cors: {
+      origin: (process.env.WEB_ORIGINS ?? '')
+        .split(',')
+        .map(v => v.trim())
+        .filter(Boolean),
+      credentials: true,
+      exposedHeaders: ['Authorization'],
+    },
+  };
   const app = await NestFactory.create(AppModule, appOptions);
   app.useWebSocketAdapter(new IoAdapter(app));
   app.useGlobalPipes(
@@ -27,6 +35,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
   configureHttpSecurity(app.getHttpAdapter().getInstance());
+  configureAuthTraffic(app.getHttpAdapter().getInstance(), app.get(LoginRateLimitService));
 
   const staticClientPath = config.getClientPath();
   if (fs.existsSync(staticClientPath)) {

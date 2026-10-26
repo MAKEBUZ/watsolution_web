@@ -20,8 +20,7 @@ export const createRouter = () =>
       {
         path: '/forbidden',
         name: 'Forbidden',
-        component: Error,
-        meta: { error403: true },
+        component: Home,
       },
       {
         path: '/not-found',

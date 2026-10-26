@@ -20,8 +20,8 @@ describe('Mobile assignment', () => {
   function fixture(person: unknown = { id: 7 }, operator: unknown = { authorities: [{ name: 'ROLE_OPERATOR' }] }) {
     const people = { findOne: jest.fn(async () => person), update: jest.fn() };
     const users = { findOne: jest.fn(async () => operator) };
-    const db = { transaction: jest.fn(async work => work({ getRepository: type => type === Person ? people : users })) };
-    return { controller: new MobileController(null, db as any), people, users, db };
+    const db = { transaction: jest.fn(async work => work({ getRepository: type => (type === Person ? people : users) })) };
+    return { controller: new MobileController(null, db as any, null), people, users, db };
   }
   it('serializes assignment against capture using the person row', async () => {
     const f = fixture();

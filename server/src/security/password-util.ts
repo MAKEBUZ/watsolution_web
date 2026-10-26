@@ -1,12 +1,12 @@
-import { compareSync, hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { config } from '../config';
 
 export const encodePassword = async (password: string): Promise<string> => {
   return hash(password, config.get('jhipster.security.authentication.jwt.hash-salt-or-rounds'));
 };
 
-export const comparePassword = (password: string, hash: string): boolean => {
-  return compareSync(password, hash);
+export const comparePassword = (password: string, hash: string): Promise<boolean> => {
+  return compare(password, hash);
 };
 
 export async function transformPassword<const T extends { password?: string }>(user: T): Promise<T> {

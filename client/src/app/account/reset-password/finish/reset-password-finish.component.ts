@@ -13,8 +13,8 @@ export default defineComponent({
       resetAccount: {
         newPassword: {
           required,
-          minLength: minLength(4),
-          maxLength: maxLength(254),
+          minLength: minLength(12),
+          maxLength: maxLength(72),
         },
         confirmPassword: {
           sameAsPassword: sameAs(this.resetAccount.newPassword),
@@ -23,6 +23,11 @@ export default defineComponent({
     };
   },
   created(): void {
+    const fragment = new URLSearchParams(window.location.hash.slice(1)).get('key');
+    if (fragment) {
+      this.key = fragment;
+      window.history.replaceState(window.history.state, '', window.location.pathname);
+    }
     if (this.$route?.query?.key !== undefined) {
       this.key = this.$route.query.key;
     }
@@ -39,6 +44,7 @@ export default defineComponent({
     const resetAccount: Ref<any> = ref({
       newPassword: null,
       confirmPassword: null,
+      code: '',
     });
 
     const openLogin = () => {
@@ -66,7 +72,11 @@ export default defineComponent({
         this.doNotMatch = 'ERROR';
       } else {
         return axios
-          .post('api/account/reset-password/finish', { key: this.key, newPassword: this.resetAccount.newPassword })
+          .post('api/account/reset-password/finish', {
+            key: this.key,
+            newPassword: this.resetAccount.newPassword,
+            code: this.resetAccount.code,
+          })
           .then(() => {
             this.success = 'OK';
           })

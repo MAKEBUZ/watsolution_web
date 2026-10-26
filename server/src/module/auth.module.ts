@@ -14,6 +14,10 @@ import { Authority } from '../domain/authority.entity';
 
 import { PublicUserController } from '../web/rest/public.user.controller';
 import { AccountController } from '../web/rest/account.controller';
+import { MfaService } from '../security/mfa.service';
+import { MfaController } from '../web/rest/mfa.controller';
+import { AccountRecoveryService } from '../security/account-recovery.service';
+import { AccountRecoveryController } from '../web/rest/account-recovery.controller';
 
 @Module({
   imports: [
@@ -25,8 +29,8 @@ import { AccountController } from '../web/rest/account.controller';
       signOptions: { expiresIn: jwtSettings.expiresIn, issuer: jwtSettings.issuer, audience: jwtSettings.audience, algorithm: 'HS256' },
     }),
   ],
-  controllers: [UserJWTController, PublicUserController, AccountController, SessionController],
-  providers: [AuthService, JwtStrategy, SessionService, LoginRateLimitService],
+  controllers: [UserJWTController, PublicUserController, AccountController, SessionController, MfaController, AccountRecoveryController],
+  providers: [AuthService, JwtStrategy, SessionService, LoginRateLimitService, MfaService, AccountRecoveryService],
   exports: [AuthService, SessionService],
 })
 export class AuthModule {}

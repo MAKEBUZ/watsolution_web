@@ -10,10 +10,10 @@ COPY . .
 RUN STANDALONE=true npm run vite-build
 
 # ── Stage 2: serve with nginx ────────────────────────────────
-FROM nginx:1.27-alpine
+FROM nginx:1.30.6-alpine@sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951
 
 # gettext provides envsubst for runtime template substitution
-RUN apk add --no-cache gettext ca-certificates
+RUN apk add --no-cache gettext ca-certificates && apk upgrade --no-cache brotli-libs
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
@@ -25,6 +25,6 @@ RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
 
-# BACKEND_URL must be set in Railway → client service → Variables tab
-# Example: BACKEND_URL = https://your-backend.up.railway.app
+# Set BACKEND_URL to the HTTPS API origin when using the bundled proxy.
+# The AWS Compose deployment supplies its own internal reverse proxy.
 CMD ["/docker-entrypoint.sh"]

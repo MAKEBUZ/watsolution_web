@@ -1,4 +1,10 @@
+import { WhatsappAccounts1792819200000 } from './migrations/1792819200000-WhatsappAccounts';
+import { Testimonial } from './domain/testimonial.entity';
+import { AdminExperience1792882800000 } from './migrations/1792882800000-AdminExperience';
 import { AuthSession } from './domain/auth-session.entity';
+import { AccountMfa } from './domain/account-mfa.entity';
+import { BillingTariff } from './domain/billing-tariff.entity';
+import { FieldSecurity1792796400000 } from './migrations/1792796400000-FieldSecurity';
 import { MobileOperation } from './domain/mobile-operation.entity';
 import { SecureMobile1791158400000 } from './migrations/1791158400000-SecureMobile';
 import { Logger } from '@nestjs/common';
@@ -31,7 +37,7 @@ function ormConfig(): TypeOrmModuleOptions {
   if (backendEnv === 'prod') {
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) {
-      ormLogger.error('DATABASE_URL is not set! Add it in Railway → service → Variables tab as ${{Postgres.DATABASE_URL}}');
+      ormLogger.error('DATABASE_URL is required in the private server environment.');
     } else {
       ormLogger.log('Database configuration loaded');
     }
@@ -79,7 +85,10 @@ function ormConfig(): TypeOrmModuleOptions {
     synchronize: backendEnv === 'test',
     migrationsRun: backendEnv === 'test',
     entities: [
+      Testimonial,
       AuthSession,
+      AccountMfa,
+      BillingTariff,
       MobileOperation,
       User,
       Authority,
@@ -102,6 +111,9 @@ function ormConfig(): TypeOrmModuleOptions {
       AddDocumentEmbeddings1749000000001,
       AddNotifications1749100000000,
       SecureMobile1791158400000,
+      FieldSecurity1792796400000,
+      AdminExperience1792882800000,
+      WhatsappAccounts1792819200000,
       // jhipster-needle-add-migration-to-ormconfig-migrations - JHipster will add code here, do not remove
     ],
     autoLoadEntities: true,

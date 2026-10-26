@@ -9,11 +9,18 @@
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <Header v-if="!isAdminRoute" />
     <main id="main-content" tabindex="-1" :class="['main-content', { 'no-header': isAdminRoute }]">
+      <div v-if="route.query.access === 'restricted'" role="status" class="logout-feedback alert alert-info">
+        Esa sección está reservada a otro tipo de cuenta. Puedes continuar desde aquí.
+        <button class="btn btn-outline-dark" @click="dismissAccessNotice">Entendido</button>
+      </div>
       <div v-if="accountStore.logoutStatus === 'pending'" role="status" class="logout-feedback alert alert-info">
         Cerrando la sesión en el servidor… Tus datos ya no se muestran en este navegador.
       </div>
       <div v-if="accountStore.logoutStatus === 'failed'" role="alert" class="logout-feedback alert alert-warning">
-        <span>No pudimos confirmar el cierre en el servidor. Tus datos ya no se muestran aquí. Puedes reintentarlo o volver a iniciar sesión.</span>
+        <span
+          >No pudimos confirmar el cierre en el servidor. Tus datos ya no se muestran aquí. Puedes reintentarlo o volver a iniciar
+          sesión.</span
+        >
         <div class="logout-feedback__actions">
           <button type="button" class="btn btn-warning" @click="accountStore.logout()">Reintentar cierre de sesión</button>
           <router-link v-if="route.path !== '/login'" to="/login" class="btn btn-outline-dark">Ir a iniciar sesión</router-link>
@@ -23,7 +30,7 @@
       <router-view v-if="!requiresAuthentication || accountStore.authenticated"></router-view>
     </main>
     <Footer v-if="!isAdminRoute && !isWorkspaceRoute" />
-    <ChatBot v-if="!isAdminRoute && !isWorkspaceRoute" />
+    <ChatBot />
   </div>
 </template>
 
@@ -70,6 +77,7 @@ export default defineComponent({
       isWorkspaceRoute: computed(() => ['/portal', '/pagos'].includes(route.path)),
       isAdminRoute,
       requiresAuthentication,
+      dismissAccessNotice: () => { const query = { ...route.query }; delete query.access; void router.replace({ query }); },
     };
   },
 });

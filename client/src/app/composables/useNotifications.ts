@@ -34,11 +34,16 @@ export const useNotificationStore = defineStore('notifications', () => {
     if (!login) return;
     try {
       const current = generation;
-      const res = await axios.get<AppNotification[]>('api/notifications');
+      const [res, count] = await Promise.all([
+        axios.get<AppNotification[]>('api/notifications'),
+        axios.get('api/notifications/unread-count'),
+      ]);
       if (current !== generation) return;
       notifications.value = res.data;
-      unreadCount.value = res.data.filter(n => !n.read).length;
-    } catch {}
+      unreadCount.value = count.data.count;
+    } catch {
+      /* Retain the last known notifications; the full page exposes retry errors. */
+    }
   }
 
   async function markAllRead() {
@@ -50,12 +55,16 @@ export const useNotificationStore = defineStore('notifications', () => {
       if (current !== generation) return;
       notifications.value = notifications.value.map(n => ({ ...n, read: true }));
       unreadCount.value = 0;
-    } catch {}
+    } catch {
+      /* Retain the last known notifications; the full page exposes retry errors. */
+    }
   }
 
   function connect() {
     clearInterval(poll);
-    poll = setInterval(() => { if (getToken()) void fetchAll(); }, 30000);
+    poll = setInterval(() => {
+      if (getToken()) void fetchAll();
+    }, 30000);
   }
 
   function disconnect() {
@@ -67,7 +76,7 @@ export const useNotificationStore = defineStore('notifications', () => {
 
   watch(
     () => accountStore.authenticated,
-    (authenticated) => {
+    authenticated => {
       if (authenticated) {
         fetchAll();
         connect();

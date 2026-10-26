@@ -4,6 +4,7 @@ import axios from 'axios';
 import { openDocumentUrl } from '@/shared/security/safe-navigation';
 import type { IInvoice } from '@/shared/model/invoice.model';
 
+const props = defineProps<{ personId?: number }>();
 const invoices = ref<IInvoice[]>([]);
 const loading = ref(false);
 const error = ref('');
@@ -59,7 +60,7 @@ onMounted(async () => {
   loading.value = true;
   error.value = '';
   try {
-    const personRes = await axios.get('api/people/me');
+    const personRes = props.personId ? { data: { id: props.personId } } : await axios.get('api/people/me');
     const personId = personRes.data?.id;
     if (!personId) {
       error.value = 'No tienes un perfil de suscriptor vinculado a tu cuenta. Contacta al administrador.';

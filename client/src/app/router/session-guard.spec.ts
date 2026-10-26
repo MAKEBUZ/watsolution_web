@@ -15,6 +15,8 @@ describe('Session navigation', () => {
     const router = createRouter({ history: createMemoryHistory(), routes: [
       { path: '/', component }, { path: '/login', component }, { path: '/forbidden', component },
       { path: '/private', component, meta: { authorities: ['ROLE_ADMIN'] } },
+      { path: '/portal', component, meta: { authorities: ['ROLE_USER'] } },
+      { path: '/admin/resumen', component, meta: { authorities: ['ROLE_ADMIN'] } },
     ] });
     router.beforeResolve(createSessionGuard(store, accounts));
     return { store, accounts, router };
@@ -53,9 +55,29 @@ describe('Session navigation', () => {
     const { store, router } = fixture();
     vi.spyOn(store, 'initAccount').mockImplementation(async () => { store.setAuthentication({ authorities: ['ROLE_USER'] }); });
     await router.push('/private');
-    expect(router.currentRoute.value.path).toBe('/forbidden');
+    expect(router.currentRoute.value.path).toBe('/portal');
+    expect(router.currentRoute.value.query.access).toBe('restricted');
     store.setAuthentication({ authorities: ['ROLE_ADMIN'] });
     await router.push('/private');
     expect(router.currentRoute.value.path).toBe('/private');
+  });
+  it('lets an admin without ROLE_USER enter the user portal', async () => {
+    const { store, router } = fixture();
+    store.setAuthentication({ authorities: ['ROLE_ADMIN'] });
+    await router.push('/portal');
+    expect(router.currentRoute.value.path).toBe('/portal');
+  });
+  it.each([['ROLE_ADMIN', '/admin/resumen'], ['ROLE_USER', '/portal'], ['ROLE_OPERATOR', '/']])('recovers old forbidden links for %s', async (role, destination) => {
+    const { store, router } = fixture();
+    store.setAuthentication({ authorities: [role] });
+    await router.push('/forbidden');
+    expect(router.currentRoute.value.path).toBe(destination);
+  });
+  it('recovers anonymous forbidden links without redirect loops', async () => {
+    const { store, router } = fixture();
+    vi.spyOn(store, 'initAccount').mockResolvedValue(undefined);
+    await router.push('/forbidden');
+    expect(router.currentRoute.value.path).toBe('/login');
+    expect(router.currentRoute.value.query.redirect).toBeUndefined();
   });
 });

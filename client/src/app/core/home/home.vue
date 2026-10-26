@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useAccountStore } from '@/shared/config/store/account-store';
 import { useRouter } from 'vue-router';
 import WaterNetwork from '@/core/water/water-network.vue';
 import WaterJourney from '@/core/water/water-journey.vue';
@@ -32,25 +35,18 @@ const features = [
   },
 ];
 
-const testimonials = [
-  {
-    name: 'Roberto Gómez',
-    role: 'Director de Operaciones',
-    company: 'Acueducto Metropolitano',
-    text: 'watsolution ha transformado nuestra capacidad de respuesta ante fugas. Hemos reducido las pérdidas técnicas en un 15% en solo seis meses.',
-    avatar: 'https://i.pravatar.cc/150?u=roberto',
-  },
-  {
-    name: 'Elena Martínez',
-    role: 'Ingeniera de Redes',
-    company: 'Aguas del Valle',
-    text: 'La facilidad de uso de la PWA nos permite que nuestros operarios en campo reporten incidencias con fotos y ubicación GPS en tiempo real.',
-    avatar: 'https://i.pravatar.cc/150?u=elena',
-  },
-];
+const testimonials = ref<any[]>([]);
+onMounted(async () => {
+  try {
+    testimonials.value = (await axios.get('api/public/testimonials')).data;
+  } catch {
+    testimonials.value = [];
+  }
+});
+const account = useAccountStore();
 
 const goToPortal = () => {
-  router.push('/login');
+  router.push(account.authenticated ? '/portal' : '/login');
 };
 </script>
 
@@ -166,12 +162,11 @@ const goToPortal = () => {
     </section>
 
     <!-- Testimonials Section -->
-    <section id="testimonios" class="testimonials">
-      <p role="note">Ejemplos ficticios de presentación; no son testimonios ni resultados operativos verificados.</p>
+    <section v-if="testimonials.length" id="testimonios" class="testimonials">
       <div class="container">
         <div class="testimonials__header">
-          <h2 class="testimonials__title">Ejemplos de presentación</h2>
-          <p class="testimonials__subtitle">Contenido ficticio utilizado para ilustrar el diseño del prototipo.</p>
+          <h2 class="testimonials__title">Voces de nuestra comunidad</h2>
+          <p class="testimonials__subtitle">Experiencias compartidas por quienes usan WatSolution.</p>
         </div>
 
         <div class="testimonials__grid">
@@ -179,7 +174,12 @@ const goToPortal = () => {
             <font-awesome-icon icon="quote-left" class="testimonial-card__quote" size="2x" />
             <p class="testimonial-card__text">{{ testimonial.text }}</p>
             <div class="testimonial-card__footer">
-              <img :src="testimonial.avatar" :alt="testimonial.name" class="testimonial-card__avatar" loading="lazy" />
+              <span
+                class="testimonial-card__avatar"
+                aria-hidden="true"
+                style="display: grid; place-items: center; background: #d9ede2; color: #176b61; font-weight: 700"
+                >{{ testimonial.name.slice(0, 1) }}</span
+              >
               <div class="testimonial-card__info">
                 <h4 class="testimonial-card__name">{{ testimonial.name }}</h4>
                 <p class="testimonial-card__role">{{ testimonial.role }}, {{ testimonial.company }}</p>

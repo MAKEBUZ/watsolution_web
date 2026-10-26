@@ -1,5 +1,6 @@
 import { Noticia } from '../../domain/noticia.entity';
 import { NoticiaDTO } from '../dto/noticia.dto';
+import { pickFields } from '../../security/entity-input';
 
 export class NoticiaMapper {
   static fromDTOtoEntity(entityDTO: NoticiaDTO): Noticia {
@@ -7,10 +8,7 @@ export class NoticiaMapper {
       return;
     }
     const entity = new Noticia();
-    const fields = Object.getOwnPropertyNames(entityDTO);
-    fields.forEach(field => {
-      entity[field] = entityDTO[field];
-    });
+    Object.assign(entity, pickFields(entityDTO, ['id', 'title', 'summary', 'content', 'category', 'status', 'publishDate', 'imageUrl']));
     return entity;
   }
 

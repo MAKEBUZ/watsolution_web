@@ -5,7 +5,7 @@ import {
   Controller,
   Get,
   HttpCode,
-  InternalServerErrorException,
+  BadRequestException,
   Logger,
   Param,
   Post,
@@ -21,6 +21,8 @@ import { PasswordChangeDTO } from '../../service/dto/password-change.dto';
 import { UserDTO } from '../../service/dto/user.dto';
 import { LoggingInterceptor } from '../../client/interceptors/logging.interceptor';
 import { AuthService } from '../../service/auth.service';
+import { AccountRecoveryService } from '../../security/account-recovery.service';
+import { assertPassword } from '../../security/password-policy';
 
 @Controller('api')
 @UseInterceptors(LoggingInterceptor, ClassSerializerInterceptor)
@@ -28,9 +30,13 @@ import { AuthService } from '../../service/auth.service';
 export class AccountController {
   logger = new Logger('AccountController');
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly recovery: AccountRecoveryService,
+  ) {}
 
   @Post('/register')
+  @HttpCode(202)
   @ApiOperation({ summary: 'Register user' })
   @ApiResponse({
     status: 201,
@@ -38,7 +44,21 @@ export class AccountController {
     type: UserDTO,
   })
   async registerAccount(@Req() req: Request, @Body() userDTO: UserDTO & { password: string }): Promise<any> {
-    return await this.authService.registerNewUser({ login: userDTO.login, email: userDTO.email, password: userDTO.password, firstName: userDTO.firstName, lastName: userDTO.lastName, langKey: userDTO.langKey, activated: false });
+    assertPassword(userDTO.password, userDTO.login);
+    try {
+      await this.authService.registerNewUser({
+        login: userDTO.login,
+        email: userDTO.email,
+        password: userDTO.password,
+        firstName: userDTO.firstName,
+        lastName: userDTO.lastName,
+        langKey: userDTO.langKey,
+        activated: false,
+      });
+    } catch (error) {
+      if (!['Login name already used!', 'Email is already in use!'].includes(error?.message) && error?.code !== '23505') throw error;
+    }
+    return { message: 'Solicitud recibida. Contacta al administrador para verificar y activar tu acceso.' };
   }
 
   @Get('/activate')
@@ -51,7 +71,7 @@ export class AccountController {
     description: 'activated',
   })
   activateAccount(@Param() key: string, @Res() res: Response): any {
-    throw new InternalServerErrorException();
+    throw new BadRequestException('Solicita al administrador un enlace de activación y configuración de contraseña.');
   }
 
   @Get('/authenticate')
@@ -112,28 +132,15 @@ export class AccountController {
   }
 
   @Post('/account/reset-password/init')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Send an email to reset the password of the user' })
-  @ApiResponse({
-    status: 201,
-    description: 'mail to reset password sent',
-    type: 'string',
-  })
-  requestPasswordReset(@Req() req: Request, @Body() email: string, @Res() res: Response): any {
-    throw new InternalServerErrorException();
+  @HttpCode(202)
+  requestPasswordReset(): any {
+    // No configured delivery provider: never pretend an email was sent or enumerate accounts.
+    return { message: 'Contacta al administrador para verificar tu identidad y obtener un enlace privado de recuperación.' };
   }
 
   @Post('/account/reset-password/finish')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Finish to reset the password of the user' })
-  @ApiResponse({
-    status: 201,
-    description: 'password reset',
-    type: 'string',
-  })
-  finishPasswordReset(@Req() req: Request, @Body() keyAndPassword: string, @Res() res: Response): any {
-    throw new InternalServerErrorException();
+  @HttpCode(200)
+  finishPasswordReset(@Body() body: unknown): Promise<any> {
+    return this.recovery.finish(body);
   }
 }

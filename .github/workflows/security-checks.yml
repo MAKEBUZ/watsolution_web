@@ -5,16 +5,16 @@ on:
 permissions:
   contents: read
 jobs:
-  railway-images:
+  container-images:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - name: Build standalone Railway frontend with its lockfile
+      - name: Build standalone frontend with its lockfile
         run: docker build -f client/Dockerfile -t watsolution-client:ci client
-      - name: Build standalone Railway backend with its lockfile
+      - name: Build standalone backend with its lockfile
         run: docker build -f server/Dockerfile -t watsolution-server:ci server
   postgres-sessions:
     runs-on: ubuntu-24.04
@@ -86,7 +86,22 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts --no-fund
-      - run: npm audit --omit=dev --audit-level=high
+      - run: npm audit --include=dev --audit-level=low
+      - name: Audit standalone backend lockfile
+        run: npm audit --include=dev --audit-level=low --workspaces=false
+        working-directory: server
+      - name: Scan current tracked source for secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o "$RUNNER_TEMP/gitleaks.tar.gz"
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          mkdir "$RUNNER_TEMP/tracked-source"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/tracked-source"
+          "$RUNNER_TEMP/gitleaks" dir "$RUNNER_TEMP/tracked-source" --redact --no-banner
+      - name: Generate dependency inventory
+        run: node scripts/dependency-inventory.cjs > "$RUNNER_TEMP/watsolution-npm-sbom.json"
       - name: Audit frontend runtime and development tooling
         run: npm audit --workspace client --include=dev --audit-level=low
       - run: node node_modules/typescript/bin/tsc -p server/tsconfig.build.json --noEmit

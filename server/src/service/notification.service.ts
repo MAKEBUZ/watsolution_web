@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan, Between } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 import { Subject, Observable } from 'rxjs';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { Notification, NotificationType } from '../domain/notification.entity';
 import { Invoice } from '../domain/invoice.entity';
 import { User } from '../domain/user.entity';
@@ -25,7 +25,7 @@ export class NotificationService {
 
   private async resolveLogin(userId?: string): Promise<string | null> {
     if (!userId) return null;
-    const user = await this.userRepo.findOne({ where: { id: parseInt(userId, 10) } as any });
+    const user = await this.userRepo.findOne({ where: { id: parseInt(userId, 10) } });
     return user?.login ?? null;
   }
 
@@ -62,6 +62,28 @@ export class NotificationService {
     await this.notifRepo.update({ userLogin, read: false }, { read: true });
   }
 
+  async page(userLogin: string, page: number, size: number) {
+    const [items, total] = await this.notifRepo.findAndCount({
+      where: { userLogin },
+      order: { createdAt: 'DESC', id: 'DESC' },
+      skip: page * size,
+      take: size,
+    });
+    return { items, total };
+  }
+
+  async markRead(userLogin: string, id: number) {
+    await this.notifRepo.update({ userLogin, id }, { read: true });
+  }
+
+  async remove(userLogin: string, id: number) {
+    await this.notifRepo.delete({ userLogin, id });
+  }
+
+  async removeRead(userLogin: string) {
+    await this.notifRepo.delete({ userLogin, read: true });
+  }
+
   async countUnread(userLogin: string): Promise<number> {
     return this.notifRepo.count({ where: { userLogin, read: false } });
   }
@@ -92,7 +114,13 @@ export class NotificationService {
       const login = await this.resolveLogin(inv.person?.userId);
       if (!login) continue;
       const num = `FAC-${new Date(inv.issueDate).getFullYear()}-${String(inv.id).padStart(3, '0')}`;
-      await this.send(login, 'invoice.due_soon', 'Factura próxima a vencer', `Tu factura ${num} vence en 3 días. Evita recargos pagando a tiempo.`, inv.id);
+      await this.send(
+        login,
+        'invoice.due_soon',
+        'Factura próxima a vencer',
+        `Tu factura ${num} vence en 3 días. Evita recargos pagando a tiempo.`,
+        inv.id,
+      );
     }
 
     const overdue = await this.invoiceRepo.find({
@@ -104,7 +132,13 @@ export class NotificationService {
       const login = await this.resolveLogin(inv.person?.userId);
       if (!login) continue;
       const num = `FAC-${new Date(inv.issueDate).getFullYear()}-${String(inv.id).padStart(3, '0')}`;
-      await this.send(login, 'invoice.overdue', 'Factura vencida', `Tu factura ${num} está vencida. Realiza el pago para evitar suspensión del servicio.`, inv.id);
+      await this.send(
+        login,
+        'invoice.overdue',
+        'Factura vencida',
+        `Tu factura ${num} está vencida. Realiza el pago para evitar suspensión del servicio.`,
+        inv.id,
+      );
     }
 
     this.logger.log(`Cron done: ${dueSoon.length} due_soon, ${overdue.length} overdue`);

@@ -45,7 +45,7 @@ export class UserService {
       await transformPassword(user);
     }
     if (creator) {
-      if (!user.createdBy) {
+      if (!user.id) {
         user.createdBy = creator;
       }
       user.lastModifiedBy = creator;

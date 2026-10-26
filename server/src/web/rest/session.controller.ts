@@ -7,7 +7,10 @@ import { SessionService } from '../../service/session.service';
 
 @Controller('api/session')
 export class SessionController {
-  constructor(private readonly auth: AuthService, private readonly sessions: SessionService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly sessions: SessionService,
+  ) {}
 
   @Post('/refresh')
   async refresh(@Req() req: any, @Res({ passthrough: true }) res: Response, @Body() body: { refresh_token: string }) {
@@ -15,7 +18,10 @@ export class SessionController {
     const token = isWebSession(req) ? readRefreshCookie(req) : body?.refresh_token;
     if (!token) throw new UnauthorizedException();
     const result = await this.auth.refresh(token);
-    if (isWebSession(req)) { setRefreshCookie(res, result.refresh_token); return { id_token: result.id_token }; }
+    if (isWebSession(req)) {
+      setRefreshCookie(res, result.refresh_token);
+      return { id_token: result.id_token };
+    }
     return result;
   }
 
@@ -24,6 +30,8 @@ export class SessionController {
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     if (isWebSession(req)) {
       await this.sessions.revokeByRefresh(readRefreshCookie(req));
+    } else if (typeof req.body?.refresh_token === 'string') {
+      await this.sessions.revokeByRefresh(req.body.refresh_token);
     } else {
       await this.sessions.revoke(req.user.sessionId, req.user.id);
     }

@@ -1,4 +1,5 @@
 import { allowedSortFields } from '../../domain/base/allowed-sort-fields';
+import { matchingId } from '../../security/entity-input';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -97,7 +98,8 @@ export class AddressController {
     description: 'The record has been successfully updated.',
     type: AddressDTO,
   })
-  async putId(@Req() req: Request, @Body() addressDTO: AddressDTO): Promise<AddressDTO> {
+  async putId(@Req() req: Request, @Body() addressDTO: AddressDTO, @Param('id') id: string): Promise<AddressDTO> {
+    addressDTO.id = matchingId(addressDTO, id);
     HeaderUtil.addEntityCreatedHeaders(req.res, 'Address', addressDTO.id);
     return await this.addressService.update(addressDTO, req.user?.login);
   }

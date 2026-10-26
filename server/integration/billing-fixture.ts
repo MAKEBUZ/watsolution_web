@@ -9,28 +9,41 @@ import { MobileOperation } from '../src/domain/mobile-operation.entity';
 import { User } from '../src/domain/user.entity';
 import { Authority } from '../src/domain/authority.entity';
 import { AuthSession } from '../src/domain/auth-session.entity';
+import { BillingTariff } from '../src/domain/billing-tariff.entity';
+import { AccountMfa } from '../src/domain/account-mfa.entity';
 import { integrationTarget } from './target';
 
 export async function createBillingFixture() {
   const target = integrationTarget();
   const schema = `ws_test_${randomUUID().replace(/-/g, '')}`;
-  const db = new DataSource({ type: 'postgres', ...target, schema,
-    entities: [Invoice, Meter, Person, Address, ActivityLog, MobileOperation, User, Authority, AuthSession], synchronize: false,
-    migrationsRun: false, dropSchema: false, logging: false,
-    extra: { max: 24, connectionTimeoutMillis: 5000, application_name: schema, options: `-c search_path=${schema}` } });
+  const db = new DataSource({
+    type: 'postgres',
+    ...target,
+    schema,
+    entities: [Invoice, Meter, Person, Address, ActivityLog, MobileOperation, User, Authority, AuthSession, BillingTariff, AccountMfa],
+    synchronize: false,
+    migrationsRun: false,
+    dropSchema: false,
+    logging: false,
+    extra: { max: 24, connectionTimeoutMillis: 5000, application_name: schema, options: `-c search_path=${schema}` },
+  });
   let created = false;
   const close = async () => {
     if (!db.isInitialized) return;
     try {
       if (created && /^ws_test_[a-f0-9]{32}$/.test(schema)) await db.query(`DROP SCHEMA "${schema}" CASCADE`);
-    } finally { await db.destroy(); }
+    } finally {
+      await db.destroy();
+    }
   };
   try {
     await db.initialize();
     const [identity] = await db.query('SELECT current_database() AS db, current_user AS role');
     if (identity.db !== 'ws_integration' || identity.role !== 'ws_test') throw new Error('Unexpected database identity');
-    await db.query(`CREATE SCHEMA "${schema}"`); created = true;
-    const audit = '"createdBy" varchar, "createdDate" timestamp DEFAULT now(), "lastModifiedBy" varchar, "lastModifiedDate" timestamp DEFAULT now()';
+    await db.query(`CREATE SCHEMA "${schema}"`);
+    created = true;
+    const audit =
+      '"createdBy" varchar, "createdDate" timestamp DEFAULT now(), "lastModifiedBy" varchar, "lastModifiedDate" timestamp DEFAULT now()';
     // Explicit test schema. Never derive or synchronize a production schema here.
     await db.query(`CREATE TABLE "${schema}".address (
       id serial PRIMARY KEY, ${audit}, neighborhood varchar NOT NULL, street varchar, house_number varchar,
@@ -70,8 +83,18 @@ export async function createBillingFixture() {
     await db.query(`CREATE TABLE "${schema}".auth_session (
       id varchar(36) PRIMARY KEY, "userId" integer NOT NULL REFERENCES "${schema}".jhi_user(id),
       "refreshHash" varchar(64) NOT NULL, "usedRefreshHashes" text NOT NULL DEFAULT '[]',
-      "expiresAt" timestamp NOT NULL, revoked boolean NOT NULL DEFAULT false)`);
-    await db.query(`CREATE TABLE "${schema}".auth_rate_limit (key varchar PRIMARY KEY, attempts integer NOT NULL, expires_at bigint NOT NULL)`);
+      "expiresAt" timestamp NOT NULL, revoked boolean NOT NULL DEFAULT false, "mfaVerified" boolean NOT NULL DEFAULT false)`);
+    await db.query(
+      `CREATE TABLE "${schema}".auth_rate_limit (key varchar PRIMARY KEY, attempts integer NOT NULL, expires_at bigint NOT NULL)`,
+    );
+    await db.query(`CREATE TABLE "${schema}".billing_tariff (id varchar(36) PRIMARY KEY, rate numeric(10,2) NOT NULL,
+      "fixedCharge" numeric(10,2) NOT NULL, "createdAt" timestamp NOT NULL, "createdBy" varchar NOT NULL)`);
+    await db.query(`CREATE TABLE "${schema}".account_mfa ("userId" integer PRIMARY KEY, enabled boolean NOT NULL DEFAULT false,
+      "secretCipher" text, "pendingCipher" text, "pendingExpiresAt" timestamp, "lastStep" bigint NOT NULL DEFAULT -1,
+      "recoveryHashes" text NOT NULL DEFAULT '[]')`);
     return { db, schema, close };
-  } catch (error) { await close(); throw error; }
+  } catch (error) {
+    await close();
+    throw error;
+  }
 }

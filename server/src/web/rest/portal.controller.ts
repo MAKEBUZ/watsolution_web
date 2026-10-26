@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Controller, Get, Logger, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, Logger, Param, ParseIntPipe, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PortalDataDTO } from '../../service/dto/portal-data.dto';
 import { PortalService } from '../../service/portal.service';
@@ -15,6 +15,12 @@ export class PortalController {
   logger = new Logger('PortalController');
 
   constructor(private readonly portalService: PortalService) {}
+
+  @Get('/subscribers/:id')
+  @Roles(RoleType.ADMIN)
+  subscriber(@Param('id', ParseIntPipe) id: number) {
+    return this.portalService.getSubscriberPortal(id);
+  }
 
   @Get('/dashboard')
   @Roles(RoleType.USER)

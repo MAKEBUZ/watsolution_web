@@ -38,15 +38,23 @@ export class PortalService {
     const [person] = profiles;
 
     if (!person) {
-      throw new NotFoundException(
-        'No se encontró perfil de suscriptor para este usuario. Contacte al administrador.',
-      );
+      throw new NotFoundException('No se encontró perfil de suscriptor para este usuario. Contacte al administrador.');
     }
 
+    return this.forPerson(person);
+  }
+
+  async getSubscriberPortal(personId: number): Promise<PortalDataDTO> {
+    const person = await this.personRepository.findOne({ where: { id: personId }, relations: { address: true } });
+    if (!person) throw new NotFoundException('Suscriptor no encontrado.');
+    return this.forPerson(person);
+  }
+
+  private async forPerson(person: Person): Promise<PortalDataDTO> {
     // Most recent invoice (any status) — shown as "Factura Actual"
     const [latestInvoice] = await this.invoiceRepository.find({
       where: { person: { id: person.id } },
-      order: { issueDate: 'DESC' } as any,
+      order: { issueDate: 'DESC' },
       take: 1,
       relations: { meter: true, person: true },
     });
@@ -54,7 +62,7 @@ export class PortalService {
     // Last 5 invoices (any status)
     const invoiceHistory = await this.invoiceRepository.find({
       where: { person: { id: person.id } },
-      order: { issueDate: 'DESC' } as any,
+      order: { issueDate: 'DESC' },
       take: 5,
       relations: { meter: true, person: true },
     });
@@ -62,7 +70,7 @@ export class PortalService {
     // Latest meter reading value for this person
     const latestMeter = await this.meterRepository.findOne({
       where: { person: { id: person.id } },
-      order: { readingDate: 'DESC' } as any,
+      order: { readingDate: 'DESC' },
     });
     const monthlyConsumption = latestMeter ? parseFloat(String(latestMeter.waterMeasure)) : 0;
 

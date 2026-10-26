@@ -1,163 +1,251 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
-import axios from 'axios'
-import { openDocumentUrl } from '@/shared/security/safe-navigation'
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import axios from 'axios';
+import { openDocumentUrl } from '@/shared/security/safe-navigation';
 
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
+const router = useRouter();
+const route = useRoute();
+const accountStore = useAccountStore();
 
-const isSidebarOpen = ref(window.innerWidth > 1024)
-const isMobile = ref(window.innerWidth <= 1024)
+const isSidebarOpen = ref(window.innerWidth > 1024);
+const isMobile = ref(window.innerWidth <= 1024);
 
 const menuItems = [
   { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
   { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
   { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
-  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
+  { name: 'Facturación en punto físico', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
   { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-]
+  { name: 'Pruebas de WhatsApp', routeName: 'AdminWhatsapp', icon: 'comment-alt' },
+  { name: 'Testimonios', routeName: 'AdminTestimonios', icon: 'quote-left' },
+  { name: 'Mapa y recorridos', routeName: 'AdminRecorridos', icon: 'map-marker-alt' },
+  { name: 'Notificaciones', routeName: 'Notificaciones', icon: 'bell' },
+  { name: 'Portal de usuarios', routeName: 'PortalDashboard', icon: 'home' },
+];
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/login')
-}
+  accountStore.logout();
+  router.push('/login');
+};
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
+  isMobile.value = window.innerWidth <= 1024;
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   } else {
-    isSidebarOpen.value = true
+    isSidebarOpen.value = true;
   }
-}
+};
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('resize', handleResize)
-  handleResize()
+  window.addEventListener('resize', handleResize);
+  handleResize();
 }
 
 // Person search
-const searchQuery = ref('')
-const searchResults = ref<any[]>([])
-const selectedPerson = ref<any>(null)
-const isSearching = ref(false)
-const showDropdown = ref(false)
+const searchQuery = ref('');
+const searchResults = ref<any[]>([]);
+const selectedPerson = ref<any>(null);
+const isSearching = ref(false);
+const showDropdown = ref(false);
 
-const searchPersons = async () => {
-  const q = searchQuery.value.trim()
-  if (!q) { searchResults.value = []; showDropdown.value = false; return }
-  isSearching.value = true
+let searchTimer: ReturnType<typeof setTimeout>;
+let searchGeneration = 0;
+let selectionGeneration = 0;
+const readingDate = ref(
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()),
+);
+const loadingReading = ref(false);
+const operation = ref<any>(null);
+const tariffNote = ref('');
+const scheduleSearch = () => {
+  ++searchGeneration;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(searchPersons, 300);
+};
+onUnmounted(() => {
+  ++searchGeneration;
+  ++selectionGeneration;
+  clearTimeout(searchTimer);
+  window.removeEventListener('resize', handleResize);
+});
+onMounted(async () => {
   try {
-    const res = await axios.get('api/people', { params: { page: 0, size: 20, sort: 'id,asc' } })
-    const lower = q.toLowerCase()
-    searchResults.value = (res.data ?? []).filter((p: any) =>
-      p.fullName?.toLowerCase().includes(lower) || p.documentNumber?.includes(q)
-    )
-    showDropdown.value = true
+    const { data } = await axios.get('api/mobile/tariff');
+    if (data) {
+      invoice.value.ratePerM3 = Number(data.rate);
+      invoice.value.fixedCharge = Number(data.fixedCharge);
+    } else tariffNote.value = 'No hay tarifa configurada. Introduce la tarifa y el cargo fijo.';
   } catch {
-    searchResults.value = []
-  } finally {
-    isSearching.value = false
+    tariffNote.value = 'No se pudo consultar la tarifa. Verifica los valores antes de facturar.';
   }
-}
+});
+const searchPersons = async () => {
+  const generation = ++searchGeneration;
+  const q = searchQuery.value.trim();
+  if (!q) {
+    searchResults.value = [];
+    showDropdown.value = false;
+    isSearching.value = false;
+    return;
+  }
+  isSearching.value = true;
+  try {
+    const res = await axios.get('api/people', { params: { page: 0, size: 20, sort: 'fullName,asc', search: q } });
+    if (generation !== searchGeneration) return;
+    searchResults.value = res.data ?? [];
+    showDropdown.value = true;
+  } catch {
+    if (generation === searchGeneration) saveError.value = 'No se pudo buscar usuarios. Intenta de nuevo.';
+  } finally {
+    if (generation === searchGeneration) isSearching.value = false;
+  }
+};
 
 const selectPerson = async (person: any) => {
-  selectedPerson.value = person
-  searchQuery.value = person.fullName
-  showDropdown.value = false
-  invoice.value.personId = person.id
-  invoice.value.meterId = null
-  invoice.value.previousReading = null
-  invoice.value.currentReading = 0
+  if (isSaving.value || operation.value) return;
+  const selection = ++selectionGeneration;
+  ++searchGeneration;
+  clearTimeout(searchTimer);
+  isSearching.value = false;
+  loadingReading.value = true;
+  saveError.value = '';
+  savedInvoice.value = null;
+  selectedPerson.value = person;
+  searchQuery.value = person.fullName;
+  showDropdown.value = false;
+  invoice.value.personId = person.id;
+  invoice.value.meterId = null;
+  invoice.value.previousReading = null;
+  invoice.value.currentReading = null;
   // Auto-load confirmed reading and baseline
   try {
-    const res = await axios.get(`api/meters/by-person/${person.id}`)
-    const meters: any[] = res.data ?? []
+    const res = await axios.get(`api/meters/by-person/${person.id}`);
+    if (selection !== selectionGeneration) return;
+    const meters: any[] = (res.data ?? []).sort(
+      (a: any, b: any) => String(b.readingDate).localeCompare(String(a.readingDate)) || b.id - a.id,
+    );
     if (meters.length > 0) {
-      invoice.value.currentReading = Number(meters[0].waterMeasure)
-      invoice.value.meterId = meters[0].id
-      invoice.value.previousReading = meters.length > 1 ? Number(meters[1].waterMeasure) : null
+      invoice.value.meterId = meters[0].id;
+      invoice.value.previousReading = Number(meters[0].waterMeasure);
     }
-  } catch { /* no meter yet */ }
-}
+    if (!meters.length) saveError.value = 'Este usuario necesita una lectura inicial antes de generar facturas.';
+  } catch {
+    if (selection === selectionGeneration) saveError.value = 'No se pudo cargar la lectura anterior.';
+  } finally {
+    if (selection === selectionGeneration) loadingReading.value = false;
+  }
+};
 
 const invoice = ref({
   personId: null as number | null,
   meterId: null as number | null,
   previousReading: null as number | null,
-  currentReading: 0,
-  ratePerM3: 2500,
-  fixedCharge: 5000,
-  subsidy: 0.15,
-  recharge: 0
-})
+  currentReading: null as number | null,
+  ratePerM3: 0,
+  fixedCharge: 0,
+  subsidy: 0,
+  recharge: 0,
+});
 
-const consumption = computed(() => invoice.value.previousReading === null ? 0 : invoice.value.currentReading - invoice.value.previousReading)
-const subtotal = computed(() => consumption.value * invoice.value.ratePerM3 + invoice.value.fixedCharge)
-const discount = computed(() => subtotal.value * invoice.value.subsidy)
-const total = computed(() => subtotal.value - discount.value + invoice.value.recharge)
+const consumption = computed(() =>
+  invoice.value.previousReading === null || invoice.value.currentReading === null
+    ? 0
+    : (Math.round(invoice.value.currentReading * 100) - Math.round(invoice.value.previousReading * 100)) / 100,
+);
+const subtotal = computed(() => consumption.value * invoice.value.ratePerM3 + invoice.value.fixedCharge);
+const discount = computed(() => subtotal.value * invoice.value.subsidy);
+const total = computed(
+  () =>
+    Math.round((Math.round(subtotal.value * 100) * (10000 - Math.round(invoice.value.subsidy * 10000))) / 10000) / 100 +
+    invoice.value.recharge,
+);
 
-const isSaving = ref(false)
-const saveError = ref('')
-const savedInvoice = ref<any>(null)
+const isSaving = ref(false);
+const saveError = ref('');
+const savedInvoice = ref<any>(null);
 
 const handleSave = async () => {
   if (!invoice.value.personId || !invoice.value.meterId || invoice.value.previousReading === null) {
-    saveError.value = 'Selecciona una lectura confirmada con lectura anterior; la lectura inicial no se factura automáticamente.'
-    return
+    saveError.value = 'Selecciona una lectura confirmada con lectura anterior; la lectura inicial no se factura automáticamente.';
+    return;
   }
-  saveError.value = ''
-  isSaving.value = true
+  if (loadingReading.value || isSaving.value) return;
+  if (
+    consumption.value < 0 ||
+    [invoice.value.currentReading, invoice.value.ratePerM3, invoice.value.fixedCharge, invoice.value.subsidy, invoice.value.recharge].some(
+      v => typeof v !== 'number' || !Number.isFinite(v) || v < 0,
+    ) ||
+    invoice.value.subsidy > 1
+  ) {
+    saveError.value = 'Revisa los valores. La lectura actual no puede ser menor que la anterior y el subsidio debe estar entre 0 y 1.';
+    return;
+  }
+  saveError.value = '';
+  isSaving.value = true;
   try {
-    const res = await axios.post('api/admin/billing/generate', {
+    operation.value ??= {
+      operationId: crypto.randomUUID(),
       personId: invoice.value.personId,
-      meterId: invoice.value.meterId,
-      prevReading: invoice.value.previousReading,
-      currentReading: invoice.value.currentReading,
-      rate: invoice.value.ratePerM3,
-      fixedCharge: invoice.value.fixedCharge,
-      subsidy: invoice.value.subsidy,
-      surcharges: invoice.value.recharge,
-    })
-    savedInvoice.value = res.data
+      previousMeterId: invoice.value.meterId,
+      waterMeasure: invoice.value.currentReading,
+      readingDate: readingDate.value,
+      billing: {
+        rate: invoice.value.ratePerM3,
+        fixedCharge: invoice.value.fixedCharge,
+        subsidy: invoice.value.subsidy,
+        surcharges: invoice.value.recharge,
+      },
+    };
+    const res = await axios.post('api/mobile/capture-billing', operation.value);
+    savedInvoice.value = { ...res.data, id: res.data.invoiceId };
+    operation.value = null;
   } catch (err: any) {
-    saveError.value = err?.response?.data?.message ?? 'Error al generar la factura.'
+    if (err?.response && err.response.status >= 400 && err.response.status < 500) operation.value = null;
+    saveError.value = operation.value
+      ? 'No se pudo confirmar el resultado. Pulsa generar nuevamente para consultar el mismo envío sin duplicarlo.'
+      : (err?.response?.data?.message ?? 'Error al generar la factura.');
   } finally {
-    isSaving.value = false
+    isSaving.value = false;
   }
-}
+};
 
 const downloadInvoice = async (invoiceId: number) => {
   try {
-    const res = await axios.get(`api/invoices/download/${invoiceId}`)
-    openDocumentUrl(res.data.url)
+    const res = await axios.get(`api/invoices/download/${invoiceId}`);
+    openDocumentUrl(res.data.url);
   } catch {
-    alert('No se pudo obtener el enlace de descarga.')
+    alert('No se pudo obtener el enlace de descarga.');
   }
-}
+};
 
 const resetForm = () => {
-  savedInvoice.value = null
-  selectedPerson.value = null
-  searchQuery.value = ''
-  invoice.value = { personId: null, meterId: null, previousReading: null, currentReading: 0, ratePerM3: 2500, fixedCharge: 5000, subsidy: 0.15, recharge: 0 }
-}
+  ++selectionGeneration;
+  savedInvoice.value = null;
+  selectedPerson.value = null;
+  searchQuery.value = '';
+  invoice.value = {
+    personId: null,
+    meterId: null,
+    previousReading: null,
+    currentReading: null,
+    ratePerM3: invoice.value.ratePerM3,
+    fixedCharge: invoice.value.fixedCharge,
+    subsidy: 0,
+    recharge: 0,
+  };
+};
 </script>
 
 <template>
   <div class="admin-layout">
-    <div
-      v-if="isMobile && isSidebarOpen"
-      class="sidebar-overlay"
-      @click="toggleSidebar"
-    ></div>
+    <div v-if="isMobile && isSidebarOpen" class="sidebar-overlay" @click="toggleSidebar"></div>
 
     <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
       <div class="sidebar-header">
@@ -174,7 +262,7 @@ const resetForm = () => {
           :key="item.routeName"
           :to="{ name: item.routeName }"
           class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
+          :class="{ active: route.name === item.routeName }"
         >
           <div class="nav-icon-container">
             <font-awesome-icon :icon="item.icon" :size="22" />
@@ -186,7 +274,9 @@ const resetForm = () => {
 
       <div class="sidebar-footer">
         <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="avatar">
+            {{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}
+          </div>
           <div class="info" v-if="isSidebarOpen || isMobile">
             <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
             <span class="role">Administrador Principal</span>
@@ -207,7 +297,8 @@ const resetForm = () => {
       <div class="admin-content-view">
         <div class="billing-view">
           <div class="mgmt-header">
-            <h1>Facturación Manual</h1>
+            <h1>Facturación en punto físico</h1>
+            <p v-if="tariffNote" role="status">{{ tariffNote }}</p>
             <p>Genera facturas individuales calculando automáticamente consumos y tarifas</p>
           </div>
 
@@ -215,10 +306,19 @@ const resetForm = () => {
           <div v-if="savedInvoice" class="success-card">
             <div class="success-icon"><font-awesome-icon icon="check-circle" :size="32" /></div>
             <h2>Factura generada exitosamente</h2>
-            <p class="success-ref">Consecutivo: <strong>FAC-{{ savedInvoice.id }}</strong></p>
-            <p>Total: <strong>${{ Math.round(savedInvoice.amountDue).toLocaleString() }}</strong></p>
+            <p class="success-ref">
+              Consecutivo: <strong>FAC-{{ savedInvoice.id }}</strong>
+            </p>
+            <p>
+              Total:
+              <strong
+                >${{
+                  Number(savedInvoice.amountDue).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                }}</strong
+              >
+            </p>
             <div class="success-actions">
-              <button v-if="savedInvoice.pdfUrl" @click="downloadInvoice(savedInvoice.id)" class="btn btn--primary">
+              <button @click="downloadInvoice(savedInvoice.id)" class="btn btn--primary">
                 <font-awesome-icon icon="download" :size="18" />
                 <span>Descargar PDF</span>
               </button>
@@ -233,17 +333,17 @@ const resetForm = () => {
             <section class="billing-card billing-form">
               <h2><font-awesome-icon icon="calculator" :size="20" /> Datos de Consumo</h2>
               <div class="form-grid">
-                <div class="form-group full-width" style="position:relative">
-                  <label>Buscar Usuario (Nombre o Documento)</label>
+                <div class="form-group full-width" style="position: relative">
+                  <label>Buscar por nombre, documento, suscriptor o correo</label>
                   <div class="input-with-search">
                     <input
                       type="text"
                       v-model="searchQuery"
                       placeholder="Ej: Juan Pérez o 1234567890"
-                      @input="searchPersons"
+                      @input="scheduleSearch"
                       @focus="searchPersons"
                       autocomplete="off"
-                    >
+                    />
                     <button class="btn-search" @click="searchPersons" :disabled="isSearching">
                       <font-awesome-icon :icon="isSearching ? 'spinner' : 'search'" :spin="isSearching" :size="18" />
                     </button>
@@ -252,11 +352,14 @@ const resetForm = () => {
                     <li
                       v-for="p in searchResults"
                       :key="p.id"
-                      @mousedown.prevent="selectPerson(p)"
+                      tabindex="0"
+                      role="button"
+                      @keydown.enter="selectPerson(p)"
+                      @click="selectPerson(p)"
                       class="search-dropdown-item"
                     >
                       <span class="person-name">{{ p.fullName }}</span>
-                      <span class="person-doc">{{ p.documentNumber }}</span>
+                      <span class="person-doc">{{ p.documentNumber }} · Suscriptor {{ p.subscriberNumber || p.id }}</span>
                     </li>
                   </ul>
                   <p v-if="showDropdown && searchResults.length === 0 && !isSearching" class="no-results">Sin resultados</p>
@@ -270,28 +373,43 @@ const resetForm = () => {
                 </div>
 
                 <div class="form-group full-width">
+                  <label>Lectura anterior (m³)</label
+                  ><input :value="invoice.previousReading ?? ''" readonly placeholder="Selecciona un usuario" /><small v-if="loadingReading"
+                    >Cargando última lectura…</small
+                  >
+                </div>
+                <div class="form-group full-width">
+                  <label>Fecha de lectura</label><input type="date" v-model="readingDate" :disabled="isSaving || !!operation" />
+                </div>
+                <div class="form-group full-width">
                   <label>Lectura Actual (m³)</label>
-                  <input type="number" v-model="invoice.currentReading" min="0" readonly>
+                  <input
+                    type="number"
+                    v-model.number="invoice.currentReading"
+                    :min="invoice.previousReading ?? 0"
+                    step="0.01"
+                    :disabled="loadingReading || isSaving || !!operation"
+                  />
                 </div>
 
                 <div class="form-group">
                   <label>Tarifa por m³</label>
-                  <input type="number" v-model="invoice.ratePerM3">
+                  <input type="number" v-model.number="invoice.ratePerM3" :disabled="isSaving || !!operation" />
                 </div>
 
                 <div class="form-group">
                   <label>Cargo Fijo</label>
-                  <input type="number" v-model="invoice.fixedCharge">
+                  <input type="number" v-model.number="invoice.fixedCharge" :disabled="isSaving || !!operation" />
                 </div>
 
                 <div class="form-group">
-                  <label>Subsidio (%)</label>
-                  <input type="number" step="0.01" v-model="invoice.subsidy" min="0" max="1">
+                  <label>Subsidio (0 a 1; 0,15 equivale a 15 %)</label>
+                  <input type="number" step="0.01" v-model.number="invoice.subsidy" :disabled="isSaving || !!operation" min="0" max="1" />
                 </div>
 
                 <div class="form-group">
                   <label>Recargos Adicionales</label>
-                  <input type="number" v-model="invoice.recharge">
+                  <input type="number" v-model.number="invoice.recharge" :disabled="isSaving || !!operation" />
                 </div>
               </div>
             </section>
@@ -312,7 +430,7 @@ const resetForm = () => {
                   <span>Cargo Fijo:</span>
                   <span>${{ invoice.fixedCharge.toLocaleString() }}</span>
                 </div>
-                <hr>
+                <hr />
                 <div class="preview-row">
                   <span>Subtotal:</span>
                   <span>${{ subtotal.toLocaleString() }}</span>
@@ -327,7 +445,7 @@ const resetForm = () => {
                 </div>
                 <div class="preview-total">
                   <span>TOTAL A PAGAR:</span>
-                  <strong>${{ Math.round(total).toLocaleString() }}</strong>
+                  <strong>${{ total.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</strong>
                 </div>
               </div>
 
@@ -389,9 +507,23 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
-    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+    .logo-text,
+    .nav-item span,
+    .chevron,
+    .logout-btn span,
+    .home-btn span {
+      display: none;
+    }
+    .nav-item,
+    .logout-btn,
+    .home-btn {
+      justify-content: center;
+      padding: 1rem;
+    }
+    .sidebar-header {
+      justify-content: center;
+      padding: $spacing-md 0;
+    }
   }
 
   &.is-mobile {
@@ -426,7 +558,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    strong { color: $color-secondary; }
+    strong {
+      color: $color-secondary;
+    }
   }
 
   .toggle-btn {
@@ -480,7 +614,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: white;
     background: rgba(255, 255, 255, 0.05);
   }
@@ -491,7 +626,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     background: rgba($color-primary, 0.1);
   }
 
-  .chevron { margin-left: auto; opacity: 0.5; }
+  .chevron {
+    margin-left: auto;
+    opacity: 0.5;
+  }
 }
 
 .sidebar-footer {
@@ -512,7 +650,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   white-space: nowrap;
   margin-bottom: 4px;
-  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+  }
 }
 
 .logout-btn {
@@ -527,7 +668,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .admin-main {
@@ -567,8 +710,17 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -589,8 +741,14 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .mgmt-header {
-  h1 { font-size: 1.5rem; color: $color-text; }
-  p { color: $color-text-muted; font-size: 0.9rem; }
+  h1 {
+    font-size: 1.5rem;
+    color: $color-text;
+  }
+  p {
+    color: $color-text-muted;
+    font-size: 0.9rem;
+  }
 }
 
 .billing-grid {
@@ -620,14 +778,20 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
 
-  .full-width { grid-column: 1 / -1; }
+  .full-width {
+    grid-column: 1 / -1;
+  }
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  label { font-weight: 600; font-size: 0.85rem; color: $color-text-muted; }
+  label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: $color-text-muted;
+  }
   input {
     padding: 0.75rem;
     border: 1px solid #e2e8f0;
@@ -639,7 +803,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 .input-with-search {
   display: flex;
   gap: 8px;
-  input { flex: 1; }
+  input {
+    flex: 1;
+  }
   .btn-search {
     background: $color-primary;
     color: white;
@@ -662,11 +828,21 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: 12px;
     font-size: 0.95rem;
 
-    &.discount { color: #166534; font-weight: 600; }
-    &.recharge { color: #991b1b; font-weight: 600; }
+    &.discount {
+      color: #166534;
+      font-weight: 600;
+    }
+    &.recharge {
+      color: #991b1b;
+      font-weight: 600;
+    }
   }
 
-  hr { border: none; border-top: 1px solid #e2e8f0; margin: 12px 0; }
+  hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 12px 0;
+  }
 
   .preview-total {
     display: flex;
@@ -674,7 +850,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-top: $spacing-md;
     font-size: 1.25rem;
     color: $color-text;
-    strong { color: $color-primary; }
+    strong {
+      color: $color-primary;
+    }
   }
 }
 
@@ -683,7 +861,13 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   flex-direction: column;
   gap: $spacing-md;
 
-  .btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
 
   .export-buttons {
     display: grid;
@@ -707,15 +891,23 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   &--primary {
     background: $color-primary;
     color: white;
-    &:hover:not(:disabled) { background: darken($color-primary, 10%); }
-    &:disabled { opacity: 0.7; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+    }
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
   }
 
   &--outline {
     background: transparent;
     border: 2px solid $color-primary;
     color: $color-primary;
-    &:hover { background: $color-primary; color: white; }
+    &:hover {
+      background: $color-primary;
+      color: white;
+    }
   }
 }
 
@@ -727,7 +919,7 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   list-style: none;
   padding: 4px 0;
   margin: 4px 0 0;
@@ -742,10 +934,19 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   align-items: center;
   padding: 10px 16px;
   cursor: pointer;
-  &:hover { background: #f1f5f9; }
+  &:hover {
+    background: #f1f5f9;
+  }
 
-  .person-name { font-weight: 600; color: #2c3e50; font-size: 0.9rem; }
-  .person-doc { font-size: 0.8rem; color: #64748b; }
+  .person-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.9rem;
+  }
+  .person-doc {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
 }
 
 .no-results {
@@ -794,9 +995,20 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: $spacing-md;
   }
 
-  h2 { font-size: 1.4rem; color: #16a34a; margin-bottom: $spacing-sm; }
-  .success-ref { font-size: 1rem; color: $color-text-muted; margin-bottom: 4px; }
-  p { color: $color-text; font-size: 1.1rem; }
+  h2 {
+    font-size: 1.4rem;
+    color: #16a34a;
+    margin-bottom: $spacing-sm;
+  }
+  .success-ref {
+    font-size: 1rem;
+    color: $color-text-muted;
+    margin-bottom: 4px;
+  }
+  p {
+    color: $color-text;
+    font-size: 1.1rem;
+  }
 
   .success-actions {
     display: flex;

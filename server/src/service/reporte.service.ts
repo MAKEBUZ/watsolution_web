@@ -4,6 +4,7 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Reporte } from '../domain/reporte.entity';
 import { ReporteDTO } from '../service/dto/reporte.dto';
 import { ReporteMapper } from '../service/mapper/reporte.mapper';
+import { matchingId } from '../security/entity-input';
 
 const relations = {
   person: true,
@@ -45,6 +46,7 @@ export class ReporteService {
   }
 
   async save(reporteDTO: ReporteDTO, creator?: string): Promise<ReporteDTO | undefined> {
+    if (reporteDTO.id != null) throw new HttpException('A new record cannot specify an ID', HttpStatus.BAD_REQUEST);
     const entity = ReporteMapper.fromDTOtoEntity(reporteDTO);
     if (!entity.createdAt) {
       entity.createdAt = new Date();
@@ -60,6 +62,8 @@ export class ReporteService {
   }
 
   async update(reporteDTO: ReporteDTO, updater?: string): Promise<ReporteDTO | undefined> {
+    if (!(await this.reporteRepository.existsBy({ id: matchingId(reporteDTO) })))
+      throw new HttpException('Record not found', HttpStatus.NOT_FOUND);
     const entity = ReporteMapper.fromDTOtoEntity(reporteDTO);
     if (updater) {
       entity.lastModifiedBy = updater;

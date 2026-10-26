@@ -14,6 +14,26 @@ const UserPortal = () => import('@/views/admin/admin-portal.vue');
 const PoliticaPrivacidad = () => import('@/views/politica/politica-privacidad.vue');
 
 export default [
+  { path: '/admin/whatsapp', name: 'AdminWhatsapp', component: () => import('@/views/admin/admin-whatsapp.vue'), meta: { authorities: [Authority.ADMIN] } },
+  {
+    path: '/notificaciones',
+    name: 'Notificaciones',
+    component: () => import('@/views/notifications/notifications.vue'),
+    meta: { authorities: [Authority.USER, Authority.ADMIN] },
+  },
+  {
+    path: '/admin/testimonios',
+    name: 'AdminTestimonios',
+    component: () => import('@/views/admin/admin-testimonios.vue'),
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  {
+    path: '/admin/recorridos',
+    name: 'AdminRecorridos',
+    component: () => import('@/views/admin/admin-recorridos.vue'),
+    meta: { authorities: [Authority.ADMIN] },
+  },
+  { path: '/noticias/:id', name: 'NoticiaDetalle', component: () => import('@/views/noticias/noticia-detalle.vue') },
   {
     path: '/login',
     name: 'Login',
@@ -44,7 +64,7 @@ export default [
   {
     path: '/admin-panel',
     name: 'AdminDashboard',
-    component: AdminPanel,
+    redirect: '/admin/resumen',
     meta: { authorities: [Authority.ADMIN] },
   },
   {
@@ -86,21 +106,6 @@ export default [
   {
     path: '/admin',
     name: 'admin-summary',
-    redirect: '/admin/resumen'
-  },
-  {
-    path: '/admin/usuarios',
-    name: 'admin-users',
-    redirect: '/admin/usuarios'
-  },
-  {
-    path: '/admin/facturacion',
-    name: 'admin-billing',
-    redirect: '/admin/facturacion'
-  },
-  {
-    path: '/admin/noticias',
-    name: 'admin-news',
-    redirect: '/admin/noticias'
+    redirect: '/admin/resumen',
   },
 ];

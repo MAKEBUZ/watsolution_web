@@ -1,52 +1,64 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAccountStore } from '@/shared/config/store/account-store'
-import axios from 'axios'
-import type { INoticia } from '@/shared/model/noticia.model'
+import { ref, computed, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useAccountStore } from '@/shared/config/store/account-store';
+import axios from 'axios';
+import { formatNewsDate as formatDate } from '@/shared/news-date';
+import type { INoticia } from '@/shared/model/noticia.model';
 
-const router = useRouter()
-const route = useRoute()
-const accountStore = useAccountStore()
+const router = useRouter();
+const route = useRoute();
+const accountStore = useAccountStore();
 
-const isSidebarOpen = ref(window.innerWidth > 1024)
-const isMobile = ref(window.innerWidth <= 1024)
+const isSidebarOpen = ref(window.innerWidth > 1024);
+const isMobile = ref(window.innerWidth <= 1024);
 
 const menuItems = [
   { name: 'Resumen', routeName: 'AdminResumen', icon: 'tachometer-alt' },
   { name: 'Actividad', routeName: 'AdminActividad', icon: 'history' },
   { name: 'Usuarios', routeName: 'AdminUsuarios', icon: 'users' },
-  { name: 'Facturación', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
+  { name: 'Facturación en punto físico', routeName: 'AdminFacturacion', icon: 'file-invoice-dollar' },
   { name: 'Noticias', routeName: 'AdminNoticias', icon: 'newspaper' },
-]
+  { name: 'Pruebas de WhatsApp', routeName: 'AdminWhatsapp', icon: 'comment-alt' },
+  { name: 'Testimonios', routeName: 'AdminTestimonios', icon: 'quote-left' },
+  { name: 'Mapa y recorridos', routeName: 'AdminRecorridos', icon: 'map-marker-alt' },
+  { name: 'Notificaciones', routeName: 'Notificaciones', icon: 'bell' },
+  { name: 'Portal de usuarios', routeName: 'PortalDashboard', icon: 'home' },
+];
 
 const handleLogout = () => {
-  accountStore.logout()
-  router.push('/login')
-}
+  accountStore.logout();
+  router.push('/login');
+};
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 1024
+  isMobile.value = window.innerWidth <= 1024;
   if (isMobile.value) {
-    isSidebarOpen.value = false
+    isSidebarOpen.value = false;
   } else {
-    isSidebarOpen.value = true
+    isSidebarOpen.value = true;
   }
-}
+};
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('resize', handleResize)
-  handleResize()
+  window.addEventListener('resize', handleResize);
+  handleResize();
 }
 
-const news = ref<INoticia[]>([])
-const isModalOpen = ref(false)
-const saving = ref(false)
-const searchQuery = ref('')
+const news = ref<INoticia[]>([]);
+const isModalOpen = ref(false);
+const saving = ref(false);
+const newsError = ref('');
+function editNews(item: INoticia) {
+  form.value = { ...item };
+  newsError.value = '';
+  isModalOpen.value = true;
+}
+const searchQuery = ref('');
 
 const emptyForm = (): Partial<INoticia> => ({
   title: '',
@@ -56,79 +68,71 @@ const emptyForm = (): Partial<INoticia> => ({
   publishDate: new Date() as any,
   imageUrl: '',
   status: 'ACTIVE' as any,
-})
+});
 
-const form = ref(emptyForm())
+const form = ref(emptyForm());
 
 const filteredNews = computed(() => {
-  const q = searchQuery.value.toLowerCase()
-  return news.value.filter(n => (n.title ?? '').toLowerCase().includes(q))
-})
+  const q = searchQuery.value.toLowerCase();
+  return news.value.filter(n => (n.title ?? '').toLowerCase().includes(q));
+});
 
 const loadNoticias = async () => {
   try {
-    const res = await axios.get('api/noticias')
-    news.value = res.data
-  } catch (e) {
-    console.error('Error loading noticias')
+    const res = await axios.get('api/noticias');
+    news.value = res.data;
+  } catch {
+    newsError.value = 'No se pudieron cargar las noticias.';
   }
-}
+};
 
 const openModal = () => {
-  form.value = emptyForm()
-  isModalOpen.value = true
-}
+  form.value = emptyForm();
+  isModalOpen.value = true;
+};
 
 const saveNoticia = async () => {
-  saving.value = true
+  saving.value = true;
   try {
-    await axios.post('api/noticias', { ...form.value, status: 'ACTIVE' })
-    isModalOpen.value = false
-    await loadNoticias()
-  } catch (e) {
-    console.error('Error saving noticia')
+    if (form.value.id) await axios.put('api/noticias/' + form.value.id, form.value);
+    else await axios.post('api/noticias', { ...form.value, status: 'ACTIVE' });
+    isModalOpen.value = false;
+    await loadNoticias();
+  } catch {
+    newsError.value = 'No se pudo guardar la noticia. Revisa los campos.';
   } finally {
-    saving.value = false
+    saving.value = false;
   }
-}
+};
 
 const toggleStatus = async (item: INoticia) => {
-  const newStatus = item.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
+  const newStatus = item.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
   try {
-    await axios.put(`api/noticias/${item.id}`, { ...item, status: newStatus })
-    await loadNoticias()
-  } catch (e) {
-    console.error('Error updating noticia')
+    await axios.put(`api/noticias/${item.id}`, { ...item, status: newStatus });
+    await loadNoticias();
+  } catch {
+    newsError.value = 'No se pudo actualizar la noticia.';
   }
-}
+};
 
 const deleteNews = async (id: number | undefined) => {
-  if (!id || !confirm('¿Estás seguro de eliminar esta noticia?')) return
+  if (!id || !confirm('¿Estás seguro de eliminar esta noticia?')) return;
   try {
-    await axios.delete(`api/noticias/${id}`)
-    await loadNoticias()
-  } catch (e) {
-    console.error('Error deleting noticia')
+    await axios.delete(`api/noticias/${id}`);
+    await loadNoticias();
+  } catch {
+    newsError.value = 'No se pudo eliminar la noticia.';
   }
-}
-
-const formatDate = (dateStr: any) => {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
-}
+};
 
 onMounted(() => {
-  loadNoticias()
-})
+  loadNoticias();
+});
 </script>
 
 <template>
   <div class="admin-layout">
-    <div
-      v-if="isMobile && isSidebarOpen"
-      class="sidebar-overlay"
-      @click="toggleSidebar"
-    ></div>
+    <div v-if="isMobile && isSidebarOpen" class="sidebar-overlay" @click="toggleSidebar"></div>
 
     <aside :class="['admin-sidebar', { 'is-closed': !isSidebarOpen, 'is-mobile': isMobile }]">
       <div class="sidebar-header">
@@ -145,7 +149,7 @@ onMounted(() => {
           :key="item.routeName"
           :to="{ name: item.routeName }"
           class="nav-item"
-          :class="{ 'active': route.name === item.routeName }"
+          :class="{ active: route.name === item.routeName }"
         >
           <div class="nav-icon-container">
             <font-awesome-icon :icon="item.icon" :size="22" />
@@ -157,7 +161,9 @@ onMounted(() => {
 
       <div class="sidebar-footer">
         <div class="sidebar-profile">
-          <div class="avatar">{{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}</div>
+          <div class="avatar">
+            {{ accountStore.account?.firstName?.charAt(0) || 'A' }}{{ accountStore.account?.lastName?.charAt(0) || 'D' }}
+          </div>
           <div class="info" v-if="isSidebarOpen || isMobile">
             <span class="name">{{ accountStore.account?.firstName || 'Administrador' }}</span>
             <span class="role">Administrador Principal</span>
@@ -188,16 +194,15 @@ onMounted(() => {
             </button>
           </div>
 
+          <p v-if="newsError" role="alert">{{ newsError }}</p>
           <div class="mgmt-filters">
             <div class="search-box">
               <font-awesome-icon class="search-icon" icon="search" :size="18" />
-              <input type="text" v-model="searchQuery" placeholder="Buscar por título...">
+              <input type="text" v-model="searchQuery" placeholder="Buscar por título..." />
             </div>
           </div>
 
-          <div v-if="filteredNews.length === 0" class="empty-state">
-            No hay noticias publicadas aún.
-          </div>
+          <div v-if="filteredNews.length === 0" class="empty-state">No hay noticias publicadas aún.</div>
 
           <div class="mgmt-table-wrapper" v-else>
             <table class="mgmt-table">
@@ -213,7 +218,10 @@ onMounted(() => {
               <tbody>
                 <tr v-for="item in filteredNews" :key="item.id">
                   <td>{{ formatDate(item.publishDate) }}</td>
-                  <td class="title-cell">{{ item.title }}</td>
+                  <td class="title-cell">
+                    <router-link v-if="item.status === 'ACTIVE'" :to="'/noticias/' + item.id">{{ item.title }}</router-link
+                    ><span v-else>{{ item.title }}</span>
+                  </td>
                   <td>
                     <span :class="['category-badge', (item.category ?? '').toLowerCase()]">{{ item.category }}</span>
                   </td>
@@ -223,11 +231,8 @@ onMounted(() => {
                     </span>
                   </td>
                   <td class="actions-cell">
-                    <button
-                      class="btn-icon"
-                      :title="item.status === 'ACTIVE' ? 'Desactivar' : 'Activar'"
-                      @click="toggleStatus(item)"
-                    >
+                    <button class="btn-icon" @click="editNews(item)" title="Editar noticia"><font-awesome-icon icon="pencil-alt" /></button>
+                    <button class="btn-icon" :title="item.status === 'ACTIVE' ? 'Desactivar' : 'Activar'" @click="toggleStatus(item)">
                       <font-awesome-icon :icon="item.status === 'ACTIVE' ? 'eye-slash' : 'eye'" :size="16" />
                     </button>
                     <button class="btn-icon btn-icon--danger" @click="deleteNews(item.id)" title="Eliminar">
@@ -246,15 +251,16 @@ onMounted(() => {
     <div v-if="isModalOpen" class="modal-overlay" @click.self="isModalOpen = false">
       <div class="modal-card">
         <div class="modal-header">
-          <h2>Nueva Noticia</h2>
+          <h2>{{ form.id ? 'Editar noticia' : 'Nueva noticia' }}</h2>
           <button class="modal-close" @click="isModalOpen = false">
             <font-awesome-icon icon="times" :size="18" />
           </button>
         </div>
         <form @submit.prevent="saveNoticia" class="modal-form">
+          <p v-if="newsError" role="alert">{{ newsError }}</p>
           <div class="form-group">
             <label>Título *</label>
-            <input v-model="form.title" type="text" required placeholder="Título de la noticia">
+            <input v-model="form.title" type="text" required placeholder="Título de la noticia" />
           </div>
           <div class="form-group">
             <label>Categoría *</label>
@@ -276,11 +282,11 @@ onMounted(() => {
           <div class="form-row">
             <div class="form-group">
               <label>Fecha de publicación</label>
-              <input v-model="form.publishDate" type="date">
+              <input v-model="form.publishDate" type="date" />
             </div>
             <div class="form-group">
               <label>URL de imagen</label>
-              <input v-model="form.imageUrl" type="url" placeholder="https://...">
+              <input v-model="form.imageUrl" type="url" placeholder="https://..." />
             </div>
           </div>
           <div class="modal-actions">
@@ -337,9 +343,23 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &.is-closed {
     width: 80px;
-    .logo-text, .nav-item span, .chevron, .logout-btn span, .home-btn span { display: none; }
-    .nav-item, .logout-btn, .home-btn { justify-content: center; padding: 1rem; }
-    .sidebar-header { justify-content: center; padding: $spacing-md 0; }
+    .logo-text,
+    .nav-item span,
+    .chevron,
+    .logout-btn span,
+    .home-btn span {
+      display: none;
+    }
+    .nav-item,
+    .logout-btn,
+    .home-btn {
+      justify-content: center;
+      padding: 1rem;
+    }
+    .sidebar-header {
+      justify-content: center;
+      padding: $spacing-md 0;
+    }
   }
 
   &.is-mobile {
@@ -374,7 +394,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    strong { color: $color-secondary; }
+    strong {
+      color: $color-secondary;
+    }
   }
 
   .toggle-btn {
@@ -428,7 +450,8 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: white;
     background: rgba(255, 255, 255, 0.05);
   }
@@ -439,7 +462,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     background: rgba($color-primary, 0.1);
   }
 
-  .chevron { margin-left: auto; opacity: 0.5; }
+  .chevron {
+    margin-left: auto;
+    opacity: 0.5;
+  }
 }
 
 .sidebar-footer {
@@ -460,7 +486,10 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   white-space: nowrap;
   margin-bottom: 4px;
-  &:hover { background: rgba(255, 255, 255, 0.08); color: white; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+  }
 }
 
 .logout-btn {
@@ -475,7 +504,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  &:hover { background: rgba(239, 68, 68, 0.1); }
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .admin-main {
@@ -515,8 +546,17 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    .name { font-weight: 600; font-size: 0.85rem; color: white; white-space: nowrap; }
-    .role { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; }
+    .name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      white-space: nowrap;
+    }
+    .role {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -543,8 +583,14 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   align-items: center;
   margin-bottom: $spacing-lg;
 
-  h1 { font-size: 1.5rem; color: $color-text; }
-  p { color: $color-text-muted; font-size: 0.9rem; }
+  h1 {
+    font-size: 1.5rem;
+    color: $color-text;
+  }
+  p {
+    color: $color-text-muted;
+    font-size: 0.9rem;
+  }
 }
 
 .mgmt-filters {
@@ -552,7 +598,13 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   .search-box {
     max-width: 400px;
     position: relative;
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: $color-text-muted; }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $color-text-muted;
+    }
     input {
       width: 100%;
       padding: 0 12px 0 2.5rem;
@@ -611,9 +663,15 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   text-transform: uppercase;
   color: white;
 
-  &.operativo { background: #f59e0b; }
-  &.institucional { background: $color-primary; }
-  &.urgente { background: #ef4444; }
+  &.operativo {
+    background: #f59e0b;
+  }
+  &.institucional {
+    background: $color-primary;
+  }
+  &.urgente {
+    background: #ef4444;
+  }
 }
 
 .status-badge {
@@ -622,8 +680,14 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-size: 0.8rem;
   font-weight: 600;
 
-  &.active { background: #dcfce7; color: #166534; }
-  &.archived { background: #f1f5f9; color: #64748b; }
+  &.active {
+    background: #dcfce7;
+    color: #166534;
+  }
+  &.archived {
+    background: #f1f5f9;
+    color: #64748b;
+  }
 }
 
 .actions-cell {
@@ -644,8 +708,15 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   color: $color-text-muted;
   transition: all 0.2s;
 
-  &:hover { background: #f1f5f9; color: $color-primary; }
-  &--danger:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+  &:hover {
+    background: #f1f5f9;
+    color: $color-primary;
+  }
+  &--danger:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fca5a5;
+  }
 }
 
 .btn {
@@ -663,14 +734,21 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   &--primary {
     background: $color-primary;
     color: white;
-    &:hover:not(:disabled) { background: darken($color-primary, 10%); }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
 
   &--secondary {
     background: #f1f5f9;
     color: $color-text;
-    &:hover { background: #e2e8f0; }
+    &:hover {
+      background: #e2e8f0;
+    }
   }
 }
 
@@ -703,7 +781,11 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: $spacing-md $spacing-lg;
   border-bottom: 1px solid #e2e8f0;
 
-  h2 { font-size: 1.2rem; color: $color-text; margin: 0; }
+  h2 {
+    font-size: 1.2rem;
+    color: $color-text;
+    margin: 0;
+  }
 
   .modal-close {
     background: none;
@@ -715,7 +797,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    &:hover { background: #f1f5f9; }
+    &:hover {
+      background: #f1f5f9;
+    }
   }
 }
 
@@ -737,7 +821,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     color: $color-text-muted;
   }
 
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     padding: 0.6rem 0.75rem;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -754,7 +840,9 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
   }
 
-  textarea { resize: vertical; }
+  textarea {
+    resize: vertical;
+  }
 }
 
 .form-row {

@@ -1,3 +1,5 @@
+import { MfaService } from '../../src/security/mfa.service';
+import { AccountRecoveryService } from '../../src/security/account-recovery.service';
 import { Controller, Get, INestApplication, Req, UseGuards } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { PassportModule } from '@nestjs/passport';
@@ -42,8 +44,11 @@ import { configureHttpSecurity } from '../../src/security/http-security';
 // A minimal protected probe, not a replacement for testing the complete application UI.
 @Controller('api/browser-probe')
 class BrowserProbe {
-  @Get() @UseGuards(AuthGuard)
-  get(@Req() req: any) { return { id: req.user.id }; }
+  @Get()
+  @UseGuards(AuthGuard)
+  get(@Req() req: any) {
+    return { id: req.user.id };
+  }
 }
 
 describe('Chromium HTTPS sessions with PostgreSQL', () => {
@@ -55,7 +60,8 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
   let proxy: Awaited<ReturnType<typeof startNginx>> | undefined;
   const oldOrigins = process.env.WEB_ORIGINS;
   const password = randomBytes(24).toString('base64url');
-  const responseStatus = (page: Page) => page.evaluate(`fetch('/api/browser-probe', {
+  const responseStatus = (page: Page) =>
+    page.evaluate(`fetch('/api/browser-probe', {
     headers: { Authorization: 'Bearer ' + ws.getAccessToken() }
   }).then(r => r.status)`);
 
@@ -67,41 +73,102 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     fixture = await createBillingFixture();
     const db = fixture.db;
     const sessions = new SessionService(db);
-    const jwt = new JwtService({ secret: jwtSettings.secret, signOptions: {
-      issuer: jwtSettings.issuer, audience: jwtSettings.audience, expiresIn: '5m',
-    } });
-    const auth = new AuthService(jwt, sessions, new LoginRateLimitService(db), db.getRepository(Authority), new UserService(db.getRepository(User)));
+    const jwt = new JwtService({
+      secret: jwtSettings.secret,
+      signOptions: {
+        issuer: jwtSettings.issuer,
+        audience: jwtSettings.audience,
+        expiresIn: '5m',
+      },
+    });
+    const auth = new AuthService(
+      jwt,
+      sessions,
+      new LoginRateLimitService(db),
+      db.getRepository(Authority),
+      new UserService(db.getRepository(User)),
+      new MfaService(db, new LoginRateLimitService(db)),
+    );
     await db.getRepository(Authority).save([{ name: 'ROLE_USER' }, { name: 'ROLE_ADMIN' }]);
-    await db.getRepository(User).save({ login: 'browser-user', email: 'browser@example.invalid', activated: true,
-      password: await encodePassword(password), authorities: [{ name: 'ROLE_USER' }] });
-    await db.getRepository(User).save({ login: 'ui-admin', firstName: 'Administrador de prueba', email: 'ui@example.invalid', activated: true,
-      password: await encodePassword(password), authorities: [{ name: 'ROLE_ADMIN' }] });
+    await db
+      .getRepository(User)
+      .save({
+        login: 'browser-user',
+        email: 'browser@example.invalid',
+        activated: true,
+        password: await encodePassword(password),
+        authorities: [{ name: 'ROLE_USER' }],
+      });
+    await db
+      .getRepository(User)
+      .save({
+        login: 'ui-admin',
+        firstName: 'Administrador de prueba',
+        email: 'ui@example.invalid',
+        activated: true,
+        password: await encodePassword(password),
+        authorities: [{ name: 'ROLE_ADMIN' }],
+      });
     const logs = db.getRepository(ActivityLog);
-    const module = await Test.createTestingModule({ imports: [PassportModule],
-      controllers: [UserJWTController, SessionController, BrowserProbe, AccountController, AdminController], providers: [JwtStrategy,
-        { provide: AuthService, useValue: auth }, { provide: SessionService, useValue: sessions },
+    const module = await Test.createTestingModule({
+      imports: [PassportModule],
+      controllers: [UserJWTController, SessionController, BrowserProbe, AccountController, AdminController],
+      providers: [
+        JwtStrategy,
+        { provide: AuthService, useValue: auth },
+        { provide: SessionService, useValue: sessions },
+        {
+          provide: AccountRecoveryService,
+          useValue: new AccountRecoveryService(db, new LoginRateLimitService(db), new MfaService(db, new LoginRateLimitService(db))),
+        },
         { provide: DataSource, useValue: db },
-        { provide: AdminStatsService, useValue: new AdminStatsService(db.getRepository(User), db.getRepository(Invoice), db.getRepository(Meter), db.getRepository(Person), logs) },
+        {
+          provide: AdminStatsService,
+          useValue: new AdminStatsService(
+            db.getRepository(User),
+            db.getRepository(Invoice),
+            db.getRepository(Meter),
+            db.getRepository(Person),
+            logs,
+          ),
+        },
         { provide: BillingService, useValue: new BillingService(db) },
-        { provide: InvoiceService, useValue: new InvoiceService(db.getRepository(Invoice), logs, db.getRepository(User), { send: jest.fn() } as any) },
+        {
+          provide: InvoiceService,
+          useValue: new InvoiceService(db.getRepository(Invoice), logs, db.getRepository(User), { send: jest.fn() } as any),
+        },
         { provide: MeterService, useValue: new MeterService(db.getRepository(Meter), logs) },
-        { provide: getRepositoryToken(ActivityLog), useValue: logs }, { provide: getRepositoryToken(Person), useValue: db.getRepository(Person) },
-        { provide: BucketService, useValue: {} }, { provide: InvoicePdfService, useValue: {} }],
+        { provide: getRepositoryToken(ActivityLog), useValue: logs },
+        { provide: getRepositoryToken(Person), useValue: db.getRepository(Person) },
+        { provide: BucketService, useValue: {} },
+        { provide: InvoicePdfService, useValue: {} },
+      ],
     }).compile();
-    app = module.createNestApplication({ httpsOptions: {
-      key: readFileSync(process.env.TEST_TLS_KEY), cert: readFileSync(process.env.TEST_TLS_CERT),
-    } });
-    const bundled = await build({ entryPoints: [resolve(__dirname, '../../../client/src/app/shared/config/web-session.ts')],
-      bundle: true, write: false, platform: 'browser', format: 'iife', globalName: 'ws',
+    app = module.createNestApplication({
+      httpsOptions: {
+        key: readFileSync(process.env.TEST_TLS_KEY),
+        cert: readFileSync(process.env.TEST_TLS_CERT),
+      },
+    });
+    const bundled = await build({
+      entryPoints: [resolve(__dirname, '../../../client/src/app/shared/config/web-session.ts')],
+      bundle: true,
+      write: false,
+      platform: 'browser',
+      format: 'iife',
+      globalName: 'ws',
       define: { SERVER_API_URL: JSON.stringify('/') },
     });
     app.use('/session-client.js', (_req, res) => res.type('application/javascript').send(bundled.outputFiles[0].text));
     configureHttpSecurity(app.getHttpAdapter().getInstance());
-    app.use('/test-session', (_req, res) => res.type('html').send(`<!doctype html><html lang="es"><title>Prueba aislada de sesión</title>
+    app.use('/test-session', (_req, res) =>
+      res.type('html').send(`<!doctype html><html lang="es"><title>Prueba aislada de sesión</title>
       <input id="password" type="password" aria-label="Contraseña de prueba"><button id="login">Entrar</button>
       <button id="refresh">Renovar</button><output id="result"></output><script src="/session-client.js"></script>
-      <script src="/session-probe.js"></script></html>`));
-    app.use('/session-probe.js', (_req, res) => res.type('application/javascript').send(`      document.querySelector('#login').onclick = async () => {
+      <script src="/session-probe.js"></script></html>`),
+    );
+    app.use('/session-probe.js', (_req, res) =>
+      res.type('application/javascript').send(`      document.querySelector('#login').onclick = async () => {
         const r = await fetch('/api/authenticate', { method:'POST', headers:{'Content-Type':'application/json','X-Session-Transport':'web'},
           body:JSON.stringify({username:'browser-user',password:document.querySelector('#password').value}) });
         const data=await r.json(); window.loginResponse=data; ws.setAccessToken(data.id_token);
@@ -111,7 +178,8 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
         try { await ws.refreshAccessToken(); document.querySelector('#result').textContent='renewed'; }
         catch { document.querySelector('#result').textContent='rejected'; }
       };
-`));
+`),
+    );
     app.use(express.static(webDist));
     app.use((req, res, next) => {
       if (req.method !== 'GET' || /^\/(api|management|i18n)(\/|$)/.test(req.path) || req.path.includes('.')) return next();
@@ -126,15 +194,28 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     process.env.WEB_ORIGINS = origin;
     browser = await chromium.launch({ headless: true });
   });
-  beforeEach(async () => { context = await browser.newContext({ ignoreHTTPSErrors: true }); });
-  afterEach(async () => { await context?.close(); });
+  beforeEach(async () => {
+    context = await browser.newContext({ ignoreHTTPSErrors: true });
+  });
+  afterEach(async () => {
+    await context?.close();
+  });
   afterAll(async () => {
-    try { await browser?.close(); await proxy?.close(); await app?.close(); await fixture?.close(); }
-    finally { if (oldOrigins === undefined) delete process.env.WEB_ORIGINS; else process.env.WEB_ORIGINS = oldOrigins; }
+    try {
+      await browser?.close();
+      await proxy?.close();
+      await app?.close();
+      await fixture?.close();
+    } finally {
+      if (oldOrigins === undefined) delete process.env.WEB_ORIGINS;
+      else process.env.WEB_ORIGINS = oldOrigins;
+    }
   });
   const login = async () => {
-    const page = await context.newPage(); await page.goto(origin + '/test-session');
-    await page.locator('#password').fill(password); await page.locator('#login').click();
+    const page = await context.newPage();
+    await page.goto(origin + '/test-session');
+    await page.locator('#password').fill(password);
+    await page.locator('#login').click();
     await page.locator('#result').filter({ hasText: /^200$/ }).waitFor();
     return page;
   };
@@ -152,27 +233,44 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     expect(await responseStatus(page)).toBe(200);
   });
   it('renews after a reload using the browser-managed cookie and real session module', async () => {
-    const page = await login(); await page.reload();
+    const page = await login();
+    await page.reload();
     expect(await page.evaluate('ws.getAccessToken()')).toBeNull();
-    await page.locator('#refresh').click(); await page.locator('#result').filter({ hasText: /^renewed$/ }).waitFor();
+    await page.locator('#refresh').click();
+    await page
+      .locator('#result')
+      .filter({ hasText: /^renewed$/ })
+      .waitFor();
     expect(await responseStatus(page)).toBe(200);
   });
   it('serializes two tabs with navigator.locks and keeps the rotated family active', async () => {
-    const first = await login(), second = await context.newPage(); await second.goto(origin + '/test-session');
+    const first = await login(),
+      second = await context.newPage();
+    await second.goto(origin + '/test-session');
     expect(await first.evaluate('!!navigator.locks')).toBe(true);
     await Promise.all([first.evaluate('ws.refreshAccessToken()'), second.evaluate('ws.refreshAccessToken()')]);
-    expect(await responseStatus(first)).toBe(200); expect(await responseStatus(second)).toBe(200);
+    expect(await responseStatus(first)).toBe(200);
+    expect(await responseStatus(second)).toBe(200);
     const cookie = (await context.cookies()).find(c => c.name === '__Host-watsolution-refresh')!;
     const session = await fixture.db.getRepository(AuthSession).findOneBy({ id: cookie.value.split('.')[0] });
-    expect(session.revoked).toBe(false); expect(JSON.parse(session.usedRefreshHashes)).toHaveLength(2);
+    expect(session.revoked).toBe(false);
+    expect(JSON.parse(session.usedRefreshHashes)).toHaveLength(2);
   });
   it('clears the browser cookie and invalidates access in a second tab after server logout', async () => {
-    const first = await login(), second = await context.newPage(); await second.goto(origin + '/test-session');
+    const first = await login(),
+      second = await context.newPage();
+    await second.goto(origin + '/test-session');
     await second.evaluate('ws.refreshAccessToken()');
-    expect(await first.evaluate(`fetch('/api/session/logout', {method:'POST',headers:{'X-Session-Transport':'web'}}).then(r=>r.status)`)).toBe(201);
+    expect(
+      await first.evaluate(`fetch('/api/session/logout', {method:'POST',headers:{'X-Session-Transport':'web'}}).then(r=>r.status)`),
+    ).toBe(201);
     expect((await context.cookies()).some(c => c.name === '__Host-watsolution-refresh')).toBe(false);
     expect(await responseStatus(second)).toBe(401);
-    await second.locator('#refresh').click(); await second.locator('#result').filter({ hasText: /^rejected$/ }).waitFor();
+    await second.locator('#refresh').click();
+    await second
+      .locator('#result')
+      .filter({ hasText: /^rejected$/ })
+      .waitFor();
   });
   it('keeps unknown API responses separate from the SPA fallback', async () => {
     const api = await context.request.get(origin + '/api/does-not-exist');
@@ -183,20 +281,23 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     expect(route.status()).toBe(200);
     expect(route.headers()['content-type']).toContain('text/html');
   });
-  (process.env.TEST_NGINX === '1' ? it : it.skip)('serves the frontend with browser security headers and hides dotfiles behind Nginx', async () => {
-    const response = await context.request.get(origin + '/login');
-    expect(response.headers()['x-content-type-options']).toBe('nosniff');
-    expect(response.headers()['referrer-policy']).toBe('no-referrer');
-    expect(response.headers()['x-frame-options']).toBe('SAMEORIGIN');
-    expect(response.headers()['content-security-policy']).toContain("frame-ancestors 'self'");
-    expect(response.headers()['content-security-policy']).toContain("object-src 'none'");
-    expect(response.headers()['cache-control']).toContain('no-store');
-    expect(response.headers()['x-powered-by']).toBeUndefined();
-    expect(response.headers()['server'] ?? '').not.toMatch(/\d+\.\d+/);
-    expect(response.headers()['strict-transport-security']).toBe('max-age=31536000');
-    expect((await context.request.get(origin + '/.env')).status()).toBe(404);
-    expect((await context.request.get(origin + '/.git/config')).status()).toBe(404);
-  });
+  (process.env.TEST_NGINX === '1' ? it : it.skip)(
+    'serves the frontend with browser security headers and hides dotfiles behind Nginx',
+    async () => {
+      const response = await context.request.get(origin + '/login');
+      expect(response.headers()['x-content-type-options']).toBe('nosniff');
+      expect(response.headers()['referrer-policy']).toBe('no-referrer');
+      expect(response.headers()['x-frame-options']).toBe('SAMEORIGIN');
+      expect(response.headers()['content-security-policy']).toContain("frame-ancestors 'self'");
+      expect(response.headers()['content-security-policy']).toContain("object-src 'none'");
+      expect(response.headers()['cache-control']).toContain('no-store');
+      expect(response.headers()['x-powered-by']).toBeUndefined();
+      expect(response.headers()['server'] ?? '').not.toMatch(/\d+\.\d+/);
+      expect(response.headers()['strict-transport-security']).toBe('max-age=31536000');
+      expect((await context.request.get(origin + '/.env')).status()).toBe(404);
+      expect((await context.request.get(origin + '/.git/config')).status()).toBe(404);
+    },
+  );
   it('rejects an untrusted Origin without revoking the valid session', async () => {
     const page = await login();
     const cookie = (await context.cookies()).find(c => c.name === '__Host-watsolution-refresh')!;
@@ -226,17 +327,37 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
     await context.route('**/api/admin/users**', async route => {
       if (route.request().method() === 'DELETE') {
         removed++;
-        return route.fulfill({ status: 204, headers: { 'x-watsolutionapp-alert': 'Usuario eliminado', 'x-watsolutionapp-params': 'synthetic-user' } });
+        return route.fulfill({
+          status: 204,
+          headers: { 'x-watsolutionapp-alert': 'Usuario eliminado', 'x-watsolutionapp-params': 'synthetic-user' },
+        });
       }
       const second = new URL(route.request().url()).searchParams.get('page') === '1';
-      return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'x-total-count': '45' },
-        body: JSON.stringify([{ id: second ? 22 : 21, login: 'synthetic-user', email: 'synthetic@example.invalid', activated: true,
-          authorities: ['ROLE_USER'], langKey: 'es', createdDate: '2026-01-01' }]) });
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'x-total-count': '45' },
+        body: JSON.stringify([
+          {
+            id: second ? 22 : 21,
+            login: 'synthetic-user',
+            email: 'synthetic@example.invalid',
+            activated: true,
+            authorities: ['ROLE_USER'],
+            langKey: 'es',
+            createdDate: '2026-01-01',
+          },
+        ]),
+      });
     });
     await page.goto(origin + '/admin/user-management');
     await page.locator('tr#synthetic-user').waitFor();
     await page.locator('.pagination [aria-label="Go to page 2"]').click();
-    await page.locator('tr#synthetic-user td').first().filter({ hasText: /^\s*22\s*$/ }).waitFor();
+    await page
+      .locator('tr#synthetic-user td')
+      .first()
+      .filter({ hasText: /^\s*22\s*$/ })
+      .waitFor();
     await page.locator('tr#synthetic-user .delete').click();
     await page.getByRole('dialog').waitFor({ state: 'visible' });
     await page.getByRole('dialog').getByRole('button', { name: 'Cancelar', exact: true }).click();
@@ -279,7 +400,10 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
   it('keeps login reachable after failed server logout while blocking cookie restoration', async () => {
     const page = await loginUi();
     let logoutRequests = 0;
-    await context.route('**/api/session/logout', route => { logoutRequests++; return route.abort('failed'); });
+    await context.route('**/api/session/logout', route => {
+      logoutRequests++;
+      return route.abort('failed');
+    });
     await page.locator('.logout-btn').click();
     await page.locator('#username').waitFor({ timeout: 5000 });
     await page.locator('.logout-feedback[role="alert"]').waitFor();
@@ -297,22 +421,26 @@ describe('Chromium HTTPS sessions with PostgreSQL', () => {
   it('logs in through the actual Vue UI and restores identity after a protected-page reload', async () => {
     const page = await loginUi();
     const account = page.waitForResponse(r => r.url().endsWith('/api/account') && r.status() === 200);
-    await page.reload(); await account;
+    await page.reload();
+    await account;
     await page.locator('.sidebar-profile .name').filter({ hasText: 'Administrador de prueba' }).waitFor();
     expect(page.url()).toContain('/admin/resumen');
     expect(await page.evaluate('localStorage.getItem("jhi-authenticationToken")')).toBeNull();
   });
   it('removes protected content from both real UI tabs after logout and prevents reload recovery', async () => {
-    const first = await loginUi(), second = await context.newPage();
+    const first = await loginUi(),
+      second = await context.newPage();
     await second.goto(origin + '/admin/actividad');
     await second.locator('.logs-card').waitFor();
     const logout = first.waitForResponse(r => r.url().endsWith('/api/session/logout') && r.status() === 201);
-    await first.locator('.logout-btn').click(); await logout;
-    await first.waitForURL('**/login'); await second.waitForURL('**/login');
+    await first.locator('.logout-btn').click();
+    await logout;
+    await first.waitForURL('**/login');
+    await second.waitForURL('**/login');
     expect(await second.locator('.logs-card').count()).toBe(0);
     expect((await context.cookies()).some(c => c.name === '__Host-watsolution-refresh')).toBe(false);
-    await second.reload(); await second.locator('#username').waitFor();
+    await second.reload();
+    await second.locator('#username').waitFor();
     expect(await second.evaluate('localStorage.getItem("watsolution-logout")?.startsWith("confirmed:")')).toBe(true);
   });
-
 });

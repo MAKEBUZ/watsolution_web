@@ -77,6 +77,7 @@ export default class AccountService {
   }
 
   private checkAuthorities(authorities: string[]): boolean {
+    if (this.userAuthorities?.includes('ROLE_ADMIN')) return true;
     if (this.userAuthorities) {
       for (const authority of authorities) {
         if (this.userAuthorities.includes(authority)) {

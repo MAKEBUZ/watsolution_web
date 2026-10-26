@@ -20,6 +20,10 @@ RUN npm prune --omit=dev --ignore-scripts --no-audit --no-fund
 # ── Stage 2: production image ────────────────────────────────
 FROM node:22-alpine
 
+# Package installation belongs to the builder. Remove npm's independent,
+# vulnerable tool dependency tree from the runtime image.
+RUN rm -rf /usr/local/lib/node_modules/npm && rm -f /usr/local/bin/npm /usr/local/bin/npx
+
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -31,7 +35,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY package*.json ./
 
-# Railway injects PORT dynamically; the app reads process.env.PORT first.
+# The deployment supplies PORT; the app reads process.env.PORT first.
 EXPOSE 3000
+
+USER node
 
 CMD ["node", "dist/main.js"]
